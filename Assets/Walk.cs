@@ -7,7 +7,13 @@ public class Walk : MonoBehaviour
 	public float _mouseSens;
 	public Vector3 _maxEulers;
 	public float _walkSpeed;
-	public float _eyeHeight;
+	public float _runSpeed;
+	public float _walkStepTime;
+	public float _runStepTime;
+	float _moveSpeed;
+	float _prevMoveSpeed;
+	float _stepTimer;
+	bool _prevRun;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,7 +28,7 @@ public class Walk : MonoBehaviour
     void Update()
     {
 		//cursor
-		if(Input.GetKeyDown(KeyCode.LeftShift)){
+		if(Input.GetKeyDown(KeyCode.LeftControl)){
 			Cursor.visible = !Cursor.visible;
 			Cursor.lockState = Cursor.lockState==CursorLockMode.Locked? 
 				CursorLockMode.None : CursorLockMode.Locked;
@@ -52,8 +58,49 @@ public class Walk : MonoBehaviour
 		Vector3 flatRight = Vector3.Cross(flatForward,Vector3.down);
 		if(input.sqrMagnitude>0)
 			input.Normalize();
+		//get speed
+		bool run = Input.GetKey(KeyCode.LeftShift);
+		float stepTime = run? _walkStepTime : _runStepTime;
+		_moveSpeed=run ? _walkSpeed : _runSpeed;
+		if(input==Vector3.zero)
+			_moveSpeed=0;
 		transform.position+=(flatForward*input.z+flatRight*input.x)
-			*Time.deltaTime*_walkSpeed;
+			*Time.deltaTime*_moveSpeed;
+
+		//footsteps
+		if(_prevMoveSpeed==0&&_moveSpeed>0){
+			//start moving
+			Step();
+		}
+		else if(_moveSpeed==0&&_prevMoveSpeed>0){
+			//stop moving
+			Step();
+		}
+		else if(_moveSpeed>0){
+			if(_prevRun!=run){
+				//switch between walk and run
+				Step();
+			}
+			_stepTimer+=Time.deltaTime;
+			if(_stepTimer>=stepTime){
+				//regular steps
+				Step();
+			}
+		}
+
+		_prevMoveSpeed=_moveSpeed;
+		_prevRun=run;
         
     }
+
+	void Step(){
+		_stepTimer=0;
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position,Vector3.down, out hit, 1.65f,1)){
+			if(hit.transform.GetComponent<Footstep>()!=null){
+				hit.transform.GetComponent<Footstep>().Sound(transform.position+Vector3.down*1.6f);
+			}
+		}
+		//Vector3 pos = transform.position;
+	}
 }
