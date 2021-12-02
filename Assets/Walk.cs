@@ -98,7 +98,8 @@ public class Walk : MonoBehaviour
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position,Vector3.down, out hit, 1.65f,1)){
 			if(hit.transform.GetComponent<Footstep>()!=null){
-				hit.transform.GetComponent<Footstep>().Sound(transform.position+Vector3.down*1.6f);
+				hit.transform.GetComponent<Footstep>().Sound(
+						transform.position+Vector3.down*1.6f,_moveSpeed);
 			}
 		}
 		//Vector3 pos = transform.position;

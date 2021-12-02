@@ -856,7 +856,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 50
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -958,10 +958,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _flySpeed: 3
   _landSpeed: 0.3
+  _fleeSound: {fileID: 8300000, guid: ae13220b2fee67344b8b455414c59ff4, type: 3}
   _peckCheckTime: 0.5
   _peckChance: 0.1
-  _song: {fileID: 0}
-  _desiredFoodFromFeeder: 10
+  _energy: 10
+  _minEnergy: 5
+  _idealEnergy: 10
+  _song: {fileID: 8300000, guid: 148e954901f21104a960804e72ae599b, type: 3}
+  _idleCheckTime: 3
+  _ruffleChance: 0.1
+  _preenChance: 0.1
+  _relocateChance: 0.2
+  _fleeChance: 0.1
 --- !u!1 &5030680254628359088
 GameObject:
   m_ObjectHideFlags: 0
