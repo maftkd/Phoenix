@@ -960,6 +960,8 @@ MonoBehaviour:
   _landSpeed: 0.3
   _peckCheckTime: 0.5
   _peckChance: 0.1
+  _song: {fileID: 0}
+  _desiredFoodFromFeeder: 10
 --- !u!1 &5030680254628359088
 GameObject:
   m_ObjectHideFlags: 0

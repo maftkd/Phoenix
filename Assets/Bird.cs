@@ -17,10 +17,17 @@ public class Bird : MonoBehaviour
 	float _peckCheckTimer;
 	public float _peckCheckTime;
 	public float _peckChance;
+	public AudioClip _song;
+	AudioSource _audio;
+	float _singTimer;
+	int _dailyFood=0;
+	int _feederFood=0;
+	public int _desiredFoodFromFeeder;
     // Start is called before the first frame update
     void Start()
     {
 		_anim=GetComponent<Animator>();
+		_audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -68,14 +75,29 @@ public class Bird : MonoBehaviour
 						looky.y=_flyTarget.position.y;
 						transform.LookAt(looky);
 					}
+					//sing on arrival
+					_singTimer=3f;
+					_anim.SetTrigger("sing");
+					_audio.clip=_song;
+					_audio.Play();
 				}
 				break;
-			case 3://feeding
+			case 3://sing
+				_singTimer-=Time.deltaTime;
+				if(_singTimer<=0)
+				{
+					_state=4;
+					_feederFood=0;
+				}
+				break;
+			case 4://feeding
 				if(_peckTimer<=0){
 					if(_peckCheckTimer<=0){
 						if(Random.value<_peckChance){
 							_anim.SetTrigger("peck");
 							_peckTimer=1f;
+							_dailyFood++;
+							_feederFood++;
 						}
 						_peckCheckTimer=_peckCheckTime;
 					}
@@ -83,11 +105,13 @@ public class Bird : MonoBehaviour
 						_peckCheckTimer-=Time.deltaTime;
 				}
 				else
+				{
 					_peckTimer-=Time.deltaTime;
-				//if not pecking
-				//	wait 1 sec
-				//		//check for new peck
-				//		//reset wait timer
+					if(_peckTimer<=0){
+						if(_feederFood>=_desiredFoodFromFeeder)
+							Debug.Log("Bird done feeding at feeder");
+					}
+				}
 				break;
 		}
     }
