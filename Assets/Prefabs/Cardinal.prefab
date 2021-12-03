@@ -964,22 +964,22 @@ MonoBehaviour:
   _peckCheckTime: 1
   _peckChance: 0.5
   _maxTurnAngle: 90
-  _energy: 4
+  _energy: 7
   _minEnergy: 5
   _idealEnergy: 10
   _song: {fileID: 8300000, guid: 148e954901f21104a960804e72ae599b, type: 3}
   _pitchRange: {x: 0.8, y: 1.2}
   _idleCheckTime: 3
-  _ruffleChance: 0.1
-  _preenChance: 0.1
-  _fleeChance: 0.2
-  _flapChance: 0.5
+  _ruffleChance: 0.5
+  _preenChance: 0.2
+  _reposChance: 0.1
   _startInTree: 1
   _startleRunRange: 5
   _startleWalkRange: 1
   _startleSpeed: 2
   _fleeDistance: 10
   _fleeAlarm: {fileID: 8300000, guid: 6329b76a87843486faea08a815e13086, type: 3}
+  _startleTime: 15
   _rank: 0
 --- !u!1 &5030680254628359088
 GameObject:

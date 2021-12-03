@@ -47,9 +47,7 @@ public class Bird : MonoBehaviour
 	[Range(0,1)]
 	public float _preenChance;
 	[Range(0,1)]
-	public float _fleeChance;//not fleeing from anything in particular yet...
-	[Range(0,1)]
-	public float _flapChance;//not fleeing from anything in particular yet...
+	public float _reposChance;//not fleeing from anything in particular yet...
 	float _idleTimer;
 	float _idleCheckTimer;
 	GameObject _curTree;
@@ -60,6 +58,8 @@ public class Bird : MonoBehaviour
 	public float _startleSpeed;
 	public float _fleeDistance;
 	public AudioClip _fleeAlarm;
+	public float _startleTime;
+	float _startleTimer;
 	[Header("Social")]
 	public int _rank;
 	static List<Bird> _birds;
@@ -83,16 +83,23 @@ public class Bird : MonoBehaviour
 			foreach(Bird b in tBirds)
 				_birds.Add(b);
 		}
-		if(_startInTree){
-			FindRandomTreePerch();
+		if(_startInTree&&_rank==0){
+			//if leader, pick tree
+			FindRandomTree();
+			FindRandomPerchInTree(_curTree);
+			//FindRandomTreePerch();
 			transform.position=_flyTarget.position;
 			transform.rotation=_flyTarget.rotation;
+			StartCoroutine(SendJoinCallR());
 		}
 		_pitch = Random.Range(_pitchRange.x,_pitchRange.y);
 		_audio.pitch=_pitch;
 
 		//get static feeder array
 		_feeders = FindObjectsOfType<Feeder>();
+		
+		//random offset for idle check
+		_idleCheckTimer=_idleCheckTime*Random.value;
     }
 
     // Update is called once per frame
@@ -103,25 +110,15 @@ public class Bird : MonoBehaviour
 			default:
 				_idleCheckTimer-=Time.deltaTime;
 				if(_idleCheckTimer<=0){
-					if(_energy<_minEnergy)
+					if(TimeManager._instance.IsNight())
+					{
+						//Sleep();
+						_state=6;
+					}
+					else if(_energy<_minEnergy)
 					{
 						FindFeeder();
 						StartFlyingToTarget();
-						//FindFeeder
-						//FlyToFeeder
-						//if feeder nearby
-						//	fly to feeder
-						//#temp - maybe should be more logic than just picking random feeder
-						//what if it knows a feeder is empty?
-						//what if there's another bird at the feeder?
-						//what if there's a new feeder it doesn't know about?
-						/*
-						GameObject [] feeders = GameObject.FindGameObjectsWithTag("Feeder");
-						GameObject feeder = feeders[Random.Range(0,feeders.Length)];
-						Transform feederPerch = feeder.transform.GetChild(
-								Random.Range(0,feeder.transform.childCount));
-						StartFlyingTo(feederPerch);
-						*/
 					}
 					else{
 						float r = Random.value;
@@ -133,14 +130,11 @@ public class Bird : MonoBehaviour
 							//preen
 							_anim.SetTrigger("preen");
 						}
-						else if(r<_ruffleChance+_preenChance+_fleeChance){
-							//flee
-							FindRandomTreePerch();
+						else if(r<_ruffleChance+_preenChance+_reposChance){
+							//repose
+							//FindRandomTreePerch();
+							FindRandomPerchInTree(_curTree);
 							StartFlyingToTarget();
-						}
-						else if(r<_ruffleChance+_preenChance+_fleeChance+_flapChance){
-							//flap
-							StartCoroutine(FlapR());
 						}
 					}
 					_idleCheckTimer=_idleCheckTime;
@@ -176,30 +170,15 @@ public class Bird : MonoBehaviour
 						transform.LookAt(looky);
 					}
 					//sing on arrival
-					Sing();
-					_prevPerch=_perchTarget;
+					//Sing();
+					ArriveAtPerch();
 				}
 				break;
 			case 3://sing
 				_singTimer-=Time.deltaTime;
 				if(_singTimer<=0)
 				{
-					if(_flyTarget==null || _flyTarget.parent.GetComponent<Tree>()!=null){
-						_state=0;
-						if(_flyTarget!=null)
-							_curTree=_flyTarget.parent.gameObject;
-					}
-					else if(_flyTarget.parent.GetComponent<Feeder>()!=null)
-					{
-						_state=4;
-						_curTree=null;
-						_curFeeder=_flyTarget.parent.GetComponent<Feeder>();
-						//instant energy boost to help offset this
-						//strange theory that if a bird keeps coming to a feeder
-						//and keeps getting scared off
-						//it may continue to lose energy and die
-						//_energy++;
-					}
+					ArriveAtPerch();
 				}
 				break;
 			case 4://feeding
@@ -229,6 +208,21 @@ public class Bird : MonoBehaviour
 				}
 				else
 					_peckCheckTimer-=Time.deltaTime;
+				break;
+			case 5://startled
+				if(_startleTimer>0){
+					//Debug.Log("startlin yo "+_startleTimer);
+					_startleTimer-=Time.deltaTime;
+					if(_startleTimer<=0){
+						if(_rank==0)
+							StartCoroutine(SendJoinCallR());
+						else
+							_state=0;
+					}
+				}
+				break;
+			case 6://sleep
+				//do nothing
 				break;
 		}
     }
@@ -261,7 +255,6 @@ public class Bird : MonoBehaviour
 
 	void HandleSound(Speaker.SpeakerEventArgs args){
 		//only really want the closest bird responding
-		//Debug.Log(name+" heard audio: "+args.name + " for duration "+args.dur);
 		float minSqrDist=10000f;
 		Bird close=null;
 		foreach(Bird b in _birds)
@@ -310,6 +303,28 @@ public class Bird : MonoBehaviour
 		}
 	}
 
+	IEnumerator SignalAlarmR(Footstep.FootstepEventArgs args){
+		//sing alarm song
+		_audio.clip=_fleeAlarm;
+		_audio.loop=false;
+		_audio.Play();
+		//fly simultaneously
+		FindRandomSafeTreePerch(args.pos);
+		StartFlyingToTarget(false);
+		//wait for alarm song
+		yield return new WaitForSeconds(_audio.clip.length);
+		//play fly sound
+		_audio.clip=_fleeSound;
+		_audio.Play();
+		//alert other birds
+		args.alerted=true;
+		foreach(Bird b in _birds){
+			if(b!=this){
+				b.HandleFootstep(args);
+			}
+		}
+	}
+
 	void FindFeeder(){
 		//GameObject [] feeders = GameObject.FindGameObjectsWithTag("Feeder");
 		//check for man-made feeders
@@ -337,6 +352,33 @@ public class Bird : MonoBehaviour
 		_flyTarget=p2==null? null : _perchTarget.transform;
 	}
 
+	void FindRandomTree(){
+		GameObject [] trees = GameObject.FindGameObjectsWithTag("Tree");
+		GameObject tree = trees[Random.Range(0,trees.Length)];
+		_curTree=tree;
+	}
+	void FindRandomPerchInTree(GameObject tree){
+		//get perch
+		Transform perch = tree.transform.GetChild(
+				Random.Range(0,tree.transform.childCount));
+		//make sure perch is unoccupied
+		int iters=0;
+		while(perch.GetComponent<Perch>()._occupied&&iters<20){
+			perch = tree.transform.GetChild(
+					Random.Range(0,tree.transform.childCount));
+			iters++;
+		}
+		if(perch.GetComponent<Perch>()._occupied){
+			FindRandomTree();
+			FindRandomPerchInTree(_curTree);
+			return;
+		}
+
+		_flyTarget=perch;
+		_perchTarget=_flyTarget.GetComponent<Perch>();
+		_perchTarget._occupied=true;
+	}
+
 	//find random perch in a tree
 	void FindRandomTreePerch(){
 		GameObject [] trees = GameObject.FindGameObjectsWithTag("Tree");
@@ -357,6 +399,7 @@ public class Bird : MonoBehaviour
 	}
 
 	void FindRandomSafeTreePerch(Vector3 threat){
+		_startleTimer=_startleTime;
 		//skip if already in safe pos
 		if(_flyTarget!=null&&(threat-_flyTarget.position).sqrMagnitude>_fleeDistance*_fleeDistance)
 			return;
@@ -383,27 +426,6 @@ public class Bird : MonoBehaviour
 		_perchTarget._occupied=true;
 	}
 
-	IEnumerator SignalAlarmR(Footstep.FootstepEventArgs args){
-		//sing alarm song
-		_audio.clip=_fleeAlarm;
-		_audio.loop=false;
-		_audio.Play();
-		//fly simultaneously
-		FindRandomSafeTreePerch(args.pos);
-		StartFlyingToTarget(false);
-		//wait for alarm song
-		yield return new WaitForSeconds(_audio.clip.length);
-		//play fly sound
-		_audio.clip=_fleeSound;
-		_audio.Play();
-		//alert other birds
-		args.alerted=true;
-		foreach(Bird b in _birds){
-			if(b!=this){
-				b.HandleFootstep(args);
-			}
-		}
-	}
 
 	IEnumerator FlapR(){
 		_anim.SetBool("flying",true);
@@ -413,13 +435,44 @@ public class Bird : MonoBehaviour
 		_anim.SetBool("flying",false);
 	}
 
-	/*
-	IEnumerator HopR(){
-		_anim.SetInt("hop",1);
+	IEnumerator SendJoinCallR(){
+		//sing join song
+		_audio.clip=_song;
+		_audio.Play();
+		_state=0;
 		yield return null;
-		_anim.SetInt("hop",0);
+		foreach(Bird b in _birds){
+			if(b!=this){
+				b.GoToTree(_curTree);
+			}
+		}
 	}
-	*/
+
+	public void GoToTree(GameObject tree){
+		_startleTimer=0;
+		_curTree=tree;
+		FindRandomPerchInTree(_curTree);
+		StartFlyingToTarget();
+	}
+
+	void ArriveAtPerch(){
+		if(_flyTarget==null || _flyTarget.parent.GetComponent<Tree>()!=null){
+			//go to startle state if arrived after a flee call
+			if(_startleTimer>0)
+				_state=5;
+			else
+				_state=0;
+			if(_flyTarget!=null)
+				_curTree=_flyTarget.parent.gameObject;
+		}
+		else if(_flyTarget.parent.GetComponent<Feeder>()!=null)
+		{
+			_state=4;
+			_curTree=null;
+			_curFeeder=_flyTarget.parent.GetComponent<Feeder>();
+		}
+		_prevPerch=_perchTarget;
+	}
 
 	void OnDrawGizmos(){
 		Gizmos.color=Color.blue;
