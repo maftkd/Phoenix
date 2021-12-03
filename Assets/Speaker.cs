@@ -11,6 +11,7 @@ public class Speaker : MonoBehaviour
 	public class SpeakerEventArgs : System.EventArgs{
 		public string name;
 		public float dur;
+		public Vector3 pos;
 	}
 
 	public delegate void EventHandler(SpeakerEventArgs args);
@@ -34,6 +35,7 @@ public class Speaker : MonoBehaviour
 			SpeakerEventArgs args = new SpeakerEventArgs();
 			args.name=_audio.clip.name;
 			args.dur=_audio.clip.length;
+			args.pos=transform.position;
 			if(OnSpeakerPlay!=null)
 				OnSpeakerPlay.Invoke(args);
 		}
