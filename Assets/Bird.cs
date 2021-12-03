@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Bird : MonoBehaviour
 {
+	[Header("Species")]
+	public string _species;
 	Animator _anim;
 	int _state;
 	Transform _flyTarget;
@@ -40,9 +42,15 @@ public class Bird : MonoBehaviour
 	float _idleCheckTimer;
 	GameObject _curTree;
 	[Header("Startle")]
-	public float _startleRange;
+	public float _startleRunRange;
+	public float _startleWalkRange;
 	public float _startleSpeed;
 	public float _fleeDistance;
+	public AudioClip _fleeAlarm;
+	[Header("Social")]
+	public int _rank;
+	static List<Bird> _birds;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +61,15 @@ public class Bird : MonoBehaviour
 		Footstep [] steps = FindObjectsOfType<Footstep>();
 		foreach(Footstep s in steps)
 			s.OnFootstep+=HandleFootstep;
+
+		//get static bird list
+		if(_birds==null)
+		{
+			Bird[] tBirds = FindObjectsOfType<Bird>();
+			_birds = new List<Bird>();
+			foreach(Bird b in tBirds)
+				_birds.Add(b);
+		}
     }
 
     // Update is called once per frame
@@ -88,34 +105,35 @@ public class Bird : MonoBehaviour
 						}
 						else if(r<_ruffleChance+_preenChance+_fleeChance){
 							//flee
-							GameObject [] trees = GameObject.FindGameObjectsWithTag("Tree");
-							GameObject tree = trees[Random.Range(0,trees.Length)];
-							while(_curTree!=null && tree==_curTree)
-								tree = trees[Random.Range(0,trees.Length)];
-							//get perch
-							Transform perch = tree.transform.GetChild(
-									Random.Range(0,tree.transform.childCount));
+							Transform perch = FindRandomPerch();
 							StartFlyingTo(perch);
 						}
 					}
 					_idleCheckTimer=_idleCheckTime;
 				}
-				//if energy <= minEnergy
-				//	//go to food
-				//else
-				//	hang out
 				break;
 			case 1://flying
 				transform.position+=transform.forward*Time.deltaTime*_flySpeed;
-				//if distance to target <.3
-				//	landing
+				//start landing when close
 				if((transform.position-_flyTarget.position).sqrMagnitude<0.09f){
-					_state=2;
-					_anim.SetBool("flying",false);
-					_dir = _flyTarget.position-transform.position;
-					_pos = transform.position;
-					_prevRot = transform.rotation;
-					_targetRot = _flyTarget.rotation;
+					bool retargeting=false;
+					foreach(Bird b in _birds){
+						if(b._flyTarget==_flyTarget){
+							if(_rank>b._rank){
+								Transform perch = FindRandomPerch();
+								StartFlyingTo(perch);
+								retargeting=true;
+							}
+						}
+					}
+					if(!retargeting){
+						_state=2;
+						_anim.SetBool("flying",false);
+						_dir = _flyTarget.position-transform.position;
+						_pos = transform.position;
+						_prevRot = transform.rotation;
+						_targetRot = _flyTarget.rotation;
+					}
 				}
 				break;
 			case 2://landing
@@ -181,12 +199,18 @@ public class Bird : MonoBehaviour
     }
 
 	void StartFlyingTo(Transform t){
+		if(_flyTarget==t && _state==0)
+		{
+			//dont fly if already idle at existing perch
+			return;
+		}
 		_flyTarget=t;
 		_anim.SetBool("flying",true);
 		transform.LookAt(_flyTarget);
 		_state = 1;
 		_energy--;
 		_audio.clip=_fleeSound;
+		_audio.loop=true;
 		_audio.Play();
 	}
 
@@ -195,39 +219,101 @@ public class Bird : MonoBehaviour
 		_singTimer=3f;
 		_anim.SetTrigger("sing");
 		_audio.clip=_song;
+		_audio.loop=false;
 		_audio.Play();
 	}
 
 	void HandleSound(Speaker.SpeakerEventArgs args){
+		//only really want the closest bird responding
 		//Debug.Log(name+" heard audio: "+args.name + " for duration "+args.dur);
-		if(args.name.ToLower().Contains(name.ToLower()))
-			StartCoroutine(SingAfterSecondsR(args.dur));
+		float minSqrDist=10000f;
+		Bird close=null;
+		foreach(Bird b in _birds)
+		{
+			if(args.name.ToLower().Contains(_species.ToLower()))
+			{
+				float sqd = (args.pos-transform.position).sqrMagnitude;
+				if(sqd<minSqrDist)
+				{
+					minSqrDist=sqd;
+					close=b;
+				}
+			}
+		}
+		if(close!=this)
+			return;
+		StartCoroutine(SingAfterSecondsR(args.dur+Random.value));
 	}
 
 	IEnumerator SingAfterSecondsR(float s){
 		yield return new WaitForSeconds(s);
-		Sing();
+		if(_state==0||_state==4)
+		{
+			Sing();
+		}
 	}
 
 	void HandleFootstep(Footstep.FootstepEventArgs args){
 		if(_state==1)
 			return;
-		if((args.pos-transform.position).sqrMagnitude<=_startleRange*_startleRange){
-			if(args.speed>=_startleSpeed)
-			{
-				Debug.Log("Startled!");
-				GameObject [] trees = GameObject.FindGameObjectsWithTag("Tree");
-				GameObject tree = trees[Random.Range(0,trees.Length)];
-				int iters=0;
-				while((tree.transform.position-args.pos).sqrMagnitude<_fleeDistance*_fleeDistance&&
-						iters<10){
-					tree = trees[Random.Range(0,trees.Length)];
-					iters++;
+		if(args.alerted){
+			//alerted by another bird's alarm
+			Transform perch = FindRandomSafePerch(args.pos);
+			StartFlyingTo(perch);
+		}
+		else{
+			//alerted by sound of footsteps alone
+			float sqrDist=(args.pos-transform.position).sqrMagnitude;
+			if(sqrDist<=_startleRunRange*_startleRunRange){
+				if(args.speed>=_startleSpeed||(sqrDist<=_startleWalkRange*_startleWalkRange&&args.speed>0))
+				{
+					Debug.Log("Startled!");
+					StartCoroutine(SignalAlarmR(args));
 				}
-				//get perch
-				Transform perch = tree.transform.GetChild(
-						Random.Range(0,tree.transform.childCount));
-				StartFlyingTo(perch);
+			}
+		}
+	}
+
+	Transform FindRandomPerch(){
+		GameObject [] trees = GameObject.FindGameObjectsWithTag("Tree");
+		GameObject tree = trees[Random.Range(0,trees.Length)];
+		while(_curTree!=null && tree==_curTree)
+			tree = trees[Random.Range(0,trees.Length)];
+		//get perch
+		Transform perch = tree.transform.GetChild(
+				Random.Range(0,tree.transform.childCount));
+		return perch;
+	}
+
+	Transform FindRandomSafePerch(Vector3 threat){
+		if(_flyTarget!=null&&(threat-_flyTarget.position).sqrMagnitude>_fleeDistance*_fleeDistance)
+			return _flyTarget;
+		GameObject [] trees = GameObject.FindGameObjectsWithTag("Tree");
+		GameObject tree = trees[Random.Range(0,trees.Length)];
+		int iters=0;
+		while((tree.transform.position-threat).sqrMagnitude<_fleeDistance*_fleeDistance&&
+				iters<10){
+			tree = trees[Random.Range(0,trees.Length)];
+			iters++;
+		}
+		//get perch
+		Transform perch = tree.transform.GetChild(
+				Random.Range(0,tree.transform.childCount));
+		return perch;
+	}
+
+	IEnumerator SignalAlarmR(Footstep.FootstepEventArgs args){
+		_audio.clip=_fleeAlarm;
+		_audio.loop=false;
+		_audio.Play();
+		yield return new WaitForSeconds(_audio.clip.length);
+		Transform perch = FindRandomSafePerch(args.pos);
+		StartFlyingTo(perch);
+		//alert other birds
+		args.alerted=true;
+		foreach(Bird b in _birds){
+			if(b!=this){
+				b.HandleFootstep(args);
 			}
 		}
 	}

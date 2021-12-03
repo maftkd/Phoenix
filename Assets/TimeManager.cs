@@ -31,6 +31,7 @@ public class TimeManager : MonoBehaviour
 		Vector3 pos = new Vector3(r*Mathf.Cos(theta),r*Mathf.Sin(theta),z);
 		_sun.position=pos;
 		_sun.LookAt(Vector3.zero);
+		RenderSettings.ambientIntensity=(0.5f-Mathf.Abs(_timeOfDay-0.5f))*2;
 	}
 
     // Update is called once per frame

@@ -11,6 +11,7 @@ public class Footstep : MonoBehaviour
 	public class FootstepEventArgs : System.EventArgs{
 		public Vector3 pos;
 		public float speed;
+		public bool alerted;
 	}
 	public delegate void EventHandler(FootstepEventArgs args);
 	public event EventHandler OnFootstep;
@@ -37,6 +38,7 @@ public class Footstep : MonoBehaviour
 					FootstepEventArgs args = new FootstepEventArgs();
 					args.pos=pos;
 					args.speed=speed;
+					args.alerted=false;
 					OnFootstep.Invoke(args);
 				}
 				return;

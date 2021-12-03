@@ -956,6 +956,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08c2ff695c9ef4fa5a74a2d143476cd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _species: Cardinal
   _flySpeed: 3
   _landSpeed: 0.3
   _fleeSound: {fileID: 8300000, guid: ae13220b2fee67344b8b455414c59ff4, type: 3}
@@ -968,8 +969,13 @@ MonoBehaviour:
   _idleCheckTime: 3
   _ruffleChance: 0.1
   _preenChance: 0.1
-  _relocateChance: 0.2
   _fleeChance: 0.1
+  _startleRunRange: 0
+  _startleWalkRange: 0
+  _startleSpeed: 2
+  _fleeDistance: 10
+  _fleeAlarm: {fileID: 8300000, guid: 6329b76a87843486faea08a815e13086, type: 3}
+  _rank: 0
 --- !u!1 &5030680254628359088
 GameObject:
   m_ObjectHideFlags: 0
