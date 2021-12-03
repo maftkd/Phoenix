@@ -856,7 +856,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 50
+  MaxDistance: 10
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -957,21 +957,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _species: Cardinal
+  _state: 0
   _flySpeed: 3
   _landSpeed: 0.3
   _fleeSound: {fileID: 8300000, guid: ae13220b2fee67344b8b455414c59ff4, type: 3}
-  _peckCheckTime: 0.5
-  _peckChance: 0.1
-  _energy: 10
+  _peckCheckTime: 1
+  _peckChance: 0.5
+  _maxTurnAngle: 90
+  _energy: 4
   _minEnergy: 5
   _idealEnergy: 10
   _song: {fileID: 8300000, guid: 148e954901f21104a960804e72ae599b, type: 3}
+  _pitchRange: {x: 0.8, y: 1.2}
   _idleCheckTime: 3
   _ruffleChance: 0.1
   _preenChance: 0.1
-  _fleeChance: 0.1
-  _startleRunRange: 0
-  _startleWalkRange: 0
+  _fleeChance: 0.2
+  _flapChance: 0.5
+  _startInTree: 1
+  _startleRunRange: 5
+  _startleWalkRange: 1
   _startleSpeed: 2
   _fleeDistance: 10
   _fleeAlarm: {fileID: 8300000, guid: 6329b76a87843486faea08a815e13086, type: 3}

@@ -7,11 +7,17 @@ public class Bird : MonoBehaviour
 	[Header("Species")]
 	public string _species;
 	Animator _anim;
-	int _state;
+	//[HideInInspector]
+	public int _state;
 	Transform _flyTarget;
+	Perch _prevPerch;
+	Perch _perchTarget;
+	Feeder _curFeeder;
 	[Header("Flying")]
 	public float _flySpeed;
 	public float _landSpeed;
+	float _landTimer;
+	float _landTime;
 	Vector3 _dir;//#temp
 	Vector3 _pos;//#temp - maybe prevDir and prevPos;
 	Quaternion _prevRot;
@@ -22,6 +28,8 @@ public class Bird : MonoBehaviour
 	public float _peckChance;
 	float _peckTimer;
 	float _peckCheckTimer;
+	static Feeder[] _feeders;
+	public float _maxTurnAngle;//
 	[Header("Energy")]
 	public int _energy;
 	public int _minEnergy;
@@ -30,6 +38,8 @@ public class Bird : MonoBehaviour
 	public AudioClip _song;
 	AudioSource _audio;
 	float _singTimer;
+	public Vector2 _pitchRange;
+	float _pitch;
 	[Header("Idling")]
 	public float _idleCheckTime;
 	[Range(0,1)]
@@ -38,9 +48,12 @@ public class Bird : MonoBehaviour
 	public float _preenChance;
 	[Range(0,1)]
 	public float _fleeChance;//not fleeing from anything in particular yet...
+	[Range(0,1)]
+	public float _flapChance;//not fleeing from anything in particular yet...
 	float _idleTimer;
 	float _idleCheckTimer;
 	GameObject _curTree;
+	public bool _startInTree;
 	[Header("Startle")]
 	public float _startleRunRange;
 	public float _startleWalkRange;
@@ -70,6 +83,16 @@ public class Bird : MonoBehaviour
 			foreach(Bird b in tBirds)
 				_birds.Add(b);
 		}
+		if(_startInTree){
+			FindRandomTreePerch();
+			transform.position=_flyTarget.position;
+			transform.rotation=_flyTarget.rotation;
+		}
+		_pitch = Random.Range(_pitchRange.x,_pitchRange.y);
+		_audio.pitch=_pitch;
+
+		//get static feeder array
+		_feeders = FindObjectsOfType<Feeder>();
     }
 
     // Update is called once per frame
@@ -82,16 +105,23 @@ public class Bird : MonoBehaviour
 				if(_idleCheckTimer<=0){
 					if(_energy<_minEnergy)
 					{
-						//forage
+						FindFeeder();
+						StartFlyingToTarget();
+						//FindFeeder
+						//FlyToFeeder
+						//if feeder nearby
+						//	fly to feeder
 						//#temp - maybe should be more logic than just picking random feeder
 						//what if it knows a feeder is empty?
 						//what if there's another bird at the feeder?
 						//what if there's a new feeder it doesn't know about?
+						/*
 						GameObject [] feeders = GameObject.FindGameObjectsWithTag("Feeder");
 						GameObject feeder = feeders[Random.Range(0,feeders.Length)];
 						Transform feederPerch = feeder.transform.GetChild(
 								Random.Range(0,feeder.transform.childCount));
 						StartFlyingTo(feederPerch);
+						*/
 					}
 					else{
 						float r = Random.value;
@@ -105,8 +135,12 @@ public class Bird : MonoBehaviour
 						}
 						else if(r<_ruffleChance+_preenChance+_fleeChance){
 							//flee
-							Transform perch = FindRandomPerch();
-							StartFlyingTo(perch);
+							FindRandomTreePerch();
+							StartFlyingToTarget();
+						}
+						else if(r<_ruffleChance+_preenChance+_fleeChance+_flapChance){
+							//flap
+							StartCoroutine(FlapR());
 						}
 					}
 					_idleCheckTimer=_idleCheckTime;
@@ -116,32 +150,23 @@ public class Bird : MonoBehaviour
 				transform.position+=transform.forward*Time.deltaTime*_flySpeed;
 				//start landing when close
 				if((transform.position-_flyTarget.position).sqrMagnitude<0.09f){
-					bool retargeting=false;
-					foreach(Bird b in _birds){
-						if(b._flyTarget==_flyTarget){
-							if(_rank>b._rank){
-								Transform perch = FindRandomPerch();
-								StartFlyingTo(perch);
-								retargeting=true;
-							}
-						}
-					}
-					if(!retargeting){
-						_state=2;
-						_anim.SetBool("flying",false);
-						_dir = _flyTarget.position-transform.position;
-						_pos = transform.position;
-						_prevRot = transform.rotation;
-						_targetRot = _flyTarget.rotation;
-					}
+					_state=2;
+					_anim.SetBool("flying",false);
+					_dir = _flyTarget.position-transform.position;
+					_pos = transform.position;
+					_landTime = _dir.magnitude/_landSpeed;
+					_dir.Normalize();
+					_landTimer=0;
+					_prevRot = transform.rotation;
+					_targetRot = _flyTarget.rotation;
+					_audio.clip=_fleeSound;
+					_audio.Play();
 				}
 				break;
 			case 2://landing
-				transform.position+=_dir.normalized*Time.deltaTime*_landSpeed;
-				float tx = (transform.position.x-_pos.x)/_dir.x;
-				float tz = (transform.position.z-_pos.z)/_dir.z;
-				float ty = (transform.position.y-_pos.y)/_dir.y;
-				float t = Mathf.Max(Mathf.Max(tx,tz),ty);
+				transform.position+=_dir*Time.deltaTime*_landSpeed;
+				_landTimer+=Time.deltaTime;
+				float t = _landTimer/_landTime;
 				transform.rotation = Quaternion.Slerp(_prevRot,_targetRot,t);
 				if(t>=1f){
 					transform.position=_flyTarget.position;
@@ -152,66 +177,78 @@ public class Bird : MonoBehaviour
 					}
 					//sing on arrival
 					Sing();
+					_prevPerch=_perchTarget;
 				}
 				break;
 			case 3://sing
 				_singTimer-=Time.deltaTime;
 				if(_singTimer<=0)
 				{
-					if(_flyTarget==null || _flyTarget.parent.tag=="Tree"){
+					if(_flyTarget==null || _flyTarget.parent.GetComponent<Tree>()!=null){
 						_state=0;
 						if(_flyTarget!=null)
 							_curTree=_flyTarget.parent.gameObject;
 					}
-					else if(_flyTarget.parent.tag=="Feeder")
+					else if(_flyTarget.parent.GetComponent<Feeder>()!=null)
 					{
 						_state=4;
 						_curTree=null;
+						_curFeeder=_flyTarget.parent.GetComponent<Feeder>();
+						//instant energy boost to help offset this
+						//strange theory that if a bird keeps coming to a feeder
+						//and keeps getting scared off
+						//it may continue to lose energy and die
+						//_energy++;
 					}
 				}
 				break;
 			case 4://feeding
-				if(_peckTimer<=0){
-					if(_peckCheckTimer<=0){
-						if(Random.value<_peckChance){
-							_anim.SetTrigger("peck");
-							_peckTimer=1f;
-							_energy++;
-						}
-						_peckCheckTimer=_peckCheckTime;
-					}
-					else
-						_peckCheckTimer-=Time.deltaTime;
-				}
-				else
-				{
-					_peckTimer-=Time.deltaTime;
-					if(_peckTimer<=0){
+				_peckCheckTimer-=Time.deltaTime;
+				if(_peckCheckTimer<=0){
+					if(Random.value<_peckChance){
+						_energy++;
 						if(_energy>=_idealEnergy)
 						{
 							Debug.Log("Bird done feeding at feeder");
 							_state=0;
+							_anim.SetInteger("hop",0);
+							//fly to a perch on a tree
+							FindRandomTreePerch();
+							StartFlyingToTarget();
 						}
+						else
+							_anim.SetTrigger("peck");
 					}
+					else if(_curFeeder._forage){
+						//hop around
+						transform.Rotate(Vector3.up*Random.Range(-_maxTurnAngle,_maxTurnAngle));
+						//StartCoroutine(HopR());
+						_anim.SetInteger("hop",1);
+					}
+					_peckCheckTimer=_peckCheckTime;
 				}
+				else
+					_peckCheckTimer-=Time.deltaTime;
 				break;
 		}
     }
 
-	void StartFlyingTo(Transform t){
-		if(_flyTarget==t && _state==0)
-		{
-			//dont fly if already idle at existing perch
+	void StartFlyingToTarget(bool playFlee=true){
+		if(_flyTarget==null || _perchTarget==null)
 			return;
-		}
-		_flyTarget=t;
+		if(_prevPerch!=null)
+			_prevPerch._occupied=false;
 		_anim.SetBool("flying",true);
 		transform.LookAt(_flyTarget);
 		_state = 1;
 		_energy--;
-		_audio.clip=_fleeSound;
-		_audio.loop=true;
-		_audio.Play();
+		if(playFlee)
+		{
+			_audio.clip=_fleeSound;
+			_audio.Play();
+		}
+		//set perch occupied on flight start
+		_perchTarget._occupied=true;
 	}
 
 	void Sing(){
@@ -219,7 +256,6 @@ public class Bird : MonoBehaviour
 		_singTimer=3f;
 		_anim.SetTrigger("sing");
 		_audio.clip=_song;
-		_audio.loop=false;
 		_audio.Play();
 	}
 
@@ -230,9 +266,9 @@ public class Bird : MonoBehaviour
 		Bird close=null;
 		foreach(Bird b in _birds)
 		{
-			if(args.name.ToLower().Contains(_species.ToLower()))
+			if(args.name.ToLower().Contains(_species.ToLower())&&b._state==0||b._state==4)
 			{
-				float sqd = (args.pos-transform.position).sqrMagnitude;
+				float sqd = (args.pos-b.transform.position).sqrMagnitude;
 				if(sqd<minSqrDist)
 				{
 					minSqrDist=sqd;
@@ -258,8 +294,8 @@ public class Bird : MonoBehaviour
 			return;
 		if(args.alerted){
 			//alerted by another bird's alarm
-			Transform perch = FindRandomSafePerch(args.pos);
-			StartFlyingTo(perch);
+			FindRandomSafeTreePerch(args.pos);
+			StartFlyingToTarget();
 		}
 		else{
 			//alerted by sound of footsteps alone
@@ -274,7 +310,35 @@ public class Bird : MonoBehaviour
 		}
 	}
 
-	Transform FindRandomPerch(){
+	void FindFeeder(){
+		//GameObject [] feeders = GameObject.FindGameObjectsWithTag("Feeder");
+		//check for man-made feeders
+		//give preference - at least in winter
+		foreach(Feeder f in _feeders){
+			if(!f._forage){
+				Perch p = f.HasSpace();
+				if(p!=null)
+				{
+					_perchTarget=p;
+					_flyTarget=p.transform;
+					return;
+				}
+			}
+		}
+		Feeder f2 = _feeders[Random.Range(0,_feeders.Length)];
+		Perch p2 = f2.HasSpace();
+		int iters=0;
+		while(p2==null&&iters<10){
+			f2 = _feeders[Random.Range(0,_feeders.Length)];
+			p2 = f2.HasSpace();
+			iters++;
+		}
+		_perchTarget=p2;
+		_flyTarget=p2==null? null : _perchTarget.transform;
+	}
+
+	//find random perch in a tree
+	void FindRandomTreePerch(){
 		GameObject [] trees = GameObject.FindGameObjectsWithTag("Tree");
 		GameObject tree = trees[Random.Range(0,trees.Length)];
 		while(_curTree!=null && tree==_curTree)
@@ -282,12 +346,20 @@ public class Bird : MonoBehaviour
 		//get perch
 		Transform perch = tree.transform.GetChild(
 				Random.Range(0,tree.transform.childCount));
-		return perch;
+		//make sure perch is unoccupied
+		while(perch.GetComponent<Perch>()._occupied){
+			perch = tree.transform.GetChild(
+					Random.Range(0,tree.transform.childCount));
+		}
+		_flyTarget=perch;
+		_perchTarget=_flyTarget.GetComponent<Perch>();
+		_perchTarget._occupied=true;
 	}
 
-	Transform FindRandomSafePerch(Vector3 threat){
+	void FindRandomSafeTreePerch(Vector3 threat){
+		//skip if already in safe pos
 		if(_flyTarget!=null&&(threat-_flyTarget.position).sqrMagnitude>_fleeDistance*_fleeDistance)
-			return _flyTarget;
+			return;
 		GameObject [] trees = GameObject.FindGameObjectsWithTag("Tree");
 		GameObject tree = trees[Random.Range(0,trees.Length)];
 		int iters=0;
@@ -299,16 +371,31 @@ public class Bird : MonoBehaviour
 		//get perch
 		Transform perch = tree.transform.GetChild(
 				Random.Range(0,tree.transform.childCount));
-		return perch;
+		//make sure perch is unoccupied
+		iters=0;
+		while(perch.GetComponent<Perch>()._occupied&&iters<10){
+			perch = tree.transform.GetChild(
+					Random.Range(0,tree.transform.childCount));
+			iters++;
+		}
+		_flyTarget=perch;
+		_perchTarget=_flyTarget.GetComponent<Perch>();
+		_perchTarget._occupied=true;
 	}
 
 	IEnumerator SignalAlarmR(Footstep.FootstepEventArgs args){
+		//sing alarm song
 		_audio.clip=_fleeAlarm;
 		_audio.loop=false;
 		_audio.Play();
+		//fly simultaneously
+		FindRandomSafeTreePerch(args.pos);
+		StartFlyingToTarget(false);
+		//wait for alarm song
 		yield return new WaitForSeconds(_audio.clip.length);
-		Transform perch = FindRandomSafePerch(args.pos);
-		StartFlyingTo(perch);
+		//play fly sound
+		_audio.clip=_fleeSound;
+		_audio.Play();
 		//alert other birds
 		args.alerted=true;
 		foreach(Bird b in _birds){
@@ -317,6 +404,22 @@ public class Bird : MonoBehaviour
 			}
 		}
 	}
+
+	IEnumerator FlapR(){
+		_anim.SetBool("flying",true);
+		_audio.clip=_fleeSound;
+		_audio.Play();
+		yield return new WaitForSeconds(0.5f);
+		_anim.SetBool("flying",false);
+	}
+
+	/*
+	IEnumerator HopR(){
+		_anim.SetInt("hop",1);
+		yield return null;
+		_anim.SetInt("hop",0);
+	}
+	*/
 
 	void OnDrawGizmos(){
 		Gizmos.color=Color.blue;
