@@ -7,6 +7,8 @@ public class Footstep : MonoBehaviour
 	public AudioClip [] _clips;
 	AudioSource [] _sources;
 	public float _volume;
+	float _walkSpeed;
+	float _runSpeed;
 
 	public class FootstepEventArgs : System.EventArgs{
 		public Vector3 pos;
@@ -19,6 +21,9 @@ public class Footstep : MonoBehaviour
     void Start()
     {
 		_sources = transform.GetComponentsInChildren<AudioSource>();
+		Walk w = Camera.main.GetComponent<Walk>();
+		_walkSpeed=w._walkSpeed;
+		_runSpeed=w._runSpeed;
     }
 
     // Update is called once per frame
@@ -30,7 +35,7 @@ public class Footstep : MonoBehaviour
 	public void Sound(Vector3 pos,float speed){
 		foreach(AudioSource s in _sources){
 			if(!s.isPlaying){
-				s.volume=_volume;
+				s.volume=Mathf.InverseLerp(0,_runSpeed,speed)*_volume;
 				s.transform.position=pos;
 				s.clip=_clips[Random.Range(0,_clips.Length)];
 				s.Play();

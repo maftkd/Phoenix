@@ -14,6 +14,8 @@ public class Scope : MonoBehaviour
 	public Canvas _can;
 	bool _wasZoom;
 	Text _debugText;
+	AudioSource _zoomSource;
+	AudioSource _shutterSource;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,22 +24,30 @@ public class Scope : MonoBehaviour
 		_zoomFov = _maxZoomFov;
 		_can.enabled=false;
 		_debugText=_can.transform.GetComponentInChildren<Text>();
+		_zoomSource = transform.Find("Zoom").GetComponent<AudioSource>();
+		_shutterSource = transform.Find("Shutter").GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
 		bool zoom=false;
-		if(Input.GetMouseButton(0)||Input.GetMouseButton(1)){
+		if(Input.GetMouseButton(1)){
 			zoom=true;
 			_cam.fieldOfView=_zoomFov;
 			float scroll = Input.mouseScrollDelta.y;
 			if(scroll>_scrollThresh){
+				//zoom audio
+				if(_zoomFov<_maxZoomFov)
+					_zoomSource.Play();
 				_zoomFov+=5f;
 				if(_zoomFov>_maxZoomFov)
 					_zoomFov=_maxZoomFov;
 			}
 			else if(scroll<-_scrollThresh){
+				//zoom audio
+				if(_zoomFov>_minZoomFov)
+					_zoomSource.Play();
 				_zoomFov-=5f;
 				if(_zoomFov<_minZoomFov)
 					_zoomFov=_minZoomFov;
@@ -54,6 +64,10 @@ public class Scope : MonoBehaviour
 			}
 			else
 				_debugText.text="";
+
+			if(Input.GetMouseButtonDown(0)){
+				_shutterSource.Play();
+			}
 		}
 		else
 		{
