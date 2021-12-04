@@ -16,11 +16,14 @@ public class TimeManager : MonoBehaviour
 	public float _secsPerDay;
 	public int _daysPerYear;
 	int _day;
+
+	public static TimeManager _instance;
     // Start is called before the first frame update
     void Start()
     {
 		_sun = transform.GetComponentInChildren<Light>().transform;
 		_day=0;
+		_instance=this;
     }
 
 	void SetSunPos(){
@@ -47,4 +50,7 @@ public class TimeManager : MonoBehaviour
 		}
 		SetSunPos();
     }
+	public bool IsNight(){
+		return _timeOfDay<0.25f||_timeOfDay>0.75f;
+	}
 }
