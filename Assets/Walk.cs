@@ -14,15 +14,27 @@ public class Walk : MonoBehaviour
 	float _prevMoveSpeed;
 	float _stepTimer;
 	bool _prevRun;
+	public static Walk _instance;
     // Start is called before the first frame update
     void Start()
     {
+		_instance = this;
 		/*
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position,Vector3.down
 		*/
 		//Vector3 pos = transform.position;
     }
+
+	void OnDisable(){
+		Cursor.lockState = CursorLockMode.None; 
+		Cursor.visible=false;
+	}
+
+	void OnEnable(){
+		Cursor.lockState = CursorLockMode.Locked; 
+		Cursor.visible=false;
+	}
 
     // Update is called once per frame
     void Update()
