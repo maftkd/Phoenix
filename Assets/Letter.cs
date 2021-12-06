@@ -7,6 +7,7 @@ public class Letter : MonoBehaviour
 	public float _rotateAmount;
 	Transform _mainCam;
 	float _readTimer;
+	AudioSource _audio;
 
 	void OnEnable(){
 		Debug.Log("letter's enabled baby");
@@ -20,6 +21,8 @@ public class Letter : MonoBehaviour
 		_mainCam = Camera.main.transform;
 		transform.position = _mainCam.position+_mainCam.forward*0.25f;
 		transform.rotation = _mainCam.rotation;
+		_audio = GetComponent<AudioSource>();
+		_audio.Play();
 	}
 
 	void OnDisable(){
@@ -35,7 +38,6 @@ public class Letter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame

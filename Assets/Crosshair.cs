@@ -17,7 +17,8 @@ public class Crosshair : MonoBehaviour
 	}
 
 	void OnEnable(){
-		_can.enabled=true;
+		if(_can!=null)
+			_can.enabled=true;
 	}
 
     // Start is called before the first frame update
