@@ -22,8 +22,17 @@ public class Footstep : MonoBehaviour
     {
 		_sources = transform.GetComponentsInChildren<AudioSource>();
 		Walk w = Camera.main.GetComponent<Walk>();
-		_walkSpeed=w._walkSpeed;
-		_runSpeed=w._runSpeed;
+		Hop h = Camera.main.GetComponent<Hop>();
+		if(w!=null)
+		{
+			_walkSpeed=w._walkSpeed;
+			_runSpeed=w._runSpeed;
+		}
+		else if(h!=null){
+			_walkSpeed=h._hopSpeed;
+			_runSpeed=h._hopSpeed;
+		}
+
     }
 
     // Update is called once per frame
@@ -32,7 +41,7 @@ public class Footstep : MonoBehaviour
         
     }
 
-	public void Sound(Vector3 pos,float speed){
+	public void Sound(Vector3 pos,float speed=1f){
 		foreach(AudioSource s in _sources){
 			if(!s.isPlaying){
 				s.volume=Mathf.InverseLerp(0,_runSpeed,speed)*_volume;

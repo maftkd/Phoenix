@@ -17,6 +17,7 @@ public class Hop : MonoBehaviour
 	Vector3 _hopForward;
 	Vector3 _hopTarget;
 	public static Hop _instance;
+	int _state;
 
 	void OnDisable(){
 		Cursor.lockState = CursorLockMode.None; 
@@ -27,10 +28,13 @@ public class Hop : MonoBehaviour
 		Cursor.lockState = CursorLockMode.Locked; 
 		Cursor.visible=false;
 	}
+
+	void Awake(){
+		_instance = this;
+	}
     // Start is called before the first frame update
     void Start()
     {
-		_instance = this;
 		_hopDur = _hopDist/_hopSpeed;
     }
 
@@ -60,7 +64,7 @@ public class Hop : MonoBehaviour
 		//set eulers
 		transform.eulerAngles=eulers;
 		
-		//walk
+		//hop
 		Vector3 input = new Vector3(Input.GetAxis("Horizontal"),0,Input.GetAxis("Vertical"));
 		Vector3 flatForward = transform.forward;
 		flatForward.y=0;
@@ -95,46 +99,9 @@ public class Hop : MonoBehaviour
 				Vector3 pos = transform.position;
 				pos.y=_height;
 				transform.position=pos;
-			}
-		}
-
-		//temp
-		//transform.position+=(flatForward*input.z+flatRight*input.x)
-		//	*Time.deltaTime*0.5f;
-		/*
-		//get speed
-		bool run = Input.GetKey(KeyCode.LeftShift);
-		float stepTime = run? _walkStepTime : _runStepTime;
-		_moveSpeed=run ? _walkSpeed : _runSpeed;
-		if(input==Vector3.zero)
-			_moveSpeed=0;
-		transform.position+=(flatForward*input.z+flatRight*input.x)
-			*Time.deltaTime*_moveSpeed;
-
-		//footsteps
-		if(_prevMoveSpeed==0&&_moveSpeed>0){
-			//start moving
-			Step();
-		}
-		else if(_moveSpeed==0&&_prevMoveSpeed>0){
-			//stop moving
-			Step();
-		}
-		else if(_moveSpeed>0){
-			if(_prevRun!=run){
-				//switch between walk and run
-				Step();
-			}
-			_stepTimer+=Time.deltaTime;
-			if(_stepTimer>=stepTime){
-				//regular steps
 				Step();
 			}
 		}
-
-		_prevMoveSpeed=_moveSpeed;
-		_prevRun=run;
-		*/
     }
 
 	public void ResetPosRot(){
@@ -144,12 +111,15 @@ public class Hop : MonoBehaviour
 		transform.forward=Vector3.forward;
 	}
 
+	//this whole thing does nothing right now
+	//except find the spot to draw the gizmo
+	//The original point here was to allow shorter hops by pointing the cursor closer to the
+	//player pos
 	void FindHopTarget(Vector3 flatForward){
 		RaycastHit hit;
 		//#temp doesn't account height
 		Vector3 basePos = transform.position-Vector3.up*_height;
 		Vector3 defaultTarget=basePos+flatForward*_hopDist;
-		bool useDefault=true;
 		if(Physics.Raycast(transform.position,transform.forward,out hit,1f,1)){
 			_hopTarget=hit.point;
 			if((hit.point-basePos).sqrMagnitude>_hopDist*_hopDist){
@@ -160,6 +130,22 @@ public class Hop : MonoBehaviour
 				_hopTarget=hit.point;
 			}
 		}
+	}
+
+	void Step(){
+		//_stepTimer=0;
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position,Vector3.down, out hit, 1.65f,1)){
+			if(hit.transform.GetComponent<Footstep>()!=null){
+				hit.transform.GetComponent<Footstep>().Sound(
+						transform.position+Vector3.down*1.6f);
+			}
+		}
+		//Vector3 pos = transform.position;
+	}
+
+	public bool Hopping(){
+		return _hopTimer>0;
 	}
 
 	void OnDrawGizmos(){

@@ -25,4 +25,8 @@ public class Dialog : MonoBehaviour
 		_canvas.enabled=true;
 		_text.text=s;
 	}
+
+	public void HideText(){
+		_canvas.enabled=false;
+	}
 }
