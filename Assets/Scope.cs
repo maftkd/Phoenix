@@ -57,8 +57,8 @@ public class Scope : MonoBehaviour
 			RaycastHit hit;
 			if(Physics.Raycast(transform.position,transform.forward,out hit,150f,1)){
 				_debugText.text=hit.transform.name;
-				if(hit.transform.GetComponent<Bird>()!=null){
-					int state = hit.transform.GetComponent<Bird>()._state;
+				if(hit.transform.GetComponent<OldBird>()!=null){
+					int state = hit.transform.GetComponent<OldBird>()._state;
 					_debugText.text+="\nState: "+state;
 				}
 			}

@@ -71,13 +71,23 @@ public class Temptress : MonoBehaviour
 				}
 				break;
 			case 2:
-				_mainCam.position+=Vector3.down*Time.deltaTime*4f;
+				if(_mainCam.position.y>-35f)
+					_mainCam.position+=Vector3.down*Time.deltaTime*4f;
+				else
+					_state=3;
+				break;
+			case 3:
 				break;
 		}
     }
 
 	void OnDrawGizmos(){
-		Gizmos.color=Color.blue;
-		Gizmos.DrawWireSphere(transform.position,_reposRange);
+		if(_temptSpots!=null){
+			foreach(Transform t in _temptSpots){
+				Gizmos.color=Color.blue;
+				Gizmos.DrawWireSphere(t.position,_reposRange);
+
+			}
+		}
 	}
 }
