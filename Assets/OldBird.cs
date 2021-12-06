@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bird : MonoBehaviour
+public class OldBird : MonoBehaviour
 {
 	[Header("Species")]
 	public string _species;
@@ -62,7 +62,7 @@ public class Bird : MonoBehaviour
 	float _startleTimer;
 	[Header("Social")]
 	public int _rank;
-	static List<Bird> _birds;
+	static List<OldBird> _birds;
 
     // Start is called before the first frame update
     void Start()
@@ -78,9 +78,9 @@ public class Bird : MonoBehaviour
 		//get static bird list
 		if(_birds==null)
 		{
-			Bird[] tBirds = FindObjectsOfType<Bird>();
-			_birds = new List<Bird>();
-			foreach(Bird b in tBirds)
+			OldBird [] tBirds = FindObjectsOfType<OldBird>();
+			_birds = new List<OldBird>();
+			foreach(OldBird b in tBirds)
 				_birds.Add(b);
 		}
 		if(_startInTree&&_rank==0){
@@ -188,7 +188,7 @@ public class Bird : MonoBehaviour
 						_energy++;
 						if(_energy>=_idealEnergy)
 						{
-							Debug.Log("Bird done feeding at feeder");
+							Debug.Log(" done feeding at feeder");
 							_state=0;
 							_anim.SetInteger("hop",0);
 							//fly to a perch on a tree
@@ -256,8 +256,8 @@ public class Bird : MonoBehaviour
 	void HandleSound(Speaker.SpeakerEventArgs args){
 		//only really want the closest bird responding
 		float minSqrDist=10000f;
-		Bird close=null;
-		foreach(Bird b in _birds)
+		OldBird close=null;
+		foreach(OldBird b in _birds)
 		{
 			if(args.name.ToLower().Contains(_species.ToLower())&&b._state==0||b._state==4)
 			{
@@ -318,7 +318,7 @@ public class Bird : MonoBehaviour
 		_audio.Play();
 		//alert other birds
 		args.alerted=true;
-		foreach(Bird b in _birds){
+		foreach(OldBird b in _birds){
 			if(b!=this){
 				b.HandleFootstep(args);
 			}
@@ -441,7 +441,7 @@ public class Bird : MonoBehaviour
 		_audio.Play();
 		_state=0;
 		yield return null;
-		foreach(Bird b in _birds){
+		foreach(OldBird b in _birds){
 			if(b!=this){
 				b.GoToTree(_curTree);
 			}
