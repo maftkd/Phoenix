@@ -13,6 +13,7 @@ public class Peck : MonoBehaviour
 	public float _turnTime;
 	[HideInInspector]
 	public Transform _holding;
+	public float _nullPeckDist;
 
 	void Awake(){
 		_instance=this;
@@ -21,6 +22,7 @@ public class Peck : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
     }
 
     // Update is called once per frame
@@ -36,7 +38,8 @@ public class Peck : MonoBehaviour
 	IEnumerator PickupR(Transform obj){
 		Hop._instance.enabled=false;
 		Vector3 startPos = transform.position;
-		Vector3 endPos = obj.position+Vector3.up*_vertPickupOffset;
+		Vector3 endPos = obj!=null?obj.position+Vector3.up*_vertPickupOffset :
+			startPos+transform.forward*_nullPeckDist;
 		Quaternion startRot = transform.rotation;
 		transform.Rotate(45f,0f,0f);
 		Quaternion endRot=transform.rotation;
@@ -49,7 +52,8 @@ public class Peck : MonoBehaviour
 			transform.rotation = Quaternion.Slerp(startRot,endRot,t);
 			yield return null;
 		}
-		obj.SetParent(transform);
+		if(obj!=null)
+			obj.SetParent(transform);
 		_holding=obj;
 		timer=0;
 		while(timer<_pickupTime*0.5f){

@@ -36,6 +36,7 @@ public class Greeter : MonoBehaviour
 	float _eatTimer;
 	int _eatCount;
 	Transform _seed;
+	Transform _worm;
 	public float _chuckTime;
 
     // Start is called before the first frame update
@@ -193,11 +194,127 @@ public class Greeter : MonoBehaviour
 					}
 					else{
 						_state=7;
+						_dialog.ShowText("Oooh that hits the spot");
+						_dialogCounter=0;
 					}
 				}
 				break;
 			case 7:
 				//done eating
+				//can you hatch? can you mate?
+				if(Input.anyKeyDown){
+					_dialogCounter++;
+					switch(_dialogCounter){
+						case 0:
+						default:
+							break;
+						case 1:
+							_dialog.ShowText("Now how about some fresh meat.");
+							break;
+						case 2:
+							_dialog.ShowText("Go to the other side and sniff out a something special ");
+							break;
+						case 3:
+							_dialog.ShowText("Listen closely. The sound will tell you where to dig");
+							break;
+						case 4:
+							_hop.enabled=true;
+							_state=8;
+							break;
+					}
+				}
+				break;
+			case 8:
+				//wait for worm
+				if((_mainCam.position-transform.position).sqrMagnitude<_chatRange*_chatRange){
+					if(_mainCam.GetComponentInChildren<Worm>()!=null&&!_hop.Hopping()){
+						_state=9;
+						_peck.TurnTo(transform.position+Vector3.up*_eyeHeight);
+						Vector3 lookAt = _mainCam.position;
+						lookAt.y=transform.position.y;
+						TurnTo(lookAt);
+						_dialog.HideText();
+					}
+				}
+				break;
+			case 9:
+				//look at eachother
+				if(_doneTurning && _peck._doneTurning){
+					Debug.Log("Embrace for impact");
+					_peckTimer=0;
+					_anim.SetTrigger("peck");
+					_state=10;
+				}
+				break;
+			case 10:
+				//take worm
+				_peckTimer+=Time.deltaTime;
+				if(_peckTimer>=_peckTime){
+					_audio.clip=_clonk;
+					_audio.Play();
+					_worm = _peck._holding;
+					_worm.SetParent(_biteParent);
+					_worm.localPosition=Vector3.zero;
+					_peck._holding=null;
+					_eatCount=0;
+					_state=11;
+					_eatTimer=0;
+					_anim.SetTrigger("sing");
+					_audio.clip=_nomNom;
+					_audio.Play();
+				}
+				break;
+			case 11:
+				Debug.Log("eating that worm");
+				_eatTimer+=Time.deltaTime;
+				if(_eatTimer>=_singAnimTime)
+				{
+					_eatCount++;
+					if(_eatCount==1){
+						//play another nom
+						_audio.Play();
+						_eatTimer=0;
+						_anim.SetTrigger("sing");
+					}
+					else if(_eatCount==2){
+						_audio.clip= _chalp;
+						_audio.Play();
+						_eatTimer=0;
+						_anim.SetTrigger("sing");
+						//eat seed
+						Destroy(_worm.gameObject);
+					}
+					else{
+						_state=12;
+						_dialog.ShowText("Now that's the good stuff");
+						_dialogCounter=0;
+					}
+				}
+				break;
+			case 12:
+				if(Input.anyKeyDown){
+					_dialogCounter++;
+					switch(_dialogCounter){
+						case 0:
+						default:
+							break;
+						case 1:
+							_dialog.ShowText("Oh... you're still here");
+							break;
+						case 2:
+							_dialog.ShowText("[insert text]");
+							break;
+						case 3:
+							_dialog.ShowText("[insert text]");
+							break;
+						case 4:
+							_hop.enabled=true;
+							_state=13;
+							break;
+					}
+				}
+				break;
+			case 13:
 				break;
 		}
     }

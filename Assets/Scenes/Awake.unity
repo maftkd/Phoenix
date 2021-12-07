@@ -529,6 +529,7 @@ MonoBehaviour:
   _pickupTime: 0.5
   _doneTurning: 0
   _turnTime: 1
+  _holding: {fileID: 0}
 --- !u!1 &152058175
 GameObject:
   m_ObjectHideFlags: 0
@@ -1573,6 +1574,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Greeter
+      objectReference: {fileID: 0}
+    - target: {fileID: 1694944314200257824, guid: 1e1a45e490f324548a80bd4347cffe81,
+        type: 3}
+      propertyPath: _chalp
+      value: 
+      objectReference: {fileID: 8300000, guid: a1e026e6644a146a79d09a82627c36c8, type: 3}
+    - target: {fileID: 1694944314200257824, guid: 1e1a45e490f324548a80bd4347cffe81,
+        type: 3}
+      propertyPath: _nomNom
+      value: 
+      objectReference: {fileID: 8300000, guid: 52839bc95b059429a8c18b091e714f3e, type: 3}
+    - target: {fileID: 1694944314200257824, guid: 1e1a45e490f324548a80bd4347cffe81,
+        type: 3}
+      propertyPath: _chatRange
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1694944314200257824, guid: 1e1a45e490f324548a80bd4347cffe81,
+        type: 3}
+      propertyPath: _chuckTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1694944314200257824, guid: 1e1a45e490f324548a80bd4347cffe81,
+        type: 3}
+      propertyPath: _biteDistance
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e1a45e490f324548a80bd4347cffe81, type: 3}
