@@ -32,6 +32,8 @@ public class Peck : MonoBehaviour
     }
 
 	public void Pickup(Transform t){
+		if(Hop._instance.enabled==false)
+			return;
 		StartCoroutine(PickupR(t));
 	}
 

@@ -27,6 +27,7 @@ public class Hop : MonoBehaviour
 	void OnEnable(){
 		Cursor.lockState = CursorLockMode.Locked; 
 		Cursor.visible=false;
+		_hopTimer=_hopDur+1f;
 	}
 
 	void Awake(){
@@ -96,17 +97,30 @@ public class Hop : MonoBehaviour
 			_hopTimer+=Time.deltaTime;
 			if(_hopTimer>=_hopDur){
 				_hopTimer=0;
-				Vector3 pos = transform.position;
-				pos.y=_height;
-				transform.position=pos;
-				Step();
+				RaycastHit hit;
+				if(Physics.Raycast(transform.position,Vector3.down,out hit,_height*2f,1)){
+					Vector3 pos=hit.point;
+					pos.y+=_height;
+					transform.position=pos;
+					Step();
+				}
+				else{
+					Debug.Log("ahhhhh");
+					enabled=false;
+					Fly._instance.enabled=true;
+				}
+			}
+			else if(Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)){
+				enabled=false;
+				Fly._instance.enabled=true;
 			}
 		}
     }
 
 	public void ResetPosRot(){
 		Vector3 pos = transform.position;
-		pos.y=_height;
+		//#temp hardcoded 10 for known starting terrain height
+		pos.y=10+_height;
 		transform.position=pos;
 		transform.forward=Vector3.forward;
 	}

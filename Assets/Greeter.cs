@@ -299,10 +299,10 @@ public class Greeter : MonoBehaviour
 						default:
 							break;
 						case 1:
-							_dialog.ShowText("Oh... you're still here");
+							_dialog.ShowText("Alright now that we're fueled up, it's time to take flight.");
 							break;
 						case 2:
-							_dialog.ShowText("[insert text]");
+							_dialog.ShowText("Meet me on the other side of that tree.");
 							break;
 						case 3:
 							_dialog.ShowText("[insert text]");
