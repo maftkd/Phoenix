@@ -48,6 +48,8 @@ public class WormBed : MonoBehaviour
 	}
 
 	void OnMouseDown(){
+		if(Fly._instance.enabled)
+			return;
 		//Peck._instance.Pickup(transform);
 		//checking
 		Vector3 camForward = _mainCam.forward;

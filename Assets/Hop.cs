@@ -28,6 +28,9 @@ public class Hop : MonoBehaviour
 		Cursor.lockState = CursorLockMode.Locked; 
 		Cursor.visible=false;
 		_hopTimer=_hopDur+1f;
+		Vector3 eulers = transform.eulerAngles;
+		eulers.z=0;
+		transform.eulerAngles=eulers;
 	}
 
 	void Awake(){

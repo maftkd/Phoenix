@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,49 +12,43 @@ public class Fly : MonoBehaviour
 	AudioSource [] _flapSources;
 	Collider[] _hitCheck;
 	Vector3 _velocity;
-	public Vector3 _flapAccel;
+	[Range(0,1f)]
+	public float _upLerp;
+	float _turnVal;
+	public Vector2 _mouseSens;
+	public float _maxPitch;
+	public float _pitchMult;
+	float _speed;
+	float _turnRadius;
 	public float _gravity;
-	public float _mouseSens;
-	public Vector3 _maxEulers;
+	public float _accelPerFlap;
+	public float _decel;
 	public float _maxSpeed;
-	public int _numFlaps;
-	int _maxFlaps;
-	public Transform _flapContainer;
-	public Transform _flapIcon;
-	public Canvas _flapCanvas;
-	RawImage [] _flapIcons;
+	public Vector3 _maxEulers;
+
+	[Header("Debug")]
+	public Text _speedText;
+	public Text _velText;
 
 	void Awake(){
 		_instance=this;
 		_flapSources = transform.Find("Flaps").GetComponentsInChildren<AudioSource>();
 		_hitCheck = new Collider[5];
-		_maxFlaps=_numFlaps;
 	}
 
 	void OnDisable(){
 		Cursor.lockState = CursorLockMode.None; 
 		Cursor.visible=false;
-		_flapCanvas.enabled=false;
 	}
 
 	void OnEnable(){
 		Cursor.lockState = CursorLockMode.Locked; 
 		Cursor.visible=false;
-		_flapCanvas.enabled=true;
-		if(_flapContainer.childCount==0){
-			//create flap icons and get references
-			_flapIcons = new RawImage[_numFlaps];
-			for(int i=0;i<_numFlaps;i++)
-			{
-				Transform fi = Instantiate(_flapIcon,_flapContainer);
-				_flapIcons[i]=fi.GetComponent<RawImage>();
-			}
-		}
-		//reset num flaps
-		_numFlaps=_maxFlaps;
 		if(_hop==null)
 			_hop=Hop._instance;
+
 		_velocity=Vector3.zero;
+		_speed=0;
 
 		Flip();
 	}
@@ -74,14 +68,10 @@ public class Fly : MonoBehaviour
 				CursorLockMode.None : CursorLockMode.Locked;
 		}
 		
-		//look
-		float mouseX = Input.GetAxis("Mouse X");
+		//pitch
 		float mouseY = Input.GetAxis("Mouse Y");
 		Vector3 eulers = transform.eulerAngles;
-		//change yEulers
-		eulers.y+=mouseX*_mouseSens;
-		//change xEulers
-		eulers.x+=mouseY*_mouseSens*-1;
+		eulers.x+=mouseY*_mouseSens.y*-1;
 		if(eulers.x>180)
 			eulers.x=-(360-eulers.x);
 		else if(eulers.x<-180)
@@ -89,7 +79,29 @@ public class Fly : MonoBehaviour
 		eulers.x = Mathf.Clamp(eulers.x,-_maxEulers.x,_maxEulers.x);
 		//set eulers
 		transform.eulerAngles=eulers;
-		
+
+		//turn
+		float mouseX = Input.GetAxis("Mouse X");
+		_turnVal+=mouseX*_mouseSens.x;
+		float turnMax=_speed/_maxSpeed;
+		_turnVal=Mathf.Clamp(_turnVal,-turnMax,turnMax);
+		Vector3 eulerAngles = transform.eulerAngles;
+		eulerAngles.z=-_turnVal*_maxPitch*_pitchMult;
+		transform.eulerAngles=eulerAngles;
+
+
+		//calc turn radius
+		_turnRadius = (_speed*_speed)/(11.26f*Mathf.Tan(_turnVal*_maxPitch*Mathf.Deg2Rad));
+		if(!float.IsNaN(_turnRadius)&&!float.IsInfinity(_turnRadius)){
+			float travelDist=_speed*Time.deltaTime;
+			float circumf=2*Mathf.Abs(_turnRadius)*Mathf.PI;
+			float frac = travelDist/circumf;
+			//Debug.Log("f: "+frac+", tr: "+_turnRadius+", circ: "+circumf);
+			float ang = frac*360f*Mathf.Sign(_turnRadius);
+			transform.RotateAround(transform.position+transform.right*_turnRadius,Vector3.up,ang);
+			_velocity=Quaternion.Euler(Vector3.up*ang)*_velocity;
+		}
+
 		//wing flap
 		if(Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)){
 			Flip();
@@ -98,12 +110,16 @@ public class Fly : MonoBehaviour
 			Flap();
 		}
 
-		if(_velocity.sqrMagnitude>_maxSpeed*_maxSpeed){
-			_velocity.Normalize();
-			_velocity*=_maxSpeed;
-		}
+		//gravity
 		_velocity+=Vector3.down*_gravity*Time.deltaTime;
-		transform.position+=_velocity*Time.deltaTime;
+		_velocity.Normalize();
+
+		_speed-=_decel*Time.deltaTime;
+		if(_speed<1)
+			_speed=1;
+
+		transform.position+=_velocity*_speed*Time.deltaTime;
+
 
 		//ground check
 		if(Physics.OverlapSphereNonAlloc(transform.position,_hop._height,_hitCheck)>0){
@@ -111,11 +127,11 @@ public class Fly : MonoBehaviour
 			enabled=false;
 			_hop.enabled=true;
 		}
+        
+		_speedText.text=_speed.ToString("0.00");
     }
 
 	void Flip(){
-		if(_numFlaps<=0)
-			return;
 		foreach(AudioSource a in _flapSources){
 			//play audio
 			if(!a.isPlaying){
@@ -124,11 +140,15 @@ public class Fly : MonoBehaviour
 				break;
 			}
 		}
-		_velocity+=_flapAccel.y*Vector3.up;
-		_velocity+=transform.forward*_flapAccel.z;
 
-		_numFlaps--;
-		UpdateFlapGui();
+		Vector3 vDiff = Vector3.Lerp(transform.forward,Vector3.up,_upLerp);
+		vDiff.Normalize();
+		//vDiff*=_accelPerFlap;
+		_velocity+=vDiff;
+		_speed+=_accelPerFlap;
+		if(_speed>_maxSpeed){
+			_speed=_maxSpeed;
+		}
 	}
 
 	void Flap(){
@@ -141,26 +161,10 @@ public class Fly : MonoBehaviour
 		}
 	}
 
-	public void FlyTowards(Vector3 pos,float strength){
-		float mag = _velocity.magnitude;
-		Vector3 newVel = pos-transform.position;
-		newVel.Normalize();
-		newVel*=mag;
-		_velocity=Vector3.Lerp(_velocity,newVel,strength);
-		_numFlaps=_maxFlaps;
-		UpdateFlapGui();
-	}
-
-	void UpdateFlapGui(){
-		for(int i=0;i<_maxFlaps;i++){
-			_flapIcons[i].enabled=_numFlaps>i;
-		}
-	}
-
 	void OnDrawGizmos(){
 		Gizmos.color=Color.blue;
-		//Gizmos.DrawRay(transform.position,_velocity);
-		//Gizmos.DrawSphere(transform.position+transform.right*_turnRadius,0.5f);
+		Gizmos.DrawRay(transform.position,_velocity);
+		Gizmos.DrawSphere(transform.position+transform.right*_turnRadius,0.5f);
 		Gizmos.color=Color.red;
 		//Gizmos.DrawRay(transform.position,_flatRight);
 	}

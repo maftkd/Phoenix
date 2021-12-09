@@ -50,6 +50,8 @@ public class Crosshair : MonoBehaviour
     }
 
 	public void SetOverItem(string name){
+		if(Fly._instance.enabled)
+			return;
 		_overItems.Add(name);
 	}
 
