@@ -1208,13 +1208,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _clonk: {fileID: 8300000, guid: a6c597b393a61415284dee4a0fa3c13a, type: 3}
   _sing: {fileID: 8300000, guid: 148e954901f21104a960804e72ae599b, type: 3}
+  _nomNom: {fileID: 8300000, guid: 52839bc95b059429a8c18b091e714f3e, type: 3}
+  _chalp: {fileID: 8300000, guid: a1e026e6644a146a79d09a82627c36c8, type: 3}
+  _whoosh: {fileID: 8300000, guid: ae13220b2fee67344b8b455414c59ff4, type: 3}
   _pecksToWake: 3
   _scootBackAmount: 0.2
   _skipFirstSong: 1
-  _chatRange: 0.88
+  _chatRange: 0.7
   _eyeHeight: 0.365
   _turnTime: 1
   _biteParent: {fileID: 6243838691372802467}
+  _biteDistance: 0.5
+  _chuckTime: 5
+  _rockPerch: {fileID: 0}
+  _flySpeed: 3
 --- !u!1 &1141424519996800097
 GameObject:
   m_ObjectHideFlags: 0

@@ -50,6 +50,11 @@ public class Seed : MonoBehaviour
 		_collider.enabled=false;
 	}
 
+	public void Reset(){
+		_collider.enabled=true;
+		_carried=false;
+	}
+
 	void OnDrawGizmos(){
 		Gizmos.color=Color.red;
 		Gizmos.DrawWireSphere(transform.position,_range);

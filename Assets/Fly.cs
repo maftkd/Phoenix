@@ -27,7 +27,7 @@ public class Fly : MonoBehaviour
 
 	void Awake(){
 		_instance=this;
-		_flapSources = transform.Find("Flaps").GetComponentsInChildren<AudioSource>();
+		_flapSources = transform.Find("FlapsAudio").GetComponentsInChildren<AudioSource>();
 		_hitCheck = new Collider[5];
 		_maxFlaps=_numFlaps;
 	}

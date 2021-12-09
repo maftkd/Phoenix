@@ -47,4 +47,9 @@ public class Worm : MonoBehaviour
 	public void Silence(bool silent){
 		_audio.volume=silent? 0: 1f;
 	}
+
+	public void Reset(){
+		transform.GetChild(1).gameObject.SetActive(true);
+
+	}
 }

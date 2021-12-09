@@ -163,7 +163,7 @@ public class Greeter : MonoBehaviour
 					_seed = _peck._holding;
 					_seed.SetParent(_biteParent);
 					_seed.localPosition=Vector3.zero;
-					_peck._holding=null;
+					_peck.LoseItem();
 					_state=6;
 					_eatTimer=0;
 					_anim.SetTrigger("sing");
@@ -260,7 +260,7 @@ public class Greeter : MonoBehaviour
 					_worm = _peck._holding;
 					_worm.SetParent(_biteParent);
 					_worm.localPosition=Vector3.zero;
-					_peck._holding=null;
+					_peck.LoseItem();
 					_eatCount=0;
 					_state=11;
 					_eatTimer=0;
@@ -350,10 +350,66 @@ public class Greeter : MonoBehaviour
 				if((_mainCam.position-transform.position).sqrMagnitude<_chatRange*_chatRange){
 					_dialog.ShowText("Hey, you're a natural!");
 					_state=15;
+					//player looks at greeter
+					_peck.TurnTo(transform.position+Vector3.up*_eyeHeight);
+					//greeter looks to player
+					Vector3 lookAt = _mainCam.position;
+					lookAt.y=transform.position.y;
+					TurnTo(lookAt);
+					_dialogCounter=0;
 				}
 				break;
 			case 15:
-				Debug.Log("Me want berries from bush");
+				//wait for turning
+				if(_doneTurning && _peck._doneTurning){
+					_state=16;
+				}
+				break;
+			case 16:
+				//tell player to eat berries
+				if(Input.anyKeyDown){
+					_dialogCounter++;
+					switch(_dialogCounter){
+						case 0:
+						default:
+							break;
+						case 1:
+							_dialog.ShowText("Now, if you ever have a sweet beak, I recommend the berries.");
+							break;
+						case 2:
+							_dialog.ShowText("You can often find them growing on the tops of berry bushes.");
+							break;
+						case 3:
+							_dialog.ShowText("I'm pretty full, but go eat a few for yourself, and report back.");
+							break;
+						case 4:
+							_hop.enabled=true;
+							_peck._berries=0;
+							_state=17;
+							break;
+					}
+				}
+				break;
+			case 17:
+				//wait for player full of berrries
+				if((_mainCam.position-transform.position).sqrMagnitude<_chatRange*_chatRange){
+					if(_peck._berries>0){
+						if(_peck._berries>=3){
+							_dialog.ShowText("Now that's a full belly");
+						}
+						else{
+							_dialog.ShowText("You're lookin a little slim, but hey to each their own");
+						}
+						_state=18;
+						_peck.TurnTo(transform.position+Vector3.up*_eyeHeight);
+						Vector3 lookAt = _mainCam.position;
+						lookAt.y=transform.position.y;
+						TurnTo(lookAt);
+					}
+				}
+				break;
+			case 18:
+				Debug.Log("I'm full and player's fulll");
 				break;
 		}
     }

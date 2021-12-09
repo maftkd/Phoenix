@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Peck : MonoBehaviour
 {
@@ -14,6 +15,14 @@ public class Peck : MonoBehaviour
 	[HideInInspector]
 	public Transform _holding;
 	public float _nullPeckDist;
+	public Canvas _foodMenu;
+	public AudioClip _nomNom;
+	public AudioClip _chalp;
+	AudioSource _audio;
+	public Transform _holdTarget;
+	//#temp - probably won't keep track of individual berries outside of this prototype
+	[HideInInspector]
+	public int _berries;
 
 	void Awake(){
 		_instance=this;
@@ -22,18 +31,28 @@ public class Peck : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+		_audio = transform.Find("EatAudio").GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+		if(_holding!=null && _holding.tag=="Food"){
+			if(Input.GetKeyDown(KeyCode.E)){
+				StartCoroutine(EatR());
+			}
+			else if(Input.GetKeyDown(KeyCode.R)){
+				DropIt();
+			}
+		}
     }
 
 	public void Pickup(Transform t){
 		if(Hop._instance.enabled==false)
 			return;
+		if(t.tag=="Food"){
+			_foodMenu.enabled=true;
+		}
 		StartCoroutine(PickupR(t));
 	}
 
@@ -69,6 +88,7 @@ public class Peck : MonoBehaviour
 		transform.position=startPos;
 		transform.rotation=startRot;
 		Hop._instance.enabled=true;
+		_holding.position=_holdTarget.position;
 	}
 
 	public void TurnTo(Vector3 v){
@@ -80,6 +100,9 @@ public class Peck : MonoBehaviour
 		_doneTurning=false;
 		Quaternion startRot=transform.rotation;
 		transform.LookAt(v);
+		Vector3 eulers = transform.eulerAngles;
+		eulers.x=0;
+		transform.eulerAngles=eulers;
 		Quaternion endRot=transform.rotation;
 		float timer = 0;
 		while(timer<_turnTime){
@@ -89,6 +112,61 @@ public class Peck : MonoBehaviour
 		}
 		_doneTurning=true;
 		Hop._instance.enabled=false;
+	}
+
+	public void LoseItem(){
+		if(_holding.tag=="Food"){
+			_foodMenu.enabled=false;
+		}
+		_holding=null;
+	}
+
+	IEnumerator EatR(){
+		//nom nom
+		_audio.clip=_nomNom;
+		float dur = _nomNom.length;
+		_audio.Play();
+		yield return new WaitForSeconds(dur);
+		//chalp
+		_audio.clip=_chalp;
+		_audio.Play();
+		Debug.Log("yum");
+		//#refactor - once we have a generic food, the type of food should be a var within
+		if(_holding.name.Contains("Berry"))
+			_berries++;
+		Destroy(_holding.gameObject);
+		LoseItem();
+	}
+
+	void DropIt(){
+		//re-position
+		RaycastHit hit;
+		if(Physics.Raycast(_holding.position,Vector3.down,out hit, 100f,1)){
+			//cast ray to ground
+			_holding.position=hit.point;
+			if(hit.transform.GetComponent<Footstep>()!=null){
+				//play footstep audio
+				hit.transform.GetComponent<Footstep>().Sound(hit.point);
+			}
+		}
+		else{
+			//if no hit, just put at player's foot level
+			Vector3 holdingPos=_holding.position;
+			holdingPos.y=Hop._instance.transform.position.y;
+			_holding.position=holdingPos;
+		}
+		//#refactor
+		if(_holding.GetComponent<Seed>()!=null){
+			_holding.GetComponent<Seed>().Reset();
+		}
+		else if(_holding.GetComponent<Worm>()!=null){
+			_holding.GetComponent<Worm>().Reset();
+		}
+		
+		//clear parent
+		_holding.SetParent(null);
+
+		LoseItem();
 	}
 
 	//public bool HasItem
