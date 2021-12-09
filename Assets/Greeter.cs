@@ -13,6 +13,7 @@ public class Greeter : MonoBehaviour
 	public AudioClip _sing;
 	public AudioClip _nomNom;
 	public AudioClip _chalp;
+	public AudioClip _whoosh;
 	float _peckTime;
 	float _peckTimer=0;
 	public int _pecksToWake;
@@ -38,6 +39,10 @@ public class Greeter : MonoBehaviour
 	Transform _seed;
 	Transform _worm;
 	public float _chuckTime;
+	public Transform _rockPerch;
+	public float _flySpeed;
+	float _flyTime;
+	float _flyTimer;
 
     // Start is called before the first frame update
     void Start()
@@ -112,13 +117,13 @@ public class Greeter : MonoBehaviour
 						default:
 							break;
 						case 1:
-							_dialog.ShowText("[insert story text here]");
+							_dialog.ShowText("Oh, you're not from around here are you?");
 							break;
 						case 2:
-							_dialog.ShowText("I guess you're not used to your new legs yet");
+							_dialog.ShowText("Let me get you started...");
 							break;
 						case 3:
-							_dialog.ShowText("Try walking over yonder, and bring me back a tasty morsel");
+							_dialog.ShowText("Try walking over to that flower bed, and bring me back a tasty seed.");
 							break;
 						case 4:
 							_hop.enabled=true;
@@ -212,7 +217,7 @@ public class Greeter : MonoBehaviour
 							_dialog.ShowText("Now how about some fresh meat.");
 							break;
 						case 2:
-							_dialog.ShowText("Go to the other side and sniff out a something special ");
+							_dialog.ShowText("Go to the other bed and sniff out a something special ");
 							break;
 						case 3:
 							_dialog.ShowText("Listen closely. The sound will tell you where to dig");
@@ -281,7 +286,7 @@ public class Greeter : MonoBehaviour
 						_audio.Play();
 						_eatTimer=0;
 						_anim.SetTrigger("sing");
-						//eat seed
+						//eat worm
 						Destroy(_worm.gameObject);
 					}
 					else{
@@ -302,19 +307,53 @@ public class Greeter : MonoBehaviour
 							_dialog.ShowText("Alright now that we're fueled up, it's time to take flight.");
 							break;
 						case 2:
-							_dialog.ShowText("Meet me on the other side of that tree.");
+							_dialog.ShowText("If you flap your wings in the middle of a hop, you'll go flying!");
 							break;
 						case 3:
-							_dialog.ShowText("[insert text]");
+							_dialog.ShowText("Try using those wings of yours to meet me on that rock.");
 							break;
 						case 4:
+							_dialog.HideText();
 							_hop.enabled=true;
 							_state=13;
+							_anim.SetBool("flying",true);
+							//face flyTarget
+							transform.LookAt(_rockPerch);
+							//calc flyTime
+							float dist = (_rockPerch.position-transform.position).magnitude;
+							_flyTime=dist/_flySpeed;
+							_flyTimer=0;
+							_audio.clip=_whoosh;
+							_audio.Play();
+							//
 							break;
 					}
 				}
 				break;
 			case 13:
+				//fly towards rock
+				_flyTimer+=Time.deltaTime;
+				transform.position+=transform.forward*Time.deltaTime*_flySpeed;
+				//start landing when close
+				if(_flyTimer>=_flyTime){
+					transform.position=_rockPerch.position;
+					transform.LookAt(_mainCam);
+					_anim.SetBool("flying",false);
+					Vector3 eulers = transform.eulerAngles;
+					eulers.x=0;
+					transform.eulerAngles=eulers;
+					_state=14;
+				}
+				break;
+			case 14:
+				//waiting for player
+				if((_mainCam.position-transform.position).sqrMagnitude<_chatRange*_chatRange){
+					_dialog.ShowText("Hey, you're a natural!");
+					_state=15;
+				}
+				break;
+			case 15:
+				Debug.Log("Me want berries from bush");
 				break;
 		}
     }

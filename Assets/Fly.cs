@@ -19,6 +19,7 @@ public class Fly : MonoBehaviour
 	public float _maxSpeed;
 	public int _numFlaps;
 	int _maxFlaps;
+	public float _airControlAccel;
 	public Transform _flapContainer;
 	public Transform _flapIcon;
 	public Canvas _flapCanvas;
@@ -97,6 +98,25 @@ public class Fly : MonoBehaviour
 		else if(Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)){
 			Flap();
 		}
+		else{
+			Vector3 input = new Vector3(Input.GetAxis("Horizontal"),0,Input.GetAxis("Vertical"));
+			/*
+			Vector3 flatForward = transform.forward;
+			flatForward.y=0;
+			flatForward.Normalize();
+			Vector3 flatRight = Vector3.Cross(flatForward,Vector3.down);
+			*/
+			if(input.sqrMagnitude>0)
+				input.Normalize();
+
+			if(input!=Vector3.zero){
+				Vector3 vDiff = (transform.forward*input.z+transform.right*input.x)*_airControlAccel*Time.deltaTime;
+				//prevent air control from giving additional lift
+				if(vDiff.y>0)
+					vDiff.y=0;
+				_velocity+=vDiff;
+			}
+		}
 
 		if(_velocity.sqrMagnitude>_maxSpeed*_maxSpeed){
 			_velocity.Normalize();
@@ -106,7 +126,7 @@ public class Fly : MonoBehaviour
 		transform.position+=_velocity*Time.deltaTime;
 
 		//ground check
-		if(Physics.OverlapSphereNonAlloc(transform.position,_hop._height,_hitCheck)>0){
+		if(Physics.OverlapSphereNonAlloc(transform.position+Vector3.down*_hop._height,_hop._height*0.5f,_hitCheck)>0){
 			Debug.Log("ground check");
 			enabled=false;
 			_hop.enabled=true;

@@ -7,9 +7,13 @@ public class Worm : MonoBehaviour
 	public Transform _zone;
 	Vector3 _velocity;
 	public float _crawlSpeed;
+	AudioSource _audio;
 
+	void Awake(){
+		_audio=GetComponent<AudioSource>();
+	}
 	void OnDisable(){
-		GetComponent<AudioSource>().Stop();
+		_audio.Stop();
 	}
     // Start is called before the first frame update
     void Start()
@@ -38,5 +42,9 @@ public class Worm : MonoBehaviour
 				transform.position.z<_zone.position.z-_zone.localScale.z*0.5f){
 			_velocity.z*=-1f;
 		}
+	}
+
+	public void Silence(bool silent){
+		_audio.volume=silent? 0: 1f;
 	}
 }

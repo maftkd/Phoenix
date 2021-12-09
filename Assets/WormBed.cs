@@ -30,6 +30,9 @@ public class WormBed : MonoBehaviour
 			Mathf.Abs(transform.position.z-_mainCam.position.z)<transform.localScale.z*0.5f;
 
 		if(_inZone!=_prevInZone){
+			foreach(Worm w in _worms){
+				w.Silence(!_inZone);
+			}
 			OnMouseEnter();
 		}
 
@@ -48,7 +51,7 @@ public class WormBed : MonoBehaviour
 	}
 
 	void OnMouseDown(){
-		if(Fly._instance.enabled)
+		if(Fly._instance.enabled||!_inZone ||Hop._instance.Hopping())
 			return;
 		//Peck._instance.Pickup(transform);
 		//checking
