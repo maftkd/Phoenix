@@ -10,6 +10,7 @@ public class WindStream : MonoBehaviour
 	public float _dip;
 	public float _minDistToNode;
 	public float _windLerpStrength;
+	public float _startT;
 	Fly _fly;
     // Start is called before the first frame update
     void Start()
@@ -19,12 +20,16 @@ public class WindStream : MonoBehaviour
 		float h = _dist*0.5f;
 		float k = -_dip;
 		float a = -k/(h*h);
+		float yOffset=0;
 		for(int i=0;i<_numPoints; i++){
-			float t = (float)i/(_numPoints-1);
+			float tRaw = (float)i/(_numPoints-1);
+			float t = Mathf.Lerp(_startT,1f,tRaw);
 			float x = t*_dist;
 			float y = a*(x-h)*(x-h)+k;
+			if(i==0)
+				yOffset=y;
 			Transform point = Instantiate(_streamNode,transform);
-			point.localPosition=new Vector3(0,y,_dist*t);
+			point.localPosition=new Vector3(0,y-yOffset,_dist*tRaw);
 		}
 		_fly = Fly._instance;
     }
@@ -53,5 +58,6 @@ public class WindStream : MonoBehaviour
 		foreach(Transform t in transform){
 			Gizmos.DrawWireSphere(t.position,_minDistToNode);
 		}
+		Gizmos.DrawSphere(transform.position,_minDistToNode);
 	}
 }
