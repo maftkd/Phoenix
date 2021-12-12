@@ -339,6 +339,9 @@ public class Greeter : MonoBehaviour
 					transform.position=_rockPerch.position;
 					transform.LookAt(_mainCam);
 					_anim.SetBool("flying",false);
+					_anim.SetTrigger("sing");
+					_audio.clip=_sing;
+					_audio.Play();
 					Vector3 eulers = transform.eulerAngles;
 					eulers.x=0;
 					transform.eulerAngles=eulers;
