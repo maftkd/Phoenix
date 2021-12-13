@@ -1,4 +1,0 @@
-#slow
-#temp
-#test
-#refactor
