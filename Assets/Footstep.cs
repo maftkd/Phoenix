@@ -29,6 +29,8 @@ public class Footstep : MonoBehaviour
     }
 
 	public void Sound(Vector3 pos,float speed=1f){
+		if(_sources==null)
+			return;
 		foreach(AudioSource s in _sources){
 			if(!s.isPlaying){
 				s.volume=Mathf.InverseLerp(0,_runSpeed,speed)*_volume;

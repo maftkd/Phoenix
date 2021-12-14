@@ -10,6 +10,7 @@ public class MCamera : MonoBehaviour
 	float _shootTimer;
 	CanvasGroup _flash;
 	public GameObject _tutorial;
+	public float _flyForce;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,4 +43,16 @@ public class MCamera : MonoBehaviour
 			}
 		}
     }
+
+	public void GoFlying(){
+		StartCoroutine(FlyAwayR());
+	}
+
+	IEnumerator FlyAwayR(){
+		Rigidbody rb = gameObject.AddComponent<Rigidbody>();
+		rb.AddForce(new Vector3(Random.value,1f,0)*_flyForce);
+		rb.AddTorque(Vector3.forward*Random.value*_flyForce);
+		yield return new WaitForSeconds(5f);
+		Destroy(gameObject);
+	}
 }

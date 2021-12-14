@@ -40,8 +40,13 @@ public class Temptress : MonoBehaviour
 	IEnumerator FlyAwayR(){
 		_audio.clip=_flee;
 		_audio.Play();
+		float y = transform.position.y;
+		float t=0;
 		while(transform.position.x<5f*16f/9f){
-			transform.position+=Vector3.right*Time.deltaTime*_flySpeed;
+			t+=Time.deltaTime;
+			Vector3 pos = transform.position+Vector3.right*Time.deltaTime*_flySpeed;
+			pos.y=y+Mathf.Sin(t*Mathf.PI*2f);
+			transform.position=pos;
 			yield return null;
 		}
 		Destroy(gameObject);
