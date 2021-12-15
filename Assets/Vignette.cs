@@ -27,6 +27,9 @@ public class Vignette : MonoBehaviour
 	public void SetMin(){
 		_mat.SetFloat("_Amount",_min);
 	}
+	public void SetT(float t){
+		_mat.SetFloat("_Amount",Mathf.Lerp(_min,_max,t));
+	}
 
 	public void OpenUp(){
 		StartCoroutine(OpenUpR());

@@ -15,6 +15,7 @@ public class Fly : MonoBehaviour
 	public Vector2 _maxVel;
 	public float _flapDur;
 	float _flapTimer;
+	AudioSource [] _flapSounds;
 	
 	void OnEnable(){
 		_velocity=Vector3.zero;
@@ -37,10 +38,13 @@ public class Fly : MonoBehaviour
 		if(!_init){
 			Init();
 		}
+
+		Flap();
 	}
 
 	void Init(){
 		_cols=new Collider[4];
+		_flapSounds=transform.Find("FlapSounds").GetComponentsInChildren<AudioSource>();
 		_init=true;
 	}
 
@@ -51,6 +55,7 @@ public class Fly : MonoBehaviour
 		if(Input.GetKeyDown(KeyCode.Space)){
 			_velocity+=_curFlapAccel;
 			_flapTimer=0;
+			Flap();
 		}
 		if(_flapTimer<_flapDur&&Input.GetKey(KeyCode.Space)){
 			//_velocity+=_curFlapAccel*Time.deltaTime;
@@ -72,10 +77,25 @@ public class Fly : MonoBehaviour
 
 		transform.position+=_velocity*Time.deltaTime;
 		_velocity+=Vector3.down*_gravity*Time.deltaTime;
-		if(Physics.OverlapSphereNonAlloc(transform.position,0.01f,_cols)>0){
+		/*
+		if(Physics.OverlapSphereNonAlloc(transform.position,0.02f,_cols,1)>0){
 			//hit something
+		}
+		*/
+		RaycastHit hit;
+		if(!Physics.Raycast(transform.position,Vector3.down,out hit, 10f, 1)){
 			GetComponent<Hop>().enabled=true;
 			enabled=false;
 		}
     }
+
+	void Flap(){
+		foreach(AudioSource a in _flapSounds){
+			if(!a.isPlaying){
+				a.transform.position=transform.position;
+				a.Play();
+				return;
+			}
+		}
+	}
 }

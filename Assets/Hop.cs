@@ -18,11 +18,12 @@ public class Hop : MonoBehaviour
 	Trap _trap;
 	public Transform _endZone;
 	public bool _flightEnabled;
-	bool _prevRight;
+	Bird _bird;
     // Start is called before the first frame update
     void Start()
     {
 		_hopTime=_hopDist/_hopSpeed;
+		_bird=GetComponent<Bird>();
     }
 
 	void OnEnable(){
@@ -32,7 +33,7 @@ public class Hop : MonoBehaviour
 		transform.rotation=Quaternion.identity;
 		_hopTimer=0;
 		RaycastHit hit;
-		if(Physics.Raycast(transform.position+Vector3.up,Vector3.down, out hit, 1f,1)){
+		if(Physics.Raycast(transform.position+Vector3.up,Vector3.down, out hit, 2f,1)){
 			transform.position=hit.point;
 			_footstep=hit.transform.GetComponent<Footstep>();
 		}
@@ -49,12 +50,10 @@ public class Hop : MonoBehaviour
 			if(horIn>0){
 				//go right
 				rayStart.x+=_hopDist;
-				_prevRight=true;
 			}
 			else{
 				//go left
 				rayStart.x-=_hopDist;
-				_prevRight=false;
 			}
 			RaycastHit hit;
 			if(Physics.Raycast(rayStart,Vector3.down, out hit, 15f,1)){
@@ -65,6 +64,10 @@ public class Hop : MonoBehaviour
 				_midPos+=Vector3.up*_hopHeight;
 				_footstep=hit.transform.GetComponent<Footstep>();
 				_trap=hit.transform.GetComponent<Trap>();
+			}
+			if(_bird!=null){
+				if(_bird.InWater())
+					_bird.Sloosh();
 			}
 		}
 		if(_hopTimer>0)
@@ -101,7 +104,7 @@ public class Hop : MonoBehaviour
 			{
 				Debug.Log("End zone!");
 				GameManager._instance.NextLevel();
-				enabled=false;
+				//enabled=false;
 			}
 		}
 		else{
