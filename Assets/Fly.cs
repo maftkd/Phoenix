@@ -16,6 +16,13 @@ public class Fly : MonoBehaviour
 	public float _flapDur;
 	float _flapTimer;
 	AudioSource [] _flapSounds;
+	Vector3 _groundPoint;
+	AudioSource _thonk;
+	[Header("Perch")]
+	public LayerMask _perchMask;
+	[HideInInspector]
+	public bool _killVert;
+	AudioSource _rustle;
 	
 	void OnEnable(){
 		_velocity=Vector3.zero;
@@ -35,6 +42,10 @@ public class Fly : MonoBehaviour
 
 		_flapTimer=0;
 
+		if(_killVert)
+			_velocity.y=0;
+		_killVert=false;
+
 		if(!_init){
 			Init();
 		}
@@ -45,6 +56,8 @@ public class Fly : MonoBehaviour
 	void Init(){
 		_cols=new Collider[4];
 		_flapSounds=transform.Find("FlapSounds").GetComponentsInChildren<AudioSource>();
+		_thonk=transform.Find("Thonk").GetComponent<AudioSource>();
+		_rustle=transform.Find("Rustle").GetComponent<AudioSource>();
 		_init=true;
 	}
 
@@ -58,13 +71,22 @@ public class Fly : MonoBehaviour
 			Flap();
 		}
 		if(_flapTimer<_flapDur&&Input.GetKey(KeyCode.Space)){
-			//_velocity+=_curFlapAccel*Time.deltaTime;
 			_velocity.y+=_curFlapAccel.y*Time.deltaTime*_flapHoldBoost;
 			_flapTimer+=Time.deltaTime;
 		}
+
+		//check perch
+		if(Input.GetKeyDown(KeyCode.LeftShift)){
+			if(Physics.OverlapSphereNonAlloc(transform.position,0.01f,_cols,_perchMask)>0){
+				_rustle.Play();
+				GetComponent<Hop>().enabled=true;
+				enabled=false;
+			}
+		}
+		
+		//add air control
 		float horIn = Input.GetAxis("Horizontal");
 		float vertIn = Input.GetAxis("Vertical");
-		//add air control
 		_velocity.x+=horIn*_airControl.x*Time.deltaTime;
 		if(vertIn<0)
 			_velocity.y+=vertIn*_airControl.y*Time.deltaTime;
@@ -75,17 +97,41 @@ public class Fly : MonoBehaviour
 		else if(_velocity.x<-_maxVel.x)
 			_velocity.x=-_maxVel.x;
 
+		//apply physics
 		transform.position+=_velocity*Time.deltaTime;
 		_velocity+=Vector3.down*_gravity*Time.deltaTime;
-		/*
-		if(Physics.OverlapSphereNonAlloc(transform.position,0.02f,_cols,1)>0){
-			//hit something
-		}
-		*/
+		transform.eulerAngles=Vector3.back*45f*horIn;
+
+		//collision detection
 		RaycastHit hit;
-		if(!Physics.Raycast(transform.position,Vector3.down,out hit, 10f, 1)){
+		if(Physics.Raycast(transform.position+Vector3.up*Bird._height,Vector3.down,out hit, Bird._height, 1)){
+			//ground check
+			_groundPoint=hit.point;
 			GetComponent<Hop>().enabled=true;
 			enabled=false;
+			transform.position=_groundPoint;
+		}
+		else{
+			if(Physics.Raycast(transform.position,Vector3.up,out hit, Bird._height, 1)){
+				//ceiling check
+				if(_velocity.y>0)
+				{
+					_velocity.y=0;
+					_thonk.Play();
+				}
+				_flapTimer=_flapDur;
+			}
+			else{
+				if(Physics.Raycast(transform.position+Vector3.up*Bird._height,Vector3.right*_velocity.x,out hit, Bird._width, 1)){
+					//side wall check
+					_velocity.x=0;
+					if(!_thonk.isPlaying)
+						_thonk.Play();
+					_flapTimer=_flapDur;
+					//undo last velocity
+					transform.position-=Vector3.right*_velocity.x*Time.deltaTime;
+				}
+			}
 		}
     }
 
@@ -97,5 +143,11 @@ public class Fly : MonoBehaviour
 				return;
 			}
 		}
+	}
+
+	void OnDrawGizmos(){
+		Gizmos.color=Color.red;
+		if(_groundPoint!=null)
+			Gizmos.DrawSphere(_groundPoint,0.2f);
 	}
 }

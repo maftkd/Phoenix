@@ -21,7 +21,7 @@ public class Food : MonoBehaviour
         
     }
 
-	public virtual float GetEaten(){
+	public virtual void GetEaten(){
 		_audio.clip=_chalp;
 		_audio.pitch=1f;
 		_audio.Play();
@@ -29,6 +29,21 @@ public class Food : MonoBehaviour
 		GetComponent<Collider>().enabled=false;
 		GetComponent<MeshRenderer>().enabled=false;
 		enabled=false;
-		return _nurishment;
+	}
+
+	void OnTriggerEnter(Collider other){
+		if(other.GetComponent<Bird>()!=null)
+		{
+			other.GetComponent<Bird>().Eat(_nurishment);
+			GetEaten();
+		}
+	}
+
+	void OnCollisioniggerEnter(Collision other){
+		if(other.transform.GetComponent<Bird>()!=null)
+		{
+			other.transform.GetComponent<Bird>().Eat(_nurishment);
+			GetEaten();
+		}
 	}
 }

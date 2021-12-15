@@ -38,12 +38,12 @@ public class Fruit : Food
 		}
     }
 
-	public override float GetEaten(){
+	public override void GetEaten(){
 		_rolling=false;
 		if(_rb!=null)
 		{
 			_rb.isKinematic=true;
 		}
-		return base.GetEaten();
+		base.GetEaten();
 	}
 }

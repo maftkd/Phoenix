@@ -49,4 +49,18 @@ public class Water : MonoBehaviour
 		if(!_sloosh.isPlaying)
 			_sloosh.Play();
 	}
+
+	void OnTriggerEnter(Collider other){
+		if(other.GetComponent<Bird>()!=null){
+			other.GetComponent<Bird>().EnterWater(this);
+			Splash(other.transform);
+		}
+	}
+
+	void OnTriggerExit(Collider other){
+		if(other.GetComponent<Bird>()!=null){
+			other.GetComponent<Bird>().ExitWater();
+			Unsplash();
+		}
+	}
 }
