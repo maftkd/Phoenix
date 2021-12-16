@@ -65,18 +65,18 @@ public class Fly : MonoBehaviour
     void Update()
     {
 		//flaps
-		if(Input.GetKeyDown(KeyCode.Space)){
+		if(Input.GetButtonDown("Jump")){
 			_velocity+=_curFlapAccel;
 			_flapTimer=0;
 			Flap();
 		}
-		if(_flapTimer<_flapDur&&Input.GetKey(KeyCode.Space)){
+		if(_flapTimer<_flapDur&&Input.GetButton("Jump")){
 			_velocity.y+=_curFlapAccel.y*Time.deltaTime*_flapHoldBoost;
 			_flapTimer+=Time.deltaTime;
 		}
 
 		//check perch
-		if(Input.GetKeyDown(KeyCode.LeftShift)){
+		if(Input.GetButtonDown("Perch")){
 			if(Physics.OverlapSphereNonAlloc(transform.position,0.01f,_cols,_perchMask)>0){
 				_rustle.Play();
 				GetComponent<Hop>().enabled=true;

@@ -52,7 +52,7 @@
             {
                 // sample the texture
                 //fixed4 col = tex2D(_MainTex, i.uv);
-				clip(_Full-i.uv.y);
+				clip(_Full-i.uv.y+0.05);
 				return _Color;
                 //return col;
             }

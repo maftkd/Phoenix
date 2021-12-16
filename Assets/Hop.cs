@@ -148,7 +148,7 @@ public class Hop : MonoBehaviour
 					_trap.Activate(this);
 				transform.position=_hopTarget;
 			}
-			if(Input.GetKeyDown(KeyCode.Space)){
+			if(Input.GetButtonDown("Jump")){
 				if(_flightEnabled)
 				{
 					transform.eulerAngles=Vector3.back*45f*horIn;
@@ -170,7 +170,7 @@ public class Hop : MonoBehaviour
 		}
 		else{
 			//not hopping
-			if(Input.GetKeyDown(KeyCode.Space)&&_flightEnabled)
+			if(Input.GetButtonDown("Jump")&&_flightEnabled)
 			{
 				//enable fly
 				Fly f = GetComponent<Fly>();
