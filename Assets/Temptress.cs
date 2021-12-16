@@ -42,10 +42,12 @@ public class Temptress : MonoBehaviour
 		_audio.Play();
 		float y = transform.position.y;
 		float t=0;
+		float phaseShift=Random.value*Mathf.PI*2f;
+		float offset=Mathf.Sin(phaseShift);
 		while(transform.position.x<5f*16f/9f){
 			t+=Time.deltaTime;
 			Vector3 pos = transform.position+Vector3.right*Time.deltaTime*_flySpeed;
-			pos.y=y+Mathf.Sin(t*Mathf.PI*2f);
+			pos.y=y+Mathf.Sin(t*Mathf.PI*2f+phaseShift)-offset;
 			transform.position=pos;
 			yield return null;
 		}

@@ -18,6 +18,8 @@ public class Bird : MonoBehaviour
 	public float _foodRadius;
 	public float _fullness;
 	Material _bellyMat;
+	Hop _hop;
+	Fly _fly;
 
 	public static float _height=0.25f;
 	public static float _width=0.2f;
@@ -40,6 +42,8 @@ public class Bird : MonoBehaviour
 		_breathTimer=_breathDur;
 		_bellyMat=GetComponent<MeshRenderer>().material;
 		_bellyMat.SetFloat("_Full",_fullness);
+		_hop=GetComponent<Hop>();
+		_fly=GetComponent<Fly>();
     }
 
     // Update is called once per frame
@@ -66,7 +70,7 @@ public class Bird : MonoBehaviour
 				break;
 			case 2:
 				//first movement
-				if(Input.anyKeyDown||Input.GetAxis("Horizontal")!=0){
+				if(Input.anyKeyDown||Input.GetAxis(GameManager._horizontalAxis)!=0){
 					Debug.Log("First touch");
 					_camera.GoFlying();
 					_state=0;
@@ -85,6 +89,12 @@ public class Bird : MonoBehaviour
 			Debug.Log("End zone!");
 			GameManager._instance.NextLevel();
 			//enabled=false;
+		}
+		else if(transform.position.y<-5f){
+			//GameManager._instance.Reload();
+			_hop.enabled=true;
+			_fly.enabled=false;
+			_hop.Reset();
 		}
     }
 

@@ -26,7 +26,7 @@ public class MCamera : MonoBehaviour
     void Update()
     {
 		if(_shootTimer<=0){
-			if(Input.GetButtonDown("Jump")&&!_flying){
+			if(Input.GetButtonDown(GameManager._jumpButton)&&!_flying){
 				_audio.Play();
 				_shootTimer=_shootTime;
 				if(_tutorial!=null)

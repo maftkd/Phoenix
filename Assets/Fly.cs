@@ -7,7 +7,8 @@ public class Fly : MonoBehaviour
 	public Vector2 _flapAccel;
 	Vector3 _curFlapAccel;
 	public float _flapHoldBoost;
-	Vector3 _velocity;
+	[HideInInspector]
+	public Vector3 _velocity;
 	public float _gravity;
 	Collider [] _cols;
 	bool _init;
@@ -23,6 +24,12 @@ public class Fly : MonoBehaviour
 	[HideInInspector]
 	public bool _killVert;
 	AudioSource _rustle;
+	public int _numFlaps;
+	int _flapCounter;
+	[HideInInspector]
+	public bool _freeFlap;
+	[HideInInspector]
+	public float _lastJumpPress=-1;
 	
 	void OnEnable(){
 		_velocity=Vector3.zero;
@@ -49,7 +56,11 @@ public class Fly : MonoBehaviour
 		if(!_init){
 			Init();
 		}
-
+		_flapCounter=0;
+		if(_freeFlap){
+			_freeFlap=false;
+			_flapCounter--;
+		}
 		Flap();
 	}
 
@@ -66,9 +77,12 @@ public class Fly : MonoBehaviour
     {
 		//flaps
 		if(Input.GetButtonDown(GameManager._jumpButton)){
-			_velocity+=_curFlapAccel;
-			_flapTimer=0;
-			Flap();
+			_lastJumpPress=Time.time;
+			if(_flapCounter<_numFlaps){
+				_velocity+=_curFlapAccel;
+				_flapTimer=0;
+				Flap();
+			}
 		}
 		if(_flapTimer<_flapDur&&Input.GetButton(GameManager._jumpButton)){
 			_velocity.y+=_curFlapAccel.y*Time.deltaTime*_flapHoldBoost;
@@ -85,8 +99,8 @@ public class Fly : MonoBehaviour
 		}
 		
 		//add air control
-		float horIn = Input.GetAxis("Horizontal");
-		float vertIn = Input.GetAxis("Vertical");
+		float horIn = Input.GetAxis(GameManager._horizontalAxis);
+		float vertIn = Input.GetAxis(GameManager._verticalAxis);
 		_velocity.x+=horIn*_airControl.x*Time.deltaTime;
 		if(vertIn<0)
 			_velocity.y+=vertIn*_airControl.y*Time.deltaTime;
@@ -106,36 +120,46 @@ public class Fly : MonoBehaviour
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position+Vector3.up*Bird._height,Vector3.down,out hit, Bird._height, 1)){
 			//ground check
-			_groundPoint=hit.point;
-			GetComponent<Hop>().enabled=true;
-			enabled=false;
-			transform.position=_groundPoint;
+			if(!hit.transform.GetComponent<Collider>().isTrigger)
+			{
+				_groundPoint=hit.point;
+				GetComponent<Hop>().enabled=true;
+				enabled=false;
+				transform.position=_groundPoint;
+			}
 		}
 		else{
 			if(Physics.Raycast(transform.position,Vector3.up,out hit, Bird._height, 1)){
 				//ceiling check
-				if(_velocity.y>0)
+				if(!hit.transform.GetComponent<Collider>().isTrigger)
 				{
-					_velocity.y=0;
-					_thonk.Play();
+					if(_velocity.y>0)
+					{
+						_velocity.y=0;
+						_thonk.Play();
+					}
+					_flapTimer=_flapDur;
 				}
-				_flapTimer=_flapDur;
 			}
 			else{
 				if(Physics.Raycast(transform.position+Vector3.up*Bird._height,Vector3.right*_velocity.x,out hit, Bird._width, 1)){
 					//side wall check
-					_velocity.x=0;
-					if(!_thonk.isPlaying)
-						_thonk.Play();
-					_flapTimer=_flapDur;
-					//undo last velocity
-					transform.position-=Vector3.right*_velocity.x*Time.deltaTime;
+					if(!hit.transform.GetComponent<Collider>().isTrigger)
+					{
+						_velocity.x=0;
+						if(!_thonk.isPlaying)
+							_thonk.Play();
+						_flapTimer=_flapDur;
+						//undo last velocity
+						transform.position-=Vector3.right*_velocity.x*Time.deltaTime;
+					}
 				}
 			}
 		}
     }
 
 	void Flap(){
+		_flapCounter++;
 		foreach(AudioSource a in _flapSounds){
 			if(!a.isPlaying){
 				a.transform.position=transform.position;

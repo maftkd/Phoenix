@@ -27,15 +27,23 @@ public class Hop : MonoBehaviour
 	AudioSource _woosh;
 	AudioSource _rustle;
 	Collider[] _cols;
+	Fly _fly;
+	public float _landVolumeMult;
+	Vector3 _startPos;
+	bool _firstFrame;
+	public float _preJumpPeriod;
     // Start is called before the first frame update
     void Start()
     {
 		_hopTime=_hopDist/_hopSpeed;
 		_bird=GetComponent<Bird>();
+		_fly=GetComponent<Fly>();
 		_woosh=transform.Find("Woosh").GetComponent<AudioSource>();
 		_thonk=transform.Find("Thonk").GetComponent<AudioSource>();
 		_rustle=transform.Find("Rustle").GetComponent<AudioSource>();
 		_cols = new Collider[4];
+		_startPos=transform.position;
+		_firstFrame=true;
     }
 
 	void OnEnable(){
@@ -50,15 +58,32 @@ public class Hop : MonoBehaviour
 			//transform.position=hit.point;
 			_footstep=hit.transform.GetComponent<Footstep>();
 		}
-		if(_footstep!=null)
-			_footstep.Sound(transform.position);
+		if(_footstep!=null&&_fly!=null)
+		{
+			float vol = Mathf.Min(1f,-_fly._velocity.y*_landVolumeMult);
+			Debug.Log("vol: "+vol);
+			if(vol<0.5f)
+				_footstep.Sound(transform.position);
+			else{
+				//heavy y velocity -> screen shake and louder land
+				Camera.main.GetComponent<CameraShake>().Shake(vol);
+				_footstep.Sound(transform.position,vol);
+			}
+		}
 	}
 
     // Update is called once per frame
     void Update()
     {
-		float horIn = Input.GetAxis("Horizontal");
-		float verIn = Input.GetAxis("Vertical");
+		//#why does initial raycast fail to find a ground point if holding horizontal on start
+		//#why does this only happen between levels and not at start?
+		if(_firstFrame){
+			_firstFrame=false;
+			return;
+		}
+		float horIn = Input.GetAxis(GameManager._horizontalAxis);
+		float h = horIn<0?-1f : 1f;
+		float verIn = Input.GetAxis(GameManager._verticalAxis);
 		if(_hopTimer<=0)
 		{
 			if(Mathf.Abs(horIn)>_inThresh){
@@ -88,23 +113,24 @@ public class Hop : MonoBehaviour
 						_midPos+=Vector3.up*_hopHeight;
 						_footstep=hit.transform.GetComponent<Footstep>();
 						_trap=hit.transform.GetComponent<Trap>();
+						transform.eulerAngles=Vector3.back*5f*h;
 					}
 				}
 				else{
-					float h = horIn<0?-1f : 1f;
 					if(Physics.Raycast(transform.position+Bird._height*Vector3.up,Vector3.right*h,out hit,_hopDist,1)){
 						//walk against wall
 						if(!_wobble)
 							StartCoroutine(Wobble(horIn));
 					}	
 					else{
+						//edge of cliff
 						if(_flightEnabled){
 							_woosh.Play();
 							transform.eulerAngles=Vector3.back*45f*horIn;
 
 							//enable fly
-							Fly f = GetComponent<Fly>();
-							f.enabled=true;
+							_fly._freeFlap=true;
+							_fly.enabled=true;
 							
 							//disable hop
 							enabled=false;
@@ -119,14 +145,14 @@ public class Hop : MonoBehaviour
 			else if(verIn<-1f*_inThresh&&_flightEnabled){
 				//jump down if on perch
 				RaycastHit hit;
-				if(!Physics.Raycast(transform.position,Vector3.down, out hit, Bird._height,1)){
+				if(!Physics.Raycast(transform.position+Vector3.up*0.01f,Vector3.down, out hit, Bird._height,1)){
+					Debug.Log("wtf?");
 					//nothing below player
 					_rustle.Play();
 					
 					//enable fly
-					Fly f = GetComponent<Fly>();
-					f._killVert=true;
-					f.enabled=true;
+					_fly._killVert=true;
+					_fly.enabled=true;
 					
 					//disable hop
 					enabled=false;
@@ -149,15 +175,15 @@ public class Hop : MonoBehaviour
 				if(_trap!=null)
 					_trap.Activate(this);
 				transform.position=_hopTarget;
+				transform.eulerAngles=Vector3.zero;
 			}
-			if(Input.GetButtonDown(GameManager._jumpButton)){
+			if(Input.GetButtonDown(GameManager._jumpButton)||Time.time-_fly._lastJumpPress<_preJumpPeriod){
 				if(_flightEnabled)
 				{
 					transform.eulerAngles=Vector3.back*45f*horIn;
 
 					//enable fly
-					Fly f = GetComponent<Fly>();
-					f.enabled=true;
+					_fly.enabled=true;
 					
 					//disable hop
 					enabled=false;
@@ -175,8 +201,7 @@ public class Hop : MonoBehaviour
 			if(Input.GetButtonDown(GameManager._jumpButton)&&_flightEnabled)
 			{
 				//enable fly
-				Fly f = GetComponent<Fly>();
-				f.enabled=true;
+				_fly.enabled=true;
 				
 				//disable hop
 				enabled=false;
@@ -211,6 +236,10 @@ public class Hop : MonoBehaviour
 		transform.eulerAngles=Vector3.zero;
 		yield return new WaitForSeconds(_postWobbleDelay);
 		_wobble=false;
+	}
+
+	public void Reset(){
+		transform.position=_startPos;
 	}
 
 	void OnDrawGizmos(){

@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 	public Transform _mainCam;
 	public static string _jumpButton;
 	public static string _perchButton;
+	public static string _horizontalAxis;
+	public static string _verticalAxis;
 	public bool _altControls;
 
 	void Awake(){
@@ -38,6 +40,12 @@ public class GameManager : MonoBehaviour
 		curLevel.position=Vector3.zero;
 		_jumpButton=_altControls?"Perch":"Jump";
 		_perchButton=_altControls?"Jump":"Perch";
+#if UNITY_EDITOR_OSX
+		_horizontalAxis=_altControls?"HorizontalAlt":"Horizontal";
+#else
+		_horizontalAxis="Horizontal";
+#endif
+		_verticalAxis=_altControls?"VerticalAlt":"Vertical";
 	}
 
 	public void NextLevel(){

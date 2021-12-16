@@ -701,6 +701,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _flapAccel: {x: 1.5, y: 2}
   _flapHoldBoost: 2
+  _velocity: {x: 0, y: 0, z: 0}
   _gravity: 4
   _airControl: {x: 4, y: 30}
   _maxVel: {x: 4, y: 0}
@@ -709,6 +710,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   _killVert: 0
+  _numFlaps: 1
+  _freeFlap: 0
+  _lastJumpPress: -1
 --- !u!114 &3227823459135067185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -722,13 +726,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inThresh: 0.1
-  _hopDist: 0.354
+  _hopDist: 0.25
   _hopSpeed: 2
-  _hopHeight: 0.25
+  _hopHeight: 0.15
   _endZone: {fileID: 0}
   _flightEnabled: 1
   _wobbleTime: 0.4
   _postWobbleDelay: 0.2
+  _landVolumeMult: 0.125
+  _preJumpPeriod: 0.05
 --- !u!114 &4811513594601139747
 MonoBehaviour:
   m_ObjectHideFlags: 0

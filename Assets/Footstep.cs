@@ -10,6 +10,7 @@ public class Footstep : MonoBehaviour
 	public float _volume;
 	float _walkSpeed;
 	float _runSpeed;
+	public static int _numSources=10;
 
 	public class FootstepEventArgs : System.EventArgs{
 		public Vector3 pos;
@@ -19,7 +20,14 @@ public class Footstep : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		_sources = transform.GetComponentsInChildren<AudioSource>();
+		_sources = new AudioSource[_numSources];
+		for(int i=0; i<_numSources; i++){
+			GameObject foo = new GameObject("AudioSource");
+			foo.transform.SetParent(transform);
+			_sources[i]=foo.AddComponent<AudioSource>();
+			_sources[i].spatialBlend=1f;
+		}
+		//_sources = transform.GetComponentsInChildren<AudioSource>();
     }
 
     // Update is called once per frame
@@ -28,13 +36,14 @@ public class Footstep : MonoBehaviour
         
     }
 
-	public void Sound(Vector3 pos,float speed=1f){
+	public void Sound(Vector3 pos,float volume=-1f){
 		if(_sources==null)
 			return;
 		foreach(AudioSource s in _sources){
 			if(!s.isPlaying){
-				s.volume=Mathf.InverseLerp(0,_runSpeed,speed)*_volume;
-				s.volume=_volume;
+				s.volume=volume<0? _volume : volume;
+				//s.volume=Mathf.InverseLerp(0,_runSpeed,speed)*_volume;
+				//s.volume=_volume;
 				s.transform.position=pos;
 				s.clip=_clips[Random.Range(0,_clips.Length)];
 				s.Play();

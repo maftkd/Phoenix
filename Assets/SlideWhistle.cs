@@ -10,6 +10,7 @@ public class SlideWhistle : MonoBehaviour
 	AudioSource _audio;
 	int _sampleRate = 44100;
 	public Vector3 _velocity;
+	public AudioClip _crash;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +41,11 @@ public class SlideWhistle : MonoBehaviour
 	
 	IEnumerator NextLevelAfterAudio(){
 		yield return new WaitForSeconds(_clipDur);
+		_audio.clip=_crash;
+		_audio.volume=1;
+		_audio.Play();
+		_audio.spatialBlend=0;
+		yield return new WaitForSeconds(_audio.clip.length);
 		GameManager._instance.NextLevel();
 	}
 }
