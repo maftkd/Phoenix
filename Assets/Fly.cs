@@ -65,18 +65,18 @@ public class Fly : MonoBehaviour
     void Update()
     {
 		//flaps
-		if(Input.GetButtonDown("Jump")){
+		if(Input.GetButtonDown(GameManager._jumpButton)){
 			_velocity+=_curFlapAccel;
 			_flapTimer=0;
 			Flap();
 		}
-		if(_flapTimer<_flapDur&&Input.GetButton("Jump")){
+		if(_flapTimer<_flapDur&&Input.GetButton(GameManager._jumpButton)){
 			_velocity.y+=_curFlapAccel.y*Time.deltaTime*_flapHoldBoost;
 			_flapTimer+=Time.deltaTime;
 		}
 
 		//check perch
-		if(Input.GetButtonDown("Perch")){
+		if(Input.GetButtonDown(GameManager._perchButton)){
 			if(Physics.OverlapSphereNonAlloc(transform.position,0.01f,_cols,_perchMask)>0){
 				_rustle.Play();
 				GetComponent<Hop>().enabled=true;

@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
 	public static GameManager _instance;
 	public int _levelIndex;
 	public Transform _mainCam;
+	public static string _jumpButton;
+	public static string _perchButton;
+	public bool _altControls;
 
 	void Awake(){
 		_instance = this;
@@ -33,6 +36,8 @@ public class GameManager : MonoBehaviour
 		}
 		Transform curLevel = transform.GetChild(_levelIndex);
 		curLevel.position=Vector3.zero;
+		_jumpButton=_altControls?"Perch":"Jump";
+		_perchButton=_altControls?"Jump":"Perch";
 	}
 
 	public void NextLevel(){

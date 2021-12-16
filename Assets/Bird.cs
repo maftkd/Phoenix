@@ -66,7 +66,7 @@ public class Bird : MonoBehaviour
 				break;
 			case 2:
 				//first movement
-				if(Input.anyKeyDown){
+				if(Input.anyKeyDown||Input.GetAxis("Horizontal")!=0){
 					Debug.Log("First touch");
 					_camera.GoFlying();
 					_state=0;

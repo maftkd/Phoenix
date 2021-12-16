@@ -98,15 +98,17 @@ public class Hop : MonoBehaviour
 							StartCoroutine(Wobble(horIn));
 					}	
 					else{
-						_woosh.Play();
-						transform.eulerAngles=Vector3.back*45f*horIn;
+						if(_flightEnabled){
+							_woosh.Play();
+							transform.eulerAngles=Vector3.back*45f*horIn;
 
-						//enable fly
-						Fly f = GetComponent<Fly>();
-						f.enabled=true;
-						
-						//disable hop
-						enabled=false;
+							//enable fly
+							Fly f = GetComponent<Fly>();
+							f.enabled=true;
+							
+							//disable hop
+							enabled=false;
+						}
 					}
 				}
 				if(_bird!=null){
@@ -114,7 +116,7 @@ public class Hop : MonoBehaviour
 						_bird.Sloosh();
 				}
 			}
-			else if(verIn<-1f*_inThresh){
+			else if(verIn<-1f*_inThresh&&_flightEnabled){
 				//jump down if on perch
 				RaycastHit hit;
 				if(!Physics.Raycast(transform.position,Vector3.down, out hit, Bird._height,1)){
@@ -148,7 +150,7 @@ public class Hop : MonoBehaviour
 					_trap.Activate(this);
 				transform.position=_hopTarget;
 			}
-			if(Input.GetButtonDown("Jump")){
+			if(Input.GetButtonDown(GameManager._jumpButton)){
 				if(_flightEnabled)
 				{
 					transform.eulerAngles=Vector3.back*45f*horIn;
@@ -170,7 +172,7 @@ public class Hop : MonoBehaviour
 		}
 		else{
 			//not hopping
-			if(Input.GetButtonDown("Jump")&&_flightEnabled)
+			if(Input.GetButtonDown(GameManager._jumpButton)&&_flightEnabled)
 			{
 				//enable fly
 				Fly f = GetComponent<Fly>();

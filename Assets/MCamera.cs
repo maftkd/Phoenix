@@ -11,6 +11,7 @@ public class MCamera : MonoBehaviour
 	CanvasGroup _flash;
 	public GameObject _tutorial;
 	public float _flyForce;
+	bool _flying;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +26,7 @@ public class MCamera : MonoBehaviour
     void Update()
     {
 		if(_shootTimer<=0){
-			if(Input.GetKeyDown(KeyCode.Space)){
+			if(Input.GetButtonDown("Jump")&&!_flying){
 				_audio.Play();
 				_shootTimer=_shootTime;
 				if(_tutorial!=null)
@@ -49,6 +50,7 @@ public class MCamera : MonoBehaviour
 	}
 
 	IEnumerator FlyAwayR(){
+		_flying=true;
 		Rigidbody rb = gameObject.AddComponent<Rigidbody>();
 		rb.AddForce(new Vector3(Random.value,1f,0)*_flyForce);
 		rb.AddTorque(Vector3.forward*Random.value*_flyForce);
