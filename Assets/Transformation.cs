@@ -18,8 +18,8 @@ public class Transformation : MonoBehaviour
     {
 		_timer+=Time.deltaTime;
 		if(_timer<_dur){
-			Color c = new Color(_timer/_dur,0,0,1);
-			_mat.SetColor("_Color",c);
+			//Color c = new Color(_timer/_dur,0,0,1);
+			//_mat.SetColor("_Color",c);
 			transform.localScale = new Vector3(1f,1-_timer/_dur,1f);
 		}
     }

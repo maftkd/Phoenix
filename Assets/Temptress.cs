@@ -11,18 +11,22 @@ public class Temptress : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+		/*
 		Footstep [] feet = FindObjectsOfType<Footstep>();
 		foreach(Footstep f in feet){
 			f.OnFootstep+=HearFootstep;
 		}
+		*/
 		_audio=GetComponent<AudioSource>();
     }
 
 	void OnDestroy(){
+		/*
 		Footstep [] feet = FindObjectsOfType<Footstep>();
 		foreach(Footstep f in feet){
 			f.OnFootstep-=HearFootstep;
 		}
+		*/
 	}
 
     // Update is called once per frame
@@ -31,10 +35,12 @@ public class Temptress : MonoBehaviour
 
     }
 
+	public void Startle(){
+		StartCoroutine(FlyAwayR());
+	}
+
+
 	void HearFootstep(Footstep.FootstepEventArgs args){
-		if((args.pos-transform.position).sqrMagnitude<_range*_range){
-			StartCoroutine(FlyAwayR());
-		}
 	}
 
 	IEnumerator FlyAwayR(){

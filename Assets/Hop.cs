@@ -18,6 +18,7 @@ public class Hop : MonoBehaviour
 	Trap _trap;
 	public Transform _endZone;
 	public bool _flightEnabled;
+	public bool _startUpsideDown;
 	Bird _bird;
 	[Header("Wobble")]
 	public float _wobbleTime;
@@ -32,6 +33,7 @@ public class Hop : MonoBehaviour
 	Vector3 _startPos;
 	bool _firstFrame;
 	public float _preJumpPeriod;
+	public Transform _dustParts;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,7 +49,7 @@ public class Hop : MonoBehaviour
     }
 
 	void OnEnable(){
-		if(!_flightEnabled)
+		if(_startUpsideDown)
 			return;
 
 		transform.rotation=Quaternion.identity;
@@ -68,6 +70,7 @@ public class Hop : MonoBehaviour
 				//heavy y velocity -> screen shake and louder land
 				Camera.main.GetComponent<CameraShake>().Shake(vol);
 				_footstep.Sound(transform.position,vol);
+				Instantiate(_dustParts,transform.position,Quaternion.identity);
 			}
 		}
 	}
@@ -103,7 +106,11 @@ public class Hop : MonoBehaviour
 					if(Physics.OverlapSphereNonAlloc(hit.point+Vector3.up*Bird._height,0.01f,_cols,1)>0){
 						//make sure no walls are in the way
 						if(!_wobble)
+						{
+							Debug.Log("Hi");
+							Debug.Log(_cols[0].name);
 							StartCoroutine(Wobble(horIn));
+						}
 					}
 					else{
 						_hopTarget=hit.point;
@@ -177,7 +184,7 @@ public class Hop : MonoBehaviour
 				transform.position=_hopTarget;
 				transform.eulerAngles=Vector3.zero;
 			}
-			if(Input.GetButtonDown(GameManager._jumpButton)||Time.time-_fly._lastJumpPress<_preJumpPeriod){
+			if(_fly!=null&&(Input.GetButtonDown(GameManager._jumpButton)||Time.time-_fly._lastJumpPress<_preJumpPeriod)){
 				if(_flightEnabled)
 				{
 					transform.eulerAngles=Vector3.back*45f*horIn;
@@ -218,7 +225,10 @@ public class Hop : MonoBehaviour
 		else
 			h=1f;
 		RaycastHit hit;
-		if(Physics.Raycast(transform.position+Bird._height*Vector3.up,Vector3.right*h,out hit,_hopDist,1)){
+		Vector3 rayStart=transform.position+Bird._height*Vector3.up;
+		Vector3 dir=Vector3.right*h;
+		Debug.Log("raycasting from: "+rayStart+", to "+dir);
+		if(Physics.Raycast(rayStart,dir,out hit,_hopDist,1)){
 			_thonk.Play();
 		}	
 		else{

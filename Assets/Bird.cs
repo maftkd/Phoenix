@@ -71,8 +71,9 @@ public class Bird : MonoBehaviour
 			case 2:
 				//first movement
 				if(Input.anyKeyDown||Input.GetAxis(GameManager._horizontalAxis)!=0){
-					Debug.Log("First touch");
-					_camera.GoFlying();
+					//Debug.Log("First touch");
+					//_camera.GoFlying();
+					_hop._startUpsideDown=false;
 					_state=0;
 					transform.rotation=Quaternion.identity;
 				}

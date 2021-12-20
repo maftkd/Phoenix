@@ -12,6 +12,10 @@ public class MCamera : MonoBehaviour
 	public GameObject _tutorial;
 	public float _flyForce;
 	bool _flying;
+	Temptress _temptress;
+	public float _shotRange;
+	bool _chill;
+	Human _human;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,17 +24,26 @@ public class MCamera : MonoBehaviour
 		_shootTime=_audio.clip.length;
 		_flash=transform.GetChild(1).GetComponent<CanvasGroup>();
 		_flash.alpha=0;
+		if(transform.parent.parent.GetComponent<Human>()!=null)
+		{
+			_temptress=transform.parent.parent.parent.GetComponentInChildren<Temptress>();
+			_shotRange=transform.parent.GetChild(1).GetComponent<LineRenderer>().GetPosition(1).x;
+		}
+		_human=transform.GetComponentInParent<Human>();
     }
 
     // Update is called once per frame
     void Update()
     {
 		if(_shootTimer<=0){
-			if(Input.GetButtonDown(GameManager._jumpButton)&&!_flying){
-				_audio.Play();
-				_shootTimer=_shootTime;
+			if(_human!=null&&Input.GetButtonDown(GameManager._jumpButton)&&!_flying){
+				Flash();
 				if(_tutorial!=null)
 					Destroy(_tutorial);
+				if(_temptress!=null){
+					if((_temptress.transform.position-transform.position).sqrMagnitude<_shotRange*_shotRange)
+						_temptress.Startle();
+				}
 			}
 		}
 		else{
@@ -44,6 +57,27 @@ public class MCamera : MonoBehaviour
 			}
 		}
     }
+
+	void LateUpdate(){
+		if(!_flying)
+			transform.rotation=Quaternion.identity;
+	}
+
+	public void FlashAndChilll(){
+		if(_chill)
+			return;
+		_chill=true;
+		Flash();
+	}
+
+	public void ResetChill(){
+		_chill=false;
+	}
+
+	public void Flash(){
+		_audio.Play();
+		_shootTimer=_shootTime;
+	}
 
 	public void GoFlying(){
 		StartCoroutine(FlyAwayR());

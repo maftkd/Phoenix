@@ -126,6 +126,7 @@ public class Fly : MonoBehaviour
 				GetComponent<Hop>().enabled=true;
 				enabled=false;
 				transform.position=_groundPoint;
+				Debug.Log("setting pos: "+_groundPoint);
 			}
 		}
 		else{
