@@ -23,6 +23,13 @@ public class Hop : MonoBehaviour
 	Animator _anim;
 	MCamera _mCam;
 	public Transform _stepParts;
+	bool _disableAfterHop;
+
+	//ai hopping
+	Terrain _terrain;
+	Vector3 _destination;
+	public bool _npc;
+	Vector3 _npcInput;
 
 	void Awake(){
 		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -34,6 +41,7 @@ public class Hop : MonoBehaviour
 		_anim=GetComponent<Animator>();
 		_anim.SetFloat("hopTime",1f/_hopTime);
 		_mCam=FindObjectOfType<MCamera>();
+		_terrain=FindObjectOfType<Terrain>();
 	}
     // Start is called before the first frame update
     void Start()
@@ -43,7 +51,7 @@ public class Hop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		Vector3 input=_mCam.GetInputDir();
+		Vector3 input=_npc ? _npcInput : _mCam.GetInputDir();
 		if(input.sqrMagnitude>0){
 			Quaternion curRot=transform.rotation;
 			transform.forward=input;
@@ -107,10 +115,18 @@ public class Hop : MonoBehaviour
 				//fx
 				_anim.SetBool("hop",false);
 				Instantiate(_stepParts,transform.position,Quaternion.identity);
+				if(_disableAfterHop){
+					_disableAfterHop=false;
+					enabled=false;
+				}
 			}
 		}
 		else{
 			//not hopping
+		}
+
+		if(!_npc&&Input.GetButtonDown("Jump")){
+			Debug.Log("Wants to jump");
 		}
     }
 
@@ -120,6 +136,31 @@ public class Hop : MonoBehaviour
 
 	public float GetHopAngle(){
 		return Mathf.Atan2(transform.forward.z,transform.forward.x);
+	}
+
+	public void HopTo(Vector3 target){
+		_destination=target;
+		_destination.y=_terrain.SampleHeight(target);
+		Vector3 diff = _destination-transform.position;
+		diff.y=0;
+		diff.Normalize();
+		_npcInput=diff;
+	}
+
+	public bool Arrived(float threshold){
+		return (transform.position-_destination).sqrMagnitude<threshold*threshold;
+	}
+
+	public void StopHopping(){
+		_npcInput=Vector3.zero;
+	}
+
+	public bool IsHopping(){
+		return _hopTimer>0;
+	}
+
+	public void FinishCurrentHop(){
+		_disableAfterHop=true;
 	}
 
 	void OnDrawGizmos(){

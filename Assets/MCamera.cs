@@ -10,7 +10,7 @@ public class MCamera : MonoBehaviour
 	public float _angleLerp;
 	Vector3 _worldSpaceInput;
 	Vector3 _controllerInput;
-	Transform _player;
+	public static Transform _player;
 	Hop _hop;
 	
 	void Awake(){
@@ -64,5 +64,9 @@ public class MCamera : MonoBehaviour
 
 	public Vector3 GetInputDir(){
 		return _worldSpaceInput;
+	}
+
+	public Vector3 GetControllerInput(){
+		return _controllerInput;
 	}
 }
