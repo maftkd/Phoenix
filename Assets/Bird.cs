@@ -15,14 +15,25 @@ public class Bird : MonoBehaviour
 	public bool _playerControlled;
 	MCamera _mCam;
 	public Bird _mate;
+	public Transform _soundRing;
+	[HideInInspector]
+	public Vector3 _size;
+	public float _soundRingDelay;
+	public int _numSoundRings;
+	ParticleSystem _callParts;
 
 	void Awake(){
+		//calculations
+		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
+		_size=smr.sharedMesh.bounds.size;
+
 		//get references
 		_hop=GetComponent<Hop>();
 		_runAway=GetComponent<RunAway>();
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
 		_callAudio=transform.Find("Call").GetComponent<AudioSource>();
+		_callParts=_callAudio.GetComponent<ParticleSystem>();
 		_mCam=FindObjectOfType<MCamera>();
 
 		//disable things
@@ -54,7 +65,7 @@ public class Bird : MonoBehaviour
 					{
 						StartHopping();
 					}
-					else if(Input.GetButtonDown("Sing")){
+					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
 					break;
@@ -63,20 +74,14 @@ public class Bird : MonoBehaviour
 						_state=0;
 						_hop.enabled=false;
 					}
-					else if(Input.GetButtonDown("Sing")){
-						_hop.FinishCurrentHop();
+					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
 					break;
 				case 2://ruffling
 					break;
 				case 3://singing
-					if(!_callAudio.isPlaying){
-						_state=0;
-						_mate.Call();
-					}
 					break;
-
 			}
 		}
     }
@@ -92,11 +97,30 @@ public class Bird : MonoBehaviour
 		return _ruffleAudio.clip.length;
 	}
 
-	public float Call(){
-		_anim.SetTrigger("sing");
+	public void Call(){
+		//StartCoroutine(SpawnSoundRings(_numSoundRings));
+		//_anim.SetTrigger("sing");
 		_callAudio.Play();
-		_state=3;
-		return _callAudio.clip.length;
+		_callParts.Play();
+		//_state=3;
+		if(_playerControlled)
+			StartCoroutine(CallMateR());
+	}
+
+	IEnumerator SpawnSoundRings(int num){
+		yield return null;
+		for(int i=0; i<num; i++)
+		{
+			Transform soundRing = Instantiate(_soundRing);
+			soundRing.position=transform.position+Vector3.up*_size.y;
+			yield return new WaitForSeconds(_soundRingDelay);
+		}
+	}
+
+	IEnumerator CallMateR(){
+		float dur = _callAudio.clip.length;
+		yield return new WaitForSeconds(dur);
+		_mate.Call();
 	}
 
 	public void HopTo(Vector3 loc){

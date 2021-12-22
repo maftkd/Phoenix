@@ -15,7 +15,6 @@ public class Hop : MonoBehaviour
 	float _hopStart;
 	float _midPos;
 	Vector3 _camTarget;
-	Vector3 _size;
 	float _hopTimer;
 	float _hopTime;
 	Footstep _footstep;
@@ -24,6 +23,7 @@ public class Hop : MonoBehaviour
 	MCamera _mCam;
 	public Transform _stepParts;
 	bool _disableAfterHop;
+	Bird _bird;
 
 	//ai hopping
 	Terrain _terrain;
@@ -32,15 +32,13 @@ public class Hop : MonoBehaviour
 	Vector3 _npcInput;
 
 	void Awake(){
-		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
-		_size=smr.sharedMesh.bounds.size;
-		Debug.Log("Size: "+_size);
 		_cols = new Collider[2];
 		_hopTime=_hopDist/_hopSpeed;
 		_camTarget=transform.position;
 		_anim=GetComponent<Animator>();
 		_anim.SetFloat("hopTime",1f/_hopTime);
 		_mCam=FindObjectOfType<MCamera>();
+		_bird=GetComponent<Bird>();
 		_terrain=FindObjectOfType<Terrain>();
 	}
     // Start is called before the first frame update
@@ -60,12 +58,12 @@ public class Hop : MonoBehaviour
 			transform.position+=transform.forward*_hopSpeed*Time.deltaTime;
 
 			if(_hopTimer<=0){
-				Vector3 rayStart=transform.position+Vector3.up*_size.y*2;
+				Vector3 rayStart=transform.position+Vector3.up*_bird._size.y*2;
 				rayStart+=transform.forward*_hopDist;
 				RaycastHit hit;
-				if(Physics.Raycast(rayStart,Vector3.down, out hit, _size.y*4f,1)){
+				if(Physics.Raycast(rayStart,Vector3.down, out hit, _bird._size.y*4f,1)){
 					//check for good ground spot
-					if(Physics.OverlapSphereNonAlloc(hit.point+Vector3.up*_size.y,0.01f,_cols,1)>0){
+					if(Physics.OverlapSphereNonAlloc(hit.point+Vector3.up*_bird._size.y,0.01f,_cols,1)>0){
 						//make sure no walls are in the way
 						Debug.Log("wobble");
 					}
@@ -153,6 +151,7 @@ public class Hop : MonoBehaviour
 
 	public void StopHopping(){
 		_npcInput=Vector3.zero;
+		_anim.SetBool("hop",false);
 	}
 
 	public bool IsHopping(){
