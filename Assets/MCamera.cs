@@ -9,15 +9,18 @@ public class MCamera : MonoBehaviour
 	public float _lerpSpeed;
 	public float _minAngleLerp;
 	public float _maxAngleLerp;
+	public float _flyAngleLerp;
 	Vector3 _worldSpaceInput;
 	Vector3 _controllerInput;
 	public static Transform _player;
 	Hop _hop;
+	Fly _fly;
 	
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
 		_player=player.transform;
 		_hop=_player.GetComponent<Hop>();
+		_fly=_player.GetComponent<Fly>();
 		_followBack=-_player.forward;
 	}
 
@@ -34,6 +37,8 @@ public class MCamera : MonoBehaviour
 		//assume bird is hopping
 		//lerp rotation to match birds
 		float angleLerp = Mathf.Lerp(_maxAngleLerp,_minAngleLerp,-_controllerInput.y);
+		if(_fly.enabled)
+			angleLerp=_flyAngleLerp;
 		Quaternion curRot=transform.rotation;
 		Vector3 birdBack=-_player.forward;
 		transform.forward=_player.forward;
@@ -41,7 +46,9 @@ public class MCamera : MonoBehaviour
 		transform.rotation=Quaternion.Slerp(curRot,targetRot,angleLerp*Time.deltaTime);
 
 		//lerp position based on rotation and follow offset vector
-		Vector3 targetPos = _hop.GetCamTarget()-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
+		Vector3 targetPos=_player.position-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
+		if(_hop.enabled)
+			targetPos = _hop.GetCamTarget()-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
 		transform.position = Vector3.Lerp(transform.position,targetPos,_lerpSpeed*Time.deltaTime);
     }
 

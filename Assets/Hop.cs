@@ -41,6 +41,15 @@ public class Hop : MonoBehaviour
 		_bird=GetComponent<Bird>();
 		_terrain=FindObjectOfType<Terrain>();
 	}
+
+	void OnEnable(){
+		_camTarget=transform.position;
+	}
+
+	void OnDisable(){
+		_hopTimer=0;
+	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -112,7 +121,7 @@ public class Hop : MonoBehaviour
 
 				//fx
 				_anim.SetBool("hop",false);
-				Instantiate(_stepParts,transform.position,Quaternion.identity);
+				PlayStepParticles();
 				if(_disableAfterHop){
 					_disableAfterHop=false;
 					enabled=false;
@@ -121,10 +130,6 @@ public class Hop : MonoBehaviour
 		}
 		else{
 			//not hopping
-		}
-
-		if(!_npc&&Input.GetButtonDown("Jump")){
-			Debug.Log("Wants to jump");
 		}
     }
 
@@ -160,6 +165,10 @@ public class Hop : MonoBehaviour
 
 	public void FinishCurrentHop(){
 		_disableAfterHop=true;
+	}
+
+	public void PlayStepParticles(){
+		Instantiate(_stepParts,transform.position,Quaternion.identity);
 	}
 
 	void OnDrawGizmos(){

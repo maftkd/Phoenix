@@ -8,6 +8,7 @@ public class Bird : MonoBehaviour
 	public float _triggerRadius;
 	int _state;
 	Hop _hop;
+	Fly _fly;
 	RunAway _runAway;
 	Animator _anim;
 	AudioSource _ruffleAudio;
@@ -15,11 +16,8 @@ public class Bird : MonoBehaviour
 	public bool _playerControlled;
 	MCamera _mCam;
 	public Bird _mate;
-	public Transform _soundRing;
 	[HideInInspector]
 	public Vector3 _size;
-	public float _soundRingDelay;
-	public int _numSoundRings;
 	ParticleSystem _callParts;
 
 	void Awake(){
@@ -29,6 +27,7 @@ public class Bird : MonoBehaviour
 
 		//get references
 		_hop=GetComponent<Hop>();
+		_fly=GetComponent<Fly>();
 		_runAway=GetComponent<RunAway>();
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
@@ -38,6 +37,7 @@ public class Bird : MonoBehaviour
 
 		//disable things
 		_hop.enabled=false;
+		_fly.enabled=false;
 
 		/*#temp - may not always want to start with runAway
 		if(!_playerControlled){
@@ -68,6 +68,10 @@ public class Bird : MonoBehaviour
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
+					if(Input.GetButtonDown("Jump")){
+						//Debug.Log("Jump time");
+						Fly();
+					}
 					break;
 				case 1://hopping
 					if(!_hop.IsHopping()&&_mCam.GetControllerInput().sqrMagnitude<=0){
@@ -77,10 +81,15 @@ public class Bird : MonoBehaviour
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
+					if(Input.GetButtonDown("Jump")){
+						//Debug.Log("Jump time");
+						Fly();
+					}
 					break;
-				case 2://ruffling
-					break;
-				case 3://singing
+				case 2://flying
+					if(Input.GetButtonDown("Sing")){
+						Call();
+					}
 					break;
 			}
 		}
@@ -105,16 +114,6 @@ public class Bird : MonoBehaviour
 		//_state=3;
 		if(_playerControlled)
 			StartCoroutine(CallMateR());
-	}
-
-	IEnumerator SpawnSoundRings(int num){
-		yield return null;
-		for(int i=0; i<num; i++)
-		{
-			Transform soundRing = Instantiate(_soundRing);
-			soundRing.position=transform.position+Vector3.up*_size.y;
-			yield return new WaitForSeconds(_soundRingDelay);
-		}
 	}
 
 	IEnumerator CallMateR(){
@@ -142,6 +141,22 @@ public class Bird : MonoBehaviour
 
 	public bool Arrived(){
 		return _hop.Arrived(_triggerRadius);
+	}
+
+	void Fly(){
+		//disable hop
+		_hop.enabled=false;
+		//enable flight
+		_fly.enabled=true;
+		_state=2;
+		_anim.SetBool("hop",false);
+		_anim.SetTrigger("fly");
+	}
+	public void Land(){
+		_fly.enabled=false;
+		_state=0;
+		_anim.SetTrigger("land");
+		_hop.PlayStepParticles();
 	}
 
 	void OnDrawGizmos(){
