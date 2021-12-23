@@ -9,12 +9,15 @@ public class MCamera : MonoBehaviour
 	public float _lerpSpeed;
 	public float _minAngleLerp;
 	public float _maxAngleLerp;
-	public float _flyAngleLerp;
 	Vector3 _worldSpaceInput;
 	Vector3 _controllerInput;
 	public static Transform _player;
 	Hop _hop;
 	Fly _fly;
+	[Header("flying")]
+	public float _flyAngleLerp;
+	public float _maxPitch;
+	public float _flyingPitchOffset;
 	
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -35,15 +38,41 @@ public class MCamera : MonoBehaviour
     {
 		CalcInputVector();
 		//assume bird is hopping
-		//lerp rotation to match birds
+		//by default camera follows rotation faster if forward joystick is down. Prevents sharp 180s
 		float angleLerp = Mathf.Lerp(_maxAngleLerp,_minAngleLerp,-_controllerInput.y);
+
 		if(_fly.enabled)
 			angleLerp=_flyAngleLerp;
+
+		//face players back
 		Quaternion curRot=transform.rotation;
 		Vector3 birdBack=-_player.forward;
 		transform.forward=_player.forward;
+		Vector3 eulers;
+		if(_fly.enabled)
+		{
+			//if flying forward, follow velocity
+			if(_fly._forwardness>0)
+				transform.forward=_fly._velocity.normalized;
+			eulers = transform.eulerAngles;
+			float x = eulers.x;
+			if(x>180)
+				x=-(360-x);
+			else if(x<-180)
+				x=(360+x);
+			if(Mathf.Abs(x)>_maxPitch){
+				eulers.x=_maxPitch*Mathf.Sign(x);
+			}
+			eulers.x+=_flyingPitchOffset;
+			transform.eulerAngles=eulers;
+		}
 		Quaternion targetRot=transform.rotation;
 		transform.rotation=Quaternion.Slerp(curRot,targetRot,angleLerp*Time.deltaTime);
+
+		//remove roll
+		eulers = transform.eulerAngles;
+		eulers.z=0;
+		transform.eulerAngles=eulers;
 
 		//lerp position based on rotation and follow offset vector
 		Vector3 targetPos=_player.position-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;

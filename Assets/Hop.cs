@@ -64,11 +64,11 @@ public class Hop : MonoBehaviour
 			transform.forward=input;
 			Quaternion targetRot=transform.rotation;
 			transform.rotation=Quaternion.Slerp(curRot,targetRot,_turnLerp*Time.deltaTime);
-			transform.position+=transform.forward*_hopSpeed*Time.deltaTime;
+			transform.position+=transform.forward*_hopSpeed*Time.deltaTime*input.magnitude;
 
 			if(_hopTimer<=0){
 				Vector3 rayStart=transform.position+Vector3.up*_bird._size.y*2;
-				rayStart+=transform.forward*_hopDist;
+				rayStart+=transform.forward*_hopDist*input.magnitude;
 				RaycastHit hit;
 				if(Physics.Raycast(rayStart,Vector3.down, out hit, _bird._size.y*4f,1)){
 					//check for good ground spot
@@ -80,8 +80,6 @@ public class Hop : MonoBehaviour
 						_hopTarget=hit.point.y;
 						_hopTimer=_hopTime;
 						_hopStart=transform.position.y;
-						//_midPos=Vector3.Lerp(_hopStart,_hopTarget,0.5f);
-						//_midPos+=Vector3.up*(_hopHeight+_hopHeightRandom*(Random.value*2-1));
 						_midPos=Mathf.Lerp(_hopStart,_hopTarget,0.5f)+(_hopHeight+_hopHeightRandom*(Random.value*2-1));
 						_footstep=hit.transform.GetComponent<Footstep>();
 						_anim.SetBool("hop",true);
@@ -110,7 +108,12 @@ public class Hop : MonoBehaviour
 			if(_hopTimer<=0){
 				//end of hop
 				pos=transform.position;
-				pos.y=_hopTarget;
+				RaycastHit hit;
+				if(Physics.Raycast(pos+Vector3.up*_bird._size.y,Vector3.down, out hit, _bird._size.y*2f,1)){
+					pos.y=hit.point.y;
+				}
+				else
+					pos.y=_hopTarget;
 				transform.position=pos;
 				_camTarget=transform.position;
 
