@@ -33,7 +33,6 @@ public class Bird : MonoBehaviour
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
 		_callAudio=transform.Find("Call").GetComponent<AudioSource>();
 		_callParts=_callAudio.GetComponent<ParticleSystem>();
-		_mCam=FindObjectOfType<MCamera>();
 
 		//disable things
 		_hop.enabled=false;
@@ -50,6 +49,7 @@ public class Bird : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+		_mCam=FindObjectOfType<MCamera>();
 		_player=MCamera._player;
     }
 
@@ -152,11 +152,12 @@ public class Bird : MonoBehaviour
 		_anim.SetBool("hop",false);
 		_anim.SetTrigger("fly");
 	}
-	public void Land(){
+	public void Land(float vel){
 		_fly.enabled=false;
 		_state=0;
 		_anim.SetTrigger("land");
 		_hop.PlayStepParticles();
+		_mCam.Shake(vel);
 	}
 
 	void OnDrawGizmos(){

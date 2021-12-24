@@ -18,6 +18,12 @@ public class MCamera : MonoBehaviour
 	public float _flyAngleLerp;
 	public float _maxPitch;
 	public float _flyingPitchOffset;
+	[Header("Camera shake")]
+	public float _durationMult;
+	public float _frequencyMult;
+	public float _amplitude;
+	public AnimationCurve _ampCurve;
+	Vector3 _shake;
 	
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -78,7 +84,7 @@ public class MCamera : MonoBehaviour
 		Vector3 targetPos=_player.position-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
 		if(_hop.enabled)
 			targetPos = _hop.GetCamTarget()-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
-		transform.position = Vector3.Lerp(transform.position,targetPos,_lerpSpeed*Time.deltaTime);
+		transform.position = Vector3.Lerp(transform.position,targetPos,_lerpSpeed*Time.deltaTime)+_shake;
     }
 
 	void CalcInputVector(){
@@ -105,5 +111,39 @@ public class MCamera : MonoBehaviour
 
 	public Vector3 GetControllerInput(){
 		return _controllerInput;
+	}
+
+	public void Shake(float v){
+		StartCoroutine(ShakeR(v));
+	}
+
+	IEnumerator ShakeR(float v){
+		yield return null;
+		float timer = 0;
+		float t = 0;
+		float dur = v*_durationMult;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			t=timer/dur;
+			_shake=Vector3.up*Mathf.Sin(timer*v*_frequencyMult)*_amplitude*v*_ampCurve.Evaluate(t);
+			yield return null;
+		}
+		_shake=Vector3.zero;
+
+		/*
+		transform.position=_defaultPos;
+		float timer =0;
+		float t=0;
+		float dur=v*_durationMult;
+		_cam.orthographicSize=_zoomSize;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			t=timer/v;
+			transform.position=_defaultPos+Vector3.up*Mathf.Sin(timer*v*_frequencyMult)*_amplitude*v*_ampCurve.Evaluate(t);
+			//_cam.orthographicSize=Mathf.Lerp(_defaultSize,_zoomSize,_fovCurve.Evaluate(t));
+			yield return null;
+		}
+		_cam.orthographicSize=_defaultSize;
+		*/
 	}
 }

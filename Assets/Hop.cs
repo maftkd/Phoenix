@@ -37,7 +37,6 @@ public class Hop : MonoBehaviour
 		_camTarget=transform.position;
 		_anim=GetComponent<Animator>();
 		_anim.SetFloat("hopTime",1f/_hopTime);
-		_mCam=FindObjectOfType<MCamera>();
 		_bird=GetComponent<Bird>();
 		_terrain=FindObjectOfType<Terrain>();
 	}
@@ -53,6 +52,7 @@ public class Hop : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+		_mCam=FindObjectOfType<MCamera>();
     }
 
     // Update is called once per frame

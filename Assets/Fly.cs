@@ -222,9 +222,10 @@ public class Fly : MonoBehaviour
 				transform.eulerAngles=eulers;
 				Soar(false);
 				Footstep footstep=hit.transform.GetComponent<Footstep>();
+				float vel = -_velocity.y/_maxVel.y;
 				if(footstep!=null)
-					footstep.Sound(_groundPoint);
-				_bird.Land();
+					footstep.Sound(_groundPoint,vel);
+				_bird.Land(vel);
 			}
 		}
 		else{
