@@ -96,9 +96,9 @@ public class MCamera : MonoBehaviour
 		flatForward.Normalize();
 		Vector3 flatRight=Vector3.Cross(Vector3.up,flatForward);
 		_worldSpaceInput = Vector3.zero;
-		if(Mathf.Abs(verIn)>_hop._inThresh)
+		//if(Mathf.Abs(verIn)>_hop._inThresh)
 			_worldSpaceInput+=verIn*flatForward;
-		if(Mathf.Abs(horIn)>_hop._inThresh)
+		//if(Mathf.Abs(horIn)>_hop._inThresh)
 			_worldSpaceInput+=horIn*flatRight;
 		float sqrMag=_worldSpaceInput.sqrMagnitude;
 		if(sqrMag>1)

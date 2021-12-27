@@ -4,26 +4,26 @@ using UnityEngine;
 
 public class Hop : MonoBehaviour
 {
-	[Range(0f,1f)]
-	public float _inThresh;
-	public float _hopDist;
-	public float _hopSpeed;
-	public float _hopHeight;
-	public float _hopHeightRandom;
-	public float _turnLerp;
-	float _hopTarget;
-	float _hopStart;
-	float _midPos;
 	Vector3 _camTarget;
-	float _hopTimer;
-	float _hopTime;
 	Footstep _footstep;
 	Collider [] _cols;
 	Animator _anim;
 	MCamera _mCam;
 	public Transform _stepParts;
-	bool _disableAfterHop;
+	//bool _disableAfterHop;
 	Bird _bird;
+	bool _hopping;
+	float _velocity;
+	public float _hopAccel;
+	public float _gravity;
+	float _hopStartY;
+	public float _airControl;
+	public float _airTurnLerp;
+	public float _hopVolumeMult;
+	public float _hopCancelWindow;
+	float _hopTimer;
+	Vector3 _hopStartPos;
+	Quaternion _hopStartRot;
 
 	//ai hopping
 	Terrain _terrain;
@@ -33,10 +33,10 @@ public class Hop : MonoBehaviour
 
 	void Awake(){
 		_cols = new Collider[2];
-		_hopTime=_hopDist/_hopSpeed;
 		_camTarget=transform.position;
 		_anim=GetComponent<Animator>();
-		_anim.SetFloat("hopTime",1f/_hopTime);
+		float hopTime=2f*_hopAccel/_gravity;
+		_anim.SetFloat("hopTime",1f/hopTime);
 		_bird=GetComponent<Bird>();
 		_terrain=FindObjectOfType<Terrain>();
 	}
@@ -46,7 +46,6 @@ public class Hop : MonoBehaviour
 	}
 
 	void OnDisable(){
-		_hopTimer=0;
 	}
 
     // Start is called before the first frame update
@@ -59,80 +58,73 @@ public class Hop : MonoBehaviour
     void Update()
     {
 		Vector3 input=_npc ? _npcInput : _mCam.GetInputDir();
-		if(input.sqrMagnitude>0){
-			Quaternion curRot=transform.rotation;
-			transform.forward=input;
-			Quaternion targetRot=transform.rotation;
-			transform.rotation=Quaternion.Slerp(curRot,targetRot,_turnLerp*Time.deltaTime);
-			transform.position+=transform.forward*_hopSpeed*Time.deltaTime*input.magnitude;
-
-			if(_hopTimer<=0){
-				Vector3 rayStart=transform.position+Vector3.up*_bird._size.y*2;
-				rayStart+=transform.forward*_hopDist*input.magnitude;
-				RaycastHit hit;
-				if(Physics.Raycast(rayStart,Vector3.down, out hit, _bird._size.y*4f,1)){
-					//check for good ground spot
-					if(Physics.OverlapSphereNonAlloc(hit.point+Vector3.up*_bird._size.y,0.01f,_cols,1)>0){
-						//make sure no walls are in the way
-						Debug.Log("wobble");
-					}
-					else{
-						_hopTarget=hit.point.y;
-						_hopTimer=_hopTime;
-						_hopStart=transform.position.y;
-						_midPos=Mathf.Lerp(_hopStart,_hopTarget,0.5f)+(_hopHeight+_hopHeightRandom*(Random.value*2-1));
-						_footstep=hit.transform.GetComponent<Footstep>();
-						_anim.SetBool("hop",true);
-					}
-				}
-				else{
-				}
+		if(!_hopping){
+			if(input.sqrMagnitude>0){
+				_hopping=true;
+				_anim.SetBool("hop",true);
+				_hopStartY=transform.position.y;
+				_velocity=_hopAccel;
+				_hopTimer=0;
+				_hopStartPos=transform.position;
+				_hopStartRot=transform.rotation;
 			}
 		}
-
-		if(_hopTimer>0)
+		if(_hopping)
 		{
-			float t = 1f-_hopTimer/_hopTime;
-			float y=0;
-			if(t<0.5f)//first half of hop
-				y=Mathf.Lerp(_hopStart,_midPos,t*2f);
-			else//second half of hop
-				y=Mathf.Lerp(_midPos,_hopTarget,(t-0.5f)*2f);
-			Vector3 pos = transform.position;
-			pos.y=y;
-			transform.position=pos;
-			_camTarget=transform.position;
-			_camTarget.y=Mathf.Lerp(_hopStart,_hopTarget,t);
+			Vector3 startPos=transform.position;
 
-			_hopTimer-=Time.deltaTime;
-			if(_hopTimer<=0){
-				//end of hop
-				pos=transform.position;
-				RaycastHit hit;
-				if(Physics.Raycast(pos+Vector3.up*_bird._size.y,Vector3.down, out hit, _bird._size.y*2f,1)){
-					pos.y=hit.point.y;
-				}
-				else
-					pos.y=_hopTarget;
-				transform.position=pos;
+			//rotation
+			if(input.sqrMagnitude>0){
+				Quaternion curRot=transform.rotation;
+				transform.forward=input;
+				Quaternion targetRot=transform.rotation;
+				transform.rotation=Quaternion.Slerp(curRot,targetRot,_airTurnLerp*Time.deltaTime);
+			}
+			else if(_hopTimer<_hopCancelWindow){
+				//hop cancel
+				transform.position=_hopStartPos;
+				transform.rotation=_hopStartRot;
+				_hopping=false;
+				_anim.SetBool("hop",false);
+				_camTarget=transform.position;
+				return;
+			}
+		
+			//air control
+			transform.position+=transform.forward*input.magnitude*Time.deltaTime*_airControl;
+
+			//apply physics
+			transform.position+=_velocity*Vector3.up*Time.deltaTime;
+			_velocity-=_gravity*Time.deltaTime;
+			_camTarget=transform.position;
+			if(_camTarget.y>_hopStartPos.y)
+				_camTarget.y=_hopStartY;
+
+			//hit detection
+			Vector3 posDelta=transform.position-startPos;
+			Vector3 rayStart=startPos-posDelta;//start back?
+			RaycastHit hit;
+			if(Physics.Raycast(rayStart,posDelta, out hit,posDelta.magnitude*2f+0.001f,1)){
+				transform.position=hit.point;
+				_hopping=false;
 				_camTarget=transform.position;
 
-				//footstep audio
-				if(_footstep!=null)
-					_footstep.Sound(transform.position);
-				//transform.eulerAngles=Vector3.zero;
-
-				//fx
-				_anim.SetBool("hop",false);
-				PlayStepParticles();
-				if(_disableAfterHop){
-					_disableAfterHop=false;
-					enabled=false;
+				//sfx + vfx
+				if(_hopTimer>_hopCancelWindow){
+					_footstep=hit.transform.GetComponent<Footstep>();
+					if(_footstep!=null)
+						_footstep.Sound(transform.position,_hopVolumeMult);
+					PlayStepParticles();
 				}
+				//anim stuff
+				_anim.SetBool("hop",false);
+				
+				//re-calibrate if npc
+				if(_npc)
+					HopTo(_destination);
+				
 			}
-		}
-		else{
-			//not hopping
+			_hopTimer+=Time.deltaTime;
 		}
     }
 
@@ -146,7 +138,12 @@ public class Hop : MonoBehaviour
 
 	public void HopTo(Vector3 target){
 		_destination=target;
-		_destination.y=_terrain.SampleHeight(target);
+		//#replace - gotta use a ray-cast because the map may consist of non-terrain elements
+		//_destination.y=_terrain.SampleHeight(target);
+		RaycastHit hit;
+		if(Physics.Raycast(_destination+Vector3.up*1f,Vector3.down, out hit,1f,1)){
+			_destination.y=hit.point.y;
+		}
 		Vector3 diff = _destination-transform.position;
 		diff.y=0;
 		diff.Normalize();
@@ -158,16 +155,23 @@ public class Hop : MonoBehaviour
 	}
 
 	public void StopHopping(){
+		transform.position=_destination;
+		/*
+		Vector3 pos = transform.position;
+		pos.y=_destination.y;
+		transform.position=pos;
+		*/
 		_npcInput=Vector3.zero;
 		_anim.SetBool("hop",false);
 	}
 
 	public bool IsHopping(){
-		return _hopTimer>0;
+		//return _hopTimer>0;
+		return _hopping;
 	}
 
 	public void FinishCurrentHop(){
-		_disableAfterHop=true;
+		//_disableAfterHop=true;
 	}
 
 	public void PlayStepParticles(){

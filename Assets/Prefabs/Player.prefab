@@ -12049,7 +12049,7 @@ SphereCollider:
   m_GameObject: {fileID: 6593778029760034153}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.05
   m_Center: {x: 0, y: 0.03, z: 0}
@@ -12081,14 +12081,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa05e4c2f9b8a3c419efe7f8194f61f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inThresh: 0
-  _hopDist: 0.4
-  _hopSpeed: 1
-  _hopHeight: 0.05
-  _hopHeightRandom: 0.02
-  _turnLerp: 10
   _stepParts: {fileID: 8133553963985264395, guid: 2a66c56a49bdd7e46858d8cad3a6ec30,
     type: 3}
+  _hopAccel: 0.8
+  _gravity: 3
+  _airControl: 1.5
+  _airTurnLerp: 5
+  _hopVolumeMult: 0.1
+  _hopCancelWindow: 0.1
   _npc: 0
 --- !u!114 &9024355052092820736
 MonoBehaviour:

@@ -85,7 +85,7 @@ PrefabInstance:
     - target: {fileID: 6593778029760034153, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
       propertyPath: m_Name
-      value: CardinalMate Variant
+      value: Mate Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6593778029760034153, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}

@@ -279,7 +279,7 @@ AnimatorController:
     m_Controller: {fileID: 0}
   - m_Name: hopTime
     m_Type: 1
-    m_DefaultFloat: 0
+    m_DefaultFloat: 2
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
@@ -962,7 +962,7 @@ AnimatorStateMachine:
     m_Position: {x: -990, y: 190, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 110220718}
-    m_Position: {x: -590, y: -240, z: 0}
+    m_Position: {x: -530, y: -220, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 110224942}
     m_Position: {x: -480, y: 470, z: 0}
@@ -971,7 +971,7 @@ AnimatorStateMachine:
     m_Position: {x: -1060, y: 40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8125047075766596844}
-    m_Position: {x: -700, y: -270, z: 0}
+    m_Position: {x: -750, y: -200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2880228870787443511}
     m_Position: {x: -150, y: 50, z: 0}

@@ -72,6 +72,7 @@ public class Bird : MonoBehaviour
 						//Debug.Log("Jump time");
 						Fly();
 					}
+
 					break;
 				case 1://hopping
 					if(!_hop.IsHopping()&&_mCam.GetControllerInput().sqrMagnitude<=0){
@@ -91,6 +92,15 @@ public class Bird : MonoBehaviour
 						Call();
 					}
 					break;
+			}
+
+			if(Input.GetButtonDown("Pause"))
+			{
+#if UNITY_EDITOR
+				UnityEditor.EditorApplication.isPlaying = false;
+#else
+				Application.Quit();
+#endif
 			}
 		}
     }
