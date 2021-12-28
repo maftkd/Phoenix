@@ -146,9 +146,8 @@ public class River : MonoBehaviour
 		}
 		for(int i=_riverAudio.childCount-1;i>=0;i--)
 			DestroyImmediate(_riverAudio.GetChild(i).gameObject);
-		foreach(Vector3 p in _points){
-			Instantiate(_sfxPrefab,p,Quaternion.identity,_riverAudio);
-		}
+		//just put a source near the middle
+		Instantiate(_sfxPrefab,_points[_points.Count/2],Quaternion.identity,_riverAudio);
 	}
 
 	void OnValidate(){

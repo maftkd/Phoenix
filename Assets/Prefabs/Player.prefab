@@ -11978,6 +11978,7 @@ GameObject:
   - component: {fileID: 4260116865516656906}
   - component: {fileID: 7931520191058087943}
   - component: {fileID: 9024355052092820736}
+  - component: {fileID: 5272248166187866681}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -12069,6 +12070,10 @@ MonoBehaviour:
   _playerControlled: 0
   _mate: {fileID: 0}
   _size: {x: 0, y: 0, z: 0}
+  _collisionLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  _walkThreshold: 0.95
 --- !u!114 &7931520191058087943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12083,12 +12088,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _stepParts: {fileID: 8133553963985264395, guid: 2a66c56a49bdd7e46858d8cad3a6ec30,
     type: 3}
-  _hopAccel: 0.8
-  _gravity: 3
-  _airControl: 1.5
-  _airTurnLerp: 5
+  _hopAccel: 1
+  _gravity: 5
+  _airControl: 1.2
+  _inputSmoothLerp: 6
+  _airTurnLerp: 10
   _hopVolumeMult: 0.1
   _hopCancelWindow: 0.1
+  _minDotToHop: 0.5
+  _footOffset: 0.015
+  _hopBoostWindow: 0.5
+  _hopBoost: 2
   _npc: 0
 --- !u!114 &9024355052092820736
 MonoBehaviour:
@@ -12119,6 +12129,22 @@ MonoBehaviour:
   _soarVolume: 0.15
   _flapParts: {fileID: 6898834388162613930, guid: edc6a0550ab36cb4eb9b56c5af76b3de,
     type: 3}
+--- !u!114 &5272248166187866681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6593778029760034153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e95a46172bcf9c44d9c478ca7067525e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _walkSpeed: 0.5
+  _maxWalkSlope: 1.5
+  _animSpeedMult: 3
+  _stepVolume: 0.01
 --- !u!1 &6593778029760034157
 GameObject:
   m_ObjectHideFlags: 0

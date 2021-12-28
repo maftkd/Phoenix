@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Bird : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class Bird : MonoBehaviour
 	int _state;
 	Hop _hop;
 	Fly _fly;
+	Waddle _waddle;
 	RunAway _runAway;
 	Animator _anim;
 	AudioSource _ruffleAudio;
@@ -19,6 +21,8 @@ public class Bird : MonoBehaviour
 	[HideInInspector]
 	public Vector3 _size;
 	ParticleSystem _callParts;
+	public LayerMask _collisionLayer;
+	public float _walkThreshold;
 
 	void Awake(){
 		//calculations
@@ -28,6 +32,7 @@ public class Bird : MonoBehaviour
 		//get references
 		_hop=GetComponent<Hop>();
 		_fly=GetComponent<Fly>();
+		_waddle=GetComponent<Waddle>();
 		_runAway=GetComponent<RunAway>();
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
@@ -63,6 +68,28 @@ public class Bird : MonoBehaviour
 				default:
 					if(_mCam.GetControllerInput().sqrMagnitude>0)
 					{
+						if(_mCam.GetControllerInput().sqrMagnitude<_walkThreshold*_walkThreshold)
+							StartWaddling();
+						else
+							StartHopping();
+					}
+					if(Input.GetButtonDown("Sing")){
+						Call();
+					}
+					if(Input.GetButtonDown("Jump")){
+						//Debug.Log("Jump time");
+						Fly();
+					}
+
+					break;
+				case 1://waddling
+					if(_mCam.GetControllerInput().sqrMagnitude<=0){
+						_state=0;
+						_waddle.enabled=false;
+						_anim.SetFloat("walkSpeed",0f);
+					}
+					else if(_mCam.GetControllerInput().sqrMagnitude>=_walkThreshold*_walkThreshold){
+						//Debug.Log(_mCam.GetControllerInput().magnitude);
 						StartHopping();
 					}
 					if(Input.GetButtonDown("Sing")){
@@ -72,12 +99,15 @@ public class Bird : MonoBehaviour
 						//Debug.Log("Jump time");
 						Fly();
 					}
-
 					break;
-				case 1://hopping
+				case 2://hopping
 					if(!_hop.IsHopping()&&_mCam.GetControllerInput().sqrMagnitude<=0){
 						_state=0;
 						_hop.enabled=false;
+						_anim.SetFloat("walkSpeed",0f);
+					}
+					if(!_hop.IsHopping()&&_mCam.GetControllerInput().sqrMagnitude<=_walkThreshold*_walkThreshold){
+						StartWaddling();
 					}
 					if(Input.GetButtonDown("Sing")){
 						Call();
@@ -87,7 +117,7 @@ public class Bird : MonoBehaviour
 						Fly();
 					}
 					break;
-				case 2://flying
+				case 3://flying
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
@@ -96,11 +126,14 @@ public class Bird : MonoBehaviour
 
 			if(Input.GetButtonDown("Pause"))
 			{
+				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+				/*
 #if UNITY_EDITOR
 				UnityEditor.EditorApplication.isPlaying = false;
 #else
 				Application.Quit();
 #endif
+*/
 			}
 		}
     }
@@ -135,17 +168,25 @@ public class Bird : MonoBehaviour
 	public void HopTo(Vector3 loc){
 		_hop.enabled=true;
 		_hop.HopTo(loc);
-		_state=1;
+		_state=2;
 	}
 
 	void StartHopping(){
-		_state=1;
+		_state=2;
 		_hop.enabled=true;
+		_waddle.enabled=false;
+	}
+
+	void StartWaddling(){
+		_state=1;
+		_waddle.enabled=true;
+		_hop.enabled=false;
 	}
 
 	public void StopHopping(){
 		_hop.StopHopping();
 		_hop.enabled=false;
+		_anim.SetFloat("walkSpeed",0f);
 		_state=0;
 	}
 
@@ -154,12 +195,13 @@ public class Bird : MonoBehaviour
 	}
 
 	void Fly(){
+		//disable waddle
+		_waddle.enabled=false;
 		//disable hop
 		_hop.enabled=false;
 		//enable flight
 		_fly.enabled=true;
-		_state=2;
-		_anim.SetBool("hop",false);
+		_state=3;
 		_anim.SetTrigger("fly");
 	}
 	public void Land(float vel){

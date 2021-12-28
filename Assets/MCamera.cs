@@ -24,6 +24,10 @@ public class MCamera : MonoBehaviour
 	public float _amplitude;
 	public AnimationCurve _ampCurve;
 	Vector3 _shake;
+	int _state;
+	Transform _camTarget;
+	[Header("Planar cam")]
+	public float _planeCamLerp;
 	
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -39,58 +43,73 @@ public class MCamera : MonoBehaviour
         
     }
 
+	Vector3 targetPos;
     // Update is called once per frame
     void Update()
     {
 		CalcInputVector();
-		//assume bird is hopping
-		//by default camera follows rotation faster if forward joystick is down. Prevents sharp 180s
-		float angleLerp = Mathf.Lerp(_maxAngleLerp,_minAngleLerp,-_controllerInput.y);
+		switch(_state){
+			case 0:
+			default:
+				float angleLerp=_maxAngleLerp;
+				//float angleLerp = Mathf.Lerp(_maxAngleLerp,_minAngleLerp,-_controllerInput.y);
 
-		if(_fly.enabled)
-			angleLerp=_flyAngleLerp;
+				if(_fly.enabled)
+					angleLerp=_flyAngleLerp;
 
-		//face players back
-		Quaternion curRot=transform.rotation;
-		Vector3 birdBack=-_player.forward;
-		transform.forward=_player.forward;
-		Vector3 eulers;
-		if(_fly.enabled)
-		{
-			//if flying forward, follow velocity
-			if(_fly._forwardness>0)
-				transform.forward=_fly._velocity.normalized;
-			eulers = transform.eulerAngles;
-			float x = eulers.x;
-			if(x>180)
-				x=-(360-x);
-			else if(x<-180)
-				x=(360+x);
-			if(Mathf.Abs(x)>_maxPitch){
-				eulers.x=_maxPitch*Mathf.Sign(x);
-			}
-			eulers.x+=_flyingPitchOffset;
-			transform.eulerAngles=eulers;
+				//face players back
+				Quaternion curRot=transform.rotation;
+				Vector3 birdBack=-_player.forward;
+				transform.forward=_player.forward;
+				Vector3 eulers;
+				if(_fly.enabled)
+				{
+					//if flying forward, follow velocity
+					if(_fly._forwardness>0)
+						transform.forward=_fly._velocity.normalized;
+					eulers = transform.eulerAngles;
+					float x = eulers.x;
+					if(x>180)
+						x=-(360-x);
+					else if(x<-180)
+						x=(360+x);
+					if(Mathf.Abs(x)>_maxPitch){
+						eulers.x=_maxPitch*Mathf.Sign(x);
+					}
+					eulers.x+=_flyingPitchOffset;
+					transform.eulerAngles=eulers;
+				}
+				Quaternion targetRot=transform.rotation;
+				transform.rotation=Quaternion.Slerp(curRot,targetRot,angleLerp*Time.deltaTime);
+
+				//remove roll
+				eulers = transform.eulerAngles;
+				eulers.z=0;
+				transform.eulerAngles=eulers;
+
+				//lerp position based on rotation and follow offset vector
+				targetPos=_player.position-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
+				if(_hop.enabled)
+					targetPos = _hop.GetCamTarget()-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
+				transform.position = Vector3.Lerp(transform.position,targetPos,_lerpSpeed*Time.deltaTime)+_shake;
+				break;
+			case 1://planar camera
+				targetPos = _camTarget.position;
+				targetPos.z=_player.position.z;
+				transform.position = Vector3.Lerp(transform.position,targetPos,_planeCamLerp*Time.deltaTime);
+				transform.rotation = Quaternion.Slerp(transform.rotation,_camTarget.rotation,_planeCamLerp*Time.deltaTime);
+				break;
+			case 2:
+				break;
 		}
-		Quaternion targetRot=transform.rotation;
-		transform.rotation=Quaternion.Slerp(curRot,targetRot,angleLerp*Time.deltaTime);
-
-		//remove roll
-		eulers = transform.eulerAngles;
-		eulers.z=0;
-		transform.eulerAngles=eulers;
-
-		//lerp position based on rotation and follow offset vector
-		Vector3 targetPos=_player.position-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
-		if(_hop.enabled)
-			targetPos = _hop.GetCamTarget()-transform.forward*_followOffset.z+Vector3.up*_followOffset.y;
-		transform.position = Vector3.Lerp(transform.position,targetPos,_lerpSpeed*Time.deltaTime)+_shake;
     }
 
 	void CalcInputVector(){
 		float verIn = Input.GetAxis("Vertical");
 		float horIn = Input.GetAxis("Horizontal");
 		_controllerInput=new Vector3(horIn,verIn,0);
+		if(_controllerInput.sqrMagnitude>1)
+			_controllerInput.Normalize();
 		Vector3 flatForward=transform.forward;
 		flatForward.y=0;
 		flatForward.Normalize();
@@ -129,21 +148,14 @@ public class MCamera : MonoBehaviour
 			yield return null;
 		}
 		_shake=Vector3.zero;
+	}
 
-		/*
-		transform.position=_defaultPos;
-		float timer =0;
-		float t=0;
-		float dur=v*_durationMult;
-		_cam.orthographicSize=_zoomSize;
-		while(timer<dur){
-			timer+=Time.deltaTime;
-			t=timer/v;
-			transform.position=_defaultPos+Vector3.up*Mathf.Sin(timer*v*_frequencyMult)*_amplitude*v*_ampCurve.Evaluate(t);
-			//_cam.orthographicSize=Mathf.Lerp(_defaultSize,_zoomSize,_fovCurve.Evaluate(t));
-			yield return null;
+	public void SetCamPlane(Transform t){
+		if(t==null)
+			_state=0;
+		else{
+			_camTarget=t;
+			_state=1;
 		}
-		_cam.orthographicSize=_defaultSize;
-		*/
 	}
 }

@@ -203,64 +203,25 @@ public class Fly : MonoBehaviour
 			_velocity.x=-_maxVel.x;
 
 		//apply physics
+		Vector3 prevPos=transform.position;
 		transform.position+=_velocity*Time.deltaTime;
 		_velocity+=Vector3.down*_gravity*Time.deltaTime;
 
-		//collision detection
+		Vector3 ray = transform.position-prevPos;
 		RaycastHit hit;
-		if(_velocity.y<=0&&Physics.Raycast(transform.position+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y, 1)){
-			//ground check
-			if(!hit.transform.GetComponent<Collider>().isTrigger)
-			{
-				_groundPoint=hit.point;
-				transform.position=_groundPoint;
-				Vector3 eulers = transform.eulerAngles;
-				Debug.Log("eulers.x: "+eulers.x);
-				Debug.Log("target pitch: "+targetPitch);
-				eulers.z=0;
-				eulers.x=0;
-				transform.eulerAngles=eulers;
-				Soar(false);
-				Footstep footstep=hit.transform.GetComponent<Footstep>();
-				float vel = -_velocity.y/_maxVel.y;
-				if(footstep!=null)
-					footstep.Sound(_groundPoint,vel);
-				_bird.Land(vel);
-			}
+		if(Physics.Raycast(prevPos,ray,out hit, ray.magnitude+0.01f,_bird._collisionLayer)){
+			transform.position=prevPos;
+			Vector3 eulers = transform.eulerAngles;
+			eulers.z=0;
+			eulers.x=0;
+			transform.eulerAngles=eulers;
+			Soar(false);
+			Footstep footstep=hit.transform.GetComponent<Footstep>();
+			float vel = -_velocity.y/_maxVel.y;
+			if(footstep!=null)
+				footstep.Sound(_groundPoint,vel);
+			_bird.Land(vel);
 		}
-		else{
-			if(Physics.Raycast(transform.position,Vector3.up,out hit, _bird._size.y, 1)){
-				//ceiling check
-				if(!hit.transform.GetComponent<Collider>().isTrigger)
-				{
-					if(_velocity.y>0)
-					{
-						_velocity.y=0;
-						//_thonk.Play();
-						Debug.Log("thonk");
-					}
-					_flapTimer=_flapDur;
-				}
-			}
-			else{
-				if(Physics.Raycast(transform.position+Vector3.up*_bird._size.y,Vector3.right*_velocity.x,out hit, _bird._size.y, 1)){
-					//side wall check
-					if(!hit.transform.GetComponent<Collider>().isTrigger)
-					{
-						_velocity.x=0;
-						/*
-						if(!_thonk.isPlaying)
-							_thonk.Play();
-							*/
-						Debug.Log("thonk");
-						_flapTimer=_flapDur;
-						//undo last velocity
-						transform.position-=Vector3.right*_velocity.x*Time.deltaTime;
-					}
-				}
-			}
-		}
-        
     }
 
 	void Flap(){

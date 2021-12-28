@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Footstep : MonoBehaviour
 {
@@ -10,7 +11,8 @@ public class Footstep : MonoBehaviour
 	public float _volume;
 	float _walkSpeed;
 	float _runSpeed;
-	public static int _numSources=10;
+	public static int _numSources=5;
+	public UnityEvent _onPlay;
 
 	public class FootstepEventArgs : System.EventArgs{
 		public Vector3 pos;
@@ -30,6 +32,11 @@ public class Footstep : MonoBehaviour
 		//_sources = transform.GetComponentsInChildren<AudioSource>();
     }
 
+	public void AssignSynthClip(Synthesizer synth){
+		_clips = new AudioClip[1];
+		_clips[0]=synth._myClip;
+	}
+
     // Update is called once per frame
     void Update()
     {
@@ -37,7 +44,7 @@ public class Footstep : MonoBehaviour
     }
 
 	public void Sound(Vector3 pos,float volume=-1f){
-		if(_sources==null)
+		if(_sources==null||_clips.Length==0)
 			return;
 		foreach(AudioSource s in _sources){
 			if(!s.isPlaying){
@@ -47,6 +54,7 @@ public class Footstep : MonoBehaviour
 				s.transform.position=pos;
 				s.clip=_clips[Random.Range(0,_clips.Length)];
 				s.Play();
+				_onPlay.Invoke();
 				if(OnFootstep!=null)
 				{
 					FootstepEventArgs args= new FootstepEventArgs();
