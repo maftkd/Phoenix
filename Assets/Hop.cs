@@ -9,11 +9,13 @@ public class Hop : MonoBehaviour
 	Collider [] _cols;
 	Animator _anim;
 	MCamera _mCam;
+	[Header("Vfx")]
 	public Transform _stepParts;
 	//bool _disableAfterHop;
 	Bird _bird;
 	bool _hopping;
 	float _velocity;
+	[Header("Physics")]
 	public float _hopAccel;
 	public float _gravity;
 	float _hopStartY;
@@ -33,6 +35,7 @@ public class Hop : MonoBehaviour
 	[Header("Hop boost")]
 	public float _hopBoostWindow;
 	public float _hopBoost;
+	
 
 	//ai hopping
 	Terrain _terrain;
@@ -152,6 +155,8 @@ public class Hop : MonoBehaviour
 							_footstep.Sound(transform.position);
 						}
 						PlayStepParticles();
+						_bird.MakeFootprint();
+						_bird.MakeFootprint(0.01f);
 					}
 					
 					//re-calibrate if npc

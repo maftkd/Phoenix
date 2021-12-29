@@ -23,6 +23,10 @@ public class Bird : MonoBehaviour
 	ParticleSystem _callParts;
 	public LayerMask _collisionLayer;
 	public float _walkThreshold;
+	[Header("Footprints")]
+	public Transform _footprint;
+	public Vector3 _footprintOffset;
+	int _leftRightPrint=1;
 
 	void Awake(){
 		//calculations
@@ -210,6 +214,16 @@ public class Bird : MonoBehaviour
 		_anim.SetTrigger("land");
 		_hop.PlayStepParticles();
 		_mCam.Shake(vel);
+	}
+
+	public void MakeFootprint(float offset=0){
+		Transform fp = Instantiate(_footprint,transform.position,Quaternion.identity);
+		//orientate
+		fp.forward=Vector3.down;
+		//offset footprint
+		fp.position+=Vector3.up*_footprintOffset.y+transform.right*_footprintOffset.x*_leftRightPrint;
+		fp.position+=offset*transform.forward;
+		_leftRightPrint*=-1;
 	}
 
 	void OnDrawGizmos(){

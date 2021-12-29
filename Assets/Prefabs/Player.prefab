@@ -12073,7 +12073,10 @@ MonoBehaviour:
   _collisionLayer:
     serializedVersion: 2
     m_Bits: 1
-  _walkThreshold: 0.95
+  _walkThreshold: 0.99
+  _footprint: {fileID: 6281567206045793963, guid: 51d67c04f4db344459bb599647a03a9c,
+    type: 3}
+  _footprintOffset: {x: 0.015, y: 0.015, z: 0}
 --- !u!114 &7931520191058087943
 MonoBehaviour:
   m_ObjectHideFlags: 0

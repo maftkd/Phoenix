@@ -55,14 +55,15 @@ public class Waddle : MonoBehaviour
 			if(slope<_maxWalkSlope)
 				transform.position=hit.point;
 			if(_stepTimer>=0.5f/animSpeed){
-				if(hit.transform.GetComponent<Footstep>()!=null)
-					TakeStep(hit.transform.GetComponent<Footstep>());
+				TakeStep(hit.transform.GetComponent<Footstep>());
 				_stepTimer=0;
 			}
 		}
     }
 
 	void TakeStep(Footstep f){
-		f.Sound(transform.position,_stepVolume);
+		if(f!=null)
+			f.Sound(transform.position,_stepVolume);
+		_bird.MakeFootprint();
 	}
 }

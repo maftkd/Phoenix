@@ -108,8 +108,7 @@ public class MCamera : MonoBehaviour
 		float verIn = Input.GetAxis("Vertical");
 		float horIn = Input.GetAxis("Horizontal");
 		_controllerInput=new Vector3(horIn,verIn,0);
-		if(_controllerInput.sqrMagnitude>1)
-			_controllerInput.Normalize();
+		RemapInputFromSquareToCircle();
 		Vector3 flatForward=transform.forward;
 		flatForward.y=0;
 		flatForward.Normalize();
@@ -157,5 +156,23 @@ public class MCamera : MonoBehaviour
 			_camTarget=t;
 			_state=1;
 		}
+	}
+
+	void RemapInputFromSquareToCircle(){
+		float theta = Mathf.Atan2(_controllerInput.y,_controllerInput.x)*Mathf.Rad2Deg;
+		float maxX=0;
+		float maxY=0;
+		if(45f-Mathf.Abs(theta)>=0||Mathf.Abs(theta)>=135f)
+		{
+			maxX=1f;
+			maxY=Mathf.Abs(Mathf.Tan(theta*Mathf.Deg2Rad));
+		}
+		else
+		{
+			maxY=1f;
+			maxX=Mathf.Abs(1f/(Mathf.Tan(theta*Mathf.Deg2Rad)));
+		}
+		float max = Mathf.Sqrt(maxX*maxX+maxY*maxY);
+		_controllerInput/=max;
 	}
 }
