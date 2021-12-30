@@ -55,7 +55,7 @@ public class RunAway : MonoBehaviour
 				//
 				break;
 			case 2://hopping
-				if(_bird.Arrived()){
+				if(!_bird.IsHopping()&&_bird.Arrived()){
 					_curSpot++;
 					_state=0;
 					_bird.StopHopping();

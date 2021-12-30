@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Fly : MonoBehaviour
 {
@@ -139,28 +140,18 @@ public class Fly : MonoBehaviour
 			_diving=false;
 		}
 
-		/*
-		//check perch
-		if(Input.GetButtonDown(GameManager._perchButton)){
-			if(Physics.OverlapSphereNonAlloc(transform.position,0.01f,_cols,_perchMask)>0){
-				_rustle.Play();
-				GetComponent<Hop>().enabled=true;
-				enabled=false;
-			}
-		}
-		*/
 		
 		//add air control
-		float horIn = Input.GetAxis("Horizontal");
-		float vertIn = Input.GetAxis("Vertical");
+		Vector3 input=_mCam.GetControllerInput();
+
 		//forward/backward air control
-		_velocity+=transform.forward*vertIn*_airControl.z*Time.deltaTime;
+		_velocity+=transform.forward*input.y*_airControl.z*Time.deltaTime;
 
 		//turning mid-air
 		Vector3 flatVel=_velocity;
 		flatVel.y=0;
 		_forwardness = Vector3.Dot(flatVel.normalized,transform.forward);
-		float rollAngle=-_maxRoll*horIn;
+		float rollAngle=-_maxRoll*input.x;
 		if(_forwardness>0){
 			//if flying forward
 			float tan = Mathf.Tan(rollAngle*_rollMult*Mathf.Deg2Rad);
@@ -185,27 +176,23 @@ public class Fly : MonoBehaviour
 		else{
 			rollAngle=0;
 		}
+		//DebugScreen.Print(_forwardness>0,0);
+		//DebugScreen.Print(_turnRadius,1);
+		//DebugScreen.Print(flatVel.sqrMagnitude,2);
 		Vector3 eulerAngles=transform.eulerAngles;
 		eulerAngles.z=rollAngle;
 		float targetPitch=0;
 		if(_diving)
 			targetPitch=-Mathf.Atan2(_velocity.y,flatVel.magnitude)*Mathf.Rad2Deg;
-		/*
-		float x=eulerAngles.x;
-		if(x>180)
-			x=-(360-x);
-		else if(x<-180)
-			x=(360+x);
-		eulerAngles.x=Mathf.Lerp(x,targetPitch,Time.deltaTime*_pitchLerp);
-			*/
 		eulerAngles.x=targetPitch;
 		transform.eulerAngles=eulerAngles;
 
 		//cap velocity
-		if(_velocity.x>_maxVel.x)
-			_velocity.x=_maxVel.x;
-		else if(_velocity.x<-_maxVel.x)
-			_velocity.x=-_maxVel.x;
+		if(flatVel.sqrMagnitude>_maxVel.z*_maxVel.z){
+			flatVel=flatVel.normalized*_maxVel.z;
+			_velocity.x=flatVel.x;
+			_velocity.z=flatVel.z;
+		}
 
 		//apply physics
 		Vector3 prevPos=transform.position;
@@ -223,7 +210,7 @@ public class Fly : MonoBehaviour
 			Soar(false);
 			Footstep footstep=hit.transform.GetComponent<Footstep>();
 			float vel = -_velocity.y/_maxVel.y;
-			float vol = _diving? 1f : vel;
+			float vol = _diving? 1f : 0.1f;
 			if(footstep!=null)
 				footstep.Sound(_groundPoint,vol);
 			if(!_diving)

@@ -198,6 +198,10 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 	}
 
+	public bool IsHopping(){
+		return _hop.enabled&&_hop.IsHopping();
+	}
+
 	public void StopHopping(){
 		_hop.StopHopping();
 		_hop.enabled=false;

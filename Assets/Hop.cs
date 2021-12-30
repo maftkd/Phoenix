@@ -100,7 +100,7 @@ public class Hop : MonoBehaviour
 			Vector3 startPos=transform.position;
 
 			//dive
-			if(Input.GetButtonDown("Dive")){
+			if(!_npc&&Input.GetButtonDown("Dive")){
 				_diving=true;
 				_anim.SetTrigger("dive");
 				_soarAudio.pitch=_fly._divePitch;
@@ -214,7 +214,7 @@ public class Hop : MonoBehaviour
 	}
 
 	public void StopHopping(){
-		transform.position=_destination;
+		//transform.position=_destination;
 		_npcInput=Vector3.zero;
 	}
 
