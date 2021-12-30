@@ -1,0 +1,10 @@
+Living Birds models:
+-convert model fbx
+-import to blender - standard fbx import
+-DO NOT TOUCH THE SCALE - leave at 0.025 or whatever it is
+
+Living Birds animations:
+-Click animation arrow in Project
+-Control-D animation clip
+-Remove scale and other un-needed properties
+-hook the duplicated clips into the animation controller

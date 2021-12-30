@@ -28,6 +28,9 @@ public class Bird : MonoBehaviour
 	public Vector3 _footprintOffset;
 	int _leftRightPrint=1;
 
+	public Transform _featherSlots;
+	public float _featherScale;
+
 	void Awake(){
 		//calculations
 		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -224,6 +227,19 @@ public class Bird : MonoBehaviour
 		fp.position+=Vector3.up*_footprintOffset.y+transform.right*_footprintOffset.x*_leftRightPrint;
 		fp.position+=offset*transform.forward;
 		_leftRightPrint*=-1;
+	}
+
+	public void EquipFeather(Transform t){
+		/*
+		t.SetParent(_featherSlots);
+		t.localPosition=Vector3.zero;
+		t.localEulerAngles=Vector3.zero;
+		t.localScale=Vector3.one*_featherScale;
+		*/
+		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
+		Material[] mats = smr.materials;
+		mats[1]=t.GetComponent<MeshRenderer>().material;
+		smr.materials=mats;
 	}
 
 	void OnDrawGizmos(){

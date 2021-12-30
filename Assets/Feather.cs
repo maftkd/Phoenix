@@ -15,4 +15,13 @@ public class Feather : MonoBehaviour
     {
         
     }
+
+	public void EquipFeather(){
+		Debug.Log("Equipping feather");
+		GameObject p = GameObject.FindGameObjectWithTag("Player");
+		Bird b = p.GetComponent<Bird>();
+		Transform parent = transform.parent;
+		b.EquipFeather(transform);
+		Destroy(parent.gameObject);
+	}
 }

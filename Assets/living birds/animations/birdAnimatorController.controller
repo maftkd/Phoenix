@@ -502,7 +502,7 @@ BlendTree:
   m_Name: IdleBT
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: fcd9e2f0fe594944fa820d71162634f0, type: 3}
+    m_Motion: {fileID: 7400000, guid: c04c1a4b84a79d64cad2b804e5a4bbef, type: 2}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -510,7 +510,7 @@ BlendTree:
     m_DirectBlendParameter: 
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 2eeda2bfa864a3b4ea31d02ad1d7d8de, type: 3}
+    m_Motion: {fileID: 7400000, guid: b38a8a75ca424424fbee444147d87d0c, type: 2}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
