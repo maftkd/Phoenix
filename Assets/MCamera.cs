@@ -8,6 +8,7 @@ public class MCamera : MonoBehaviour
 	public Vector3 _followOffset;
 	public Vector3 _followBack;
 	public float _lerpSpeed;
+	public float _slerpMult;
 	public float _minAngleLerp;
 	public float _maxAngleLerp;
 	Vector3 _worldSpaceInput;
@@ -30,6 +31,8 @@ public class MCamera : MonoBehaviour
 	[Header("Planar cam")]
 	public float _planeCamLerp;
 	Text _debugText;
+	Quaternion _prevTargetRot;
+	float _slerpTimer;
 	
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -82,8 +85,13 @@ public class MCamera : MonoBehaviour
 					eulers.x+=_flyingPitchOffset;
 					transform.eulerAngles=eulers;
 				}
+
 				Quaternion targetRot=transform.rotation;
-				transform.rotation=Quaternion.Slerp(curRot,targetRot,angleLerp*Time.deltaTime);
+				float ang = Quaternion.Angle(targetRot,curRot);
+				//lerps slower for larger angle diffs
+				float lerpMult=Mathf.Min(1f,_slerpMult/ang);
+				transform.rotation=Quaternion.Slerp(curRot,targetRot,angleLerp*Time.deltaTime*lerpMult);
+
 
 				//remove roll
 				eulers = transform.eulerAngles;
