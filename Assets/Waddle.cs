@@ -12,6 +12,9 @@ public class Waddle : MonoBehaviour
 	public float _animSpeedMult;
 	public float _stepVolume;
 	float _stepTimer;
+	Vector3 _input;
+	public float _inputSmoothLerp;
+	public float _minInput;
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
@@ -29,6 +32,7 @@ public class Waddle : MonoBehaviour
 				TakeStep(hit.transform.GetComponent<Footstep>());
 		}
 		_stepTimer=0;
+		_input=_mCam.GetInputDir();
 	}
     // Start is called before the first frame update
     void Start()
@@ -41,10 +45,13 @@ public class Waddle : MonoBehaviour
 		_stepTimer+=Time.deltaTime;
 		//Vector3 rawInput = _npc ? _npcInput : _mCam.GetInputDir();
 		Vector3 rawInput = _mCam.GetInputDir();
-		float animSpeed=rawInput.magnitude*_animSpeedMult;
+		_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
+		if(_input.sqrMagnitude<_minInput*_minInput)
+			return;
+		float animSpeed=_input.magnitude*_animSpeedMult;
 		_anim.SetFloat("hopTime",animSpeed);
-		transform.forward=rawInput;
-		Vector3 move=transform.forward*rawInput.magnitude*Time.deltaTime*_walkSpeed*2*Mathf.Max(0,Vector3.Dot(transform.forward,rawInput));
+		transform.forward=_input;
+		Vector3 move=transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*2*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
 		Vector3 targetPos = transform.position+move;
 		RaycastHit hit;
 		if(Physics.Raycast(targetPos+Vector3.up*0.5f,Vector3.down,out hit, 1f,_bird._collisionLayer)){
@@ -65,5 +72,9 @@ public class Waddle : MonoBehaviour
 		if(f!=null)
 			f.Sound(transform.position,_stepVolume);
 		_bird.MakeFootprint();
+	}
+
+	public bool IsWaddling(){
+		return _input.sqrMagnitude>=_minInput*_minInput;
 	}
 }

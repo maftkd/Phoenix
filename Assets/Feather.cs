@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Feather : MonoBehaviour
 {
+	public Transform _sfx;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +19,7 @@ public class Feather : MonoBehaviour
 
 	public void EquipFeather(){
 		Debug.Log("Equipping feather");
+		Instantiate(_sfx,transform.position,Quaternion.identity);
 		GameObject p = GameObject.FindGameObjectWithTag("Player");
 		Bird b = p.GetComponent<Bird>();
 		Transform parent = transform.parent;

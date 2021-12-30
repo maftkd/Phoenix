@@ -37,6 +37,8 @@ public class Fly : MonoBehaviour
 	ParticleSystem _soarParticles;
 	AudioSource _soarAudio;
 	public float _soarVolume;
+	public float _diveVolume;
+	public float _divePitch;
 	public ParticleSystem _flapParts;
 
 	void OnEnable(){
@@ -123,6 +125,9 @@ public class Fly : MonoBehaviour
 			_anim.SetTrigger("dive");
 			Soar(false);
 			_diving=true;
+			_soarAudio.pitch=_divePitch;
+			_soarAudio.volume=_diveVolume;
+			_soarAudio.Play();
 		}
 		if(Input.GetButton("Dive")){
 			_velocity.y-=_airControl.y*Time.deltaTime;
@@ -218,9 +223,13 @@ public class Fly : MonoBehaviour
 			Soar(false);
 			Footstep footstep=hit.transform.GetComponent<Footstep>();
 			float vel = -_velocity.y/_maxVel.y;
+			float vol = _diving? 1f : vel;
 			if(footstep!=null)
-				footstep.Sound(_groundPoint,vel);
-			_bird.Land(vel);
+				footstep.Sound(_groundPoint,vol);
+			if(!_diving)
+				_bird.Land();
+			else
+				_bird.Dive(vel);
 		}
     }
 
@@ -242,6 +251,7 @@ public class Fly : MonoBehaviour
 		if(soaring)
 		{
 			_soarParticles.Play();
+			_soarAudio.pitch=1.0f;
 			_soarAudio.Play();
 			_soarAudio.volume=_soarVolume;
 		}

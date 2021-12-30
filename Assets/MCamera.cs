@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MCamera : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class MCamera : MonoBehaviour
 	Transform _camTarget;
 	[Header("Planar cam")]
 	public float _planeCamLerp;
+	Text _debugText;
 	
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -35,6 +37,7 @@ public class MCamera : MonoBehaviour
 		_hop=_player.GetComponent<Hop>();
 		_fly=_player.GetComponent<Fly>();
 		_followBack=-_player.forward;
+		_debugText=transform.GetComponentInChildren<Text>();
 	}
 
     // Start is called before the first frame update
@@ -173,6 +176,19 @@ public class MCamera : MonoBehaviour
 			maxX=Mathf.Abs(1f/(Mathf.Tan(theta*Mathf.Deg2Rad)));
 		}
 		float max = Mathf.Sqrt(maxX*maxX+maxY*maxY);
+		//#hack - some reason we aren't seeing values above the 1.2 range I would expect 1*sqrt(2)
+		max = Mathf.Min(1.2f,max);
+		string db ="raw: "+_controllerInput.magnitude;
+		//Debug.Log("raw: "+_controllerInput.magnitude);
+		db+="\nmax: "+max;
+		_debugText.text=db;
+		//Debug.Log("max: "+max);
 		_controllerInput/=max;
+		//Debug.Log("mag: "+_controllerInput.magnitude);
+		if(_controllerInput.magnitude>1f)
+		{
+			//Debug.Log("yoooo");
+			//Debug.Break();
+		}
 	}
 }

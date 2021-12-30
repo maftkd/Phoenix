@@ -51,6 +51,7 @@ public class Footstep : MonoBehaviour
 				s.volume=volume<0? _volume : volume;
 				//s.volume=Mathf.InverseLerp(0,_runSpeed,speed)*_volume;
 				//s.volume=_volume;
+				s.spatialBlend=s.volume==1f?0:1f;
 				s.transform.position=pos;
 				s.clip=_clips[Random.Range(0,_clips.Length)];
 				s.Play();

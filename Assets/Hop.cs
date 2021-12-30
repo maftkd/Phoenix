@@ -13,6 +13,7 @@ public class Hop : MonoBehaviour
 	public Transform _stepParts;
 	//bool _disableAfterHop;
 	Bird _bird;
+	Fly _fly;
 	bool _hopping;
 	float _velocity;
 	[Header("Physics")]
@@ -35,7 +36,9 @@ public class Hop : MonoBehaviour
 	[Header("Hop boost")]
 	public float _hopBoostWindow;
 	public float _hopBoost;
-	
+	bool _diving;
+	AudioSource _soarAudio;
+	public float _divePitchMult;
 
 	//ai hopping
 	Terrain _terrain;
@@ -48,14 +51,17 @@ public class Hop : MonoBehaviour
 		_camTarget=transform.position;
 		_anim=GetComponent<Animator>();
 		_bird=GetComponent<Bird>();
+		_fly=GetComponent<Fly>();
 		_terrain=FindObjectOfType<Terrain>();
 		_input=Vector3.zero;
+		_soarAudio=transform.Find("SoarParticles").GetComponent<AudioSource>();
 	}
 
 	void OnEnable(){
 		_camTarget=transform.position;
 		_firstHop=true;
 		_anim.SetFloat("walkSpeed",1f);
+		_diving=false;
 	}
 
 	void OnDisable(){
@@ -93,6 +99,22 @@ public class Hop : MonoBehaviour
 			//middle of hop
 			Vector3 startPos=transform.position;
 
+			//dive
+			if(Input.GetButtonDown("Dive")){
+				_diving=true;
+				_anim.SetTrigger("dive");
+				_soarAudio.pitch=_fly._divePitch;
+				_soarAudio.volume=_fly._diveVolume;
+				_soarAudio.Play();
+			}
+
+			Vector3 eulerAngles=transform.eulerAngles;
+			float targetPitch=0;
+			if(_diving)
+				targetPitch=-Mathf.Atan2(_velocity,_input.magnitude)*Mathf.Rad2Deg*_divePitchMult;
+			eulerAngles.x=targetPitch;
+			transform.eulerAngles=eulerAngles;
+
 			//rotation
 			if(rawInput.sqrMagnitude>0){
 				Quaternion curRot=transform.rotation;
@@ -118,13 +140,6 @@ public class Hop : MonoBehaviour
 				_velocity+=_input.magnitude*Time.deltaTime*_hopBoost;
 			}
 
-			//animation
-			/*
-			if(_hopTimer>_hopTime){
-				_anim.SetBool("hop",false);
-			}
-			*/
-
 			//apply physics
 			transform.position+=_velocity*Vector3.up*Time.deltaTime;
 			_velocity-=_gravity*Time.deltaTime;
@@ -148,15 +163,20 @@ public class Hop : MonoBehaviour
 					//sfx + vfx
 					if(_hopTimer>_hopCancelWindow){
 						_footstep=hit.transform.GetComponent<Footstep>();
+						float vol=_diving? 1f : -1f;
 						if(_footstep!=null)
 						{
-							//if(_velocity.y
-							//_footstep.Sound(transform.position,_hopVolumeMult);
-							_footstep.Sound(transform.position);
+							_footstep.Sound(transform.position,vol);
 						}
-						PlayStepParticles();
-						_bird.MakeFootprint();
-						_bird.MakeFootprint(0.01f);
+						if(!_diving){
+							PlayStepParticles();
+							_bird.MakeFootprint();
+							_bird.MakeFootprint(0.01f);
+						}
+						else{
+							_bird.Dive(0.5f);
+							_soarAudio.Stop();
+						}
 					}
 					
 					//re-calibrate if npc
@@ -179,8 +199,6 @@ public class Hop : MonoBehaviour
 
 	public void HopTo(Vector3 target){
 		_destination=target;
-		//#replace - gotta use a ray-cast because the map may consist of non-terrain elements
-		//_destination.y=_terrain.SampleHeight(target);
 		RaycastHit hit;
 		if(Physics.Raycast(_destination+Vector3.up*1f,Vector3.down, out hit,1f,_bird._collisionLayer)){
 			_destination.y=hit.point.y;
@@ -197,17 +215,10 @@ public class Hop : MonoBehaviour
 
 	public void StopHopping(){
 		transform.position=_destination;
-		/*
-		Vector3 pos = transform.position;
-		pos.y=_destination.y;
-		transform.position=pos;
-		*/
 		_npcInput=Vector3.zero;
-		_anim.SetBool("hop",false);
 	}
 
 	public bool IsHopping(){
-		//return _hopTimer>0;
 		return _hopping;
 	}
 

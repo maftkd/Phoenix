@@ -27,14 +27,17 @@ public class Bird : MonoBehaviour
 	public Transform _footprint;
 	public Vector3 _footprintOffset;
 	int _leftRightPrint=1;
-
-	public Transform _featherSlots;
-	public float _featherScale;
+	[Header("Explosion")]
+	public float _afterDiveDelay;
+	float _afterDiveTimer;
+	public Transform _explodeParts;
+	public float _divePartsDelay;
 
 	void Awake(){
 		//calculations
 		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
-		_size=smr.sharedMesh.bounds.size;
+		_size=smr.sharedMesh.bounds.size*smr.transform.localScale.x*transform.localScale.x;
+		Debug.Log("size: "+_size);
 
 		//get references
 		_hop=GetComponent<Hop>();
@@ -90,7 +93,7 @@ public class Bird : MonoBehaviour
 
 					break;
 				case 1://waddling
-					if(_mCam.GetControllerInput().sqrMagnitude<=0){
+					if(!_waddle.IsWaddling()){
 						_state=0;
 						_waddle.enabled=false;
 						_anim.SetFloat("walkSpeed",0f);
@@ -128,6 +131,11 @@ public class Bird : MonoBehaviour
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
+					break;
+				case 4://after dive
+					_afterDiveTimer+=Time.deltaTime;
+					if(_afterDiveTimer>_afterDiveDelay)
+						_state=0;
 					break;
 			}
 
@@ -211,12 +219,23 @@ public class Bird : MonoBehaviour
 		_state=3;
 		_anim.SetTrigger("fly");
 	}
-	public void Land(float vel){
+	public void Land(){
 		_fly.enabled=false;
 		_state=0;
+		_anim.SetFloat("walkSpeed",0f);
 		_anim.SetTrigger("land");
 		_hop.PlayStepParticles();
+	}
+
+	public void Dive(float vel){
+		_fly.enabled=false;
+		_hop.enabled=false;
+		_state=4;
+		StartCoroutine(PlayExplodeParticlesR());
 		_mCam.Shake(vel);
+		_anim.SetFloat("walkSpeed",0f);
+		_anim.SetTrigger("land");
+		_afterDiveTimer=0;
 	}
 
 	public void MakeFootprint(float offset=0){
@@ -230,16 +249,15 @@ public class Bird : MonoBehaviour
 	}
 
 	public void EquipFeather(Transform t){
-		/*
-		t.SetParent(_featherSlots);
-		t.localPosition=Vector3.zero;
-		t.localEulerAngles=Vector3.zero;
-		t.localScale=Vector3.one*_featherScale;
-		*/
 		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
 		Material[] mats = smr.materials;
-		mats[1]=t.GetComponent<MeshRenderer>().material;
+		mats[1]=t.GetComponent<MeshRenderer>().materials[1];
 		smr.materials=mats;
+	}
+
+	IEnumerator PlayExplodeParticlesR(){
+		yield return new WaitForSeconds(_divePartsDelay);
+		Instantiate(_explodeParts,transform.position,Quaternion.identity);
 	}
 
 	void OnDrawGizmos(){
