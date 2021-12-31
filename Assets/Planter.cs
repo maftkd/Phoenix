@@ -9,6 +9,7 @@ public class Planter : MonoBehaviour
 	public float _alphaThreshold;
 	public float _plantChance;
 	public Vector2 _sizeRange;
+	public bool _offsetVert;
     // Start is called before the first frame update
     void Start()
     {
@@ -53,7 +54,8 @@ public class Planter : MonoBehaviour
 						scale.y*=Random.Range(_sizeRange.x,_sizeRange.y);
 						scale.z*=Random.Range(_sizeRange.x,_sizeRange.y);
 						grass.localScale=scale;
-						grass.position+=Vector3.up*grass.localScale.y*0.5f;
+						if(_offsetVert)
+							grass.position+=Vector3.up*grass.localScale.y*0.5f;
 					}
 				}
 			}
