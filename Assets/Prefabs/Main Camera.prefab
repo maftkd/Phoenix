@@ -233,6 +233,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _planeCamLerp: 1
+  _maxFov: 75
+  _fovLerp: 1
+  _shiftSlowDown: 0.7
 --- !u!1 &914837368859513064
 GameObject:
   m_ObjectHideFlags: 0

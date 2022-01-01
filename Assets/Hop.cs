@@ -39,6 +39,8 @@ public class Hop : MonoBehaviour
 	bool _diving;
 	AudioSource _soarAudio;
 	public float _divePitchMult;
+	bool _knockBack;
+	public float _knockBackMult;
 
 	//ai hopping
 	Terrain _terrain;
@@ -62,6 +64,7 @@ public class Hop : MonoBehaviour
 		_firstHop=true;
 		_anim.SetFloat("walkSpeed",1f);
 		_diving=false;
+		_knockBack=false;
 	}
 
 	void OnDisable(){
@@ -77,7 +80,8 @@ public class Hop : MonoBehaviour
     void Update()
     {
 		Vector3 rawInput = _npc ? _npcInput : _mCam.GetInputDir();
-		_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
+		if(!_knockBack)
+			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
 		if(!_hopping){
 			if(_input.sqrMagnitude>0){
 				//start hop
@@ -116,24 +120,32 @@ public class Hop : MonoBehaviour
 			transform.eulerAngles=eulerAngles;
 
 			//rotation
-			if(rawInput.sqrMagnitude>0){
-				Quaternion curRot=transform.rotation;
-				transform.forward=rawInput;
-				Quaternion targetRot=transform.rotation;
-				transform.rotation=Quaternion.Slerp(curRot,targetRot,_airTurnLerp*Time.deltaTime);
-			}
-			else if(_hopTimer<_hopCancelWindow&&!_firstHop){
-				//hop cancel
-				transform.position=_hopStartPos;
-				transform.rotation=_hopStartRot;
-				_hopping=false;
-				//_anim.SetBool("hop",false);
-				_camTarget=transform.position;
-				return;
+			if(!_knockBack){
+				if(rawInput.sqrMagnitude>0){
+					Quaternion curRot=transform.rotation;
+					transform.forward=rawInput;
+					Quaternion targetRot=transform.rotation;
+					transform.rotation=Quaternion.Slerp(curRot,targetRot,_airTurnLerp*Time.deltaTime);
+				}
+				else if(_hopTimer<_hopCancelWindow&&!_firstHop){
+					//hop cancel
+					transform.position=_hopStartPos;
+					transform.rotation=_hopStartRot;
+					_hopping=false;
+					//_anim.SetBool("hop",false);
+					_camTarget=transform.position;
+					return;
+				}
 			}
 		
 			//air control
-			Vector3 airControl=transform.forward*_input.magnitude*Time.deltaTime*_airControl*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
+			Vector3 airControl=Vector3.zero;
+			if(!_knockBack)
+				airControl=transform.forward*_input.magnitude*Time.deltaTime*_airControl*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
+			else
+				airControl=_input*Time.deltaTime*_airControl;
+
+
 			transform.position+=airControl;
 			if(_hopTimer<_hopBoostWindow){
 				//hop boost
@@ -150,40 +162,22 @@ public class Hop : MonoBehaviour
 			//hit detection
 			Vector3 posDelta=transform.position-startPos;
 			RaycastHit hit;
-			if(Physics.Raycast(startPos+Vector3.up*_footOffset,posDelta, out hit,posDelta.magnitude*1f+0.001f,_bird._collisionLayer)){
-				if(_velocity>_hopAccel*0.5f && Vector3.Dot(hit.normal,Vector3.up)>_minDotToHop){
-					//ignore vertical-ish collisions at the beginning of jump
+			if(Physics.Raycast(startPos+Vector3.up*_footOffset,posDelta, out hit,posDelta.magnitude+0.001f,_bird._collisionLayer)){
+				Vector3 castDir = _velocity>0 ? Vector3.up : Vector3.down;
+				//check collision along velocity
+				if(Physics.Raycast(startPos+Vector3.up*_footOffset,castDir, out hit,Mathf.Abs(posDelta.y)+0.001f,_bird._collisionLayer)){
+					//check collision along vert
+					//transform.position=startPos;
+					transform.position=hit.point;
+					CompleteHop(hit.transform);
 				}
-				else{
-					transform.position=startPos;
-					_hopping=false;
-					_firstHop=false;
-					_camTarget=transform.position;
-
-					//sfx + vfx
-					if(_hopTimer>_hopCancelWindow){
-						_footstep=hit.transform.GetComponent<Footstep>();
-						float vol=_diving? 1f : -1f;
-						if(_footstep!=null)
-						{
-							_footstep.Sound(transform.position,vol);
-						}
-						if(!_diving){
-							PlayStepParticles();
-							_bird.MakeFootprint();
-							_bird.MakeFootprint(0.01f);
-						}
-						else{
-							_bird.Dive(0.5f);
-							_soarAudio.Stop();
-						}
-					}
-					
-					//re-calibrate if npc
-					if(_npc)
-						HopTo(_destination);
+				else//vertical is free
+				{
+					transform.position=startPos+Vector3.up*posDelta.y;
 				}
-				
+			}
+			else{
+				//no hits
 			}
 			_hopTimer+=Time.deltaTime;
 		}
@@ -228,6 +222,49 @@ public class Hop : MonoBehaviour
 
 	public void PlayStepParticles(){
 		Instantiate(_stepParts,transform.position,Quaternion.identity);
+	}
+
+	public void KnockBack(Vector3 dir){
+		Debug.Log("Time to hop back");
+		_anim.SetFloat("hopTime",-1f/_hopTime);
+		_knockBack=true;
+		float mag = _input.magnitude;
+		//_input=dir*mag*_knockBackMult;
+		_input=dir;
+		//
+	}
+
+	void CompleteHop(Transform ground){
+		_hopping=false;
+		_firstHop=false;
+		_camTarget=transform.position;
+
+		//sfx + vfx
+		if(_hopTimer>_hopCancelWindow){
+			_footstep=ground.GetComponent<Footstep>();
+			float vol=_diving? 1f : -1f;
+			if(_footstep!=null)
+			{
+				_footstep.Sound(transform.position,vol);
+			}
+			if(!_diving){
+				PlayStepParticles();
+				_bird.MakeFootprint();
+				_bird.MakeFootprint(0.01f);
+			}
+			else{
+				_bird.Dive(0.5f);
+				_soarAudio.Stop();
+			}
+		}
+		
+		//re-calibrate if npc
+		if(_npc)
+			HopTo(_destination);
+
+		if(_knockBack){
+			_bird.ShakeItOff();
+		}
 	}
 
 	void OnDrawGizmos(){

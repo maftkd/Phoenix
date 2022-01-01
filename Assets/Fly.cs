@@ -41,6 +41,7 @@ public class Fly : MonoBehaviour
 	public float _diveVolume;
 	public float _divePitch;
 	public ParticleSystem _flapParts;
+	float _speedFrac;
 
 	void OnEnable(){
 		if(!_init)
@@ -55,6 +56,8 @@ public class Fly : MonoBehaviour
 
 		//initial velocity
 		_velocity=_curFlapAccel;
+
+		_speedFrac=0;
 
 		//zero out horizontal component of flap after initial flap
 		_curFlapAccel=Vector3.up*_flapAccel.y;
@@ -152,6 +155,7 @@ public class Fly : MonoBehaviour
 		flatVel.y=0;
 		_forwardness = Vector3.Dot(flatVel.normalized,transform.forward);
 		float rollAngle=-_maxRoll*input.x;
+		_speedFrac=flatVel.magnitude/_maxVel.z;
 		if(_forwardness>0){
 			//if flying forward
 			float tan = Mathf.Tan(rollAngle*_rollMult*Mathf.Deg2Rad);
@@ -246,6 +250,10 @@ public class Fly : MonoBehaviour
 			_soarParticles.Stop();
 			_soarAudio.Stop();
 		}
+	}
+
+	public float GetSpeedFraction(){
+		return _speedFrac;
 	}
 
 	void OnDrawGizmos(){

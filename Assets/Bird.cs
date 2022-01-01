@@ -32,6 +32,13 @@ public class Bird : MonoBehaviour
 	float _afterDiveTimer;
 	public Transform _explodeParts;
 	public float _divePartsDelay;
+	[Header("Collisions")]
+	public float _shakeDelay;
+	float _shakeTimer;
+	ParticleSystem _starParts;
+	public float _waddleKnockVolume;
+	public float _hopKnockVolume;
+	Vector3 _prevPos;
 
 	void Awake(){
 		//calculations
@@ -48,6 +55,7 @@ public class Bird : MonoBehaviour
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
 		_callAudio=transform.Find("Call").GetComponent<AudioSource>();
 		_callParts=_callAudio.GetComponent<ParticleSystem>();
+		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
 
 		//disable things
 		_hop.enabled=false;
@@ -98,6 +106,9 @@ public class Bird : MonoBehaviour
 						_waddle.enabled=false;
 						_anim.SetFloat("walkSpeed",0f);
 					}
+					else if(_waddle.IsKnockBack()){
+						//just wait
+					}
 					else if(_mCam.GetControllerInput().sqrMagnitude>=_walkThreshold*_walkThreshold){
 						//Debug.Log(_mCam.GetControllerInput().magnitude);
 						StartHopping();
@@ -111,19 +122,22 @@ public class Bird : MonoBehaviour
 					}
 					break;
 				case 2://hopping
-					if(!_hop.IsHopping()&&_mCam.GetControllerInput().sqrMagnitude<=0){
-						_state=0;
-						_hop.enabled=false;
-						_anim.SetFloat("walkSpeed",0f);
-					}
-					if(!_hop.IsHopping()&&_mCam.GetControllerInput().sqrMagnitude<=_walkThreshold*_walkThreshold){
-						StartWaddling();
+					if(!_hop.IsHopping()){
+						if(_mCam.GetControllerInput().sqrMagnitude<=0){
+							//go to idle
+							_state=0;
+							_hop.enabled=false;
+							_anim.SetFloat("walkSpeed",0f);
+						}
+						else if(_mCam.GetControllerInput().sqrMagnitude<=_walkThreshold*_walkThreshold){
+							//go to waddle
+							StartWaddling();
+						}
 					}
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
 					if(Input.GetButtonDown("Jump")){
-						//Debug.Log("Jump time");
 						Fly();
 					}
 					break;
@@ -136,6 +150,12 @@ public class Bird : MonoBehaviour
 					_afterDiveTimer+=Time.deltaTime;
 					if(_afterDiveTimer>_afterDiveDelay)
 						_state=0;
+					break;
+				case 5://shake it off
+					_shakeTimer+=Time.deltaTime;
+					if(_shakeTimer>=_shakeDelay){
+						_state=0;
+					}
 					break;
 			}
 
@@ -151,6 +171,7 @@ public class Bird : MonoBehaviour
 */
 			}
 		}
+		_prevPos=transform.position;
     }
 
 	public bool IsPlayerClose(){
@@ -235,8 +256,7 @@ public class Bird : MonoBehaviour
 		_fly.enabled=false;
 		_hop.enabled=false;
 		_state=4;
-		StartCoroutine(PlayExplodeParticlesR());
-		_mCam.Shake(vel);
+		StartCoroutine(PlayExplodeParticlesR(vel));
 		_anim.SetFloat("walkSpeed",0f);
 		_anim.SetTrigger("land");
 		_afterDiveTimer=0;
@@ -259,9 +279,48 @@ public class Bird : MonoBehaviour
 		smr.materials=mats;
 	}
 
-	IEnumerator PlayExplodeParticlesR(){
-		yield return new WaitForSeconds(_divePartsDelay);
+	IEnumerator PlayExplodeParticlesR(float vel){
 		Instantiate(_explodeParts,transform.position,Quaternion.identity);
+		yield return new WaitForSeconds(_divePartsDelay);
+		_mCam.Shake(vel);
+	}
+
+	public void KnockBack(CollisionHelper ch, Vector3 dir){
+		//add particel to collision
+		Transform fp = Instantiate(_footprint,ch._hitPoint,Quaternion.identity);
+		//orientate
+		fp.forward=-dir;
+		//offset footprint
+		fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*0.9f;
+	
+		//move back to previous frame, to prevent collider from getting stuck overlapping
+		transform.position=_prevPos;
+
+		_starParts.Play();
+		switch(_state){
+			case 0:
+			default:
+			case 1://waddling
+				ch.Sound(_waddleKnockVolume);
+				_waddle.KnockBack(dir);
+				break;
+			case 2://hopping
+				ch.Sound(_hopKnockVolume);
+				_hop.KnockBack(dir);
+				break;
+			case 3://flying
+				break;
+		}
+	}
+
+	public void ShakeItOff(){
+		_waddle.enabled=false;
+		_hop.enabled=false;
+		_fly.enabled=false;
+		Debug.Log("Shaking it off");
+		_anim.SetFloat("walkSpeed",0f);
+		_shakeTimer=0;
+		_state=5;
 	}
 
 	void OnDrawGizmos(){

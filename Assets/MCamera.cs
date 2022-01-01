@@ -33,6 +33,13 @@ public class MCamera : MonoBehaviour
 	Text _debugText;
 	Quaternion _prevTargetRot;
 	float _slerpTimer;
+	[Header("Fov")]
+	public float _maxFov;
+	public float _fovLerp;
+	float _defaultFov;
+	Camera _cam;
+	[Header("Input")]
+	public float _shiftSlowDown;
 	
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -41,6 +48,8 @@ public class MCamera : MonoBehaviour
 		_fly=_player.GetComponent<Fly>();
 		_followBack=-_player.forward;
 		_debugText=transform.GetComponentInChildren<Text>();
+		_cam = GetComponent<Camera>();
+		_defaultFov=_cam.fieldOfView;
 	}
 
     // Start is called before the first frame update
@@ -63,6 +72,8 @@ public class MCamera : MonoBehaviour
 				if(_fly.enabled)
 					angleLerp=_flyAngleLerp;
 
+				float targetFov=_defaultFov;
+
 				//face players back
 				Quaternion curRot=transform.rotation;
 				Vector3 birdBack=-_player.forward;
@@ -84,6 +95,7 @@ public class MCamera : MonoBehaviour
 					}
 					eulers.x+=_flyingPitchOffset;
 					transform.eulerAngles=eulers;
+					targetFov=Mathf.Lerp(_defaultFov,_maxFov,_fly.GetSpeedFraction());
 				}
 
 				Quaternion targetRot=transform.rotation;
@@ -92,6 +104,8 @@ public class MCamera : MonoBehaviour
 				float lerpMult=Mathf.Min(1f,_slerpMult/ang);
 				transform.rotation=Quaternion.Slerp(curRot,targetRot,angleLerp*Time.deltaTime*lerpMult);
 
+				//lerp fov
+				_cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView,targetFov,_fovLerp*Time.deltaTime);
 
 				//remove roll
 				eulers = transform.eulerAngles;
@@ -135,10 +149,16 @@ public class MCamera : MonoBehaviour
 	}
 
 	public Vector3 GetInputDir(){
+		//#temp - until pc input integrated
+		if(Input.GetKey(KeyCode.LeftShift))
+			return _worldSpaceInput*_shiftSlowDown;
 		return _worldSpaceInput;
 	}
 
 	public Vector3 GetControllerInput(){
+		//#temp - until pc input integrated
+		if(Input.GetKey(KeyCode.LeftShift))
+			return _controllerInput*_shiftSlowDown;
 		return _controllerInput;
 	}
 

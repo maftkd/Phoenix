@@ -15,6 +15,11 @@ public class Waddle : MonoBehaviour
 	Vector3 _input;
 	public float _inputSmoothLerp;
 	public float _minInput;
+	float _knockBackTimer;
+	[Header("Knock back")]
+	public float _knockBackTime;
+	Vector3 _knockBackDir;
+	public float _knockBackSpeedMult;
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
@@ -43,18 +48,38 @@ public class Waddle : MonoBehaviour
     void Update()
     {
 		_stepTimer+=Time.deltaTime;
-		//Vector3 rawInput = _npc ? _npcInput : _mCam.GetInputDir();
-		Vector3 rawInput = _mCam.GetInputDir();
-		_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
-		if(_input.sqrMagnitude<_minInput*_minInput)
-			return;
+		if(_knockBackTimer<=0){
+			Vector3 rawInput = _mCam.GetInputDir();
+			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
+			if(_input.sqrMagnitude<_minInput*_minInput)
+				return;
+		}
+		else{
+			_knockBackTimer-=Time.deltaTime;
+			if(_knockBackTimer<=0){
+				_bird.ShakeItOff();
+				return;
+			}
+		}
 		float animSpeed=_input.magnitude*_animSpeedMult;
-		_anim.SetFloat("hopTime",animSpeed);
-		transform.forward=_input;
-		Vector3 move=transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*2*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
+		Vector3 move=Vector3.zero;
+		if(_knockBackTimer<=0)
+		{
+			_anim.SetFloat("hopTime",animSpeed);
+			transform.forward=_input;
+			move=transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*2*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
+		}
+		else
+		{
+			_anim.SetFloat("hopTime",-animSpeed);
+			//move=-transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*2;
+			move=_input*Time.deltaTime*_walkSpeed*2;
+		}
+
 		Vector3 targetPos = transform.position+move;
 		RaycastHit hit;
 		if(Physics.Raycast(targetPos+Vector3.up*0.5f,Vector3.down,out hit, 1f,_bird._collisionLayer)){
+			//raycast to ground
 			targetPos.y=hit.point.y;
 			float dy = (targetPos.y-transform.position.y);
 			float dx = move.magnitude;
@@ -76,5 +101,17 @@ public class Waddle : MonoBehaviour
 
 	public bool IsWaddling(){
 		return _input.sqrMagnitude>=_minInput*_minInput;
+	}
+	
+	public bool IsKnockBack(){
+		return _knockBackTimer>0;
+	}
+
+	public void KnockBack(Vector3 dir){
+		//_knockBackDir=dir;
+		_knockBackTimer=_knockBackTime;
+		float mag = _input.magnitude;
+		_input=dir*mag*_knockBackSpeedMult;
+		//transform.forward=-dir;
 	}
 }
