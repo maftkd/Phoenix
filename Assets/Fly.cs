@@ -42,6 +42,10 @@ public class Fly : MonoBehaviour
 	public float _divePitch;
 	public ParticleSystem _flapParts;
 	float _speedFrac;
+	[Header("Knockback")]
+	public float _knockBackDelay;
+	public float _knockBackMult;
+	float _knockBackTimer;
 
 	void OnEnable(){
 		if(!_init)
@@ -58,6 +62,8 @@ public class Fly : MonoBehaviour
 		_velocity=_curFlapAccel;
 
 		_speedFrac=0;
+
+		_knockBackTimer=0;
 
 		//zero out horizontal component of flap after initial flap
 		_curFlapAccel=Vector3.up*_flapAccel.y;
@@ -95,6 +101,7 @@ public class Fly : MonoBehaviour
 		//flap
 		if(Input.GetButtonDown("Jump")){
 			if(_flapCounter<_numFlaps){
+				_knockBackTimer=0f;//can reset knockback by flapping
 				_velocity+=_curFlapAccel;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
@@ -105,7 +112,8 @@ public class Fly : MonoBehaviour
 		}
 		if(Input.GetButton("Jump")){
 			if(_flapTimer<_flapDur){
-				_velocity.y+=_curFlapAccel.y*Time.deltaTime*_flapHoldBoost;
+				if(_knockBackTimer<=0)
+					_velocity.y+=_curFlapAccel.y*Time.deltaTime*_flapHoldBoost;
 				_flapTimer+=Time.deltaTime;
 				if(_flapTimer>=_flapDur){
 					//soar
@@ -147,56 +155,61 @@ public class Fly : MonoBehaviour
 		//add air control
 		Vector3 input=_mCam.GetControllerInput();
 
-		//forward/backward air control
-		_velocity+=transform.forward*input.y*_airControl.z*Time.deltaTime;
+		if(_knockBackTimer<=0)
+		{
+			//air control if not getting knocked back
+			//forward/backward air control
+			_velocity+=transform.forward*input.y*_airControl.z*Time.deltaTime;
 
-		//turning mid-air
-		Vector3 flatVel=_velocity;
-		flatVel.y=0;
-		_forwardness = Vector3.Dot(flatVel.normalized,transform.forward);
-		float rollAngle=-_maxRoll*input.x;
-		_speedFrac=flatVel.magnitude/_maxVel.z;
-		if(_forwardness>0){
-			//if flying forward
-			float tan = Mathf.Tan(rollAngle*_rollMult*Mathf.Deg2Rad);
-			if(tan!=0&&!float.IsNaN(tan)&&!float.IsInfinity(tan)&&!float.IsNegativeInfinity(tan)){
-				_turnRadius = -flatVel.sqrMagnitude/(11.26f*tan);
-				if(Mathf.Abs(_turnRadius)>_minTurnRadius){
-					//make sure turn radius isn't too small or else we get the dizzys
-					float rawMag=flatVel.magnitude;
-					float frameDistance = rawMag*Time.deltaTime;
-					//calculate rotation arc
-					float circumference = _turnRadius*2f*Mathf.PI;
-					float arc = frameDistance/(circumference);
-					//rotate velocity
-					flatVel = Quaternion.Euler(0f,arc*360f,0)*flatVel;
-					_velocity.x=flatVel.x;
-					_velocity.z=flatVel.z;
-					//rotate transform
-					transform.forward = flatVel.normalized;
+			//turning mid-air
+			Vector3 flatVel=_velocity;
+			flatVel.y=0;
+			_forwardness = Vector3.Dot(flatVel.normalized,transform.forward);
+			float rollAngle=-_maxRoll*input.x;
+			_speedFrac=flatVel.magnitude/_maxVel.z;
+			if(_forwardness>0){
+				//if flying forward
+				float tan = Mathf.Tan(rollAngle*_rollMult*Mathf.Deg2Rad);
+				if(tan!=0&&!float.IsNaN(tan)&&!float.IsInfinity(tan)&&!float.IsNegativeInfinity(tan)){
+					_turnRadius = -flatVel.sqrMagnitude/(11.26f*tan);
+					if(Mathf.Abs(_turnRadius)>_minTurnRadius){
+						//make sure turn radius isn't too small or else we get the dizzys
+						float rawMag=flatVel.magnitude;
+						float frameDistance = rawMag*Time.deltaTime;
+						//calculate rotation arc
+						float circumference = _turnRadius*2f*Mathf.PI;
+						float arc = frameDistance/(circumference);
+						//rotate velocity
+						flatVel = Quaternion.Euler(0f,arc*360f,0)*flatVel;
+						_velocity.x=flatVel.x;
+						_velocity.z=flatVel.z;
+						//rotate transform
+						transform.forward = flatVel.normalized;
+					}
 				}
 			}
-		}
-		else{
-			rollAngle=0;
-		}
-		//DebugScreen.Print(_forwardness>0,0);
-		//DebugScreen.Print(_turnRadius,1);
-		//DebugScreen.Print(flatVel.sqrMagnitude,2);
-		Vector3 eulerAngles=transform.eulerAngles;
-		eulerAngles.z=rollAngle;
-		float targetPitch=0;
-		if(_diving)
-			targetPitch=-Mathf.Atan2(_velocity.y,flatVel.magnitude)*Mathf.Rad2Deg;
-		eulerAngles.x=targetPitch;
-		transform.eulerAngles=eulerAngles;
+			else{
+				rollAngle=0;
+			}
+			//DebugScreen.Print(_forwardness>0,0);
+			//DebugScreen.Print(_turnRadius,1);
+			//DebugScreen.Print(flatVel.sqrMagnitude,2);
+			Vector3 eulerAngles=transform.eulerAngles;
+			eulerAngles.z=rollAngle;
+			float targetPitch=0;
+			if(_diving)
+				targetPitch=-Mathf.Atan2(_velocity.y,flatVel.magnitude)*Mathf.Rad2Deg;
+			eulerAngles.x=targetPitch;
+			transform.eulerAngles=eulerAngles;
 
-		//cap velocity
-		if(flatVel.sqrMagnitude>_maxVel.z*_maxVel.z){
-			flatVel=flatVel.normalized*_maxVel.z;
-			_velocity.x=flatVel.x;
-			_velocity.z=flatVel.z;
+			//cap velocity
+			if(flatVel.sqrMagnitude>_maxVel.z*_maxVel.z){
+				flatVel=flatVel.normalized*_maxVel.z;
+				_velocity.x=flatVel.x;
+				_velocity.z=flatVel.z;
+			}
 		}
+
 
 		//apply physics
 		Vector3 prevPos=transform.position;
@@ -221,6 +234,13 @@ public class Fly : MonoBehaviour
 				_bird.Land();
 			else
 				_bird.Dive(vel);
+		}
+
+		//update kb timer
+		if(_knockBackTimer>0){
+			_knockBackTimer+=Time.deltaTime;
+			if(_knockBackTimer>_knockBackDelay)
+				_knockBackTimer=0;
 		}
     }
 
@@ -254,6 +274,13 @@ public class Fly : MonoBehaviour
 
 	public float GetSpeedFraction(){
 		return _speedFrac;
+	}
+
+	public void KnockBack(Vector3 dir){
+		Debug.Log("Fly getting knocked back");
+		_knockBackTimer+=Time.deltaTime;
+		_velocity.x*=-_knockBackMult;
+		_velocity.z*=-_knockBackMult;
 	}
 
 	void OnDrawGizmos(){

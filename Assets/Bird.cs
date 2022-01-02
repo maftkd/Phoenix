@@ -44,7 +44,6 @@ public class Bird : MonoBehaviour
 		//calculations
 		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
 		_size=smr.sharedMesh.bounds.size*smr.transform.localScale.x*transform.localScale.x;
-		Debug.Log("size: "+_size);
 
 		//get references
 		_hop=GetComponent<Hop>();
@@ -207,7 +206,7 @@ public class Bird : MonoBehaviour
 		_state=2;
 	}
 
-	void StartHopping(){
+	public void StartHopping(){
 		_state=2;
 		_hop.enabled=true;
 		_waddle.enabled=false;
@@ -291,10 +290,9 @@ public class Bird : MonoBehaviour
 		//orientate
 		fp.forward=-dir;
 		//offset footprint
-		fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*0.9f;
+		float vertMult = _state==3?0.4f : 0.9f;
+		fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*vertMult;
 	
-		//move back to previous frame, to prevent collider from getting stuck overlapping
-		transform.position=_prevPos;
 
 		_starParts.Play();
 		switch(_state){
@@ -309,6 +307,8 @@ public class Bird : MonoBehaviour
 				_hop.KnockBack(dir);
 				break;
 			case 3://flying
+				ch.Sound(_hopKnockVolume);
+				_fly.KnockBack(dir);
 				break;
 		}
 	}
@@ -321,6 +321,11 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 		_shakeTimer=0;
 		_state=5;
+	}
+
+	public void RevertToPreviousPosition(){
+		//move back to previous frame, to prevent collider from getting stuck overlapping
+		transform.position=_prevPos;
 	}
 
 	void OnDrawGizmos(){

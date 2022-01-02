@@ -65,6 +65,7 @@ public class Hop : MonoBehaviour
 		_anim.SetFloat("walkSpeed",1f);
 		_diving=false;
 		_knockBack=false;
+
 	}
 
 	void OnDisable(){
@@ -159,6 +160,7 @@ public class Hop : MonoBehaviour
 			if(_camTarget.y>_hopStartPos.y)
 				_camTarget.y=_hopStartY;
 
+
 			//hit detection
 			Vector3 posDelta=transform.position-startPos;
 			RaycastHit hit;
@@ -167,17 +169,12 @@ public class Hop : MonoBehaviour
 				//check collision along velocity
 				if(Physics.Raycast(startPos+Vector3.up*_footOffset,castDir, out hit,Mathf.Abs(posDelta.y)+0.001f,_bird._collisionLayer)){
 					//check collision along vert
-					//transform.position=startPos;
 					transform.position=hit.point;
 					CompleteHop(hit.transform);
+					Debug.Log("done jumping");
 				}
 				else//vertical is free
-				{
 					transform.position=startPos+Vector3.up*posDelta.y;
-				}
-			}
-			else{
-				//no hits
 			}
 			_hopTimer+=Time.deltaTime;
 		}
@@ -229,8 +226,10 @@ public class Hop : MonoBehaviour
 		_anim.SetFloat("hopTime",-1f/_hopTime);
 		_knockBack=true;
 		float mag = _input.magnitude;
-		//_input=dir*mag*_knockBackMult;
-		_input=dir;
+		mag = Mathf.Max(0.1f,mag);
+		_input=dir*mag*_knockBackMult;
+		//_input=dir*_knockBackMult;
+		//_input=dir;
 		//
 	}
 

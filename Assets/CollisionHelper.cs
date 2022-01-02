@@ -17,6 +17,8 @@ public class CollisionHelper : MonoBehaviour
 	[Range(0,1)]
 	public float _volume;
 
+	bool _hasMeshCollider;
+
 	void Awake(){
 		_col=GetComponent<Collider>();
 		_sources = new AudioSource[_numSources];
@@ -26,6 +28,7 @@ public class CollisionHelper : MonoBehaviour
 			_sources[i]=foo.AddComponent<AudioSource>();
 			_sources[i].spatialBlend=1f;
 		}
+		_hasMeshCollider=transform.GetComponent<MeshCollider>()!=null;
 	}
 
     // Start is called before the first frame update
@@ -41,20 +44,30 @@ public class CollisionHelper : MonoBehaviour
     }
 
 	void OnTriggerEnter(Collider other){
-		_hitPoint=_col.ClosestPoint(other.transform.position);
-		//check the normal vector
-		_hitNormal=other.transform.position-_hitPoint;
-		_hitNormal.Normalize();
-		float dt = Vector3.Dot(_hitNormal,Vector3.up);
-		if(Mathf.Abs(dt)>_maxDotToKnock)
-		{
-			Debug.Log("ignoring collision due to up/down-ness of collision normal");
-			return;
-		}
 		if(other.GetComponent<Bird>()!=null)
 		{
-			other.GetComponent<Bird>().KnockBack(this,_hitNormal);
-			//Sound(_hitPoint);
+			if(_hasMeshCollider)
+			{
+				_hitPoint=other.transform.position;
+			}
+			else
+			{
+				_hitPoint=_col.ClosestPoint(other.transform.position);
+			}
+			_hitNormal=other.transform.position-_hitPoint;
+			if(_hitNormal.sqrMagnitude==0)
+				_hitNormal=-other.transform.forward;
+			Bird b = other.GetComponent<Bird>();
+			Vector3 curPos=other.transform.position;
+			b.RevertToPreviousPosition();
+			_hitNormal.y=0;
+			_hitNormal.Normalize();
+			float dt = Vector3.Dot(_hitNormal, other.transform.forward);
+			if(dt>_maxDotToKnock){
+				other.transform.position=curPos;
+			}
+			else
+				other.GetComponent<Bird>().KnockBack(this,_hitNormal);
 		}
 	}
 

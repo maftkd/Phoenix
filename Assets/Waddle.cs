@@ -20,18 +20,21 @@ public class Waddle : MonoBehaviour
 	public float _knockBackTime;
 	Vector3 _knockBackDir;
 	public float _knockBackSpeedMult;
+	Collider [] _cols;
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
 		_mCam=FindObjectOfType<MCamera>();
 		_bird = GetComponent<Bird>();
+		_cols = new Collider[2];
 	}
 
 	void OnEnable(){
 		_anim.SetFloat("walkSpeed",0.1f);
 
+		//ground at start
 		RaycastHit hit;
-		if(Physics.Raycast(transform.position+Vector3.up*0.5f,Vector3.down,out hit, 1f,_bird._collisionLayer)){
+		if(Physics.Raycast(transform.position+Vector3.up*0.01f,Vector3.down,out hit, 0.02f,_bird._collisionLayer)){
 			transform.position=hit.point;
 			if(hit.transform.GetComponent<Footstep>()!=null)
 				TakeStep(hit.transform.GetComponent<Footstep>());
@@ -77,8 +80,9 @@ public class Waddle : MonoBehaviour
 		}
 
 		Vector3 targetPos = transform.position+move;
+
 		RaycastHit hit;
-		if(Physics.Raycast(targetPos+Vector3.up*0.5f,Vector3.down,out hit, 1f,_bird._collisionLayer)){
+		if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y*1.5f,_bird._collisionLayer)){
 			//raycast to ground
 			targetPos.y=hit.point.y;
 			float dy = (targetPos.y-transform.position.y);
@@ -90,6 +94,10 @@ public class Waddle : MonoBehaviour
 				TakeStep(hit.transform.GetComponent<Footstep>());
 				_stepTimer=0;
 			}
+			_anim.SetFloat("walkSpeed",0.1f);
+		}
+		else{
+			_anim.SetFloat("walkSpeed",0f);
 		}
     }
 

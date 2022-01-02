@@ -574,7 +574,8 @@ MonoBehaviour:
   _inputSmoothLerp: 5
   _minInput: 0.1
   _knockBackTime: 0.25
-  _knockBackSpeedMult: 0.4
+  _knockBackSpeedMult: 0.3
+  _gravity: 0
 --- !u!114 &1820936649275779886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -606,6 +607,8 @@ MonoBehaviour:
   _divePitch: 1.5
   _flapParts: {fileID: 6898834388162613930, guid: edc6a0550ab36cb4eb9b56c5af76b3de,
     type: 3}
+  _knockBackDelay: 0.5
+  _knockBackMult: 0.2
 --- !u!114 &1820936649275779887
 MonoBehaviour:
   m_ObjectHideFlags: 0

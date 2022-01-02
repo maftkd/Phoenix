@@ -206,17 +206,6 @@ public class MCamera : MonoBehaviour
 		float max = Mathf.Sqrt(maxX*maxX+maxY*maxY);
 		//#hack - some reason we aren't seeing values above the 1.2 range I would expect 1*sqrt(2)
 		max = Mathf.Min(1.2f,max);
-		string db ="raw: "+_controllerInput.magnitude;
-		//Debug.Log("raw: "+_controllerInput.magnitude);
-		db+="\nmax: "+max;
-		_debugText.text=db;
-		//Debug.Log("max: "+max);
 		_controllerInput/=max;
-		//Debug.Log("mag: "+_controllerInput.magnitude);
-		if(_controllerInput.magnitude>1f)
-		{
-			//Debug.Log("yoooo");
-			//Debug.Break();
-		}
 	}
 }
