@@ -22,7 +22,7 @@ public class Bird : MonoBehaviour
 	public Vector3 _size;
 	ParticleSystem _callParts;
 	public LayerMask _collisionLayer;
-	public float _walkThreshold;
+	public float _controllerZero;
 	[Header("Footprints")]
 	public Transform _footprint;
 	public Vector3 _footprintOffset;
@@ -83,20 +83,19 @@ public class Bird : MonoBehaviour
 			switch(_state){
 				case 0://chilling
 				default:
-					if(_mCam.GetControllerInput().sqrMagnitude>0)
-					{
-						if(_mCam.GetControllerInput().sqrMagnitude<_walkThreshold*_walkThreshold)
-							StartWaddling();
-						else
-							StartHopping();
-					}
+					if(Input.GetButton("Jump"))
+						StartHopping();
+					else if(_mCam.GetControllerInput().sqrMagnitude>_controllerZero*_controllerZero)
+						StartWaddling();
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
+					/*
 					if(Input.GetButtonDown("Jump")){
 						//Debug.Log("Jump time");
 						Fly();
 					}
+					*/
 
 					break;
 				case 1://waddling
@@ -108,37 +107,40 @@ public class Bird : MonoBehaviour
 					else if(_waddle.IsKnockBack()){
 						//just wait
 					}
-					else if(_mCam.GetControllerInput().sqrMagnitude>=_walkThreshold*_walkThreshold){
-						//Debug.Log(_mCam.GetControllerInput().magnitude);
+					else if(Input.GetButton("Jump")){
 						StartHopping();
 					}
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
+					/*
 					if(Input.GetButtonDown("Jump")){
 						//Debug.Log("Jump time");
 						Fly();
 					}
+					*/
 					break;
 				case 2://hopping
 					if(!_hop.IsHopping()){
-						if(_mCam.GetControllerInput().sqrMagnitude<=0){
+						Debug.Log("Hm?");
+						if(_mCam.GetControllerInput().sqrMagnitude<=_controllerZero*_controllerZero){
 							//go to idle
 							_state=0;
 							_hop.enabled=false;
 							_anim.SetFloat("walkSpeed",0f);
 						}
-						else if(_mCam.GetControllerInput().sqrMagnitude<=_walkThreshold*_walkThreshold){
-							//go to waddle
+						else{
 							StartWaddling();
 						}
 					}
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
+					/*
 					if(Input.GetButtonDown("Jump")){
 						Fly();
 					}
+					*/
 					break;
 				case 3://flying
 					if(Input.GetButtonDown("Sing")){
@@ -255,6 +257,12 @@ public class Bird : MonoBehaviour
 		_fly.enabled=false;
 		_hop.enabled=false;
 		_state=4;
+		//reset pitch
+		Vector3 eulerAngles=transform.eulerAngles;
+		float targetPitch=0;
+		eulerAngles.x=targetPitch;
+		transform.eulerAngles=eulerAngles;
+		//polish
 		StartCoroutine(PlayExplodeParticlesR(vel));
 		_anim.SetFloat("walkSpeed",0f);
 		_anim.SetTrigger("land");

@@ -104,6 +104,7 @@ public class Waddle : MonoBehaviour
 	void TakeStep(Footstep f){
 		if(f!=null)
 			f.Sound(transform.position,_stepVolume);
+		Debug.Log("WaddleStep");
 		_bird.MakeFootprint();
 	}
 

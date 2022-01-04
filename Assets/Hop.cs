@@ -54,6 +54,7 @@ public class Hop : MonoBehaviour
 		_anim=GetComponent<Animator>();
 		_bird=GetComponent<Bird>();
 		_fly=GetComponent<Fly>();
+		_mCam=FindObjectOfType<MCamera>();
 		_terrain=FindObjectOfType<Terrain>();
 		_input=Vector3.zero;
 		_soarAudio=transform.Find("SoarParticles").GetComponent<AudioSource>();
@@ -65,6 +66,20 @@ public class Hop : MonoBehaviour
 		_anim.SetFloat("walkSpeed",1f);
 		_diving=false;
 		_knockBack=false;
+		_input=_mCam.GetInputDir();
+
+		//start da hop
+		_hopping=true;
+		_velocity=_hopAccel;
+		_hopTime=2f*_hopAccel/_gravity;
+		_anim.SetTrigger("resetWalk");
+		_anim.SetFloat("hopTime",1f/_hopTime);
+			//_anim.SetBool("hop",true);
+
+		_hopStartY=transform.position.y;
+		_hopTimer=0;
+		_hopStartPos=transform.position;
+		_hopStartRot=transform.rotation;
 
 	}
 
@@ -74,7 +89,6 @@ public class Hop : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		_mCam=FindObjectOfType<MCamera>();
     }
 
     // Update is called once per frame
@@ -83,22 +97,6 @@ public class Hop : MonoBehaviour
 		Vector3 rawInput = _npc ? _npcInput : _mCam.GetInputDir();
 		if(!_knockBack)
 			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
-		if(!_hopping){
-			if(_input.sqrMagnitude>0){
-				//start hop
-				_hopping=true;
-				_velocity=_hopAccel;
-				_hopTime=2f*_hopAccel/_gravity;
-				_anim.SetTrigger("resetWalk");
-				_anim.SetFloat("hopTime",1f/_hopTime);
-				//_anim.SetBool("hop",true);
-
-				_hopStartY=transform.position.y;
-				_hopTimer=0;
-				_hopStartPos=transform.position;
-				_hopStartRot=transform.rotation;
-			}
-		}
 		if(_hopping)
 		{
 			//middle of hop
@@ -113,6 +111,7 @@ public class Hop : MonoBehaviour
 				_soarAudio.Play();
 			}
 
+			//dive pitch
 			Vector3 eulerAngles=transform.eulerAngles;
 			float targetPitch=0;
 			if(_diving)
@@ -143,15 +142,17 @@ public class Hop : MonoBehaviour
 			Vector3 airControl=Vector3.zero;
 			if(!_knockBack)
 				airControl=transform.forward*_input.magnitude*Time.deltaTime*_airControl*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
+				//more air control when moving along forward... helps give time to rotate first
 			else
 				airControl=_input*Time.deltaTime*_airControl;
-
-
 			transform.position+=airControl;
-			if(_hopTimer<_hopBoostWindow){
-				//hop boost
-				_velocity+=_input.magnitude*Time.deltaTime*_hopBoost;
+
+			//hop boost
+			if(_hopTimer<_hopBoostWindow&&Input.GetButton("Jump")){
+				_velocity+=Time.deltaTime*_hopBoost;
 			}
+			if(Input.GetButtonUp("Jump"))
+				_hopTimer=_hopBoostWindow;
 
 			//apply physics
 			transform.position+=_velocity*Vector3.up*Time.deltaTime;
