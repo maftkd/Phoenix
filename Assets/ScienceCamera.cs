@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ScienceCamera : MonoBehaviour
@@ -25,6 +26,7 @@ public class ScienceCamera : MonoBehaviour
 	public float _minDistToTarget;
 	public float _flashEffectDur;
 	Image _ringFill;
+	public UnityEvent _onFlash;
 
 	void Awake(){
 		_camera=transform.GetChild(1);
@@ -121,6 +123,9 @@ public class ScienceCamera : MonoBehaviour
 			yield return null;
 		}
 		_flash.alpha=0;
+
+		//start effects
+		_onFlash.Invoke();
 	}
 
 	void OnDrawGizmos(){

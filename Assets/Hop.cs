@@ -38,6 +38,7 @@ public class Hop : MonoBehaviour
 	public float _hopBoost;
 	bool _diving;
 	AudioSource _soarAudio;
+	AudioSource _hopAudio;
 	public float _divePitchMult;
 	bool _knockBack;
 	public float _knockBackMult;
@@ -58,6 +59,7 @@ public class Hop : MonoBehaviour
 		_terrain=FindObjectOfType<Terrain>();
 		_input=Vector3.zero;
 		_soarAudio=transform.Find("SoarParticles").GetComponent<AudioSource>();
+		_hopAudio=transform.Find("JumpSound").GetComponent<AudioSource>();
 	}
 
 	void OnEnable(){
@@ -81,6 +83,8 @@ public class Hop : MonoBehaviour
 		_hopStartPos=transform.position;
 		_hopStartRot=transform.rotation;
 
+		_hopAudio.pitch=Random.Range(0.8f,1.2f);
+		_hopAudio.Play();
 	}
 
 	void OnDisable(){
@@ -172,7 +176,6 @@ public class Hop : MonoBehaviour
 					//check collision along vert
 					transform.position=hit.point;
 					CompleteHop(hit.transform);
-					Debug.Log("done jumping");
 				}
 				else//vertical is free
 					transform.position=startPos+Vector3.up*posDelta.y;

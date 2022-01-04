@@ -39,6 +39,8 @@ public class Bird : MonoBehaviour
 	public float _waddleKnockVolume;
 	public float _hopKnockVolume;
 	Vector3 _prevPos;
+	public Transform _mandible;
+	Transform _curKey;
 
 	void Awake(){
 		//calculations
@@ -122,7 +124,6 @@ public class Bird : MonoBehaviour
 					break;
 				case 2://hopping
 					if(!_hop.IsHopping()){
-						Debug.Log("Hm?");
 						if(_mCam.GetControllerInput().sqrMagnitude<=_controllerZero*_controllerZero){
 							//go to idle
 							_state=0;
@@ -334,6 +335,22 @@ public class Bird : MonoBehaviour
 	public void RevertToPreviousPosition(){
 		//move back to previous frame, to prevent collider from getting stuck overlapping
 		transform.position=_prevPos;
+	}
+
+	public void CollectKey(Transform t){
+		t.SetParent(_mandible);
+		t.localPosition=Vector3.zero;
+		t.localEulerAngles=Vector3.up*90f;
+		t.localScale=Vector3.one*0.25f;
+		_curKey=t;
+	}
+
+	public Transform GetKey(){
+		return _curKey;
+	}
+
+	public void UseKey(){
+		_curKey=null;
 	}
 
 	void OnDrawGizmos(){
