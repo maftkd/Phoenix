@@ -3595,6 +3595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: 0
+  _unlock: {fileID: 0}
 --- !u!114 &1871064193
 MonoBehaviour:
   m_ObjectHideFlags: 0
