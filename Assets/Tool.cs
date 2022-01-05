@@ -20,8 +20,14 @@ public class Tool : MonoBehaviour
 	void OnEnable(){
 		Debug.Log("We using tools!");
 		_toolCanvas.gameObject.SetActive(true);
-		_path.EnableCanvas();
+		_path.EnableCanvas(true);
 	}
+
+	void OnDisable(){
+		_toolCanvas.gameObject.SetActive(false);
+		_path.EnableCanvas(false);
+	}
+
     // Start is called before the first frame update
     void Start()
     {

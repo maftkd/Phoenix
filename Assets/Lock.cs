@@ -7,6 +7,7 @@ public class Lock : MonoBehaviour
 	Bird _bird;
 	public int _id;
 	bool _opening;
+	bool _opened;
 	MCamera _mCam;
 	public Transform _keyStart;
 	public Transform _keyEnd;
@@ -72,32 +73,43 @@ public class Lock : MonoBehaviour
 					Sfx.PlayOneShot2D(_pin,0.5f+Random.Range(_pinPitchRange.x,_pinPitchRange.y));
 				}
 			}
-			if(pos>=1f&&_prevPos<1f){
+			if(Mathf.Abs(pos-1f)<0.05f&&Mathf.Abs(_prevPos-1f)>0.05f){
 				//Sfx.PlayOneShot2D(_pin,1f+Random.Range(_pinPitchRange.x,_pinPitchRange.y));
 				//Sfx.PlayOneShot2D(_click);
 				if(!_click.isPlaying)
+				{
+					_click.pitch=1.2f;
 					_click.Play();
+				}
+			}
+			if(pos>=2f){
+				StartCoroutine(Unlock());
 			}
 			_prevPos=pos;
 		}
     }
 
 	public void CheckLock(){
-		if(_opening)
+		if(_opening||_opened)
 			return;
 		_key = _bird.GetKey();
-		if(_key!=null){
-			int id = _key.GetComponent<Key>().GetId();
-			if(id==_id){
-				Debug.Log("Got a match");
-				//StartCoroutine(OpenLock(key));
-				_opening=true;
-				_mCam.MoveToTransform(transform.Find("CamTarget"));
-				MoveKeyToStartPos();
+		if(_key!=null||_cylinder.childCount>0){
+			if(_key!=null)
+			{
+				int id = _key.GetComponent<Key>().GetId();
+				if(id==_id){
+					Debug.Log("Got a match");
+					//StartCoroutine(OpenLock(key));
+					_opening=true;
+					_mCam.MoveToTransform(transform.Find("CamTarget"));
+					MoveKeyToStartPos();
+				}
+				else{
+					Debug.Log("Mismatch");
+				}
 			}
-			else{
-				Debug.Log("Mismatch");
-			}
+			else
+				_bird.UseKey(null,_toolPath);
 		}
 		else{
 			Debug.Log("ignore");
@@ -111,6 +123,20 @@ public class Lock : MonoBehaviour
 		_key.localScale=Vector3.one;
 		//give bird control of tool
 		_bird.UseKey(_key,_toolPath);
+	}
+
+	IEnumerator Unlock(){
+		_opening=false;
+		_opened=true;
+		_click.pitch=0.8f;
+		_click.Play();
+		_turn.Stop();
+		yield return new WaitForSeconds(_click.clip.length);
+		_bird.DoneWithTool();
+		_mCam.MoveToTransform(null);
+		//disable the lock
+		enabled=false;
+		Debug.Log("Time to power on beacon");
 	}
 
 	void OnDrawGizmos(){

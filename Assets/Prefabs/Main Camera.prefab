@@ -134,6 +134,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _planeCamLerp: 1
   _transformCamLerp: 2
+  _surroundLerp: 2
   _maxFov: 75
   _fovLerp: 3
   _shiftSlowDown: 0.7

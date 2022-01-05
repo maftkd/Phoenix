@@ -23,6 +23,10 @@ public class ToolPath : MonoBehaviour
 		_tool.position=GetPosition();
 	}
 
+	void OnDisable(){
+
+	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,8 +39,8 @@ public class ToolPath : MonoBehaviour
         
     }
 
-	public void EnableCanvas(){
-		gameObject.SetActive(true);
+	public void EnableCanvas(bool en){
+		gameObject.SetActive(en);
 	}
 
 	public Vector3 GetPosition(){
@@ -69,17 +73,18 @@ public class ToolPath : MonoBehaviour
 		_position+=linearMovement;
 		if(_position>=_curIndex+1)
 		{
+			//next
 			if(_position>=_line.positionCount-1){
-				Debug.Log("Done");
-				_position=_curIndex+0.999f;
+				_position=_curIndex+1f;
 			}
 			else
 			{
 				_curIndex++;
+				_position=_curIndex;
 			}
-			_position=_curIndex;
 		}
 		else if(_position<_curIndex){
+			//prev
 			if(_curIndex>0)
 			{
 				_curIndex--;

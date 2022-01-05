@@ -35,6 +35,8 @@ public class MCamera : MonoBehaviour
 	float _slerpTimer;
 	[Header("Transform cam")]
 	public float _transformCamLerp;
+	[Header("Surround cam")]
+	public float _surroundLerp;
 	[Header("Fov")]
 	public float _maxFov;
 	public float _fovLerp;
@@ -61,6 +63,8 @@ public class MCamera : MonoBehaviour
     }
 
 	Vector3 targetPos;
+	Quaternion curRot;
+	Quaternion targetRot;
     // Update is called once per frame
     void Update()
     {
@@ -77,7 +81,7 @@ public class MCamera : MonoBehaviour
 				float targetFov=_defaultFov;
 
 				//face players back
-				Quaternion curRot=transform.rotation;
+				curRot=transform.rotation;
 				Vector3 birdBack=-_player.forward;
 				transform.forward=_player.forward;
 				Vector3 eulers;
@@ -100,7 +104,7 @@ public class MCamera : MonoBehaviour
 					targetFov=Mathf.Lerp(_defaultFov,_maxFov,_fly.GetSpeedFraction());
 				}
 
-				Quaternion targetRot=transform.rotation;
+				targetRot=transform.rotation;
 				float ang = Quaternion.Angle(targetRot,curRot);
 				//lerps slower for larger angle diffs
 				float lerpMult=Mathf.Min(1f,_slerpMult/ang);
@@ -129,6 +133,17 @@ public class MCamera : MonoBehaviour
 			case 2://Single transform target
 				transform.position = Vector3.Lerp(transform.position,_camTarget.position,_transformCamLerp*Time.deltaTime);
 				transform.rotation = Quaternion.Slerp(transform.rotation,_camTarget.rotation,_transformCamLerp*Time.deltaTime);
+				break;
+			case 3://surround object
+				Vector3 dir = _player.position-_camTarget.position;
+				targetPos=_player.position+dir.normalized*_followOffset.z+Vector3.up*_followOffset.y;
+				transform.position=Vector3.Lerp(transform.position,targetPos,_surroundLerp*Time.deltaTime);
+				curRot=transform.rotation;
+				Vector3 forward=-dir;
+				forward.y=0;
+				transform.forward=forward;
+				targetRot=transform.rotation;
+				transform.rotation = Quaternion.Slerp(curRot,targetRot,_surroundLerp*Time.deltaTime);
 				break;
 		}
     }
@@ -219,6 +234,15 @@ public class MCamera : MonoBehaviour
 		else{
 			_camTarget=t;
 			_state=2;
+		}
+	}
+
+	public void Surround(Transform t){
+		if(t==null)
+			_state=0;
+		else{
+			_camTarget=t;
+			_state=3;
 		}
 	}
 }

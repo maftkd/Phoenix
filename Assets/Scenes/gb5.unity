@@ -1665,6 +1665,26 @@ MonoBehaviour:
   _onPlay:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1270025030 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8558470209501655974, guid: 294dfb866adb6e744933a4c76a588542,
+    type: 3}
+  m_PrefabInstance: {fileID: 8558470210702080224}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1270025031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270025030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d65f56073f8364ea15817514d69f73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outerRadius: 1
+  _innerRadius: 0
 --- !u!1 &1338484946
 GameObject:
   m_ObjectHideFlags: 0
@@ -2297,6 +2317,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: key
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137848913469112656, guid: 592c0fbabf6a9f04f8af1d8375707965,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 592c0fbabf6a9f04f8af1d8375707965, type: 3}
@@ -4634,7 +4659,7 @@ PrefabInstance:
     - target: {fileID: 8558470209501655975, guid: 294dfb866adb6e744933a4c76a588542,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.348
+      value: 4.34
       objectReference: {fileID: 0}
     - target: {fileID: 8558470209501655975, guid: 294dfb866adb6e744933a4c76a588542,
         type: 3}
@@ -4717,6 +4742,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PuzzleBox_camera
       objectReference: {fileID: 0}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
+      propertyPath: _radius
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3105464079716255404, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
       propertyPath: m_RootOrder
@@ -4735,7 +4765,7 @@ PrefabInstance:
     - target: {fileID: 3105464079716255404, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.25
+      value: 2.242
       objectReference: {fileID: 0}
     - target: {fileID: 3105464079716255404, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}

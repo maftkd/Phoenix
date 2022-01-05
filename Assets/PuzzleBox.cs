@@ -28,7 +28,6 @@ public class PuzzleBox : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        
     }
 
 	public virtual void PuzzleSolved(){
@@ -40,5 +39,8 @@ public class PuzzleBox : MonoBehaviour
 
 	protected virtual IEnumerator OpenBox(){
 		yield return null;
+	}
+
+	void OnDrawGizmos(){
 	}
 }

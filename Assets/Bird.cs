@@ -354,12 +354,14 @@ public class Bird : MonoBehaviour
 	}
 
 	public void UseKey(Transform tool,ToolPath path){
-		Vector3 handlePos=_curKey.Find("Handle").position;
-		RaycastHit hit;
-		if(Physics.Raycast(handlePos,Vector3.down,out hit, 1f, 1)){
-			transform.position=hit.point;
+		if(_curKey!=null){
+			Vector3 handlePos=_curKey.Find("Handle").position;
+			RaycastHit hit;
+			if(Physics.Raycast(handlePos,Vector3.down,out hit, 1f, 1)){
+				transform.position=hit.point;
+			}
+			_curKey=null;
 		}
-		_curKey=null;
 		StartUsingTool(path);
 	}
 
@@ -372,6 +374,11 @@ public class Bird : MonoBehaviour
 		_tool._path=path;
 		_tool.enabled=true;
 		_state=6;
+	}
+
+	public void DoneWithTool(){
+		_state=0;
+		_tool.enabled=false;
 	}
 
 	void OnDrawGizmos(){
