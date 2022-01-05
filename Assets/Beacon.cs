@@ -10,6 +10,8 @@ public class Beacon : MonoBehaviour
 	public MeshRenderer _domeGlass;
 	public MeshRenderer _domeLight;
 	public float _flipPeriod;
+	public GameObject _beam;
+	public ParticleSystem _sparks;
 
 	void Awake(){
 		_hum=GetComponent<AudioSource>();
@@ -35,6 +37,7 @@ public class Beacon : MonoBehaviour
 		Sfx.PlayOneShot2D(_smallSwitch);
 		yield return new WaitForSeconds(_smallSwitch.length);
 		Sfx.PlayOneShot2D(_bigSwitch);
+		Instantiate(_sparks,transform.position,Quaternion.identity);
 		float dur = _bigSwitch.length;
 		float timer=0;
 		Color c = Color.black;
@@ -52,6 +55,7 @@ public class Beacon : MonoBehaviour
 		_domeGlass.enabled=false;
 		_domeLight.enabled=true;
 		_hum.Play();
-		Debug.Log("Time to activate the beam");
+		_beam.SetActive(true);
+		enabled=false;
 	}
 }
