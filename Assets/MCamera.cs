@@ -27,7 +27,9 @@ public class MCamera : MonoBehaviour
 	public AnimationCurve _ampCurve;
 	Vector3 _shake;
 	int _state;
+	int _prevState;
 	Transform _camTarget;
+	Transform _prevTarget;
 	[Header("Planar cam")]
 	public float _planeCamLerp;
 	Text _debugText;
@@ -201,9 +203,14 @@ public class MCamera : MonoBehaviour
 
 	public void SetCamPlane(Transform t){
 		if(t==null)
-			_state=0;
+		{
+			_state=_prevState;
+			_camTarget=_prevTarget;
+		}
 		else{
+			_prevTarget=_camTarget;
 			_camTarget=t;
+			_prevState=_state;
 			_state=1;
 		}
 	}
@@ -230,19 +237,34 @@ public class MCamera : MonoBehaviour
 
 	public void MoveToTransform(Transform t){
 		if(t==null)
-			_state=0;
+		{
+			_state=_prevState;
+			_camTarget=_prevTarget;
+			Debug.Log("Setting cam target to: "+_camTarget.name);
+		}
 		else{
+			_prevTarget=_camTarget;
 			_camTarget=t;
+			_prevState=_state;
 			_state=2;
 		}
 	}
 
 	public void Surround(Transform t){
 		if(t==null)
-			_state=0;
+		{
+			_state=_prevState;
+			_camTarget=_prevTarget;
+		}
 		else{
+			_prevTarget=_camTarget;
 			_camTarget=t;
+			_prevState=_state;
 			_state=3;
 		}
+	}
+
+	public void DefaultCam(){
+		_state=0;
 	}
 }

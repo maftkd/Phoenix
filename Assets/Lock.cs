@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Lock : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class Lock : MonoBehaviour
 	public Vector2 _pinPitchRange;
 	public float _turnVolMult;
 	public float _turnPitchMult;
+	public UnityEvent _onUnlock;
 
 	void Awake(){
 		GameObject player =GameObject.FindGameObjectWithTag("Player");
@@ -136,7 +138,7 @@ public class Lock : MonoBehaviour
 		_mCam.MoveToTransform(null);
 		//disable the lock
 		enabled=false;
-		Debug.Log("Time to power on beacon");
+		_onUnlock.Invoke();
 	}
 
 	void OnDrawGizmos(){

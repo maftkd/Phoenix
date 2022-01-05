@@ -31,9 +31,10 @@ public class SurroundCamHelper : MonoBehaviour
 			}
 		}
 		else{
+			Debug.Log("Player is in zone!");
 			if(sqrMag>_outerRadius*_outerRadius || sqrMag<_innerRadius*_innerRadius){
 				_playerInZone=false;
-				_mCam.Surround(null);
+				_mCam.DefaultCam();
 			}
 		}
         
