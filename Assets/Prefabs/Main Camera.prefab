@@ -133,6 +133,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _planeCamLerp: 1
+  _transformCamLerp: 2
   _maxFov: 75
-  _fovLerp: 1
+  _fovLerp: 3
   _shiftSlowDown: 0.7

@@ -11,6 +11,7 @@ public class Bird : MonoBehaviour
 	Hop _hop;
 	Fly _fly;
 	Waddle _waddle;
+	Tool _tool;
 	RunAway _runAway;
 	Animator _anim;
 	AudioSource _ruffleAudio;
@@ -51,6 +52,7 @@ public class Bird : MonoBehaviour
 		_hop=GetComponent<Hop>();
 		_fly=GetComponent<Fly>();
 		_waddle=GetComponent<Waddle>();
+		_tool=GetComponent<Tool>();
 		_runAway=GetComponent<RunAway>();
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
@@ -158,6 +160,8 @@ public class Bird : MonoBehaviour
 					if(_shakeTimer>=_shakeDelay){
 						_state=0;
 					}
+					break;
+				case 6://using tool
 					break;
 			}
 
@@ -349,8 +353,25 @@ public class Bird : MonoBehaviour
 		return _curKey;
 	}
 
-	public void UseKey(){
+	public void UseKey(Transform tool,ToolPath path){
+		Vector3 handlePos=_curKey.Find("Handle").position;
+		RaycastHit hit;
+		if(Physics.Raycast(handlePos,Vector3.down,out hit, 1f, 1)){
+			transform.position=hit.point;
+		}
 		_curKey=null;
+		StartUsingTool(path);
+	}
+
+	void StartUsingTool(ToolPath path){
+		_waddle.enabled=false;
+		_hop.enabled=false;
+		_fly.enabled=false;
+		_anim.SetFloat("walkSpeed",0f);
+		//enter tool state
+		_tool._path=path;
+		_tool.enabled=true;
+		_state=6;
 	}
 
 	void OnDrawGizmos(){

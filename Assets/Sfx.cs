@@ -23,4 +23,13 @@ public class Sfx : MonoBehaviour
 		audio.Play();
 		Destroy(foo,clip.length);
 	}
+
+	public static void PlayOneShot2D(AudioClip clip, float pitch){
+		GameObject foo = new GameObject("one-shot audio");
+		AudioSource audio = foo.AddComponent<AudioSource>();
+		audio.pitch=pitch;
+		audio.clip=clip;
+		audio.Play();
+		Destroy(foo,clip.length);
+	}
 }

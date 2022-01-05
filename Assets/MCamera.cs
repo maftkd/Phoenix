@@ -33,6 +33,8 @@ public class MCamera : MonoBehaviour
 	Text _debugText;
 	Quaternion _prevTargetRot;
 	float _slerpTimer;
+	[Header("Transform cam")]
+	public float _transformCamLerp;
 	[Header("Fov")]
 	public float _maxFov;
 	public float _fovLerp;
@@ -124,7 +126,9 @@ public class MCamera : MonoBehaviour
 				transform.position = Vector3.Lerp(transform.position,targetPos,_planeCamLerp*Time.deltaTime);
 				transform.rotation = Quaternion.Slerp(transform.rotation,_camTarget.rotation,_planeCamLerp*Time.deltaTime);
 				break;
-			case 2:
+			case 2://Single transform target
+				transform.position = Vector3.Lerp(transform.position,_camTarget.position,_transformCamLerp*Time.deltaTime);
+				transform.rotation = Quaternion.Slerp(transform.rotation,_camTarget.rotation,_transformCamLerp*Time.deltaTime);
 				break;
 		}
     }
@@ -207,5 +211,14 @@ public class MCamera : MonoBehaviour
 		//#hack - some reason we aren't seeing values above the 1.2 range I would expect 1*sqrt(2)
 		max = Mathf.Min(1.2f,max);
 		_controllerInput/=max;
+	}
+
+	public void MoveToTransform(Transform t){
+		if(t==null)
+			_state=0;
+		else{
+			_camTarget=t;
+			_state=2;
+		}
 	}
 }
