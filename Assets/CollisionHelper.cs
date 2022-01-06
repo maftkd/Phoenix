@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CollisionHelper : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class CollisionHelper : MonoBehaviour
 	public float _volume;
 
 	bool _hasMeshCollider;
+
+	public UnityEvent _onBirdEnter;
 
 	void Awake(){
 		_col=GetComponent<Collider>();
@@ -46,6 +49,7 @@ public class CollisionHelper : MonoBehaviour
 	void OnTriggerEnter(Collider other){
 		if(other.GetComponent<Bird>()!=null)
 		{
+			_onBirdEnter.Invoke();
 			if(_hasMeshCollider)
 			{
 				_hitPoint=other.transform.position;

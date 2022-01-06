@@ -596,8 +596,8 @@ LineRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4930177914892647791}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 0
   m_LightProbeUsage: 0
@@ -840,7 +840,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8558470209501655974}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0d65f56073f8364ea15817514d69f73, type: 3}
   m_Name: 
@@ -866,6 +866,9 @@ MonoBehaviour:
   _flipPeriod: 0.05
   _beam: {fileID: 4930177914892647791}
   _sparks: {fileID: 4850052255876221039, guid: e2b8621176028174cb8f836371708f17, type: 3}
+  _onActivated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!82 &115569619045557230
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1109,6 +1112,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e876c22279c9a46e3bb56fd53a769b88, type: 3}
   _numSources: 2
   _volume: 0.1
+  _onBirdEnter:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8558470209715112554
 GameObject:
   m_ObjectHideFlags: 0
@@ -1642,6 +1648,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e848b9e11a6271f4b898dd69e011d2e6, type: 3}
   _numSources: 1
   _volume: 1
+  _onBirdEnter:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &8558470210106872928
 MonoBehaviour:
   m_ObjectHideFlags: 0

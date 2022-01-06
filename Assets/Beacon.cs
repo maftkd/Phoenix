@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Beacon : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class Beacon : MonoBehaviour
 	public float _flipPeriod;
 	public GameObject _beam;
 	public ParticleSystem _sparks;
+	public UnityEvent _onActivated;
 
 	void Awake(){
 		_hum=GetComponent<AudioSource>();
@@ -57,5 +59,6 @@ public class Beacon : MonoBehaviour
 		_hum.Play();
 		_beam.SetActive(true);
 		enabled=false;
+		_onActivated.Invoke();
 	}
 }

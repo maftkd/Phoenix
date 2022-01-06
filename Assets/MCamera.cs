@@ -138,7 +138,11 @@ public class MCamera : MonoBehaviour
 				break;
 			case 3://surround object
 				Vector3 dir = _player.position-_camTarget.position;
-				targetPos=_player.position+dir.normalized*_followOffset.z+Vector3.up*_followOffset.y;
+				dir.y=0;
+				if(_hop.enabled)
+					targetPos=_hop.GetCamTarget()+dir.normalized*_followOffset.z+Vector3.up*_followOffset.y;
+				else
+					targetPos=_player.position+dir.normalized*_followOffset.z+Vector3.up*_followOffset.y;
 				transform.position=Vector3.Lerp(transform.position,targetPos,_surroundLerp*Time.deltaTime);
 				curRot=transform.rotation;
 				Vector3 forward=-dir;

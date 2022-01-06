@@ -14,6 +14,11 @@ public class SurroundCamHelper : MonoBehaviour
 		_player=GameObject.FindGameObjectWithTag("Player").transform;
 		_mCam=Camera.main.GetComponent<MCamera>();
 	}
+
+	void OnDisable(){
+		_mCam.DefaultCam();
+	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +36,6 @@ public class SurroundCamHelper : MonoBehaviour
 			}
 		}
 		else{
-			Debug.Log("Player is in zone!");
 			if(sqrMag>_outerRadius*_outerRadius || sqrMag<_innerRadius*_innerRadius){
 				_playerInZone=false;
 				_mCam.DefaultCam();
@@ -41,6 +45,8 @@ public class SurroundCamHelper : MonoBehaviour
     }
 
 	void OnDrawGizmos(){
+		if(!enabled)
+			return;
 		Gizmos.color=Color.green;
 		Gizmos.DrawWireSphere(transform.position,_outerRadius);
 		Gizmos.color=Color.blue;
