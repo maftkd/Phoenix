@@ -202,8 +202,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lit: {fileID: 2100000, guid: bf833c5cf66251440911905fe83bc03d, type: 2}
   _unlit: {fileID: 2100000, guid: 6541af7f0279b944ebfa6abb66e955c3, type: 2}
-  _pushOffset: 0.05
+  _pushOffset: 3
   _pushDur: 0.1
   _pushAudio: {fileID: 8300000, guid: e9fb18130df37d646865b16754958941, type: 3}
   _pushPitch: 1
   _releasePitch: 1.3
+  _onButtonPressed:
+    m_PersistentCalls:
+      m_Calls: []

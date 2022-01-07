@@ -297,17 +297,19 @@ public class Bird : MonoBehaviour
 		_mCam.Shake(vel);
 	}
 
-	public void KnockBack(CollisionHelper ch, Vector3 dir){
-		//add particel to collision
-		Transform fp = Instantiate(_footprint,ch._hitPoint,Quaternion.identity);
-		//orientate
-		fp.forward=-dir;
-		//offset footprint
-		float vertMult = _state==3?0.4f : 0.9f;
-		fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*vertMult;
-	
+	public void KnockBack(CollisionHelper ch, Vector3 dir,bool supress=false){
+		if(!supress){
+			//add particel to collision
+			Transform fp = Instantiate(_footprint,ch._hitPoint,Quaternion.identity);
+			//orientate
+			fp.forward=-dir;
+			//offset footprint
+			float vertMult = _state==3?0.4f : 0.9f;
+			fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*vertMult;
 
-		_starParts.Play();
+			_starParts.Play();
+		}
+
 		switch(_state){
 			case 0:
 			default:

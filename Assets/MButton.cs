@@ -20,8 +20,8 @@ public class MButton : MonoBehaviour
 	public UnityEvent _onButtonPressed;
 
 	void Awake(){
-		_restPos=transform.position;
-		_pushedPos=_restPos-transform.forward*_pushOffset;
+		_restPos=transform.localPosition;
+		_pushedPos=_restPos-Vector3.forward*_pushOffset;
 		_renderer=GetComponent<MeshRenderer>();
 	}
     // Start is called before the first frame update
@@ -63,7 +63,7 @@ public class MButton : MonoBehaviour
 			case 0:
 			default://unpressed
 				_state=1;
-				transform.position=_pushedPos;
+				transform.localPosition=_pushedPos;
 				_pushTimer=0;
 				Sfx.PlayOneShot2D(_pushAudio,_pushPitch);
 				break;
@@ -71,7 +71,7 @@ public class MButton : MonoBehaviour
 				break;
 			case 2://pressed
 				_state=3;
-				transform.position=_restPos;
+				transform.localPosition=_restPos;
 				_pushTimer=0;
 				Sfx.PlayOneShot2D(_pushAudio,_releasePitch);
 				break;

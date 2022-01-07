@@ -7,6 +7,7 @@ public class MCamera : MonoBehaviour
 {
 	public Vector3 _followOffset;
 	public Vector3 _followBack;
+	public Vector3 _trackOffset;
 	public float _lerpSpeed;
 	public float _slerpMult;
 	public float _minAngleLerp;
@@ -39,6 +40,10 @@ public class MCamera : MonoBehaviour
 	public float _transformCamLerp;
 	[Header("Surround cam")]
 	public float _surroundLerp;
+	[Header("Track cam")]
+	public float _trackLerpSlow;
+	public float _trackLerpFast;
+	float _trackLerp;
 	[Header("Fov")]
 	public float _maxFov;
 	public float _fovLerp;
@@ -46,6 +51,7 @@ public class MCamera : MonoBehaviour
 	Camera _cam;
 	[Header("Input")]
 	public float _shiftSlowDown;
+	GameObject _letterBox;
 	
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -56,6 +62,7 @@ public class MCamera : MonoBehaviour
 		_debugText=transform.GetComponentInChildren<Text>();
 		_cam = GetComponent<Camera>();
 		_defaultFov=_cam.fieldOfView;
+		_letterBox=transform.GetChild(0).gameObject;
 	}
 
     // Start is called before the first frame update
@@ -151,6 +158,12 @@ public class MCamera : MonoBehaviour
 				targetRot=transform.rotation;
 				transform.rotation = Quaternion.Slerp(curRot,targetRot,_surroundLerp*Time.deltaTime);
 				break;
+			case 4:
+				curRot=transform.rotation;
+				transform.LookAt(_camTarget.position+_trackOffset);
+				targetRot=transform.rotation;
+				transform.rotation = Quaternion.Slerp(curRot,targetRot,_trackLerp*Time.deltaTime);
+				break;
 		}
     }
 
@@ -174,6 +187,9 @@ public class MCamera : MonoBehaviour
 	}
 
 	public Vector3 GetInputDir(){
+		//#temp - little hacky
+		if(_state==4)
+			return Vector3.zero;
 		//#temp - until pc input integrated
 		if(Input.GetKey(KeyCode.LeftShift))
 			return _worldSpaceInput*_shiftSlowDown;
@@ -181,6 +197,9 @@ public class MCamera : MonoBehaviour
 	}
 
 	public Vector3 GetControllerInput(){
+		//#temp - little hacky
+		if(_state==4)
+			return Vector3.zero;
 		//#temp - until pc input integrated
 		if(Input.GetKey(KeyCode.LeftShift))
 			return _controllerInput*_shiftSlowDown;
@@ -270,5 +289,24 @@ public class MCamera : MonoBehaviour
 
 	public void DefaultCam(){
 		_state=0;
+		if(_letterBox!=null)
+			_letterBox.SetActive(false);
+	}
+
+	public void TrackTarget(Transform t,Vector3 offset,bool fast){
+		if(t==null)
+		{
+			_state=_prevState;
+			_camTarget=_prevTarget;
+		}
+		else{
+			_trackOffset=offset;
+			_prevTarget=_camTarget;
+			_camTarget=t;
+			_prevState=_state;
+			_state=4;
+			_letterBox.SetActive(true);
+		}
+		_trackLerp=fast? _trackLerpFast: _trackLerpSlow;
 	}
 }

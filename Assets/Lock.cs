@@ -135,7 +135,8 @@ public class Lock : MonoBehaviour
 		_turn.Stop();
 		yield return new WaitForSeconds(_click.clip.length);
 		_bird.DoneWithTool();
-		_mCam.MoveToTransform(null);
+		//_mCam.MoveToTransform(null);
+		//_mCam.DefaultCam();
 		//disable the lock
 		enabled=false;
 		_onUnlock.Invoke();

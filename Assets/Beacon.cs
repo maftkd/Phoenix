@@ -13,6 +13,8 @@ public class Beacon : MonoBehaviour
 	public float _flipPeriod;
 	public GameObject _beam;
 	public ParticleSystem _sparks;
+	public float _flickerDur;
+
 	public UnityEvent _onActivated;
 
 	void Awake(){
@@ -40,7 +42,7 @@ public class Beacon : MonoBehaviour
 		yield return new WaitForSeconds(_smallSwitch.length);
 		Sfx.PlayOneShot2D(_bigSwitch);
 		Instantiate(_sparks,transform.position,Quaternion.identity);
-		float dur = _bigSwitch.length;
+		float dur = _flickerDur;
 		float timer=0;
 		Color c = Color.black;
 		float flipTimer=0;

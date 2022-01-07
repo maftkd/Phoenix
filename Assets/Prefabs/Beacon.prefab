@@ -317,7 +317,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3359147958877657743}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.272, z: 0}
+  m_LocalPosition: {x: 0, y: 0.421, z: 0}
   m_LocalScale: {x: 0.29074445, y: 0.29074445, z: 0.29074445}
   m_Children: []
   m_Father: {fileID: 8558470209501655975}
@@ -866,6 +866,7 @@ MonoBehaviour:
   _flipPeriod: 0.05
   _beam: {fileID: 4930177914892647791}
   _sparks: {fileID: 4850052255876221039, guid: e2b8621176028174cb8f836371708f17, type: 3}
+  _flickerDur: 0.5
   _onActivated:
     m_PersistentCalls:
       m_Calls: []
@@ -881,7 +882,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: b0fdcac0b9416ff4c84874240e957bed, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1112,6 +1113,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e876c22279c9a46e3bb56fd53a769b88, type: 3}
   _numSources: 2
   _volume: 0.1
+  _supressHitFx: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -1344,6 +1346,7 @@ GameObject:
   - component: {fileID: 8558470210774972623}
   - component: {fileID: 8558470210774972622}
   - component: {fileID: 8558470210774972621}
+  - component: {fileID: 5750320120529187300}
   m_Layer: 0
   m_Name: GlassDome
   m_TagString: Untagged
@@ -1359,7 +1362,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8558470210774972619}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.272, z: 0}
+  m_LocalPosition: {x: 0, y: 0.421, z: 0}
   m_LocalScale: {x: 0.29074445, y: 0.29074445, z: 0.29074445}
   m_Children: []
   m_Father: {fileID: 8558470209501655975}
@@ -1425,6 +1428,27 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5750320120529187300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8558470210774972619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05d79d743a93f1546bc55d38515425c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hitPoint: {x: 0, y: 0, z: 0}
+  _maxDotToKnock: 0.2
+  _clips: []
+  _numSources: 0
+  _volume: 0
+  _supressHitFx: 0
+  _onBirdEnter:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8558470211155216742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1648,6 +1672,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e848b9e11a6271f4b898dd69e011d2e6, type: 3}
   _numSources: 1
   _volume: 1
+  _supressHitFx: 1
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
