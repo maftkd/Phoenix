@@ -22,6 +22,12 @@ public class Waddle : MonoBehaviour
 	public float _knockBackSpeedMult;
 	Collider [] _cols;
 
+	//npc
+	Terrain _terrain;
+	Vector3 _destination;
+	public bool _npc;
+	Vector3 _npcInput;
+
 	void Awake(){
 		_anim=GetComponent<Animator>();
 		_mCam=FindObjectOfType<MCamera>();
@@ -52,7 +58,7 @@ public class Waddle : MonoBehaviour
     {
 		_stepTimer+=Time.deltaTime;
 		if(_knockBackTimer<=0){
-			Vector3 rawInput = _mCam.GetInputDir();
+			Vector3 rawInput = _npc? _npcInput : _mCam.GetInputDir();
 			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
 			if(_input.sqrMagnitude<_minInput*_minInput)
 				return;
@@ -122,4 +128,25 @@ public class Waddle : MonoBehaviour
 		_input=dir*mag*_knockBackSpeedMult;
 		//transform.forward=-dir;
 	}
+
+	public void WaddleTo(Vector3 target,float speed){
+		_destination=target;
+		RaycastHit hit;
+		if(Physics.Raycast(_destination+Vector3.up*1f,Vector3.down, out hit,1f,_bird._collisionLayer)){
+			_destination.y=hit.point.y;
+		}
+		Vector3 diff = _destination-transform.position;
+		diff.y=0;
+		diff.Normalize();
+		_npcInput=diff*speed;
+	}
+
+	public bool Arrived(float threshold){
+		return (transform.position-_destination).sqrMagnitude<threshold*threshold;
+	}
+	public void StopWaddling(){
+		//transform.position=_destination;
+		_npcInput=Vector3.zero;
+	}
+
 }

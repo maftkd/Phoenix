@@ -41,8 +41,8 @@ public class Planter : MonoBehaviour
 			for(int x=0;x<td.alphamapWidth; x++){
 				if(alphaMaps[x,y,_terrainLayer]>_alphaThreshold)
 				{
-					grassCount++;
 					if(Random.value<_plantChance){
+						grassCount++;
 						float xFrac=(y/(float)(td.alphamapHeight-1));
 						float zFrac=(x/(float)(td.alphamapWidth-1));
 						float worldX=t.transform.position.x+td.size.x*xFrac;

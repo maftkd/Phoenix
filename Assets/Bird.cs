@@ -42,6 +42,7 @@ public class Bird : MonoBehaviour
 	Vector3 _prevPos;
 	public Transform _mandible;
 	Transform _curKey;
+	Transform _curSeed;
 
 	void Awake(){
 		//calculations
@@ -177,6 +178,9 @@ public class Bird : MonoBehaviour
 */
 			}
 		}
+		else{
+
+		}
 		_prevPos=transform.position;
     }
 
@@ -213,6 +217,12 @@ public class Bird : MonoBehaviour
 		_state=2;
 	}
 
+	public void WaddleTo(Vector3 loc,float speed){
+		_waddle.enabled=true;
+		_waddle.WaddleTo(loc,speed);
+		_state=1;
+	}
+
 	public void StartHopping(){
 		_state=2;
 		_hop.enabled=true;
@@ -236,8 +246,19 @@ public class Bird : MonoBehaviour
 		_state=0;
 	}
 
+	public void StopWaddling(){
+		_waddle.StopWaddling();
+		_waddle.enabled=false;
+		_anim.SetFloat("walkSpeed",0f);
+		_state=0;
+	}
+
 	public bool Arrived(){
 		return _hop.Arrived(_triggerRadius);
+	}
+
+	public bool ArrivedW(){
+		return _waddle.Arrived(_triggerRadius*0.1f);
 	}
 
 	void Fly(){
@@ -351,6 +372,16 @@ public class Bird : MonoBehaviour
 		_curKey=t;
 	}
 
+	public void CollectSeed(Transform t){
+		if(t==null)
+			Debug.Log("oopsies");
+		t.SetParent(_mandible);
+		t.localPosition=Vector3.zero;
+		t.localEulerAngles=Vector3.up*90f;
+		t.localScale=Vector3.one*0.25f;
+		_curSeed=t;
+	}
+
 	public Transform GetKey(){
 		return _curKey;
 	}
@@ -381,6 +412,40 @@ public class Bird : MonoBehaviour
 	public void DoneWithTool(){
 		_state=0;
 		_tool.enabled=false;
+	}
+
+	public bool HasSeed(){
+		return _curSeed!=null;
+	}
+
+	public Transform GiveSeed(){
+		Transform seed=_curSeed;
+		_curSeed=null;
+		return seed;
+	}
+
+	public Transform GetSeed(){
+		return _curSeed;
+	}
+
+	public bool IsRunningAway(){
+		return _runAway.enabled;
+	}
+
+	public void Ground(){
+		_waddle.enabled=false;
+		_hop.enabled=false;
+		_fly.enabled=false;
+		_anim.SetFloat("walkSpeed",0f);
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position+_size.y*Vector3.up,Vector3.down, out hit,1f,_collisionLayer)){
+			transform.position=hit.point;
+		}
+	}
+
+	public void TakeSeedFromMate(){
+		Transform seed = _mate.GiveSeed();
+		CollectSeed(seed);
 	}
 
 	void OnDrawGizmos(){

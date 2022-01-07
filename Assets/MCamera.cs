@@ -44,6 +44,7 @@ public class MCamera : MonoBehaviour
 	public float _trackLerpSlow;
 	public float _trackLerpFast;
 	float _trackLerp;
+	Vector3 _targetPos;
 	[Header("Fov")]
 	public float _maxFov;
 	public float _fovLerp;
@@ -159,6 +160,7 @@ public class MCamera : MonoBehaviour
 				transform.rotation = Quaternion.Slerp(curRot,targetRot,_surroundLerp*Time.deltaTime);
 				break;
 			case 4:
+				transform.position=Vector3.Lerp(transform.position,_targetPos,_trackLerp*Time.deltaTime);
 				curRot=transform.rotation;
 				transform.LookAt(_camTarget.position+_trackOffset);
 				targetRot=transform.rotation;
@@ -306,6 +308,25 @@ public class MCamera : MonoBehaviour
 			_prevState=_state;
 			_state=4;
 			_letterBox.SetActive(true);
+			_targetPos=transform.position;
+		}
+		_trackLerp=fast? _trackLerpFast: _trackLerpSlow;
+	}
+
+	public void TrackTargetFrom(Transform t,Vector3 pos,Vector3 offset,bool fast){
+		if(t==null)
+		{
+			_state=_prevState;
+			_camTarget=_prevTarget;
+		}
+		else{
+			_trackOffset=offset;
+			_prevTarget=_camTarget;
+			_camTarget=t;
+			_prevState=_state;
+			_state=4;
+			_letterBox.SetActive(true);
+			_targetPos=pos;
 		}
 		_trackLerp=fast? _trackLerpFast: _trackLerpSlow;
 	}

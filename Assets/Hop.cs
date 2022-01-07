@@ -71,20 +71,7 @@ public class Hop : MonoBehaviour
 		_input=_mCam.GetInputDir();
 
 		//start da hop
-		_hopping=true;
-		_velocity=_hopAccel;
-		_hopTime=2f*_hopAccel/_gravity;
-		_anim.SetTrigger("resetWalk");
-		_anim.SetFloat("hopTime",1f/_hopTime);
-			//_anim.SetBool("hop",true);
-
-		_hopStartY=transform.position.y;
-		_hopTimer=0;
-		_hopStartPos=transform.position;
-		_hopStartRot=transform.rotation;
-
-		_hopAudio.pitch=Random.Range(0.8f,1.2f);
-		_hopAudio.Play();
+		StartHop();
 	}
 
 	void OnDisable(){
@@ -101,6 +88,10 @@ public class Hop : MonoBehaviour
 		Vector3 rawInput = _npc ? _npcInput : _mCam.GetInputDir();
 		if(!_knockBack)
 			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
+		if(!_hopping&&_npc)
+		{
+			StartHop();
+		}
 		if(_hopping)
 		{
 			//middle of hop
@@ -152,7 +143,7 @@ public class Hop : MonoBehaviour
 			transform.position+=airControl;
 
 			//hop boost
-			if(_hopTimer<_hopBoostWindow&&Input.GetButton("Jump")){
+			if(_hopTimer<_hopBoostWindow&&(Input.GetButton("Jump")||_npc)){
 				_velocity+=Time.deltaTime*_hopBoost;
 			}
 			if(Input.GetButtonUp("Jump"))
@@ -268,6 +259,24 @@ public class Hop : MonoBehaviour
 		if(_knockBack){
 			_bird.ShakeItOff();
 		}
+	}
+
+	void StartHop(){
+		_hopping=true;
+		_velocity=_hopAccel;
+		_hopTime=2f*_hopAccel/_gravity;
+		_anim.SetTrigger("resetWalk");
+		_anim.SetFloat("hopTime",1f/_hopTime);
+			//_anim.SetBool("hop",true);
+
+		_hopStartY=transform.position.y;
+		_hopTimer=0;
+		_hopStartPos=transform.position;
+		_hopStartRot=transform.rotation;
+
+		_hopAudio.pitch=Random.Range(0.8f,1.2f);
+		_hopAudio.Play();
+
 	}
 
 	void OnDrawGizmos(){

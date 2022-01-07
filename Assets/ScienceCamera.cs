@@ -11,7 +11,8 @@ public class ScienceCamera : MonoBehaviour
 	public float _maxRotationAngle;
 	public float _anglesPerSec;
 	float _focusTimer;
-	public Vector3 _localTargetPos;
+	Vector3 _targetPos;
+	public Transform _ex;
 	public AudioClip _zoom;
 	public Vector2 _zoomPitchRange;
 	public AudioClip _shutter;
@@ -27,6 +28,7 @@ public class ScienceCamera : MonoBehaviour
 	public float _flashEffectDur;
 	Image _ringFill;
 	public UnityEvent _onFlash;
+	Quaternion _startRot;
 
 	void Awake(){
 		_camera=transform.GetChild(1);
@@ -35,6 +37,8 @@ public class ScienceCamera : MonoBehaviour
 		_flash=transform.GetChild(2).GetComponent<CanvasGroup>();
 		_flashDur=_flashCharge.length;
 		_ringFill=transform.GetChild(3).GetChild(1).GetComponent<Image>();
+		_startRot=transform.rotation;
+		_targetPos=_ex.position;
 	}
 
     // Start is called before the first frame update
@@ -49,7 +53,7 @@ public class ScienceCamera : MonoBehaviour
 		if(_focusTimer>=_focusDelay){
 			Refocus();
 		}
-		if((_player.position-(transform.position+_localTargetPos)).sqrMagnitude<=0.01f){
+		if((_player.position-_targetPos).sqrMagnitude<=0.01f){
 			StartCoroutine(Flash());
 		}
 		_ringFill.fillAmount=Mathf.Lerp(_ringFill.fillAmount,0,Time.deltaTime);
@@ -60,7 +64,7 @@ public class ScienceCamera : MonoBehaviour
 		_camera.LookAt(_player);
 		Quaternion targetRot=_camera.rotation;
 		_camera.rotation=curRot;
-		float angle=Quaternion.Angle(Quaternion.identity,targetRot);
+		float angle=Quaternion.Angle(_startRot,targetRot);
 		if(angle<_maxRotationAngle){
 			angle=Quaternion.Angle(curRot,targetRot);
 			if(angle>_minAngleToRotate){
@@ -104,7 +108,7 @@ public class ScienceCamera : MonoBehaviour
 		while(timer<_flashDur){
 			timer+=Time.deltaTime;
 			_ringFill.fillAmount=timer/_flashDur;
-			if((_player.position-(transform.position+_localTargetPos)).sqrMagnitude>_minDistToTarget*_minDistToTarget){
+			if((_player.position-_targetPos).sqrMagnitude>_minDistToTarget*_minDistToTarget){
 				enabled=true;
 				_audio.Stop();
 				StopAllCoroutines();
@@ -129,7 +133,9 @@ public class ScienceCamera : MonoBehaviour
 	}
 
 	void OnDrawGizmos(){
+		if(_targetPos==null)
+			return;
 		Gizmos.color=Color.red;
-		Gizmos.DrawWireSphere(transform.position+_localTargetPos,0.15f);
+		Gizmos.DrawWireSphere(_targetPos,0.15f);
 	}
 }
