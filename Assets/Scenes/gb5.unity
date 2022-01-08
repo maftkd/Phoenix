@@ -26184,6 +26184,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SunflowerSeed
       objectReference: {fileID: 0}
+    - target: {fileID: 963494779082559, guid: 3b9b4ce4e8503704ab8cfaab42768dfb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 813107435324345733, guid: 3b9b4ce4e8503704ab8cfaab42768dfb,
         type: 3}
       propertyPath: m_RootOrder
@@ -36335,7 +36339,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 33477581, guid: cf64143ad284ac9429781b3f4abab518, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 33477581, guid: cf64143ad284ac9429781b3f4abab518, type: 3}
       propertyPath: _spots.Array.data[0]
@@ -36349,25 +36353,16 @@ PrefabInstance:
       propertyPath: _spots.Array.data[2]
       value: 
       objectReference: {fileID: 1849745419}
-    - target: {fileID: 178958788880810555, guid: cf64143ad284ac9429781b3f4abab518,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4488024965191202580, guid: cf64143ad284ac9429781b3f4abab518,
         type: 3}
-      propertyPath: _eatDistance
-      value: 0.1
-      objectReference: {fileID: 0}
+      propertyPath: _eatParts
+      value: 
+      objectReference: {fileID: 2205440437209648765, guid: f8aa667c1467efc4a89df3a8d3bf4d01,
+        type: 3}
     - target: {fileID: 4488024965191202580, guid: cf64143ad284ac9429781b3f4abab518,
         type: 3}
-      propertyPath: _eatCamOffset.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4488024965191202580, guid: cf64143ad284ac9429781b3f4abab518,
-        type: 3}
-      propertyPath: _eatCamOffset.y
-      value: 0.2
+      propertyPath: _eatCamOffset.z
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4663429959623069336, guid: cf64143ad284ac9429781b3f4abab518,
         type: 3}
