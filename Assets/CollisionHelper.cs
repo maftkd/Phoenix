@@ -20,6 +20,7 @@ public class CollisionHelper : MonoBehaviour
 
 	bool _hasMeshCollider;
 	public bool _supressHitFx;
+	public bool _supressNpcKnockback;
 
 	public UnityEvent _onBirdEnter;
 
@@ -72,7 +73,7 @@ public class CollisionHelper : MonoBehaviour
 				other.transform.position=curPos;
 			}
 			else
-				other.GetComponent<Bird>().KnockBack(this,_hitNormal,_supressHitFx);
+				other.GetComponent<Bird>().KnockBack(this,_hitNormal,_supressHitFx,_supressNpcKnockback);
 		}
 	}
 

@@ -27,6 +27,8 @@ public class Waddle : MonoBehaviour
 	Vector3 _destination;
 	public bool _npc;
 	Vector3 _npcInput;
+	float _timeEstimate;
+	float _walkTimer;
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
@@ -57,6 +59,7 @@ public class Waddle : MonoBehaviour
     void Update()
     {
 		_stepTimer+=Time.deltaTime;
+		_walkTimer+=Time.deltaTime;
 		if(_knockBackTimer<=0){
 			Vector3 rawInput = _npc? _npcInput : _mCam.GetInputDir();
 			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
@@ -76,13 +79,13 @@ public class Waddle : MonoBehaviour
 		{
 			_anim.SetFloat("hopTime",animSpeed);
 			transform.forward=_input;
-			move=transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*2*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
+			move=transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
 		}
 		else
 		{
 			_anim.SetFloat("hopTime",-animSpeed);
 			//move=-transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*2;
-			move=_input*Time.deltaTime*_walkSpeed*2;
+			move=_input*Time.deltaTime*_walkSpeed;
 		}
 
 		Vector3 targetPos = transform.position+move;
@@ -111,6 +114,15 @@ public class Waddle : MonoBehaviour
 		if(f!=null)
 			f.Sound(transform.position,_stepVolume);
 		_bird.MakeFootprint();
+		if(_npc){
+			//recalibrate
+			float mag = _npcInput.magnitude;
+			Vector3 diff = _destination-transform.position;
+			diff.y=0;
+			diff.Normalize();
+			_npcInput=diff*mag;
+			Debug.Log("recalibrating");
+		}
 	}
 
 	public bool IsWaddling(){
@@ -139,10 +151,15 @@ public class Waddle : MonoBehaviour
 		diff.y=0;
 		diff.Normalize();
 		_npcInput=diff*speed;
+		_timeEstimate=(_destination-transform.position).magnitude/(_npcInput.magnitude*_walkSpeed);
+		//Debug.Log("te: "+_timeEstimate);
+		_walkTimer=0;
 	}
 
 	public bool Arrived(float threshold){
-		return (transform.position-_destination).sqrMagnitude<threshold*threshold;
+		bool closeEnough=(transform.position-_destination).sqrMagnitude<threshold*threshold;
+		//bool timeOut=_walkTimer>_timeEstimate+0.5f;
+		return  closeEnough;// || timeOut ;
 	}
 	public void StopWaddling(){
 		//transform.position=_destination;

@@ -12,10 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff847ed2f230e084cb01f15580bb84d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  _paths: []
 --- !u!114 &4488024965191202580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35,7 +32,7 @@ MonoBehaviour:
   _riseTime: 0.35
   _bowAngle: 45
   _throwAngle: -30
-  _flipTime: 0.5
+  _flipTime: 0.75
   _flipSpeed: 720
   _flipHeight: 0.3
   _flipArc:
@@ -94,7 +91,12 @@ PrefabInstance:
     - target: {fileID: 1550414671924663931, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
       propertyPath: m_Name
-      value: Mate
+      value: Mate Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550414671924663931, guid: 243d99ceabd103b46884074f0d8fbdda,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 1820936649275779881, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}

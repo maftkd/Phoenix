@@ -109,8 +109,9 @@ public class Hunger : MonoBehaviour
 		Destroy(_seed.gameObject);
 		yield return new WaitForSeconds(_effectsDur);
 
-		//give player a heart
-
+		//return to main gameplay
 		_eating=false;
+		_mCam.DefaultCam();
+		_bird.RunAwayNextPath();
 	}
 }

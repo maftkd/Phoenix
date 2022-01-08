@@ -208,6 +208,14 @@ public class MCamera : MonoBehaviour
 		return _controllerInput;
 	}
 
+	public bool GetJump(){
+		if(_state==4)
+			return false;
+		else
+			return Input.GetButton("Jump");
+
+	}
+
 	public void Shake(float v){
 		StartCoroutine(ShakeR(v));
 	}

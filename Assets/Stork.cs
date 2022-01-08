@@ -9,6 +9,7 @@ public class Stork : MonoBehaviour
 	public float _flightDur;
 	public float _flightApex;
 	public float _startDist;
+	public float _preDeliveryDelay;
 	//apex form for quadratic y = a*(x-h)^2 + k
 	float _a;
 	float _h;
@@ -80,6 +81,7 @@ public class Stork : MonoBehaviour
 	}
 
 	IEnumerator ArcToTarget(){
+		yield return new WaitForSeconds(_preDeliveryDelay);
 		//camera
 		_mCam.TrackTarget(transform,_trackOffset,true);
 		//initial orientation

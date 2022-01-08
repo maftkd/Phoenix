@@ -88,7 +88,7 @@ public class Hop : MonoBehaviour
 		Vector3 rawInput = _npc ? _npcInput : _mCam.GetInputDir();
 		if(!_knockBack)
 			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
-		if(!_hopping&&_npc)
+		if(!_hopping&& (_npc || _mCam.GetJump()))
 		{
 			StartHop();
 		}
@@ -167,6 +167,8 @@ public class Hop : MonoBehaviour
 					//check collision along vert
 					transform.position=hit.point;
 					CompleteHop(hit.transform);
+					if(!_npc)
+						CheckForPressurePlate(hit.transform);
 				}
 				else//vertical is free
 					transform.position=startPos+Vector3.up*posDelta.y;
@@ -276,7 +278,14 @@ public class Hop : MonoBehaviour
 
 		_hopAudio.pitch=Random.Range(0.8f,1.2f);
 		_hopAudio.Play();
+	}
 
+	void CheckForPressurePlate(Transform t){
+		if(t.GetComponent<PressurePlate>()!=null)
+		{
+			PressurePlate pp = t.GetComponent<PressurePlate>();
+			pp.PlayerOnPlate(transform);
+		}
 	}
 
 	void OnDrawGizmos(){

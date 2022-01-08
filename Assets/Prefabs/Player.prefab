@@ -641,7 +641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e95a46172bcf9c44d9c478ca7067525e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 0.5
+  _walkSpeed: 1
   _maxWalkSlope: 1.5
   _animSpeedMult: 3
   _stepVolume: 0.01
@@ -649,6 +649,7 @@ MonoBehaviour:
   _minInput: 0.1
   _knockBackTime: 0.25
   _knockBackSpeedMult: 0.3
+  _npc: 0
 --- !u!114 &1820936649275779887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -738,6 +739,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _triggerRadius: 0.7
+  _arriveRadius: 0.1
+  _state: 0
   _playerControlled: 1
   _mate: {fileID: 0}
   _size: {x: 0, y: 0, z: 0}
@@ -747,7 +750,7 @@ MonoBehaviour:
   _controllerZero: 0.1
   _footprint: {fileID: 6281567206045793963, guid: 51d67c04f4db344459bb599647a03a9c,
     type: 3}
-  _footprintOffset: {x: 0.015, y: 0.015, z: 0}
+  _footprintOffset: {x: 0.015, y: 0.005, z: 0}
   _afterDiveDelay: 0.5
   _explodeParts: {fileID: 8364014487585317613, guid: fd0ecdfcdd5274549961c35f858d4412,
     type: 3}

@@ -7,7 +7,9 @@ public class Bird : MonoBehaviour
 {
 	Transform _player;
 	public float _triggerRadius;
-	int _state;
+	public float _arriveRadius;
+	public int _state;
+	public int _startPath;
 	Hop _hop;
 	Fly _fly;
 	Waddle _waddle;
@@ -65,11 +67,11 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 		_fly.enabled=false;
 
-		/*#temp - may not always want to start with runAway
+		//#temp - may not always want to start with runAway
 		if(!_playerControlled){
 			_runAway.enabled=false;
 		}
-		*/
+		
 		_state=0;
 	}
 
@@ -78,6 +80,9 @@ public class Bird : MonoBehaviour
     {
 		_mCam=FindObjectOfType<MCamera>();
 		_player=MCamera._player;
+		if(!_playerControlled){
+			_runAway.RunAwayOnPath(_startPath);
+		}
     }
 
     // Update is called once per frame
@@ -88,7 +93,7 @@ public class Bird : MonoBehaviour
 			switch(_state){
 				case 0://chilling
 				default:
-					if(Input.GetButton("Jump"))
+					if(_mCam.GetJump())
 						StartHopping();
 					else if(_mCam.GetControllerInput().sqrMagnitude>_controllerZero*_controllerZero)
 						StartWaddling();
@@ -112,7 +117,7 @@ public class Bird : MonoBehaviour
 					else if(_waddle.IsKnockBack()){
 						//just wait
 					}
-					else if(Input.GetButton("Jump")){
+					else if(_mCam.GetJump()){
 						StartHopping();
 					}
 					if(Input.GetButtonDown("Sing")){
@@ -254,11 +259,14 @@ public class Bird : MonoBehaviour
 	}
 
 	public bool Arrived(){
-		return _hop.Arrived(_triggerRadius);
+		bool arrived=_hop.Arrived(_arriveRadius);
+		if(arrived)
+			Ground();
+		return arrived;
 	}
 
 	public bool ArrivedW(){
-		return _waddle.Arrived(_triggerRadius*0.1f);
+		return _waddle.Arrived(_arriveRadius);
 	}
 
 	void Fly(){
@@ -318,7 +326,9 @@ public class Bird : MonoBehaviour
 		_mCam.Shake(vel);
 	}
 
-	public void KnockBack(CollisionHelper ch, Vector3 dir,bool supress=false){
+	public void KnockBack(CollisionHelper ch, Vector3 dir,bool supress=false,bool ignoreNpc=false){
+		if(ignoreNpc&&!_playerControlled)
+			return;
 		if(!supress){
 			//add particel to collision
 			Transform fp = Instantiate(_footprint,ch._hitPoint,Quaternion.identity);
@@ -437,6 +447,7 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 		_fly.enabled=false;
 		_anim.SetFloat("walkSpeed",0f);
+		_state=0;
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position+_size.y*Vector3.up,Vector3.down, out hit,1f,_collisionLayer)){
 			transform.position=hit.point;
@@ -446,6 +457,15 @@ public class Bird : MonoBehaviour
 	public void TakeSeedFromMate(){
 		Transform seed = _mate.GiveSeed();
 		CollectSeed(seed);
+	}
+
+	public void RunAwayNextPath(){
+		_runAway.RunAwayNextPath();
+	}
+
+	public void StopRunningAway(){
+		if(_runAway!=null)
+			_runAway.enabled=false;
 	}
 
 	void OnDrawGizmos(){
