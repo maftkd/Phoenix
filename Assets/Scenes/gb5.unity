@@ -472,7 +472,7 @@ Transform:
   m_LocalScale: {x: 1.426669, y: 0.33231962, z: 0.9814421}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 190
+  m_RootOrder: 189
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &9770468
 AudioSource:
@@ -920,7 +920,7 @@ Transform:
   m_LocalScale: {x: 1.0027353, y: 0.7821672, z: 1.3411652}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 149
+  m_RootOrder: 148
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &31507692
 AudioSource:
@@ -2506,7 +2506,7 @@ Transform:
   m_LocalScale: {x: 0.88195395, y: 1.0311129, z: 1.8963941}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 163
+  m_RootOrder: 162
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &83334001
 AudioSource:
@@ -3178,7 +3178,7 @@ Transform:
   m_LocalScale: {x: 0.7395903, y: 0.83128065, z: 0.62513864}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 132
+  m_RootOrder: 131
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &91776731
 AudioSource:
@@ -4469,7 +4469,7 @@ Transform:
   m_LocalScale: {x: 1.731557, y: 0.9986768, z: 0.5754443}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 207
+  m_RootOrder: 206
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &155365112
 AudioSource:
@@ -4811,7 +4811,7 @@ Transform:
   m_LocalScale: {x: 1.7082413, y: 0.40061343, z: 0.6082747}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 185
+  m_RootOrder: 184
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &170922366
 AudioSource:
@@ -5129,7 +5129,7 @@ Transform:
   m_LocalScale: {x: 1.7426476, y: 0.69940615, z: 1.4622797}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 148
+  m_RootOrder: 147
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &250093921
 AudioSource:
@@ -5699,7 +5699,7 @@ Transform:
   m_LocalScale: {x: 0.75656796, y: 0.5116821, z: 0.8287294}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 184
+  m_RootOrder: 183
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &285821125
 AudioSource:
@@ -6513,7 +6513,6 @@ Transform:
   - {fileID: 1370335141}
   - {fileID: 131530214}
   - {fileID: 1653025319}
-  - {fileID: 1435868089}
   - {fileID: 1411215334}
   - {fileID: 1143318437}
   - {fileID: 1707594275}
@@ -6633,7 +6632,7 @@ Transform:
   m_LocalScale: {x: 1.7090787, y: 0.98099625, z: 1.1650032}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 195
+  m_RootOrder: 194
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &310735914
 AudioSource:
@@ -6857,7 +6856,7 @@ Transform:
   m_LocalScale: {x: 1.026859, y: 0.8499781, z: 1.5820248}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 187
+  m_RootOrder: 186
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &315517422
 AudioSource:
@@ -8207,7 +8206,7 @@ Transform:
   m_LocalScale: {x: 1.7105906, y: 0.5766397, z: 0.58489424}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 162
+  m_RootOrder: 161
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &372651035
 AudioSource:
@@ -8655,7 +8654,7 @@ Transform:
   m_LocalScale: {x: 1.1229017, y: 0.8417227, z: 1.4196432}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 176
+  m_RootOrder: 175
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &383173914
 AudioSource:
@@ -8915,7 +8914,7 @@ Transform:
   m_LocalScale: {x: 1.7964168, y: 0.86739844, z: 1.5779483}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 198
+  m_RootOrder: 197
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &426427623
 AudioSource:
@@ -9139,7 +9138,7 @@ Transform:
   m_LocalScale: {x: 0.5541853, y: 0.92810464, z: 1.7335067}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 209
+  m_RootOrder: 208
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &429954868
 AudioSource:
@@ -10483,7 +10482,7 @@ Transform:
   m_LocalScale: {x: 1.7877572, y: 0.8236912, z: 0.6391276}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 203
+  m_RootOrder: 202
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &466428921
 AudioSource:
@@ -10931,7 +10930,7 @@ Transform:
   m_LocalScale: {x: 1.1570263, y: 0.9717789, z: 1.3587838}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 210
+  m_RootOrder: 209
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &499625866
 AudioSource:
@@ -11155,7 +11154,7 @@ Transform:
   m_LocalScale: {x: 0.79278797, y: 0.8449357, z: 0.93280363}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 164
+  m_RootOrder: 163
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &515821788
 AudioSource:
@@ -11379,7 +11378,7 @@ Transform:
   m_LocalScale: {x: 1.0463845, y: 0.33805913, z: 0.66448003}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 169
+  m_RootOrder: 168
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &527963533
 AudioSource:
@@ -11603,7 +11602,7 @@ Transform:
   m_LocalScale: {x: 1.2395413, y: 0.5418132, z: 1.158422}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 175
+  m_RootOrder: 174
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &529964900
 AudioSource:
@@ -12499,7 +12498,7 @@ Transform:
   m_LocalScale: {x: 1.4534409, y: 0.8212384, z: 0.50729257}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 138
+  m_RootOrder: 137
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &561047286
 AudioSource:
@@ -12723,7 +12722,7 @@ Transform:
   m_LocalScale: {x: 1.4872931, y: 1.0035759, z: 0.6596751}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 208
+  m_RootOrder: 207
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &582349105
 AudioSource:
@@ -13395,7 +13394,7 @@ Transform:
   m_LocalScale: {x: 1.6397825, y: 0.7380416, z: 1.5724376}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 171
+  m_RootOrder: 170
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &592504521
 AudioSource:
@@ -13619,7 +13618,7 @@ Transform:
   m_LocalScale: {x: 0.6444883, y: 0.31943658, z: 1.678578}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 150
+  m_RootOrder: 149
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &619587482
 AudioSource:
@@ -14067,7 +14066,7 @@ Transform:
   m_LocalScale: {x: 1.444266, y: 0.7642272, z: 0.7074229}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 161
+  m_RootOrder: 160
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &656658251
 AudioSource:
@@ -14291,7 +14290,7 @@ Transform:
   m_LocalScale: {x: 1.8984097, y: 0.5711784, z: 1.2485127}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 199
+  m_RootOrder: 198
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &657880435
 AudioSource:
@@ -16435,7 +16434,7 @@ Transform:
   m_LocalScale: {x: 1.4008586, y: 0.364872, z: 1.436747}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 186
+  m_RootOrder: 185
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &735668107
 AudioSource:
@@ -17482,7 +17481,7 @@ Transform:
   m_LocalScale: {x: 1.901824, y: 0.96006435, z: 0.6957306}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 189
+  m_RootOrder: 188
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &757806242
 AudioSource:
@@ -18154,7 +18153,7 @@ Transform:
   m_LocalScale: {x: 0.7246647, y: 0.30007154, z: 1.9692768}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 147
+  m_RootOrder: 146
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &776161605
 AudioSource:
@@ -19050,7 +19049,7 @@ Transform:
   m_LocalScale: {x: 1.8074203, y: 0.9841796, z: 1.7505821}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 193
+  m_RootOrder: 192
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &797283441
 AudioSource:
@@ -19498,7 +19497,7 @@ Transform:
   m_LocalScale: {x: 1.6463808, y: 0.7726504, z: 0.80265313}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 192
+  m_RootOrder: 191
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &815750806
 AudioSource:
@@ -20406,7 +20405,7 @@ Transform:
   m_LocalScale: {x: 0.5064434, y: 0.6049174, z: 1.687706}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 201
+  m_RootOrder: 200
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &831733385
 AudioSource:
@@ -20854,7 +20853,7 @@ Transform:
   m_LocalScale: {x: 0.844487, y: 0.4575808, z: 1.3462172}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 156
+  m_RootOrder: 155
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &863257757
 AudioSource:
@@ -21302,7 +21301,7 @@ Transform:
   m_LocalScale: {x: 1.7571234, y: 1.0132484, z: 1.3070203}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 155
+  m_RootOrder: 154
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &880235536
 AudioSource:
@@ -21526,7 +21525,7 @@ Transform:
   m_LocalScale: {x: 0.7570375, y: 0.6184824, z: 0.9322696}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 151
+  m_RootOrder: 150
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &883278087
 AudioSource:
@@ -21832,7 +21831,7 @@ Transform:
   m_LocalScale: {x: 1.5328168, y: 0.45659354, z: 1.2358092}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 174
+  m_RootOrder: 173
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &892976686
 AudioSource:
@@ -22280,7 +22279,7 @@ Transform:
   m_LocalScale: {x: 1.9783875, y: 0.45574513, z: 1.8965011}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 154
+  m_RootOrder: 153
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &922877317
 AudioSource:
@@ -23657,7 +23656,7 @@ Transform:
   m_LocalScale: {x: 1.0237423, y: 0.67129225, z: 1.3893645}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 182
+  m_RootOrder: 181
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &978270984
 AudioSource:
@@ -24329,7 +24328,7 @@ Transform:
   m_LocalScale: {x: 1.718471, y: 0.7586199, z: 0.90871096}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 181
+  m_RootOrder: 180
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &986972955
 AudioSource:
@@ -24646,7 +24645,7 @@ Transform:
   m_LocalScale: {x: 1.73273, y: 0.31742343, z: 0.5705986}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 179
+  m_RootOrder: 178
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1028891873
 AudioSource:
@@ -25270,7 +25269,7 @@ Transform:
   m_LocalScale: {x: 1.452712, y: 0.8315748, z: 1.4029162}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 143
+  m_RootOrder: 142
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1067782360
 AudioSource:
@@ -25494,7 +25493,7 @@ Transform:
   m_LocalScale: {x: 1.1560695, y: 0.6708086, z: 0.79301167}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 172
+  m_RootOrder: 171
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1071528645
 AudioSource:
@@ -25789,7 +25788,7 @@ Transform:
   m_LocalScale: {x: 1.0682926, y: 0.5151054, z: 0.93686974}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 180
+  m_RootOrder: 179
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1093062264
 AudioSource:
@@ -26461,7 +26460,7 @@ Transform:
   m_LocalScale: {x: 1.9354632, y: 0.5556571, z: 1.3887119}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 157
+  m_RootOrder: 156
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1101537897
 AudioSource:
@@ -27133,7 +27132,7 @@ Transform:
   m_LocalScale: {x: 1.9645271, y: 0.8629205, z: 0.696683}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 146
+  m_RootOrder: 145
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1113101323
 AudioSource:
@@ -27387,7 +27386,7 @@ Transform:
   m_LocalScale: {x: 1.711922, y: 1.0072393, z: 1.8261929}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 135
+  m_RootOrder: 134
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1135053685
 AudioSource:
@@ -27835,7 +27834,7 @@ Transform:
   m_LocalScale: {x: 1.5727944, y: 0.4638391, z: 1.3223512}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 130
+  m_RootOrder: 129
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1143318438
 AudioSource:
@@ -28590,7 +28589,7 @@ Transform:
   m_LocalScale: {x: 1.8300626, y: 0.87543607, z: 0.5326441}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 145
+  m_RootOrder: 144
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1202669274
 AudioSource:
@@ -29038,7 +29037,7 @@ Transform:
   m_LocalScale: {x: 0.7305407, y: 0.32355502, z: 1.7156868}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 194
+  m_RootOrder: 193
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1213667003
 AudioSource:
@@ -29262,7 +29261,7 @@ Transform:
   m_LocalScale: {x: 1.5296189, y: 0.30062303, z: 0.5210897}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 142
+  m_RootOrder: 141
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1215144034
 AudioSource:
@@ -29829,7 +29828,7 @@ Transform:
   m_LocalScale: {x: 0.7074778, y: 0.9041306, z: 1.1952223}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 197
+  m_RootOrder: 196
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1257570539
 AudioSource:
@@ -30627,7 +30626,7 @@ Transform:
   m_LocalScale: {x: 1.0456434, y: 0.4816647, z: 1.6619705}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 196
+  m_RootOrder: 195
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1292485421
 AudioSource:
@@ -31075,7 +31074,7 @@ Transform:
   m_LocalScale: {x: 0.9080349, y: 0.94173175, z: 0.84569293}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 160
+  m_RootOrder: 159
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1310894496
 AudioSource:
@@ -31523,7 +31522,7 @@ Transform:
   m_LocalScale: {x: 1.1097059, y: 0.8907263, z: 0.5313198}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 204
+  m_RootOrder: 203
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1312557935
 AudioSource:
@@ -31747,7 +31746,7 @@ Transform:
   m_LocalScale: {x: 1.6222072, y: 0.69918144, z: 0.7217677}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 205
+  m_RootOrder: 204
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1323192091
 AudioSource:
@@ -32231,7 +32230,7 @@ Transform:
   m_LocalScale: {x: 0.6625152, y: 0.92804307, z: 0.77598965}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 167
+  m_RootOrder: 166
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1368096355
 AudioSource:
@@ -33384,7 +33383,7 @@ Transform:
   m_LocalScale: {x: 1.0031658, y: 0.7783592, z: 0.8796021}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 159
+  m_RootOrder: 158
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1388912147
 AudioSource:
@@ -33983,7 +33982,7 @@ Transform:
   m_LocalScale: {x: 1.5528917, y: 0.75481224, z: 1.6790769}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 129
+  m_RootOrder: 128
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1411215335
 AudioSource:
@@ -34453,7 +34452,7 @@ Transform:
   m_LocalScale: {x: 0.8022712, y: 0.9285778, z: 0.54851186}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 141
+  m_RootOrder: 140
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1428951777
 AudioSource:
@@ -34643,230 +34642,6 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1428951775}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1435868088
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1435868089}
-  - component: {fileID: 1435868094}
-  - component: {fileID: 1435868093}
-  - component: {fileID: 1435868092}
-  - component: {fileID: 1435868091}
-  - component: {fileID: 1435868090}
-  m_Layer: 8
-  m_Name: Grass(Clone)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1435868089
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1435868088}
-  m_LocalRotation: {x: -0, y: 0.8468885, z: -0, w: -0.5317705}
-  m_LocalPosition: {x: -12.377691, y: 1.4220268, z: -14.921721}
-  m_LocalScale: {x: 1.9586227, y: 0.8297703, z: 1.3742663}
-  m_Children: []
-  m_Father: {fileID: 306086780}
-  m_RootOrder: 128
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &1435868090
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1435868088}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: b0ee3ff22fb9101438ded1eaf83bcb75, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 0.02
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!114 &1435868091
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1435868088}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9daabac800f771448610a04c5ab20ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _onTriggerEnter:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1435868090}
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  _onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  _onCollisionEnter:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!64 &1435868092
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1435868088}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1435868093
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1435868088}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: da63fb4c0b77d294782090afb4ea27d0, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!33 &1435868094
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1435868088}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1437209306
 GameObject:
@@ -35603,7 +35378,7 @@ Transform:
   m_LocalScale: {x: 1.7150027, y: 0.96155405, z: 1.581674}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 200
+  m_RootOrder: 199
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1466849274
 AudioSource:
@@ -36223,7 +35998,7 @@ Transform:
   m_LocalScale: {x: 0.7722374, y: 0.652196, z: 0.8882731}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 133
+  m_RootOrder: 132
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1478466491
 AudioSource:
@@ -36447,7 +36222,7 @@ Transform:
   m_LocalScale: {x: 0.6750576, y: 0.39523306, z: 0.56956613}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 166
+  m_RootOrder: 165
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1486144767
 AudioSource:
@@ -37860,7 +37635,7 @@ Transform:
   m_LocalScale: {x: 0.78414106, y: 0.6114165, z: 1.5896205}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 178
+  m_RootOrder: 177
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1518502936
 AudioSource:
@@ -38308,7 +38083,7 @@ Transform:
   m_LocalScale: {x: 1.4874669, y: 0.557745, z: 1.5608454}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 139
+  m_RootOrder: 138
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1526349484
 AudioSource:
@@ -39204,7 +38979,7 @@ Transform:
   m_LocalScale: {x: 0.78882957, y: 0.29490617, z: 0.9217515}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 165
+  m_RootOrder: 164
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1532798566
 AudioSource:
@@ -39428,7 +39203,7 @@ Transform:
   m_LocalScale: {x: 1.6824021, y: 0.44082886, z: 0.86911184}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 170
+  m_RootOrder: 169
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1541949043
 AudioSource:
@@ -39754,7 +39529,7 @@ Transform:
   m_LocalScale: {x: 0.85043186, y: 0.6145223, z: 0.8472236}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 202
+  m_RootOrder: 201
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1557076235
 AudioSource:
@@ -39978,7 +39753,7 @@ Transform:
   m_LocalScale: {x: 0.87471336, y: 0.76112795, z: 1.5382569}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 211
+  m_RootOrder: 210
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1570397238
 AudioSource:
@@ -40426,7 +40201,7 @@ Transform:
   m_LocalScale: {x: 1.783934, y: 0.46601814, z: 1.5568836}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 168
+  m_RootOrder: 167
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1619203474
 AudioSource:
@@ -40940,7 +40715,7 @@ Transform:
   m_LocalScale: {x: 1.0899435, y: 0.5167856, z: 1.4657322}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 191
+  m_RootOrder: 190
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1631921520
 AudioSource:
@@ -41642,7 +41417,7 @@ Transform:
   m_LocalScale: {x: 1.9447132, y: 0.5686125, z: 1.7826133}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 144
+  m_RootOrder: 143
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1643500704
 AudioSource:
@@ -42986,7 +42761,7 @@ Transform:
   m_LocalScale: {x: 1.8229553, y: 0.59666955, z: 0.50763357}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 131
+  m_RootOrder: 130
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1707594276
 AudioSource:
@@ -43729,7 +43504,7 @@ Transform:
   m_LocalScale: {x: 1.7772939, y: 0.9866144, z: 1.2212881}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 173
+  m_RootOrder: 172
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1754947071
 AudioSource:
@@ -44479,7 +44254,7 @@ Transform:
   m_LocalScale: {x: 0.55265087, y: 0.8411315, z: 0.9788039}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 140
+  m_RootOrder: 139
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1772413032
 AudioSource:
@@ -44703,7 +44478,7 @@ Transform:
   m_LocalScale: {x: 1.3908165, y: 0.34475377, z: 1.828252}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 153
+  m_RootOrder: 152
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1792570386
 AudioSource:
@@ -45151,7 +44926,7 @@ Transform:
   m_LocalScale: {x: 1.2436212, y: 0.7093962, z: 0.9920435}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 136
+  m_RootOrder: 135
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1801480149
 AudioSource:
@@ -45375,7 +45150,7 @@ Transform:
   m_LocalScale: {x: 0.95775735, y: 0.8111579, z: 1.6265416}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 188
+  m_RootOrder: 187
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1806538020
 AudioSource:
@@ -46271,7 +46046,7 @@ Transform:
   m_LocalScale: {x: 1.0876483, y: 0.32596454, z: 0.5499606}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 134
+  m_RootOrder: 133
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1839741632
 AudioSource:
@@ -46812,7 +46587,7 @@ Transform:
   m_LocalScale: {x: 1.0814655, y: 0.30775243, z: 1.5706065}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 137
+  m_RootOrder: 136
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1851660993
 AudioSource:
@@ -47563,7 +47338,7 @@ Transform:
   m_LocalScale: {x: 1.1625533, y: 0.9526646, z: 1.5173156}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 177
+  m_RootOrder: 176
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1894210035
 AudioSource:
@@ -47956,7 +47731,7 @@ Transform:
   m_LocalScale: {x: 0.8752413, y: 0.35095018, z: 0.86873597}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 206
+  m_RootOrder: 205
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1937956480
 AudioSource:
@@ -48437,7 +48212,7 @@ Transform:
   m_LocalScale: {x: 0.5359979, y: 0.91522366, z: 0.6380025}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 183
+  m_RootOrder: 182
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1956701268
 AudioSource:
@@ -49260,7 +49035,7 @@ Transform:
   m_LocalScale: {x: 1.8027095, y: 0.34667778, z: 1.1138563}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 152
+  m_RootOrder: 151
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1975568280
 AudioSource:
@@ -51322,7 +51097,7 @@ Transform:
   m_LocalScale: {x: 1.3285273, y: 0.3194395, z: 0.5378247}
   m_Children: []
   m_Father: {fileID: 306086780}
-  m_RootOrder: 158
+  m_RootOrder: 157
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &2120929517
 AudioSource:
@@ -52983,7 +52758,7 @@ PrefabInstance:
     - target: {fileID: 2290168266399751350, guid: dbf48933162b765488148b02f8f3ba05,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3500354870299029577, guid: dbf48933162b765488148b02f8f3ba05,
         type: 3}
@@ -53045,6 +52820,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5166436285255291324, guid: dbf48933162b765488148b02f8f3ba05,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d77d7ad0244f4d44aab06f48cbcea308, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbf48933162b765488148b02f8f3ba05, type: 3}
 --- !u!1001 &6139524748253465385

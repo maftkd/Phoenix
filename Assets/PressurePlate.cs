@@ -18,6 +18,7 @@ public class PressurePlate : MonoBehaviour
 	Bird _player;
 	Bird _mate;
 	public UnityEvent _onActivated;
+	bool _activated;
 
 	void Awake(){
 		_col=GetComponent<BoxCollider>();
@@ -84,6 +85,8 @@ public class PressurePlate : MonoBehaviour
 	}
 
 	void CheckLoad(){
+		if(_activated)
+			return;
 		if(_load>=_requiredLoad){
 			Debug.Log("Activating!");
 			_onActivated.Invoke();
@@ -113,5 +116,7 @@ public class PressurePlate : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		_player.transform.SetParent(null);
 		_mate.transform.SetParent(null);
+		_activated=true;
+		enabled=false;
 	}
 }
