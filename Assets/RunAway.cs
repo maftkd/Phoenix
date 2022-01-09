@@ -49,7 +49,7 @@ public class RunAway : MonoBehaviour
 		switch(_state){
 			case 0:
 			default://idle
-				if(_bird.IsPlayerClose()){
+				if(_bird.IsPlayerClose(_bird._mate)){
 					if(_curSpot<_spots.Length){
 						if(_curSpot==0){
 							//ruffle for first spot

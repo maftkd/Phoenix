@@ -5,7 +5,7 @@ using UnityEngine;
 public class Waddle : MonoBehaviour
 {
 	Animator _anim;
-	MCamera _mCam;
+	MInput _mIn;
 	public float _walkSpeed;
 	Bird _bird;
 	public float _maxWalkSlope;
@@ -32,7 +32,7 @@ public class Waddle : MonoBehaviour
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
-		_mCam=FindObjectOfType<MCamera>();
+		_mIn=Camera.main.GetComponent<MInput>();
 		_bird = GetComponent<Bird>();
 		_cols = new Collider[2];
 	}
@@ -45,10 +45,10 @@ public class Waddle : MonoBehaviour
 		if(Physics.Raycast(transform.position+Vector3.up*0.01f,Vector3.down,out hit, 0.02f,_bird._collisionLayer)){
 			transform.position=hit.point;
 			if(hit.transform.GetComponent<Footstep>()!=null)
-				TakeStep(hit.transform.GetComponent<Footstep>());
+				TakeStep(hit.transform);
 		}
 		_stepTimer=0;
-		_input=_mCam.GetInputDir();
+		_input=_mIn.GetInputDir();
 	}
     // Start is called before the first frame update
     void Start()
@@ -61,7 +61,7 @@ public class Waddle : MonoBehaviour
 		_stepTimer+=Time.deltaTime;
 		_walkTimer+=Time.deltaTime;
 		if(_knockBackTimer<=0){
-			Vector3 rawInput = _npc? _npcInput : _mCam.GetInputDir();
+			Vector3 rawInput = _npc? _npcInput : _mIn.GetInputDir();
 			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
 			if(_input.sqrMagnitude<_minInput*_minInput)
 				return;
@@ -100,17 +100,20 @@ public class Waddle : MonoBehaviour
 			if(slope<_maxWalkSlope)
 				transform.position=hit.point;
 			if(_stepTimer>=0.5f/animSpeed){
-				TakeStep(hit.transform.GetComponent<Footstep>());
+				TakeStep(hit.transform);
 				_stepTimer=0;
 			}
 			_anim.SetFloat("walkSpeed",0.1f);
 		}
 		else{
 			_anim.SetFloat("walkSpeed",0f);
+			Debug.Log("Should hop");
+			_bird.StartHopping();
 		}
     }
 
-	void TakeStep(Footstep f){
+	void TakeStep(Transform t){
+		Footstep f = t.GetComponent<Footstep>();
 		if(f!=null)
 			f.Sound(transform.position,_stepVolume);
 		_bird.MakeFootprint();
@@ -121,8 +124,10 @@ public class Waddle : MonoBehaviour
 			diff.y=0;
 			diff.Normalize();
 			_npcInput=diff*mag;
-			Debug.Log("recalibrating");
 		}
+		PressurePlate pp = t.GetComponent<PressurePlate>();
+		if(pp!=null)
+			pp.PlayerOnPlate();
 	}
 
 	public bool IsWaddling(){

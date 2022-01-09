@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Bird : MonoBehaviour
 {
-	Transform _player;
 	public float _triggerRadius;
 	public float _arriveRadius;
 	public int _state;
@@ -20,6 +19,7 @@ public class Bird : MonoBehaviour
 	AudioSource _callAudio;
 	public bool _playerControlled;
 	MCamera _mCam;
+	MInput _mIn;
 	public Bird _mate;
 	[HideInInspector]
 	public Vector3 _size;
@@ -62,6 +62,9 @@ public class Bird : MonoBehaviour
 		_callAudio=transform.Find("Call").GetComponent<AudioSource>();
 		_callParts=_callAudio.GetComponent<ParticleSystem>();
 		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
+		Camera cam = Camera.main;
+		_mCam = cam.GetComponent<MCamera>();
+		_mIn = cam.GetComponent<MInput>();
 
 		//disable things
 		_hop.enabled=false;
@@ -78,8 +81,6 @@ public class Bird : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		_mCam=FindObjectOfType<MCamera>();
-		_player=MCamera._player;
 		if(!_playerControlled){
 			_runAway.RunAwayOnPath(_startPath);
 		}
@@ -93,9 +94,9 @@ public class Bird : MonoBehaviour
 			switch(_state){
 				case 0://chilling
 				default:
-					if(_mCam.GetJump())
+					if(_mIn.GetJump())
 						StartHopping();
-					else if(_mCam.GetControllerInput().sqrMagnitude>_controllerZero*_controllerZero)
+					else if(_mIn.GetControllerInput().sqrMagnitude>_controllerZero*_controllerZero)
 						StartWaddling();
 					if(Input.GetButtonDown("Sing")){
 						Call();
@@ -117,7 +118,7 @@ public class Bird : MonoBehaviour
 					else if(_waddle.IsKnockBack()){
 						//just wait
 					}
-					else if(_mCam.GetJump()){
+					else if(_mIn.GetJump()){
 						StartHopping();
 					}
 					if(Input.GetButtonDown("Sing")){
@@ -132,7 +133,7 @@ public class Bird : MonoBehaviour
 					break;
 				case 2://hopping
 					if(!_hop.IsHopping()){
-						if(_mCam.GetControllerInput().sqrMagnitude<=_controllerZero*_controllerZero){
+						if(_mIn.GetControllerInput().sqrMagnitude<=_controllerZero*_controllerZero){
 							//go to idle
 							_state=0;
 							_hop.enabled=false;
@@ -189,8 +190,8 @@ public class Bird : MonoBehaviour
 		_prevPos=transform.position;
     }
 
-	public bool IsPlayerClose(){
-		return (_player.position-transform.position).sqrMagnitude<_triggerRadius*_triggerRadius;
+	public bool IsPlayerClose(Bird other){
+		return (other.transform.position-transform.position).sqrMagnitude<_triggerRadius*_triggerRadius;
 	}
 
 	public float Ruffle(){
@@ -323,7 +324,7 @@ public class Bird : MonoBehaviour
 	IEnumerator PlayExplodeParticlesR(float vel){
 		Instantiate(_explodeParts,transform.position,Quaternion.identity);
 		yield return new WaitForSeconds(_divePartsDelay);
-		_mCam.Shake(vel);
+		//_mCam.Shake(vel);
 	}
 
 	public void KnockBack(CollisionHelper ch, Vector3 dir,bool supress=false,bool ignoreNpc=false){
@@ -466,6 +467,13 @@ public class Bird : MonoBehaviour
 	public void StopRunningAway(){
 		if(_runAway!=null)
 			_runAway.enabled=false;
+	}
+
+	public Vector3 GetCamTarget(){
+		if(_state==2)
+			return _hop.GetCamTarget();
+		else
+			return transform.position;
 	}
 
 	void OnDrawGizmos(){

@@ -27,6 +27,7 @@ public class PressurePlate : MonoBehaviour
 		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
 		_mate=_player._mate;
 	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +43,8 @@ public class PressurePlate : MonoBehaviour
     }
 
 	void OnTriggerEnter(Collider other){
+		if(_activated)
+			return;
 		if(other.GetComponent<Bird>()!=null){
 			Bird b = other.GetComponent<Bird>();
 			if(!_npcOnPlate&&b==_mate)
@@ -71,17 +74,31 @@ public class PressurePlate : MonoBehaviour
 		CheckLoad();
 	}
 
-	public void PlayerOnPlate(Transform p){
-		Debug.Log("Player is on plate");
-		p.SetParent(transform);
+	public void PlayerOnPlate(){
+		if(_activated)
+			return;
+		_player.transform.SetParent(transform);
 		_load++;
 		PlayFx();
-		_mCam.TrackTargetFrom(p,transform.Find("CamTarget").position,Vector3.up*0.1f,false);
+		GroundBirdOnPlate(_player);
+		if(!_npcOnPlate){
+			//ForceNpcToPlate();
+		}
+		CheckLoad();
+	}
+
+	public void PlayerOffPlate(){
+		Debug.Log("Player is off plate");
+		_player.transform.SetParent(null);
+		_load--;
+		/*
+		PlayFx();
 		GroundBirdOnPlate(_player);
 		if(!_npcOnPlate){
 			ForceNpcToPlate();
 		}
 		CheckLoad();
+		*/
 	}
 
 	void CheckLoad(){
@@ -90,6 +107,8 @@ public class PressurePlate : MonoBehaviour
 		if(_load>=_requiredLoad){
 			Debug.Log("Activating!");
 			_onActivated.Invoke();
+			_mCam.TrackTargetFrom(_player.transform,
+					transform.Find("CamTarget").position,Vector3.up*0.1f);
 			StartCoroutine(UngroundAfterDelay());
 		}
 	}

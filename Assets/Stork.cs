@@ -83,7 +83,7 @@ public class Stork : MonoBehaviour
 	IEnumerator ArcToTarget(){
 		yield return new WaitForSeconds(_preDeliveryDelay);
 		//camera
-		_mCam.TrackTarget(transform,_trackOffset,true);
+		_mCam.TrackTarget(transform,_trackOffset);
 		//initial orientation
 		_flightStartPos=_targetPos-_flightDir*_h+Vector3.up*_k;
 		transform.position=_flightStartPos;
@@ -131,7 +131,7 @@ public class Stork : MonoBehaviour
 			_anim.SetTrigger("land");
 
 		ReleaseBox();
-		_mCam.TrackTarget(_carryingBox.transform,Vector3.zero,false);
+		_mCam.TrackTarget(_carryingBox.transform,Vector3.zero);
 
 		//lerp towards actual top of box before pausing
 		timer=0;

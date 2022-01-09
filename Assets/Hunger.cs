@@ -44,7 +44,7 @@ public class Hunger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(!_eating&&_bird._mate.HasSeed()&&_bird.IsPlayerClose()&&!_bird.IsRunningAway()){
+		if(!_eating&&_bird._mate.HasSeed()&&_bird.IsPlayerClose(_bird._mate)&&!_bird.IsRunningAway()){
 			StartCoroutine(EatSeed());
 		}
     }
@@ -58,8 +58,7 @@ public class Hunger : MonoBehaviour
 		//i want dat seed
 		_bird.WaddleTo(target,_waddleSpeed);
 		_mCam.TrackTargetFrom(transform,
-				_player.position+_player.right*_eatCamOffset.x+Vector3.up*_eatCamOffset.y+_player.forward*_eatCamOffset.z,
-				Vector3.up*_eatCamOffset.y,false);
+				_player.position+_player.right*_eatCamOffset.x+Vector3.up*_eatCamOffset.y+_player.forward*_eatCamOffset.z,Vector3.up*_eatCamOffset.y);
 		yield return null;
 		while(!_bird.ArrivedW())
 			yield return null;
@@ -88,10 +87,11 @@ public class Hunger : MonoBehaviour
 		timer=0;
 		while(timer<_riseTime){
 			timer+=Time.deltaTime;
-			transform.rotation=Quaternion.Slerp(_bowRot,_throwRot,timer/_riseTime);
+			transform.rotation=Quaternion.Slerp(_bowRot,_standRot,timer/_riseTime);
 			yield return null;
 		}
 		transform.rotation=_standRot;
+		/*
 		_seedStart=_seed.position;
 
 		//throw
@@ -102,6 +102,8 @@ public class Hunger : MonoBehaviour
 			_seed.Rotate(Vector3.right*_flipSpeed*Time.deltaTime);
 			yield return null;
 		}
+		*/
+		yield return new WaitForSeconds(1f);
 
 		//play effects
 		Sfx.PlayOneShot3D(_chalp,transform.position);

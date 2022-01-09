@@ -8,7 +8,7 @@ public class Hop : MonoBehaviour
 	Footstep _footstep;
 	Collider [] _cols;
 	Animator _anim;
-	MCamera _mCam;
+	MInput _mIn;
 	[Header("Vfx")]
 	public Transform _stepParts;
 	//bool _disableAfterHop;
@@ -42,6 +42,7 @@ public class Hop : MonoBehaviour
 	public float _divePitchMult;
 	bool _knockBack;
 	public float _knockBackMult;
+	PressurePlate _plate;
 
 	//ai hopping
 	Terrain _terrain;
@@ -55,7 +56,7 @@ public class Hop : MonoBehaviour
 		_anim=GetComponent<Animator>();
 		_bird=GetComponent<Bird>();
 		_fly=GetComponent<Fly>();
-		_mCam=FindObjectOfType<MCamera>();
+		_mIn=Camera.main.GetComponent<MInput>();
 		_terrain=FindObjectOfType<Terrain>();
 		_input=Vector3.zero;
 		_soarAudio=transform.Find("SoarParticles").GetComponent<AudioSource>();
@@ -68,7 +69,7 @@ public class Hop : MonoBehaviour
 		_anim.SetFloat("walkSpeed",1f);
 		_diving=false;
 		_knockBack=false;
-		_input=_mCam.GetInputDir();
+		_input=_mIn.GetInputDir();
 
 		//start da hop
 		StartHop();
@@ -85,10 +86,10 @@ public class Hop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		Vector3 rawInput = _npc ? _npcInput : _mCam.GetInputDir();
+		Vector3 rawInput = _npc ? _npcInput : _mIn.GetInputDir();
 		if(!_knockBack)
 			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
-		if(!_hopping&& (_npc || _mCam.GetJump()))
+		if(!_hopping&& (_npc || _mIn.GetJump()))
 		{
 			StartHop();
 		}
@@ -278,13 +279,15 @@ public class Hop : MonoBehaviour
 
 		_hopAudio.pitch=Random.Range(0.8f,1.2f);
 		_hopAudio.Play();
+		if(_plate!=null)
+			_plate.PlayerOffPlate();
 	}
 
 	void CheckForPressurePlate(Transform t){
-		if(t.GetComponent<PressurePlate>()!=null)
+		_plate = t.GetComponent<PressurePlate>();
+		if(_plate!=null)
 		{
-			PressurePlate pp = t.GetComponent<PressurePlate>();
-			pp.PlayerOnPlate(transform);
+			_plate.PlayerOnPlate();
 		}
 	}
 

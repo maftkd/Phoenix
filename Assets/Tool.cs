@@ -7,14 +7,14 @@ public class Tool : MonoBehaviour
 	Transform _toolCanvas;
 	public ToolPath _path;
 	Transform _tool;
-	MCamera _mCam;
+	MInput _mIn;
 	public float _moveSpeed;
 	Vector3 _input;
 	public float _inputLerp;
 
 	void Awake(){
 		_toolCanvas=transform.Find("ToolCanvas");
-		_mCam=Camera.main.GetComponent<MCamera>();
+		_mIn=Camera.main.GetComponent<MInput>();
 	}
 
 	void OnEnable(){
@@ -37,7 +37,7 @@ public class Tool : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		Vector3 rawInput=_mCam.GetControllerInput();
+		Vector3 rawInput=_mIn.GetControllerInput();
 		_input = Vector3.Lerp(_input,rawInput,_inputLerp*Time.deltaTime);
 		if(_input!=Vector3.zero){
 			//move

@@ -22,7 +22,7 @@ public class Fly : MonoBehaviour
 	public float _flapHoldBoost;
 	Bird _bird;
 	Vector3 _groundPoint;
-	MCamera _mCam;
+	MInput _mIn;
 	public float _maxRoll;
 	public float _minTurnRadius;
 	float _turnRadius;
@@ -47,6 +47,10 @@ public class Fly : MonoBehaviour
 	public float _knockBackMult;
 	float _knockBackTimer;
 
+	void Awake(){
+		_mIn=Camera.main.GetComponent<MInput>();
+	}
+
 	void OnEnable(){
 		if(!_init)
 			Init();
@@ -55,7 +59,7 @@ public class Fly : MonoBehaviour
 
 		//_curFlapAccel=_flapAccel;
 		_curFlapAccel=Vector3.zero;
-		Vector3 input=_mCam.GetControllerInput();
+		Vector3 input=_mIn.GetControllerInput();
 		_curFlapAccel+=transform.forward*_flapAccel.z*input.magnitude+Vector3.up*_flapAccel.y;
 
 		//initial velocity
@@ -83,7 +87,6 @@ public class Fly : MonoBehaviour
 		_flapSounds=transform.Find("FlapSounds").GetComponentsInChildren<AudioSource>();
 		_bird=GetComponent<Bird>();
 		_anim=GetComponent<Animator>();
-		_mCam=FindObjectOfType<MCamera>();
 		_soarParticles=transform.Find("SoarParticles").GetComponent<ParticleSystem>();
 		_soarAudio=_soarParticles.GetComponent<AudioSource>();
 		_init=true;
@@ -153,7 +156,7 @@ public class Fly : MonoBehaviour
 
 		
 		//add air control
-		Vector3 input=_mCam.GetControllerInput();
+		Vector3 input=_mIn.GetControllerInput();
 
 		if(_knockBackTimer<=0)
 		{
