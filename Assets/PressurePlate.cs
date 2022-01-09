@@ -77,6 +77,8 @@ public class PressurePlate : MonoBehaviour
 	public void PlayerOnPlate(){
 		if(_activated)
 			return;
+		if(_player.transform.parent==transform)
+			return;
 		_player.transform.SetParent(transform);
 		_load++;
 		PlayFx();
@@ -89,6 +91,8 @@ public class PressurePlate : MonoBehaviour
 
 	public void PlayerOffPlate(){
 		Debug.Log("Player is off plate");
+		if(_player.transform.parent!=transform)
+			return;
 		_player.transform.SetParent(null);
 		_load--;
 		/*

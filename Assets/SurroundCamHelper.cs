@@ -16,7 +16,7 @@ public class SurroundCamHelper : MonoBehaviour
 	}
 
 	void OnDisable(){
-		_mCam.DefaultCam();
+		//_mCam.DefaultCam();
 	}
 
     // Start is called before the first frame update

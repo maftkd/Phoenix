@@ -51836,6 +51836,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0.0000014755996
       objectReference: {fileID: 0}
+    - target: {fileID: 1820936649275779881, guid: 243d99ceabd103b46884074f0d8fbdda,
+        type: 3}
+      propertyPath: _inputFallLerp
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820936649275779881, guid: 243d99ceabd103b46884074f0d8fbdda,
+        type: 3}
+      propertyPath: _inputRampLerp
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1820936649275779884, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
       propertyPath: _mate

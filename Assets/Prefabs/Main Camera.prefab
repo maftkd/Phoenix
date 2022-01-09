@@ -101,9 +101,9 @@ MonoBehaviour:
   _theta: 0
   _phi: 0.3
   _radius: 1
-  _positionLerp: 3
+  _positionLerp: 4
   _rotationLerp: 0.25
-  _surroundLerp: 2
+  _surroundLerp: 1
   _thetaOffsetGravity: 1
   _trackLerp: 5
   _trackRotLerp: 1

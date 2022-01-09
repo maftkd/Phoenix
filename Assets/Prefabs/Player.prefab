@@ -645,7 +645,8 @@ MonoBehaviour:
   _maxWalkSlope: 1.5
   _animSpeedMult: 3
   _stepVolume: 0.01
-  _inputSmoothLerp: 5
+  _inputSmoothLerp: 10
+  _slerp: 10
   _minInput: 0.1
   _knockBackTime: 0.25
   _knockBackSpeedMult: 0.3
@@ -741,6 +742,7 @@ MonoBehaviour:
   _triggerRadius: 0.7
   _arriveRadius: 0.1
   _state: 0
+  _startPath: 0
   _playerControlled: 1
   _mate: {fileID: 0}
   _size: {x: 0, y: 0, z: 0}

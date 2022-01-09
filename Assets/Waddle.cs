@@ -14,6 +14,7 @@ public class Waddle : MonoBehaviour
 	float _stepTimer;
 	Vector3 _input;
 	public float _inputSmoothLerp;
+	public float _slerp;
 	public float _minInput;
 	float _knockBackTimer;
 	[Header("Knock back")]
@@ -21,6 +22,7 @@ public class Waddle : MonoBehaviour
 	Vector3 _knockBackDir;
 	public float _knockBackSpeedMult;
 	Collider [] _cols;
+	PressurePlate _plate;
 
 	//npc
 	Terrain _terrain;
@@ -62,7 +64,9 @@ public class Waddle : MonoBehaviour
 		_walkTimer+=Time.deltaTime;
 		if(_knockBackTimer<=0){
 			Vector3 rawInput = _npc? _npcInput : _mIn.GetInputDir();
+			//if(_input.sqrMagnitude<=rawInput.sqrMagnitude)
 			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
+			//_input=rawInput;
 			if(_input.sqrMagnitude<_minInput*_minInput)
 				return;
 		}
@@ -78,7 +82,10 @@ public class Waddle : MonoBehaviour
 		if(_knockBackTimer<=0)
 		{
 			_anim.SetFloat("hopTime",animSpeed);
+			Quaternion curRot=transform.rotation;
 			transform.forward=_input;
+			Quaternion endRot=transform.rotation;
+			transform.rotation=Quaternion.Slerp(curRot,endRot,_slerp*Time.deltaTime);
 			move=transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
 		}
 		else
@@ -127,7 +134,14 @@ public class Waddle : MonoBehaviour
 		}
 		PressurePlate pp = t.GetComponent<PressurePlate>();
 		if(pp!=null)
+		{
 			pp.PlayerOnPlate();
+			_plate=pp;
+		}
+		else if(_plate!=null){
+			_plate.PlayerOffPlate();
+			_plate=null;
+		}
 	}
 
 	public bool IsWaddling(){
