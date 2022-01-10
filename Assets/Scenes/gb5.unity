@@ -34401,6 +34401,16 @@ PrefabInstance:
       propertyPath: _theta
       value: -1.3
       objectReference: {fileID: 0}
+    - target: {fileID: 914837368030260095, guid: f4485801ec9228b4db2d14ce6228916e,
+        type: 3}
+      propertyPath: _rotationLerp
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 914837368030260095, guid: f4485801ec9228b4db2d14ce6228916e,
+        type: 3}
+      propertyPath: _surroundLerp
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4485801ec9228b4db2d14ce6228916e, type: 3}
 --- !u!4 &1418143677 stripped
@@ -52758,7 +52768,7 @@ PrefabInstance:
     - target: {fileID: 2290168266399751350, guid: dbf48933162b765488148b02f8f3ba05,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3500354870299029577, guid: dbf48933162b765488148b02f8f3ba05,
         type: 3}
