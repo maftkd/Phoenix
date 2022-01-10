@@ -12,6 +12,7 @@ public class RunAway : MonoBehaviour
 	int _state;
 	float _ruffleTimer;
 	float _ruffleDelay;
+	MCamera _mCam;
 
 	void Awake(){
 		foreach(Transform t in _paths){
@@ -21,6 +22,7 @@ public class RunAway : MonoBehaviour
 			}
 		}
 		_bird=GetComponent<Bird>();
+		_mCam=Camera.main.transform.parent.GetComponent<MCamera>();
 	}
 
 	void OnEnable(){
@@ -37,6 +39,11 @@ public class RunAway : MonoBehaviour
 		_state=0;
 	}
 
+	void OnDisable(){
+		if(_mCam!=null)
+			_mCam.DefaultCam();
+	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,6 +58,7 @@ public class RunAway : MonoBehaviour
 			default://idle
 				if(_bird.IsPlayerClose(_bird._mate)){
 					if(_curSpot<_spots.Length){
+						/*
 						if(_curSpot==0){
 							//ruffle for first spot
 							_state=1;
@@ -58,11 +66,12 @@ public class RunAway : MonoBehaviour
 							_ruffleTimer=0;
 						}
 						else{
+						*/
 							//otherwise just start walking
-							Transform target=_spots[_curSpot];
-							_bird.WaddleTo(target.position,1f);
-							_state=2;
-						}
+						Transform target=_spots[_curSpot];
+						_bird.WaddleTo(target.position,1f);
+						_state=2;
+						//}
 					}
 					else{
 						//no more spots
@@ -86,6 +95,7 @@ public class RunAway : MonoBehaviour
 					_curSpot++;
 					_state=0;
 					_bird.StopWaddling();
+					_bird.CallToMate();
 				}
 				break;
 		}
@@ -93,6 +103,7 @@ public class RunAway : MonoBehaviour
 
 	public void RunAwayOnPath(int pathIndex){
 		_pathIndex=pathIndex;
+		_mCam.Surround(transform);
 		enabled=true;
 	}
 

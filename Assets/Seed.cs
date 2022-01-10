@@ -34,5 +34,6 @@ public class Seed : MonoBehaviour
 		//play some sound
 		Sfx.PlayOneShot2D(_choir);
 		_player.GetComponent<Bird>().CollectSeed(transform);
+		GetComponent<BoxCollider>().enabled=false;
 	}
 }

@@ -16,6 +16,7 @@ public class Waddle : MonoBehaviour
 	public float _inputSmoothLerp;
 	public float _slerp;
 	public float _minInput;
+	public float _minSlopeToCheckSpeed;
 	float _knockBackTimer;
 	[Header("Knock back")]
 	public float _knockBackTime;
@@ -34,7 +35,7 @@ public class Waddle : MonoBehaviour
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
-		_mIn=Camera.main.GetComponent<MInput>();
+		_mIn = Camera.main.transform.parent.GetComponent<MInput>();
 		_bird = GetComponent<Bird>();
 		_cols = new Collider[2];
 	}
@@ -104,8 +105,22 @@ public class Waddle : MonoBehaviour
 			float dy = (targetPos.y-transform.position.y);
 			float dx = move.magnitude;
 			float slope = dy/dx;
+			/*
+			if(hit.transform.GetComponent<Bird>())
+				hit.transform.GetComponent<Bird>().GetWalkedInto(_bird);
+				*/
 			if(slope<_maxWalkSlope)
-				transform.position=hit.point;
+			{
+				if(slope>_minSlopeToCheckSpeed){
+					Vector3 dir=hit.point-transform.position;
+					targetPos=transform.position+dir.normalized*_walkSpeed*Time.deltaTime;
+					if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y*1.5f,_bird._collisionLayer)){
+						transform.position=hit.point;
+					}
+				}
+				else
+					transform.position=hit.point;
+			}
 			if(_stepTimer>=0.5f/animSpeed){
 				TakeStep(hit.transform);
 				_stepTimer=0;

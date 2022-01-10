@@ -8,7 +8,8 @@ public class Planter : MonoBehaviour
 	public int _terrainLayer;
 	public float _alphaThreshold;
 	public float _plantChance;
-	public Vector2 _sizeRange;
+	public Vector3 _minSize;
+	public Vector3 _maxSize;
 	public bool _offsetVert;
     // Start is called before the first frame update
     void Start()
@@ -50,9 +51,9 @@ public class Planter : MonoBehaviour
 						float worldY = t.SampleHeight(new Vector3(worldX,0,worldZ));
 						Transform grass = Instantiate(_grassPrefab, new Vector3(worldX,worldY,worldZ),Quaternion.Euler(0,Random.value*360f,0),transform);
 						Vector3 scale = grass.localScale;
-						scale.x*=Random.Range(_sizeRange.x,_sizeRange.y);
-						scale.y*=Random.Range(_sizeRange.x,_sizeRange.y);
-						scale.z*=Random.Range(_sizeRange.x,_sizeRange.y);
+						scale.x*=Random.Range(_minSize.x,_maxSize.y);
+						scale.y*=Random.Range(_minSize.x,_maxSize.y);
+						scale.z*=Random.Range(_minSize.x,_maxSize.y);
 						grass.localScale=scale;
 						if(_offsetVert)
 							grass.position+=Vector3.up*grass.localScale.y*0.5f;

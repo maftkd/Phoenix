@@ -26,15 +26,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _eatDistance: 0.125
-  _eatCamOffset: {x: 0.5, y: 0.2, z: -0.1}
-  _waddleSpeed: 0.4
+  _eatCamOffset: {x: 0.5, y: 0.2, z: -0.2}
+  _waddleSpeed: 0.6
   _bowTime: 0.25
   _riseTime: 0.35
   _bowAngle: 45
   _throwAngle: -30
-  _flipTime: 0.75
-  _flipSpeed: 720
-  _flipHeight: 0.3
+  _flipTime: 0.5
+  _flipSpeed: 1440
+  _flipHeight: 0.25
   _flipArc:
     serializedVersion: 2
     m_Curve:
@@ -69,8 +69,42 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _chalp: {fileID: 8300000, guid: 5b743fb36e86bf546aa7efda348d4af9, type: 3}
-  _eatParts: {fileID: 0}
+  _eatParts: {fileID: 2205440437209648765, guid: f8aa667c1467efc4a89df3a8d3bf4d01,
+    type: 3}
   _effectsDur: 2
+--- !u!114 &6052478643217251372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4663429959623069336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05d79d743a93f1546bc55d38515425c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hitPoint: {x: 0, y: 0, z: 0}
+  _maxDotToKnock: 0.2
+  _clips: []
+  _numSources: 0
+  _volume: 0
+  _supressHitFx: 1
+  _supressNpcKnockback: 0
+  _onBirdEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5509799030927029199}
+        m_MethodName: RuffleToMate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &6139524748241066211
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -92,6 +126,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Mate Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550414671924663931, guid: 243d99ceabd103b46884074f0d8fbdda,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1550414671924663931, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
@@ -201,3 +240,15 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 6139524748241066211}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5509799030927029199 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1820936649275779884, guid: 243d99ceabd103b46884074f0d8fbdda,
+    type: 3}
+  m_PrefabInstance: {fileID: 6139524748241066211}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4663429959623069336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 634b715ccea38bf4ead75d121f88d2c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

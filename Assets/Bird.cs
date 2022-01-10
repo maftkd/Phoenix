@@ -45,6 +45,7 @@ public class Bird : MonoBehaviour
 	public Transform _mandible;
 	Transform _curKey;
 	Transform _curSeed;
+	public Transform _ruffleEffects;
 
 	void Awake(){
 		//calculations
@@ -62,9 +63,8 @@ public class Bird : MonoBehaviour
 		_callAudio=transform.Find("Call").GetComponent<AudioSource>();
 		_callParts=_callAudio.GetComponent<ParticleSystem>();
 		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
-		Camera cam = Camera.main;
-		_mCam = cam.GetComponent<MCamera>();
-		_mIn = cam.GetComponent<MInput>();
+		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
+		_mIn = _mCam.GetComponent<MInput>();
 
 		//disable things
 		_hop.enabled=false;
@@ -196,7 +196,8 @@ public class Bird : MonoBehaviour
 
 	public float Ruffle(){
 		_anim.SetTrigger("ruffle");
-		_state=2;
+		Instantiate(_ruffleEffects,transform.position+_size.y*0.5f*Vector3.up,Quaternion.identity,transform);
+		//_state=2;
 		_ruffleAudio.Play();
 		return _ruffleAudio.clip.length;
 	}
@@ -208,7 +209,12 @@ public class Bird : MonoBehaviour
 		_callParts.Play();
 		//_state=3;
 		if(_playerControlled)
+		{
 			StartCoroutine(CallMateR());
+		}
+		else{
+			_anim.SetTrigger("sing");
+		}
 	}
 
 	IEnumerator CallMateR(){
@@ -391,6 +397,8 @@ public class Bird : MonoBehaviour
 		t.localEulerAngles=Vector3.up*90f;
 		t.localScale=Vector3.one*0.25f;
 		_curSeed=t;
+		if(_playerControlled)
+			_mCam.Surround(_mate.transform);
 	}
 
 	public Transform GetKey(){
@@ -474,6 +482,23 @@ public class Bird : MonoBehaviour
 			return _hop.GetCamTarget();
 		else
 			return transform.position;
+	}
+
+	public void CallToMate(){
+		//Debug.Log(name + " got walked into by: "+b.name);
+		Vector3 diff = _mate.transform.position-transform.position;
+		diff.y=0;
+		transform.forward=diff;
+		Call();
+		//Ruffle();
+	}
+
+	public void RuffleToMate(){
+		//Debug.Log(name + " got walked into by: "+b.name);
+		Vector3 diff = _mate.transform.position-transform.position;
+		diff.y=0;
+		transform.forward=diff;
+		Ruffle();
 	}
 
 	void OnDrawGizmos(){

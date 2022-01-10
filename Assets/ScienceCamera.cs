@@ -53,7 +53,7 @@ public class ScienceCamera : MonoBehaviour
 		if(_focusTimer>=_focusDelay){
 			Refocus();
 		}
-		if((_player.position-_targetPos).sqrMagnitude<=0.01f){
+		if((_player.position-_targetPos).sqrMagnitude<=_minDistToTarget*_minDistToTarget){
 			StartCoroutine(Flash());
 		}
 		_ringFill.fillAmount=Mathf.Lerp(_ringFill.fillAmount,0,Time.deltaTime);

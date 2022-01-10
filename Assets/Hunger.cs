@@ -32,7 +32,7 @@ public class Hunger : MonoBehaviour
 		_bird=GetComponent<Bird>();
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
 		_player=player.transform;
-		_mCam=Camera.main.GetComponent<MCamera>();
+		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
 	}
 
     // Start is called before the first frame update
@@ -87,11 +87,10 @@ public class Hunger : MonoBehaviour
 		timer=0;
 		while(timer<_riseTime){
 			timer+=Time.deltaTime;
-			transform.rotation=Quaternion.Slerp(_bowRot,_standRot,timer/_riseTime);
+			transform.rotation=Quaternion.Slerp(_bowRot,_throwRot,timer/_riseTime);
 			yield return null;
 		}
 		transform.rotation=_standRot;
-		/*
 		_seedStart=_seed.position;
 
 		//throw
@@ -102,8 +101,6 @@ public class Hunger : MonoBehaviour
 			_seed.Rotate(Vector3.right*_flipSpeed*Time.deltaTime);
 			yield return null;
 		}
-		*/
-		yield return new WaitForSeconds(1f);
 
 		//play effects
 		Sfx.PlayOneShot3D(_chalp,transform.position);

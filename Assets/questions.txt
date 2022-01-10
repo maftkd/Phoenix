@@ -7,3 +7,11 @@
 - To what extent does environment play on the puzzle solving experience?
 - "					  terrain 			"
 - What shapes seem to work best for puzzle boxes to highlight their presence, make clear their purpose, and provide visual interest
+
+1/10/21
+- How does the behavior of the camera affect gameplay
+- How many puzzles should be included in the first island?
+- How can / should the player learn to interact with the game?
+- How can the story begin unfolding from the first island?
+- How can certain areas be gated off?
+- How does the birdo make the player feel? Does it help or harm the experience?

@@ -12,7 +12,7 @@ public class SurroundCamHelper : MonoBehaviour
 
 	void Awake(){
 		_player=GameObject.FindGameObjectWithTag("Player").transform;
-		_mCam=Camera.main.GetComponent<MCamera>();
+		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
 	}
 
 	void OnDisable(){

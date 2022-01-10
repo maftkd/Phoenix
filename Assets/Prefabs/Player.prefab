@@ -627,8 +627,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.11
-  m_Center: {x: 0, y: 0.1, z: 0}
+  m_Radius: 0.06
+  m_Center: {x: 0, y: 0.12, z: 0}
 --- !u!114 &1820936649275779881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -648,6 +648,7 @@ MonoBehaviour:
   _inputSmoothLerp: 10
   _slerp: 10
   _minInput: 0.1
+  _minSlopeToCheckSpeed: 0.1
   _knockBackTime: 0.25
   _knockBackSpeedMult: 0.3
   _npc: 0
@@ -761,6 +762,8 @@ MonoBehaviour:
   _waddleKnockVolume: 0.025
   _hopKnockVolume: 0.1
   _mandible: {fileID: 4928122866667590429}
+  _ruffleEffects: {fileID: 3804091942241321643, guid: 68db3c5ff28b4c94fb2b6827ba07c304,
+    type: 3}
 --- !u!1 &1792526787315343659
 GameObject:
   m_ObjectHideFlags: 0
