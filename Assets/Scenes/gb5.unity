@@ -34331,6 +34331,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2012870925}
     m_Modifications:
+    - target: {fileID: 2017222633, guid: f4485801ec9228b4db2d14ce6228916e, type: 3}
+      propertyPath: _joySens
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 914837368030260091, guid: f4485801ec9228b4db2d14ce6228916e,
         type: 3}
       propertyPath: m_Name

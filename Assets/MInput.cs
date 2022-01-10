@@ -90,6 +90,7 @@ public class MInput : MonoBehaviour
 			return Vector2.zero;
 		Vector2 mouseIn=new Vector2(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y"));
 		Vector2 joyIn=new Vector2(Input.GetAxis("Joy X"),Input.GetAxis("Joy Y"));
+		Debug.Log("joy x: "+joyIn.x);
 		return mouseIn*_mouseSens+joyIn*_joySens*Time.deltaTime;
 	}
 
