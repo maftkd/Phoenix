@@ -50,5 +50,6 @@ public class Follow : MonoBehaviour
 	public void StopFollowingMate(){
 		_bird.StopWaddling();
 		enabled=false;
+		Debug.Log("say whaaa?");
 	}
 }

@@ -51,6 +51,8 @@ public class Bird : MonoBehaviour
 	public int _seeds;
 	public Transform _ruffleEffects;
 	public float _summonDist;
+	[HideInInspector]
+	public Transform _puzzleZone;
 
 	void Awake(){
 		//calculations
@@ -543,6 +545,16 @@ public class Bird : MonoBehaviour
 
 	public void ShowTutorial(int index){
 		_tutorial.ShowTutorial(index);
+	}
+
+	public void SetZone(Transform t){
+		_puzzleZone=t;
+		if(!_playerControlled && _seeds>0){
+			if(t!=null&&_puzzleZone==_mate._puzzleZone)
+				StopFollowing();
+			else
+				StartFollowing();
+		}
 	}
 
 	void OnDrawGizmos(){

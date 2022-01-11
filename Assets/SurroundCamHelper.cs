@@ -36,15 +36,14 @@ public class SurroundCamHelper : MonoBehaviour
 			if(sqrMag<_outerRadius*_outerRadius){
 				_playerInZone=true;
 				_mCam.Surround(transform);
-				_mate.StopFollowing();
 			}
 		}
 		else{
 			if(sqrMag>_outerRadius*_outerRadius || sqrMag<_innerRadius*_innerRadius){
 				_playerInZone=false;
 				_mCam.DefaultCam();
-				if(_mate._seeds>0)
-					_mate.StartFollowing();
+				/*
+					*/
 			}
 		}
         

@@ -49,7 +49,7 @@ public class PBCamera : PuzzleBox
 		_gearsAudio.Play();
 		float timer=0;
 		Vector3 startPos=_box.position;
-		Vector3 endPos=startPos+Vector3.up*_box.localScale.y*0.5f;
+		Vector3 endPos=startPos+Vector3.up*_box.localScale.y*0.25f;
 		while(timer<_liftDur){
 			timer+=Time.deltaTime;
 			_box.position=Vector3.Lerp(startPos,endPos,_liftCurve.Evaluate(timer/_liftDur));

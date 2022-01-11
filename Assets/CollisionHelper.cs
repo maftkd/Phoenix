@@ -61,19 +61,22 @@ public class CollisionHelper : MonoBehaviour
 				_hitPoint=_col.ClosestPoint(other.transform.position);
 			}
 			_hitNormal=other.transform.position-_hitPoint;
+			Debug.Log("yo yo yo, hit on the norm: "+_hitNormal);
 			if(_hitNormal.sqrMagnitude==0)
 				_hitNormal=-other.transform.forward;
 			Bird b = other.GetComponent<Bird>();
 			Vector3 curPos=other.transform.position;
 			b.RevertToPreviousPosition();
-			_hitNormal.y=0;
-			_hitNormal.Normalize();
-			float dt = Vector3.Dot(_hitNormal, other.transform.forward);
+			//#why what does this do, why is it here?
+			Vector3 flatNormal=_hitNormal;
+			flatNormal.y=0;
+			flatNormal.Normalize();
+			float dt = Vector3.Dot(flatNormal, other.transform.forward);
 			if(dt>_maxDotToKnock){
 				other.transform.position=curPos;
 			}
 			else
-				other.GetComponent<Bird>().KnockBack(this,_hitNormal,_supressHitFx,_supressNpcKnockback);
+				other.GetComponent<Bird>().KnockBack(this,_hitNormal.normalized,_supressHitFx,_supressNpcKnockback);
 		}
 	}
 

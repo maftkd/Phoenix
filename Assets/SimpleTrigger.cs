@@ -13,6 +13,8 @@ public class SimpleTrigger : MonoBehaviour
 	Collider _col;
 	Transform _mainCam;
 	bool _active;
+	public bool _ignoreMesh;
+	public bool _ignoreCol;
 
 	void Awake(){
 		_mesh=GetComponent<MeshRenderer>();
@@ -31,13 +33,17 @@ public class SimpleTrigger : MonoBehaviour
     {
 		if(!_active&&(_mainCam.position-transform.position).sqrMagnitude<=_activeRadius*_activeRadius){
 			_active=true;
-			_mesh.enabled=true;
-			_col.enabled=true;
+			if(!_ignoreMesh)
+				_mesh.enabled=true;
+			if(!_ignoreCol)
+				_col.enabled=true;
 		}
 		else if(_active&&(_mainCam.position-transform.position).sqrMagnitude>_activeRadius*_activeRadius){
 			_active=false;
-			_mesh.enabled=false;
-			_col.enabled=false;
+			if(!_ignoreMesh)
+				_mesh.enabled=false;
+			if(!_ignoreCol)
+				_col.enabled=false;
 		}
     }
 

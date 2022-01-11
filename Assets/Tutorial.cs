@@ -15,6 +15,7 @@ public class Tutorial : MonoBehaviour
 
 	public float _pulseDur;
 	float _pulseTimer;
+	public Color [] _textColors;
 	public Color [] _colors;
 	public string [] _buttons;
 	public string [] _inputs;
@@ -57,9 +58,13 @@ public class Tutorial : MonoBehaviour
 			return;
 		}
 		_button.color=_colors[index];
+		_button.transform.GetChild(0).GetComponent<RawImage>().color=_textColors[index];
 		_buttonText.text=_buttons[index];
+		_buttonText.color=_textColors[index];
 		_inputText.text=_inputs[index];
+		_inputText.color=_textColors[index];
 		_responseText.text=_responses[index];
+		_responseText.color=_textColors[index];
 		_can.enabled=true;
 		_cg.alpha=1f;
 		enabled=true;
