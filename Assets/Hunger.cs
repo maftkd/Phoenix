@@ -60,8 +60,10 @@ public class Hunger : MonoBehaviour
 		_mCam.TrackTargetFrom(transform,
 				_player.position+_player.right*_eatCamOffset.x+Vector3.up*_eatCamOffset.y+_player.forward*_eatCamOffset.z,Vector3.up*_eatCamOffset.y);
 		yield return null;
+		Debug.Log("Started walking");
 		while(!_bird.ArrivedW())
 			yield return null;
+		Debug.Log("Arrived");
 
 		_bird.StopWaddling();
 		_standRot = transform.rotation;
@@ -114,5 +116,9 @@ public class Hunger : MonoBehaviour
 		_mCam.DefaultCam();
 		//_bird.RunAwayNextPath();
 		_bird.StartFollowing();
+	}
+
+	public bool IsEating(){
+		return _eating;
 	}
 }

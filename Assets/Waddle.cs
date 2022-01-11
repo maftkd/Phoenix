@@ -181,7 +181,7 @@ public class Waddle : MonoBehaviour
 	public void WaddleTo(Vector3 target,float speed){
 		_destination=target;
 		RaycastHit hit;
-		if(Physics.Raycast(_destination+Vector3.up*1f,Vector3.down, out hit,1f,_bird._collisionLayer)){
+		if(Physics.Raycast(_destination+Vector3.up*_bird._size.y*0.5f,Vector3.down, out hit,1f,_bird._collisionLayer)){
 			_destination.y=hit.point.y;
 		}
 		Vector3 diff = _destination-transform.position;
@@ -194,7 +194,9 @@ public class Waddle : MonoBehaviour
 	}
 
 	public bool Arrived(float threshold){
-		bool closeEnough=(transform.position-_destination).sqrMagnitude<threshold*threshold;
+		float sqrDst=(transform.position-_destination).sqrMagnitude;
+		//Debug.Log("sqrDst: "+sqrDst);
+		bool closeEnough=sqrDst<threshold*threshold;
 		//bool timeOut=_walkTimer>_timeEstimate+0.5f;
 		return  closeEnough;// || timeOut ;
 	}
@@ -205,4 +207,11 @@ public class Waddle : MonoBehaviour
 		enabled=false;
 	}
 
+	void OnDrawGizmos(){
+		if(_destination!=null)
+		{
+			Gizmos.color=Color.red;
+			Gizmos.DrawWireSphere(_destination,0.1f);
+		}
+	}
 }

@@ -120,7 +120,7 @@ public class ScienceCamera : MonoBehaviour
 		while(timer<_flashDur){
 			timer+=Time.deltaTime;
 			_ringFill.fillAmount=timer/_flashDur;
-			if((_player.position-_targetPos).sqrMagnitude>_minDistToTarget*_minDistToTarget){
+			if((_player.position-_targetPos).sqrMagnitude>_minDistToTarget*_minDistToTarget||(_otherCam!=null&&!_otherCam.LedOn())){
 				enabled=true;
 				LightLed(false);
 				_audio.Stop();
@@ -162,7 +162,7 @@ public class ScienceCamera : MonoBehaviour
 
 	bool OtherCamLightOn() {
 		if(_otherCam==null)
-			return false;//single camera
+			return true;//single camera
 		else return _otherCam.LedOn();
 	}
 

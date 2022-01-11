@@ -15,3 +15,4 @@
 - How can the story begin unfolding from the first island?
 - How can certain areas be gated off?
 - How does the birdo make the player feel? Does it help or harm the experience?
+- What variables are needed to save state?

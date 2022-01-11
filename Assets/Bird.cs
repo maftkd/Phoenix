@@ -14,7 +14,9 @@ public class Bird : MonoBehaviour
 	Waddle _waddle;
 	Tool _tool;
 	RunAway _runAway;
+	Hunger _hunger;
 	Follow _follow;
+	Tutorial _tutorial;
 	Animator _anim;
 	AudioSource _ruffleAudio;
 	AudioSource _callAudio;
@@ -61,7 +63,9 @@ public class Bird : MonoBehaviour
 		_waddle=GetComponent<Waddle>();
 		_tool=GetComponent<Tool>();
 		_runAway=GetComponent<RunAway>();
+		_hunger=GetComponent<Hunger>();
 		_follow=GetComponent<Follow>();
+		_tutorial=GetComponentInChildren<Tutorial>();
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
 		_callAudio=transform.Find("Call").GetComponent<AudioSource>();
@@ -150,14 +154,14 @@ public class Bird : MonoBehaviour
 							StartWaddling();
 						}
 					}
+					else{
+						if(_mIn.GetJumpDown()){
+							Fly();
+						}
+					}
 					if(Input.GetButtonDown("Sing")){
 						Call();
 					}
-					/*
-					if(Input.GetButtonDown("Jump")){
-						Fly();
-					}
-					*/
 					break;
 				case 3://flying
 					if(Input.GetButtonDown("Sing")){
@@ -226,7 +230,7 @@ public class Bird : MonoBehaviour
 		if(_playerControlled)
 		{
 			//StartCoroutine(CallMateR());
-			if(_mate._seeds>0)
+			if(_mate._seeds>0&&!_mate.IsRunningAway())
 			{
 				Vector3 diff=transform.position-_mate.transform.position;
 				_mate.WaddleTo(transform.position-diff.normalized*_summonDist,1f);
@@ -516,6 +520,8 @@ public class Bird : MonoBehaviour
 	}
 
 	public void RuffleToMate(){
+		if(_hunger.IsEating())
+			return;
 		//Debug.Log(name + " got walked into by: "+b.name);
 		Vector3 diff = _mate.transform.position-transform.position;
 		diff.y=0;
@@ -533,6 +539,10 @@ public class Bird : MonoBehaviour
 
 	public void GainSeed(){
 		_seeds++;
+	}
+
+	public void ShowTutorial(int index){
+		_tutorial.ShowTutorial(index);
 	}
 
 	void OnDrawGizmos(){

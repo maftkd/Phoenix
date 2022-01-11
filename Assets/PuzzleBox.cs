@@ -94,13 +94,19 @@ public class PuzzleBox : MonoBehaviour
 
 	public virtual IEnumerator FocusOnBox(){
 		_shotTaken=true;
+		yield return null;
+		/*
 		Vector3 dir=transform.position-_mCam.transform.position;
 		dir.y=0;
 		Vector3 targetPos=transform.position-dir.normalized*_shotDistance+Vector3.up*_shotHeight;
-		_mCam.TrackTargetFrom(transform,targetPos,transform.localScale.y*Vector3.up*0.5f);
+		//_mCam.TrackTargetFrom(transform,targetPos,transform.localScale.y*Vector3.up*0.5f);
+		//_mCam.TrackTarget(transform,transform.localScale.y*0.5f*Vector3.up);
+		_mCam.LetterBox(true);
 		yield return new WaitForSeconds(3f);
-		_mCam.DefaultCam();
+		//_mCam.DefaultCam();
+		_mCam.LetterBox(false);
 		_onShot.Invoke();
+		*/
 	}
 
 	void OnDrawGizmos(){

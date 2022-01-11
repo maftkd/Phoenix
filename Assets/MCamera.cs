@@ -170,4 +170,8 @@ public class MCamera : MonoBehaviour
 		_letterBox.SetActive(true);
 		_mIn.LockInput(true);
 	}
+
+	public void LetterBox(bool lb){
+		_letterBox.SetActive(lb);
+	}
 }

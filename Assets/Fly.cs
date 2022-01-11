@@ -10,7 +10,12 @@ public class Fly : MonoBehaviour
 	AudioSource[] _flapSounds;
 	[HideInInspector]
 	public Vector3 _velocity;
-	public float _gravity;
+	float _gravity;
+	public float _defaultGravity;
+	public float _soarGravity;
+	public float _minSoarVely;
+	public float _minDefaultVely;
+	float _minVely;
 	public Vector3 _maxVel;
 	public Vector3 _flapAccel;//z=forward,y=up
 	Vector3 _curFlapAccel;
@@ -24,10 +29,14 @@ public class Fly : MonoBehaviour
 	Vector3 _groundPoint;
 	MInput _mIn;
 	public float _maxRoll;
+	public float _soarMaxRoll;
+	public float _defaultMaxRoll;
 	public float _minTurnRadius;
 	float _turnRadius;
 	[Tooltip("Scales down the roll angle before computing turn radius")]//allows larger turn radii
 	public float _rollMult;
+	public float _soarRollMult;
+	public float _defaultRollMult;
 	public Vector3 _airControl;
 	Animator _anim;
 	[HideInInspector]
@@ -48,13 +57,16 @@ public class Fly : MonoBehaviour
 	float _knockBackTimer;
 
 	void Awake(){
-		_mIn=Camera.main.GetComponent<MInput>();
+		_mIn=Camera.main.transform.parent.GetComponent<MInput>();
+		_cols=new Collider[4];
+		_flapSounds=transform.Find("FlapSounds").GetComponentsInChildren<AudioSource>();
+		_bird=GetComponent<Bird>();
+		_anim=GetComponent<Animator>();
+		_soarParticles=transform.Find("SoarParticles").GetComponent<ParticleSystem>();
+		_soarAudio=_soarParticles.GetComponent<AudioSource>();
 	}
 
 	void OnEnable(){
-		if(!_init)
-			Init();
-
 		_velocity=Vector3.zero;
 
 		//_curFlapAccel=_flapAccel;
@@ -82,16 +94,6 @@ public class Fly : MonoBehaviour
 		Flap();
 	}
 
-	void Init(){
-		_cols=new Collider[4];
-		_flapSounds=transform.Find("FlapSounds").GetComponentsInChildren<AudioSource>();
-		_bird=GetComponent<Bird>();
-		_anim=GetComponent<Animator>();
-		_soarParticles=transform.Find("SoarParticles").GetComponent<ParticleSystem>();
-		_soarAudio=_soarParticles.GetComponent<AudioSource>();
-		_init=true;
-	}
-
     // Start is called before the first frame update
     void Start()
     {
@@ -101,18 +103,27 @@ public class Fly : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		_flapTimer+=Time.deltaTime;
 		//flap
-		if(Input.GetButtonDown("Jump")){
+		if(_mIn.GetJumpDown()){
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
 				_velocity+=_curFlapAccel;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
-				_anim.ResetTrigger("soar");
 				Soar(false);
 				Flap();
+				_diving=false;
 			}
 		}
+
+		_anim.SetBool("soar",_mIn.GetJump());
+		if(_flapTimer>_flapDur){
+			Soar(_mIn.GetJump());
+			_diving=!_mIn.GetJump();
+		}
+
+		/*
 		if(Input.GetButton("Jump")){
 			if(_flapTimer<_flapDur){
 				if(_knockBackTimer<=0)
@@ -131,8 +142,10 @@ public class Fly : MonoBehaviour
 			_anim.SetTrigger("soar");
 			Soar(true);
 		}
+		*/
 
 		//dive
+		/*
 		if(Input.GetButtonDown("Dive")){
 			Debug.Log("Dive time");
 			_flapTimer=_flapDur;
@@ -153,6 +166,7 @@ public class Fly : MonoBehaviour
 			Soar(true);
 			_diving=false;
 		}
+		*/
 
 		
 		//add air control
@@ -164,9 +178,12 @@ public class Fly : MonoBehaviour
 			//forward/backward air control
 			_velocity+=transform.forward*input.y*_airControl.z*Time.deltaTime;
 
-			//turning mid-air
 			Vector3 flatVel=_velocity;
 			flatVel.y=0;
+
+			//turning mid-air
+			_rollMult=_mIn.GetJump() ? _soarRollMult : _defaultRollMult;
+			_maxRoll=_mIn.GetJump() ? _soarMaxRoll : _defaultMaxRoll;
 			_forwardness = Vector3.Dot(flatVel.normalized,transform.forward);
 			float rollAngle=-_maxRoll*input.x;
 			_speedFrac=flatVel.magnitude/_maxVel.z;
@@ -197,6 +214,7 @@ public class Fly : MonoBehaviour
 			//DebugScreen.Print(_forwardness>0,0);
 			//DebugScreen.Print(_turnRadius,1);
 			//DebugScreen.Print(flatVel.sqrMagnitude,2);
+			//adjust pitch
 			Vector3 eulerAngles=transform.eulerAngles;
 			eulerAngles.z=rollAngle;
 			float targetPitch=0;
@@ -217,7 +235,16 @@ public class Fly : MonoBehaviour
 		//apply physics
 		Vector3 prevPos=transform.position;
 		transform.position+=_velocity*Time.deltaTime;
+		_gravity=_mIn.GetJump()&&_velocity.y<0? _soarGravity : _defaultGravity;
 		_velocity+=Vector3.down*_gravity*Time.deltaTime;
+
+		//cap vertical velocity
+		if(_velocity.y>_maxVel.y)
+			_velocity.y=_maxVel.y;
+
+		_minVely=_mIn.GetJump()?_minSoarVely : _minDefaultVely;
+		if(_velocity.y<_minVely)
+			_velocity.y=_minVely;
 
 		Vector3 ray = transform.position-prevPos;
 		RaycastHit hit;
@@ -229,14 +256,13 @@ public class Fly : MonoBehaviour
 			transform.eulerAngles=eulers;
 			Soar(false);
 			Footstep footstep=hit.transform.GetComponent<Footstep>();
-			float vel = -_velocity.y/_maxVel.y;
 			float vol = _diving? 1f : 0.1f;
 			if(footstep!=null)
 				footstep.Sound(_groundPoint,vol);
-			if(!_diving)
+			if(_velocity.y>_minDefaultVely)
 				_bird.Land();
 			else
-				_bird.Dive(vel);
+				_bird.Dive(1);
 		}
 
 		//update kb timer
@@ -264,10 +290,13 @@ public class Fly : MonoBehaviour
 	void Soar(bool soaring){
 		if(soaring)
 		{
-			_soarParticles.Play();
-			_soarAudio.pitch=1.0f;
-			_soarAudio.Play();
-			_soarAudio.volume=_soarVolume;
+			if(!_soarParticles.isPlaying)
+				_soarParticles.Play();
+			if(!_soarAudio.isPlaying){
+				_soarAudio.pitch=1.0f;
+				_soarAudio.Play();
+				_soarAudio.volume=_soarVolume;
+			}
 		}
 		else{
 			_soarParticles.Stop();

@@ -56,7 +56,7 @@ public class Hop : MonoBehaviour
 		_anim=GetComponent<Animator>();
 		_bird=GetComponent<Bird>();
 		_fly=GetComponent<Fly>();
-		_mIn=Camera.main.GetComponent<MInput>();
+		_mIn=Camera.main.transform.parent.GetComponent<MInput>();
 		_terrain=FindObjectOfType<Terrain>();
 		_input=Vector3.zero;
 		_soarAudio=transform.Find("SoarParticles").GetComponent<AudioSource>();

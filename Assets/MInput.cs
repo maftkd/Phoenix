@@ -65,6 +65,12 @@ public class MInput : MonoBehaviour
 		return Input.GetButton("Jump");
 	}
 
+	public bool GetJumpDown(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonDown("Jump");
+	}
+
 	void RemapInputFromSquareToCircle(){
 		float theta = Mathf.Atan2(_controllerInput.y,_controllerInput.x)*Mathf.Rad2Deg;
 		float maxX=0;
