@@ -14,6 +14,7 @@ public class MCamera : MonoBehaviour
 	public float _rotationLerp;
 	public float _surroundLerp;
 	public float _thetaOffsetGravity;
+	public float _maxThetaOffset;
 	public float _phiMult;
 	public float _trackLerp;
 	public float _trackRotLerp;
@@ -93,6 +94,7 @@ public class MCamera : MonoBehaviour
 				}
 				_thetaOffset+=-mouseIn.x;
 				_thetaOffset=Mathf.Lerp(_thetaOffset,0,controlIn.magnitude*Time.deltaTime*_thetaOffsetGravity);
+				_thetaOffset=Mathf.Clamp(_thetaOffset,-_maxThetaOffset,_maxThetaOffset);
 				_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
 				break;
 			case 1://surround
@@ -116,6 +118,7 @@ public class MCamera : MonoBehaviour
 				}
 				_thetaOffset+=-mouseIn.x;
 				_thetaOffset=Mathf.Lerp(_thetaOffset,0,controlIn.magnitude*Time.deltaTime*_thetaOffsetGravity);
+				_thetaOffset=Mathf.Clamp(_thetaOffset,-_maxThetaOffset,_maxThetaOffset);
 				_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
 				break;
 			case 2:

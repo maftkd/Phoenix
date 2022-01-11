@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Grass
   - lb_bird
+  - Mate
   layers:
   - Default
   - TransparentFX

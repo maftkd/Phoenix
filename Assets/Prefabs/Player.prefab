@@ -762,8 +762,10 @@ MonoBehaviour:
   _waddleKnockVolume: 0.025
   _hopKnockVolume: 0.1
   _mandible: {fileID: 4928122866667590429}
+  _seeds: 0
   _ruffleEffects: {fileID: 3804091942241321643, guid: 68db3c5ff28b4c94fb2b6827ba07c304,
     type: 3}
+  _summonDist: 0
 --- !u!1 &1792526787315343659
 GameObject:
   m_ObjectHideFlags: 0

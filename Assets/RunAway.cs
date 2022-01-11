@@ -94,7 +94,6 @@ public class RunAway : MonoBehaviour
 				if(_bird.ArrivedW()){
 					_curSpot++;
 					_state=0;
-					_bird.StopWaddling();
 					_bird.CallToMate();
 				}
 				break;
@@ -109,6 +108,14 @@ public class RunAway : MonoBehaviour
 
 	public void RunAwayNextPath(){
 		RunAwayOnPath(_pathIndex+1);
+	}
+
+	public void FinishPath(int index){
+		Vector3 target=_paths[index].GetChild(_paths[index].childCount-1).position;
+		transform.position=target;
+		_pathIndex=index;
+		_state=0;
+		enabled=false;
 	}
 
 	void OnDrawGizmos(){

@@ -14,6 +14,7 @@ public class Bird : MonoBehaviour
 	Waddle _waddle;
 	Tool _tool;
 	RunAway _runAway;
+	Follow _follow;
 	Animator _anim;
 	AudioSource _ruffleAudio;
 	AudioSource _callAudio;
@@ -45,7 +46,9 @@ public class Bird : MonoBehaviour
 	public Transform _mandible;
 	Transform _curKey;
 	Transform _curSeed;
+	public int _seeds;
 	public Transform _ruffleEffects;
+	public float _summonDist;
 
 	void Awake(){
 		//calculations
@@ -58,6 +61,7 @@ public class Bird : MonoBehaviour
 		_waddle=GetComponent<Waddle>();
 		_tool=GetComponent<Tool>();
 		_runAway=GetComponent<RunAway>();
+		_follow=GetComponent<Follow>();
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
 		_callAudio=transform.Find("Call").GetComponent<AudioSource>();
@@ -82,7 +86,10 @@ public class Bird : MonoBehaviour
     void Start()
     {
 		if(!_playerControlled){
-			_runAway.RunAwayOnPath(_startPath);
+			//_runAway.RunAwayOnPath(_startPath);
+			//_follow.enabled=false;
+			_seeds=1;
+			StartFollowing();
 		}
     }
 
@@ -185,7 +192,15 @@ public class Bird : MonoBehaviour
 			}
 		}
 		else{
-
+			switch(_state){
+				case 0:
+				default://chilling
+					break;
+				case 1://run away
+					break;
+				case 2://following
+					break;
+			}
 		}
 		_prevPos=transform.position;
     }
@@ -210,7 +225,12 @@ public class Bird : MonoBehaviour
 		//_state=3;
 		if(_playerControlled)
 		{
-			StartCoroutine(CallMateR());
+			//StartCoroutine(CallMateR());
+			if(_mate._seeds>0)
+			{
+				Vector3 diff=transform.position-_mate.transform.position;
+				_mate.WaddleTo(transform.position-diff.normalized*_summonDist,1f);
+			}
 		}
 		else{
 			_anim.SetTrigger("sing");
@@ -260,8 +280,6 @@ public class Bird : MonoBehaviour
 
 	public void StopWaddling(){
 		_waddle.StopWaddling();
-		_waddle.enabled=false;
-		_anim.SetFloat("walkSpeed",0f);
 		_state=0;
 	}
 
@@ -274,6 +292,10 @@ public class Bird : MonoBehaviour
 
 	public bool ArrivedW(){
 		return _waddle.Arrived(_arriveRadius);
+	}
+	
+	public bool IsWaddling(){
+		return _waddle.IsWaddling();
 	}
 
 	void Fly(){
@@ -499,6 +521,18 @@ public class Bird : MonoBehaviour
 		diff.y=0;
 		transform.forward=diff;
 		Ruffle();
+	}
+
+	public void StartFollowing(){
+		_follow.StartFollowingMate();
+	}
+	
+	public void StopFollowing(){
+		_follow.StopFollowingMate();
+	}
+
+	public void GainSeed(){
+		_seeds++;
 	}
 
 	void OnDrawGizmos(){

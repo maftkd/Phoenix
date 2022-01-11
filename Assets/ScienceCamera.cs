@@ -21,6 +21,7 @@ public class ScienceCamera : MonoBehaviour
 	float _flashTimer;
 	Transform _camera;
 	Transform _player;
+	public string _targetTag;
 	AudioSource _audio;
 	CanvasGroup _flash;
 	public AnimationCurve _flashCurve;
@@ -29,16 +30,22 @@ public class ScienceCamera : MonoBehaviour
 	Image _ringFill;
 	public UnityEvent _onFlash;
 	Quaternion _startRot;
+	public GameObject [] _ledLit;
+	public GameObject [] _ledUnlit;
+	public ScienceCamera _otherCam;
+	bool _lit;
 
 	void Awake(){
 		_camera=transform.GetChild(1);
-		_player=GameObject.FindGameObjectWithTag("Player").transform;
+		_player=GameObject.FindGameObjectWithTag(_targetTag).transform;
 		_audio=GetComponent<AudioSource>();
 		_flash=transform.GetChild(2).GetComponent<CanvasGroup>();
 		_flashDur=_flashCharge.length;
 		_ringFill=transform.GetChild(3).GetChild(1).GetComponent<Image>();
 		_startRot=transform.rotation;
 		_targetPos=_ex.position;
+		_lit=true;
+		LightLed(false);
 	}
 
     // Start is called before the first frame update
@@ -54,7 +61,12 @@ public class ScienceCamera : MonoBehaviour
 			Refocus();
 		}
 		if((_player.position-_targetPos).sqrMagnitude<=_minDistToTarget*_minDistToTarget){
-			StartCoroutine(Flash());
+			LightLed(true);
+			if(OtherCamLightOn())
+				StartCoroutine(Flash());
+		}
+		else{
+			LightLed(false);
 		}
 		_ringFill.fillAmount=Mathf.Lerp(_ringFill.fillAmount,0,Time.deltaTime);
     }
@@ -110,6 +122,7 @@ public class ScienceCamera : MonoBehaviour
 			_ringFill.fillAmount=timer/_flashDur;
 			if((_player.position-_targetPos).sqrMagnitude>_minDistToTarget*_minDistToTarget){
 				enabled=true;
+				LightLed(false);
 				_audio.Stop();
 				StopAllCoroutines();
 			}
@@ -130,6 +143,27 @@ public class ScienceCamera : MonoBehaviour
 
 		//start effects
 		_onFlash.Invoke();
+		LightLed(false);
+	}
+
+	void LightLed(bool lit){
+		if(lit==_lit)
+			return;
+		foreach(GameObject go in _ledLit)
+			go.SetActive(lit);
+		foreach(GameObject go in _ledUnlit)
+			go.SetActive(!lit);
+		_lit=lit;
+	}
+
+	public bool LedOn(){
+		return _lit;
+	}
+
+	bool OtherCamLightOn() {
+		if(_otherCam==null)
+			return false;//single camera
+		else return _otherCam.LedOn();
 	}
 
 	void OnDrawGizmos(){

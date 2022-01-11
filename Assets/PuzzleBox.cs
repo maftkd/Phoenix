@@ -12,14 +12,21 @@ public class PuzzleBox : MonoBehaviour
 	float _revealDur=1f;
 	MCamera _mCam;
 	float _resetCamDelay=1f;
+	public float _shotRadius;
+	public float _shotDistance;
+	public float _shotHeight;
+	bool _shotTaken;
+	Transform _player;
 	public UnityEvent _onRevealed;
+	public UnityEvent _onShot;
 
 	protected virtual void Awake(){
 		Debug.Log("Starting puzzle box");
 		_effects=transform.Find("Effects");
 		_surroundCam=GetComponent<SurroundCamHelper>();
 		_guideLine=transform.Find("GuideLine").gameObject;
-		_mCam=Camera.main.GetComponent<MCamera>();
+		_mCam=Camera.main.transform.parent.GetComponent<MCamera>();
+		_player=GameObject.FindGameObjectWithTag("Player").transform;
 	}
 
 	protected virtual void OnEnable(){
@@ -39,6 +46,9 @@ public class PuzzleBox : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
+		if(!_shotTaken&&(_player.position-transform.position).sqrMagnitude<_shotRadius*_shotRadius){
+			StartCoroutine(FocusOnBox());
+		}
     }
 
 	public virtual void PuzzleSolved(){
@@ -82,6 +92,19 @@ public class PuzzleBox : MonoBehaviour
 		_onRevealed.Invoke();
 	}
 
+	public virtual IEnumerator FocusOnBox(){
+		_shotTaken=true;
+		Vector3 dir=transform.position-_mCam.transform.position;
+		dir.y=0;
+		Vector3 targetPos=transform.position-dir.normalized*_shotDistance+Vector3.up*_shotHeight;
+		_mCam.TrackTargetFrom(transform,targetPos,transform.localScale.y*Vector3.up*0.5f);
+		yield return new WaitForSeconds(3f);
+		_mCam.DefaultCam();
+		_onShot.Invoke();
+	}
+
 	void OnDrawGizmos(){
+		Gizmos.color=Color.green;
+		Gizmos.DrawWireSphere(transform.position,_shotRadius);
 	}
 }

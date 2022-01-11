@@ -980,6 +980,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  _shotRadius: 2.81
+  _shotDistance: 1.5
+  _shotHeight: 0.25
   _onRevealed:
     m_PersistentCalls:
       m_Calls:
@@ -2378,7 +2381,7 @@ PrefabInstance:
     - target: {fileID: 8872602865916046132, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_Name
-      value: PuzzleBox_buttons
+      value: PuzzleBox_buttons Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8872602865916046132, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -2430,7 +2433,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 7271517533371955074}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2290168266399751350}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0d65f56073f8364ea15817514d69f73, type: 3}
   m_Name: 

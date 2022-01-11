@@ -50,9 +50,10 @@ MonoBehaviour:
   _phi: 0.05
   _radius: 1
   _positionLerp: 4
-  _rotationLerp: 1
+  _rotationLerp: 0.75
   _surroundLerp: 1
   _thetaOffsetGravity: 1
+  _maxThetaOffset: 3.14
   _phiMult: 0.25
   _trackLerp: 5
   _trackRotLerp: 1

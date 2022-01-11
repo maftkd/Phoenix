@@ -126,6 +126,9 @@ public class Waddle : MonoBehaviour
 				_stepTimer=0;
 			}
 			_anim.SetFloat("walkSpeed",0.1f);
+
+			if(_npc && Arrived(_bird._arriveRadius))
+				StopWaddling();
 		}
 		else{
 			_anim.SetFloat("walkSpeed",0f);
@@ -198,6 +201,8 @@ public class Waddle : MonoBehaviour
 	public void StopWaddling(){
 		//transform.position=_destination;
 		_npcInput=Vector3.zero;
+		_anim.SetFloat("walkSpeed",0f);
+		enabled=false;
 	}
 
 }

@@ -9,10 +9,12 @@ public class SurroundCamHelper : MonoBehaviour
 	Transform _player;
 	bool _playerInZone;
 	MCamera _mCam;
+	Bird _mate;
 
 	void Awake(){
 		_player=GameObject.FindGameObjectWithTag("Player").transform;
 		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
+		_mate=_player.GetComponent<Bird>()._mate;
 	}
 
 	void OnDisable(){
@@ -34,12 +36,15 @@ public class SurroundCamHelper : MonoBehaviour
 			if(sqrMag<_outerRadius*_outerRadius){
 				_playerInZone=true;
 				_mCam.Surround(transform);
+				_mate.StopFollowing();
 			}
 		}
 		else{
 			if(sqrMag>_outerRadius*_outerRadius || sqrMag<_innerRadius*_innerRadius){
 				_playerInZone=false;
 				_mCam.DefaultCam();
+				if(_mate._seeds>0)
+					_mate.StartFollowing();
 			}
 		}
         

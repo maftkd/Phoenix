@@ -107,10 +107,12 @@ public class Hunger : MonoBehaviour
 		Instantiate(_eatParts,_seed.position,Quaternion.identity);
 		Destroy(_seed.gameObject);
 		yield return new WaitForSeconds(_effectsDur);
+		_bird.GainSeed();
 
 		//return to main gameplay
 		_eating=false;
 		_mCam.DefaultCam();
-		_bird.RunAwayNextPath();
+		//_bird.RunAwayNextPath();
+		_bird.StartFollowing();
 	}
 }
