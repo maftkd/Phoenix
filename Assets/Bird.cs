@@ -19,14 +19,15 @@ public class Bird : MonoBehaviour
 	Tutorial _tutorial;
 	Animator _anim;
 	AudioSource _ruffleAudio;
-	AudioSource _callAudio;
 	public bool _playerControlled;
 	MCamera _mCam;
 	MInput _mIn;
 	public Bird _mate;
 	[HideInInspector]
 	public Vector3 _size;
-	ParticleSystem _callParts;
+	[Header("Call")]
+	public Transform _callEffects;
+	public Vector2 _callPitchRange;
 	public LayerMask _collisionLayer;
 	public float _controllerZero;
 	[Header("Footprints")]
@@ -70,8 +71,6 @@ public class Bird : MonoBehaviour
 		_tutorial=GetComponentInChildren<Tutorial>();
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
-		_callAudio=transform.Find("Call").GetComponent<AudioSource>();
-		_callParts=_callAudio.GetComponent<ParticleSystem>();
 		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
 		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
 		_mIn = _mCam.GetComponent<MInput>();
@@ -92,10 +91,10 @@ public class Bird : MonoBehaviour
     void Start()
     {
 		if(!_playerControlled){
-			//_runAway.RunAwayOnPath(_startPath);
+			_runAway.RunAwayOnPath(_startPath);
 			//_follow.enabled=false;
-			_seeds=1;
-			StartFollowing();
+			//_seeds=1;
+			//StartFollowing();
 		}
     }
 
@@ -226,27 +225,23 @@ public class Bird : MonoBehaviour
 	public void Call(){
 		//StartCoroutine(SpawnSoundRings(_numSoundRings));
 		//_anim.SetTrigger("sing");
-		_callAudio.Play();
-		_callParts.Play();
+		Transform call = Instantiate(_callEffects,transform.position+Vector3.up*_size.y,Quaternion.identity);
+		AudioSource source = call.GetComponent<AudioSource>();
+		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
 		//_state=3;
 		if(_playerControlled)
 		{
 			//StartCoroutine(CallMateR());
-			if(_mate._seeds>0&&!_mate.IsRunningAway())
+			if(_seeds>0&&!_mate.IsRunningAway())
 			{
 				Vector3 diff=transform.position-_mate.transform.position;
-				_mate.WaddleTo(transform.position-diff.normalized*_summonDist,1f);
+				//_mate.WaddleTo(transform.position-diff.normalized*_summonDist,1f);
+				_mate.transform.position=transform.position-diff.normalized*_summonDist;
 			}
 		}
 		else{
 			_anim.SetTrigger("sing");
 		}
-	}
-
-	IEnumerator CallMateR(){
-		float dur = _callAudio.clip.length;
-		yield return new WaitForSeconds(dur);
-		_mate.Call();
 	}
 
 	public void HopTo(Vector3 loc){
@@ -418,6 +413,7 @@ public class Bird : MonoBehaviour
 	}
 
 	public void CollectSeed(Transform t){
+		/*
 		if(t==null)
 			Debug.Log("oopsies");
 		t.SetParent(_mandible);
@@ -427,6 +423,9 @@ public class Bird : MonoBehaviour
 		_curSeed=t;
 		if(_playerControlled)
 			_mCam.Surround(_mate.transform);
+			*/
+		Destroy(t.gameObject);
+		_seeds++;
 	}
 
 	public Transform GetKey(){

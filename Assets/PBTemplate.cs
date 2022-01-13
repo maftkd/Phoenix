@@ -37,4 +37,9 @@ public class PBTemplate : PuzzleBox
 		base.PuzzleSolved();
 		//your code here
 	}
+
+	public override void Activate(){
+		base.Activate();
+		//your code here
+	}
 }

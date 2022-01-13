@@ -13,6 +13,9 @@ public class RunAway : MonoBehaviour
 	float _ruffleTimer;
 	float _ruffleDelay;
 	MCamera _mCam;
+	float _chirpTimer;
+	float _chirpTime;
+	public Vector2 _chirpTimeRange;
 
 	void Awake(){
 		foreach(Transform t in _paths){
@@ -37,6 +40,8 @@ public class RunAway : MonoBehaviour
 		}
 		_curSpot=0;
 		_state=0;
+		_chirpTimer=0;
+		_chirpTime=Random.Range(_chirpTimeRange.x,_chirpTimeRange.y);
 	}
 
 	void OnDisable(){
@@ -76,6 +81,15 @@ public class RunAway : MonoBehaviour
 					else{
 						//no more spots
 						enabled=false;
+					}
+				}
+				else{
+					_chirpTimer+=Time.deltaTime;
+					if(_chirpTimer>_chirpTime)
+					{
+						_bird.CallToMate();
+						_chirpTimer=0;
+						_chirpTime=Random.Range(_chirpTimeRange.x,_chirpTimeRange.y);
 					}
 				}
 				break;

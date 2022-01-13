@@ -19,6 +19,9 @@ public class PuzzleBox : MonoBehaviour
 	Transform _player;
 	public UnityEvent _onRevealed;
 	public UnityEvent _onShot;
+	public UnityEvent _onActivated;
+	public bool _activateOnAwake;
+	ForceField _forceField;
 
 	protected virtual void Awake(){
 		Debug.Log("Starting puzzle box");
@@ -27,6 +30,11 @@ public class PuzzleBox : MonoBehaviour
 		_guideLine=transform.Find("GuideLine").gameObject;
 		_mCam=Camera.main.transform.parent.GetComponent<MCamera>();
 		_player=GameObject.FindGameObjectWithTag("Player").transform;
+		_forceField=transform.GetComponentInChildren<ForceField>();
+		if(_activateOnAwake)
+			Activate();
+		else
+			_forceField.Activate();
 	}
 
 	protected virtual void OnEnable(){
@@ -107,6 +115,12 @@ public class PuzzleBox : MonoBehaviour
 		_mCam.LetterBox(false);
 		_onShot.Invoke();
 		*/
+	}
+
+	public virtual void Activate(){
+		_onActivated.Invoke();
+		_surroundCam.enabled=true;
+		_forceField.Deactivate();
 	}
 
 	void OnDrawGizmos(){

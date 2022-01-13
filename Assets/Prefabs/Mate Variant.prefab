@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _paths: []
+  _chirpTimeRange: {x: 3, y: 5}
 --- !u!114 &277420507989826880
 MonoBehaviour:
   m_ObjectHideFlags: 0

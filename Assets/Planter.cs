@@ -51,9 +51,9 @@ public class Planter : MonoBehaviour
 						float worldY = t.SampleHeight(new Vector3(worldX,0,worldZ));
 						Transform grass = Instantiate(_grassPrefab, new Vector3(worldX,worldY,worldZ),Quaternion.Euler(0,Random.value*360f,0),transform);
 						Vector3 scale = grass.localScale;
-						scale.x*=Random.Range(_minSize.x,_maxSize.y);
-						scale.y*=Random.Range(_minSize.x,_maxSize.y);
-						scale.z*=Random.Range(_minSize.x,_maxSize.y);
+						scale.x*=Random.Range(_minSize.x,_maxSize.x);
+						scale.y*=Random.Range(_minSize.y,_maxSize.y);
+						scale.z*=Random.Range(_minSize.z,_maxSize.z);
 						grass.localScale=scale;
 						if(_offsetVert)
 							grass.position+=Vector3.up*grass.localScale.y*0.5f;

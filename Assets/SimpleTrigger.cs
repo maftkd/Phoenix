@@ -20,6 +20,21 @@ public class SimpleTrigger : MonoBehaviour
 		_mesh=GetComponent<MeshRenderer>();
 		_col = GetComponent<Collider>();
 		_mainCam=Camera.main.transform;
+		if((_mainCam.position-transform.position).sqrMagnitude<=_activeRadius*_activeRadius){
+			_active=true;
+			if(!_ignoreMesh)
+				_mesh.enabled=true;
+			if(!_ignoreCol)
+				_col.enabled=true;
+		}
+		else{
+			_active=false;
+			if(!_ignoreMesh)
+				_mesh.enabled=false;
+			if(!_ignoreCol)
+				_col.enabled=false;
+
+		}
 	}
 
     // Start is called before the first frame update

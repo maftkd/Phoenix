@@ -789,6 +789,10 @@ MonoBehaviour:
   _onShot:
     m_PersistentCalls:
       m_Calls: []
+  _onActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _activateOnAwake: 0
   _liftDelay: 1
   _liftDur: 5
   _liftCurve:
@@ -1045,6 +1049,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4131526481616456287, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5004843187855405742, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -1184,6 +1193,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 8042639071083821359, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8166064000045038702, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}

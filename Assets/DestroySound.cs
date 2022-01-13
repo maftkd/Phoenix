@@ -5,16 +5,15 @@ using UnityEngine;
 public class DestroySound : MonoBehaviour
 {
 	AudioSource _a;
-    // Start is called before the first frame update
-    void Start()
-    {
+
+	void Awake(){
 		_a=GetComponent<AudioSource>();
-		Destroy(gameObject,_a.clip.length);
-    }
+	}
 
     // Update is called once per frame
     void Update()
     {
-        
+		if(!_a.isPlaying)
+			Destroy(transform.gameObject);
     }
 }
