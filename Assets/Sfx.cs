@@ -42,4 +42,14 @@ public class Sfx : MonoBehaviour
 		audio.Play();
 		Destroy(foo,clip.length);
 	}
+	public static void PlayOneShot3D(AudioClip clip,Vector3 pos,float pitch){
+		GameObject foo = new GameObject("one-shot audio");
+		foo.transform.position=pos;
+		AudioSource audio = foo.AddComponent<AudioSource>();
+		audio.spatialBlend=1f;
+		audio.pitch=pitch;
+		audio.clip=clip;
+		audio.Play();
+		Destroy(foo,clip.length);
+	}
 }

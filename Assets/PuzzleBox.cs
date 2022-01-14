@@ -22,6 +22,13 @@ public class PuzzleBox : MonoBehaviour
 	public UnityEvent _onActivated;
 	public bool _activateOnAwake;
 	ForceField _forceField;
+	public Transform _seedPrefab;
+	public int _numRewards;
+	public Vector2 _ejectForceRange;
+	public float _ejectForceX;
+	public float _ejectForceY;
+	public Vector2 _seedDispenseDelayRange;
+	public AudioClip _dispenseSound;
 
 	protected virtual void Awake(){
 		Debug.Log("Starting puzzle box");

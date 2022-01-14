@@ -91,7 +91,7 @@ public class Bird : MonoBehaviour
     void Start()
     {
 		if(!_playerControlled){
-			_runAway.RunAwayOnPath(_startPath);
+			//_runAway.RunAwayOnPath(_startPath);
 			//_follow.enabled=false;
 			//_seeds=1;
 			//StartFollowing();
@@ -424,7 +424,8 @@ public class Bird : MonoBehaviour
 		if(_playerControlled)
 			_mCam.Surround(_mate.transform);
 			*/
-		Destroy(t.gameObject);
+		//Destroy(t.gameObject);
+		_anim.SetTrigger("peck");
 		_seeds++;
 	}
 
