@@ -5,6 +5,7 @@
 		_Color ("Main Color", Color) = (1,1,1,1)
 		_Frequency ("Frequency", Float) = 1
 		_PhaseMult ("Phase multiplier", Float) = 1
+		_VCut ("V cutoff", Range(0,1)) = 0.75
     }
     SubShader
     {
@@ -38,6 +39,7 @@
 			fixed4 _Color;
 			fixed _Frequency;
 			fixed _PhaseMult;
+			fixed _VCut;
 
             v2f vert (appdata v)
             {
@@ -51,6 +53,7 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
+				clip(_VCut-i.uv.y);
                 fixed4 col = _Color;
 				fixed wave = 0.5*(sin(i.uv.y*_Frequency+_Time.w*_PhaseMult)+1);
 				col.a*=wave;

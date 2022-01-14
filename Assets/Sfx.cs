@@ -52,4 +52,12 @@ public class Sfx : MonoBehaviour
 		audio.Play();
 		Destroy(foo,clip.length);
 	}
+
+	public void Pause(){
+		transform.GetChild(0).GetComponent<AudioSource>().Pause();
+	}
+
+	public void Play(){
+		transform.GetChild(0).GetComponent<AudioSource>().Play();
+	}
 }

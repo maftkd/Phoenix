@@ -5,6 +5,12 @@ using UnityEngine;
 public class ForceField : MonoBehaviour
 {
 	public AudioClip _powerOff;
+	Material _mat;
+	public float _deactivatedHeight;
+
+	void Awake(){
+		_mat=GetComponent<MeshRenderer>().material;
+	}
 
 	void OnDisable(){
 	}
@@ -22,13 +28,17 @@ public class ForceField : MonoBehaviour
     }
 
 	public void Deactivate(){
+		if(_mat==null)
+			_mat=GetComponent<MeshRenderer>().material;
 		Sfx.PlayOneShot3D(_powerOff,transform.position);
-		GetComponent<MeshRenderer>().enabled=false;
+		_mat.SetFloat("_VCut",_deactivatedHeight);
 		GetComponent<SphereCollider>().enabled=false;
 	}
 
 	public void Activate(){
-		GetComponent<MeshRenderer>().enabled=true;
+		if(_mat==null)
+			_mat=GetComponent<MeshRenderer>().material;
+		_mat.SetFloat("_VCut",1f);
 		GetComponent<SphereCollider>().enabled=true;
 	}
 }

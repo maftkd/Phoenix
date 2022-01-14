@@ -87,7 +87,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 249061121978343306}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b560b63184713f844a95ca67d73f6718, type: 3}
   m_Name: 
@@ -238,6 +238,13 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   _activateOnAwake: 0
+  _seedPrefab: {fileID: 0}
+  _numRewards: 0
+  _ejectForceRange: {x: 0, y: 0}
+  _ejectForceX: 0
+  _ejectForceY: 0
+  _seedDispenseDelayRange: {x: 0, y: 0}
+  _dispenseSound: {fileID: 0}
 --- !u!1001 &4229424567836184245
 PrefabInstance:
   m_ObjectHideFlags: 0

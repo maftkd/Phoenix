@@ -131,3 +131,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _powerOff: {fileID: 8300000, guid: 19719a538ace0064983fa1f868014019, type: 3}
+  _deactivatedHeight: 0.4

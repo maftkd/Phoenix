@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Bird : MonoBehaviour
 {
@@ -182,18 +181,6 @@ public class Bird : MonoBehaviour
 					break;
 				case 6://using tool
 					break;
-			}
-
-			if(Input.GetButtonDown("Pause"))
-			{
-				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-				/*
-#if UNITY_EDITOR
-				UnityEditor.EditorApplication.isPlaying = false;
-#else
-				Application.Quit();
-#endif
-*/
 			}
 		}
 		else{
