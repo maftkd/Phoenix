@@ -38,6 +38,24 @@ public class PBFlaps : PuzzleBox
 		//your code here
 	}
 
+	protected override IEnumerator OpenBox(){
+		Debug.Log("Cool open animation goes here");
+		yield return null;
+		/*
+		yield return new WaitForSeconds(_liftDelay);
+		_gearsAudio.Play();
+		float timer=0;
+		Vector3 startPos=_box.position;
+		Vector3 endPos=startPos+Vector3.up*_box.localScale.y*0.25f;
+		while(timer<_liftDur){
+			timer+=Time.deltaTime;
+			_box.position=Vector3.Lerp(startPos,endPos,_liftCurve.Evaluate(timer/_liftDur));
+			yield return null;
+		}
+		_box.position=endPos;
+		*/
+	}
+
 	public override void Activate(){
 		base.Activate();
 		//your code here
