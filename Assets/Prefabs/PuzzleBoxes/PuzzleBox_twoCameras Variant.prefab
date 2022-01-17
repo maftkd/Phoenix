@@ -647,8 +647,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
+      propertyPath: _puzzleId
+      value: 1-2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
       propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
@@ -663,13 +668,28 @@ PrefabInstance:
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
       propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
-      value: 1
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
+      propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
       propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 7403694668043351626}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
+      propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 4912174141765737809}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
+      propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[3].m_Target
+      value: 
+      objectReference: {fileID: 977630168606957769}
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
       propertyPath: _onActivated.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -712,8 +732,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
+      propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
       propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
       value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
+      propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: set_enabled
+      objectReference: {fileID: 0}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
+      propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
+      value: set_enabled
       objectReference: {fileID: 0}
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
@@ -768,6 +803,16 @@ PrefabInstance:
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
       propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
+      propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
+      propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,

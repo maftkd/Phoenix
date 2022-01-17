@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Planter : MonoBehaviour
 {
+	public Terrain _terrain;
 	public Transform _grassPrefab;
 	public int _terrainLayer;
 	public float _alphaThreshold;
@@ -32,10 +33,7 @@ public class Planter : MonoBehaviour
 
 	[ContextMenu("Plant")]
 	public void PlantGrass(){
-		ClearGrass();
-		Terrain t = FindObjectOfType<Terrain>();
-		Debug.Log(t.name);
-		TerrainData td = t.terrainData;
+		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int grassCount=0;
 		for(int y=0;y<td.alphamapHeight; y++){
@@ -46,9 +44,9 @@ public class Planter : MonoBehaviour
 						grassCount++;
 						float xFrac=(y/(float)(td.alphamapHeight-1));
 						float zFrac=(x/(float)(td.alphamapWidth-1));
-						float worldX=t.transform.position.x+td.size.x*xFrac;
-						float worldZ=t.transform.position.z+td.size.z*zFrac;
-						float worldY = t.SampleHeight(new Vector3(worldX,0,worldZ));
+						float worldX=_terrain.transform.position.x+td.size.x*xFrac;
+						float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
+						float worldY = _terrain.SampleHeight(new Vector3(worldX,0,worldZ));
 						Transform grass = Instantiate(_grassPrefab, new Vector3(worldX,worldY,worldZ),Quaternion.Euler(0,Random.value*360f,0),transform);
 						Vector3 scale = grass.localScale;
 						scale.x*=Random.Range(_minSize.x,_maxSize.x);

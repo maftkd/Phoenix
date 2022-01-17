@@ -220,81 +220,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1964930542043818369
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 545483396630721317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5310430570077e74ba19c0c65d3311fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _onSolved:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  _shotRadius: 4
-  _shotDistance: 1.5
-  _shotHeight: 0.25
-  _onRevealed:
-    m_PersistentCalls:
-      m_Calls: []
-  _onShot:
-    m_PersistentCalls:
-      m_Calls: []
-  _onActivated:
-    m_PersistentCalls:
-      m_Calls: []
-  _activateOnAwake: 0
-  _seedPrefab: {fileID: 813107435324345733, guid: 3b9b4ce4e8503704ab8cfaab42768dfb,
-    type: 3}
-  _numRewards: 10
-  _ejectForceRange: {x: 50, y: 75}
-  _ejectForceX: 50
-  _ejectForceY: 200
-  _seedDispenseDelayRange: {x: 0.05, y: 0.1}
-  _dispenseSound: {fileID: 8300000, guid: d0d47c3e34e42431e908f343347cf04d, type: 3}
-  _liftDelay: 1
-  _liftDur: 3
-  _liftCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _gearsAudio: {fileID: 5927940671223819811}
-  _mouth: {fileID: 2400796433632165040}
 --- !u!1 &774595476639266567
 GameObject:
   m_ObjectHideFlags: 0
@@ -908,6 +833,93 @@ MonoBehaviour:
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1964930542043818369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545483396630721317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5310430570077e74ba19c0c65d3311fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onSolved:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 154629867}
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _shotRadius: 4
+  _shotDistance: 1.5
+  _shotHeight: 0.25
+  _onRevealed:
+    m_PersistentCalls:
+      m_Calls: []
+  _onShot:
+    m_PersistentCalls:
+      m_Calls: []
+  _onActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _activateOnAwake: 0
+  _seedPrefab: {fileID: 813107435324345733, guid: 3b9b4ce4e8503704ab8cfaab42768dfb,
+    type: 3}
+  _numRewards: 10
+  _ejectForceRange: {x: 50, y: 75}
+  _ejectForceX: 50
+  _ejectForceY: 200
+  _seedDispenseDelayRange: {x: 0.05, y: 0.1}
+  _dispenseSound: {fileID: 8300000, guid: d0d47c3e34e42431e908f343347cf04d, type: 3}
+  _puzzleId: 1-1
+  _liftDelay: 1
+  _liftDur: 3
+  _liftCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _gearsAudio: {fileID: 5927940671223819811}
+  _mouth: {fileID: 2400796433632165040}
 --- !u!1001 &5855796476275793546
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1012,6 +1024,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f4b331ab70686c449b44a8f640405d1, type: 3}
+--- !u!114 &154629867 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5855796476123310177, guid: 1f4b331ab70686c449b44a8f640405d1,
+    type: 3}
+  m_PrefabInstance: {fileID: 5855796476275793546}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a89a50a157acb12439103d506327c5e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8984719801771743249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1062,7 +1086,7 @@ PrefabInstance:
     - target: {fileID: 4131526481616456287, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5004843187855405742, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -1092,12 +1116,7 @@ PrefabInstance:
     - target: {fileID: 5937327541773843749, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_Text
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5937327541773843749, guid: 08532e3f51afd0b4f8defe82a22f5085,
-        type: 3}
-      propertyPath: m_FontData.m_FontSize
-      value: 63
+      value: 1-1
       objectReference: {fileID: 0}
     - target: {fileID: 6087279683598256075, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -1207,7 +1226,7 @@ PrefabInstance:
     - target: {fileID: 8042639071083821359, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8166064000045038702, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}

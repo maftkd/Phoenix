@@ -110,4 +110,8 @@ public class MInput : MonoBehaviour
 	public void LockInput(bool locked){
 		_inputLocked=locked;
 	}
+
+	public bool InputLocked(){
+		return _inputLocked;
+	}
 }

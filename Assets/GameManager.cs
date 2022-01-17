@@ -8,11 +8,13 @@ public class GameManager : MonoBehaviour
 	Sfx _sfx;
 	GameObject _pauseScreen;
 	MInput _mIn;
+	List<string> _solvedPuzzles;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
 		_pauseScreen=transform.GetChild(0).gameObject;
 		_mIn=FindObjectOfType<MInput>();
+		_solvedPuzzles=new List<string>();
 	}
 
     // Start is called before the first frame update
@@ -53,5 +55,13 @@ public class GameManager : MonoBehaviour
 		_sfx.Play();
 		_pauseScreen.SetActive(false);
 		_mIn.LockInput(false);
+	}
+
+	public void PuzzleSolved(string puzzleId){
+		_solvedPuzzles.Add(puzzleId);
+	}
+
+	public List<string> GetSolvedPuzzles(){
+		return _solvedPuzzles;
 	}
 }

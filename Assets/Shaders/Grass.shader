@@ -5,6 +5,7 @@
         _MainTex ("Texture", 2D) = "white" {}
 		_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
 		_AlphaDist ("Alpha distance mult", Float) = 0.5
+		_Color ("Color mult", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -41,6 +42,7 @@
             float4 _MainTex_ST;
 			fixed _Cutoff;
 			fixed _AlphaDist;
+			fixed4 _Color;
 
             v2f vert (appdata v)
             {
@@ -57,7 +59,7 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
+                fixed4 col = tex2D(_MainTex, i.uv)*_Color;
 				col.a*=i.dist;
 				clip(col.a-_Cutoff);
 				//col.a=1;

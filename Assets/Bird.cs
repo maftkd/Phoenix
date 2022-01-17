@@ -53,11 +53,12 @@ public class Bird : MonoBehaviour
 	public float _summonDist;
 	[HideInInspector]
 	public Transform _puzzleZone;
+	SkinnedMeshRenderer _smr;
 
 	void Awake(){
 		//calculations
-		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
-		_size=smr.sharedMesh.bounds.size*smr.transform.localScale.x*transform.localScale.x;
+		_smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
+		_size=_smr.sharedMesh.bounds.size*_smr.transform.localScale.x*transform.localScale.x;
 
 		//get references
 		_hop=GetComponent<Hop>();
@@ -90,7 +91,7 @@ public class Bird : MonoBehaviour
     void Start()
     {
 		if(!_playerControlled){
-			_runAway.RunAwayOnPath(_startPath);
+			//_runAway.RunAwayOnPath(_startPath);
 			//_follow.enabled=false;
 			//_seeds=1;
 			//StartFollowing();
@@ -210,16 +211,13 @@ public class Bird : MonoBehaviour
 	}
 
 	public void Call(){
-		//StartCoroutine(SpawnSoundRings(_numSoundRings));
 		//_anim.SetTrigger("sing");
 		Transform call = Instantiate(_callEffects,transform.position+Vector3.up*_size.y,Quaternion.identity);
 		AudioSource source = call.GetComponent<AudioSource>();
 		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
-		//_state=3;
 		if(_playerControlled)
 		{
-			//StartCoroutine(CallMateR());
-			if(_seeds>0&&!_mate.IsRunningAway())
+			if(_mate._seeds>0)
 			{
 				Vector3 diff=transform.position-_mate.transform.position;
 				//_mate.WaddleTo(transform.position-diff.normalized*_summonDist,1f);
@@ -331,10 +329,9 @@ public class Bird : MonoBehaviour
 	}
 
 	public void EquipFeather(Transform t){
-		SkinnedMeshRenderer smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
-		Material[] mats = smr.materials;
+		Material[] mats = _smr.materials;
 		mats[1]=t.GetComponent<MeshRenderer>().materials[1];
-		smr.materials=mats;
+		_smr.materials=mats;
 	}
 
 	IEnumerator PlayExplodeParticlesR(float vel){
@@ -542,6 +539,34 @@ public class Bird : MonoBehaviour
 			else
 				StartFollowing();
 		}
+	}
+
+	public void FlyTo(Transform target, float dur){
+		_smr.enabled=true;
+		StartCoroutine(FlyToR(target,dur));
+		_anim.SetTrigger("flyLoop");
+	}
+
+	IEnumerator FlyToR(Transform target, float dur){
+		Vector3 start=transform.position;
+		transform.LookAt(target);
+		Vector3 end = target.position;
+		float timer=0;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			transform.position=Vector3.Lerp(start,end+Vector3.down*0.00f,timer/dur);
+			yield return null;
+		}
+		Vector3 eulers = transform.eulerAngles;
+		eulers.x=0;
+		transform.eulerAngles=eulers;
+		_anim.SetTrigger("land");
+	}
+
+	public void SetSeeds(int s){
+		_seeds=s;
+		if(!_playerControlled&&s>0)
+			_smr.enabled=true;
 	}
 
 	void OnDrawGizmos(){

@@ -47,7 +47,14 @@ public class Seed : MonoBehaviour
 			_groundEffects = Instantiate(_groundEffectsPrefab,transform.position,Quaternion.identity);
 	}
 
-	public void CollectSeed(){
+	void OnTriggerEnter(Collider other){
+		if(other.GetComponent<Bird>()==null)
+			return;
+		CollectSeed(other.GetComponent<Bird>());
+		GetComponent<Rotator>().enabled=false;
+	}
+
+	public void CollectSeed(Bird other){
 		_effectsPlayed=true;//prevents effects from starting after collection
 		if(_groundEffects!=null)
 			Destroy(_groundEffects.gameObject);
@@ -55,15 +62,15 @@ public class Seed : MonoBehaviour
 			Debug.Log("bug alert - effects not started");
 		//play some sound
 		Sfx.PlayOneShot2D(_choir);
-		_player.GetComponent<Bird>().CollectSeed(transform);
+		other.CollectSeed(transform);
 		GetComponent<Collider>().enabled=false;
 		_rb.isKinematic=true;
 		_rb.useGravity=false;
-		StartCoroutine(CollectSeedR());
+		StartCoroutine(CollectSeedR(other.transform));
 	}
 
-	IEnumerator CollectSeedR(){
-		transform.SetParent(_player);
+	IEnumerator CollectSeedR(Transform bird){
+		transform.SetParent(bird);
 		transform.localScale*=_scaleDown;
 		Vector3 curLocal=transform.localPosition;
 		curLocal.x=0;

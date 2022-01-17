@@ -105,7 +105,7 @@ public class MCamera : MonoBehaviour
 				_camTransform.localPosition=_cameraSlide;
 				transform.forward=-offset;
 				transform.position=_playerTarget+offset;
-				if(in01>0){
+				if(in01>0||_mIn.InputLocked()){
 					Vector3 diff = _playerPos-_camTarget.position;
 					theta = Mathf.Atan2(diff.z,diff.x);
 					if(theta<0)
@@ -157,6 +157,7 @@ public class MCamera : MonoBehaviour
 	public void Surround(Transform t){
 		_state=1;
 		_camTarget=t;
+		Debug.Log("Surrounding "+t.name);
 	}
 
 	public void DefaultCam(){
@@ -164,6 +165,7 @@ public class MCamera : MonoBehaviour
 		//_thetaOffset=0;
 		_letterBox.SetActive(false);
 		_mIn.LockInput(false);
+		Debug.Log("herm");
 	}
 
 	public void TrackTarget(Transform t,Vector3 offset){

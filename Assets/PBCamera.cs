@@ -60,6 +60,11 @@ public class PBCamera : PuzzleBox
 			yield return null;
 		}
 		Debug.Log("Time to roll out the seeds");
+		if(_unlockBird!=null)
+		{
+			Transform seed = Instantiate(_seedPrefab,_player.position-_player.forward*0.3f,Quaternion.identity);
+			UnlockBird(seed);
+		}
 		Transform mouth=_mouth.transform;
 		for(int i=0;i<_numRewards; i++){
 			float waitTime=Random.Range(_seedDispenseDelayRange.x,_seedDispenseDelayRange.y);
@@ -74,7 +79,6 @@ public class PBCamera : PuzzleBox
 			forceVector+=mouth.right*MRandom.RandSign()*Random.value*_ejectForceX;
 			forceVector+=Vector3.up*Random.value*_ejectForceY;
 			rb.AddForce(forceVector);
-			//give seed some velocity
 		}
 	}
 }

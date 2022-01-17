@@ -12,12 +12,13 @@ public class PuzzleBox : MonoBehaviour
 	GameObject _guideLine;
 	float _revealDur=1f;
 	MCamera _mCam;
+	MInput _mIn;
 	float _resetCamDelay=1f;
 	public float _shotRadius;
 	public float _shotDistance;
 	public float _shotHeight;
 	bool _shotTaken;
-	Transform _player;
+	public Transform _player;
 	public UnityEvent _onRevealed;
 	public UnityEvent _onShot;
 	public UnityEvent _onActivated;
@@ -31,6 +32,8 @@ public class PuzzleBox : MonoBehaviour
 	public Vector2 _seedDispenseDelayRange;
 	public AudioClip _dispenseSound;
 	public string _puzzleId;
+	GameManager _gm;
+	public Bird _unlockBird;
 
 	protected virtual void Awake(){
 		Debug.Log("Starting puzzle box");
@@ -38,12 +41,17 @@ public class PuzzleBox : MonoBehaviour
 		_surroundCam=GetComponent<SurroundCamHelper>();
 		_guideLine=transform.Find("GuideLine").gameObject;
 		_mCam=Camera.main.transform.parent.GetComponent<MCamera>();
+		_mIn=_mCam.GetComponent<MInput>();
 		_player=GameObject.FindGameObjectWithTag("Player").transform;
 		_forceField=transform.GetComponentInChildren<ForceField>();
 		if(_activateOnAwake)
 			Activate();
 		else
 			_forceField.Activate();
+
+		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
+		label.GetComponent<Text>().text=_puzzleId;
+		_gm=GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
 	}
 
 	protected virtual void OnEnable(){
@@ -68,14 +76,40 @@ public class PuzzleBox : MonoBehaviour
 		}
     }
 
+	public virtual void SolveSilent(){
+		_onSolved.Invoke();
+		_surroundCam.enabled=false;
+		_guideLine.SetActive(false);
+		_gm.PuzzleSolved(_puzzleId);
+	}
+
 	public virtual void PuzzleSolved(){
 		Debug.Log("Puzzle Solved");
+		if(_unlockBird!=null)
+			_mIn.LockInput(true);
+		else
+			_mCam.DefaultCam();
 		_onSolved.Invoke();
 		_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
 		StartCoroutine(OpenBox());
+		_gm.PuzzleSolved(_puzzleId);
+	}
+
+	protected virtual void UnlockBird(Transform seed){
+		StartCoroutine(UnlockBirdR(seed));
+	}
+
+	IEnumerator UnlockBirdR(Transform seed){
+		_mCam.Surround(_unlockBird.transform);
+		float dur=3f;
+		_unlockBird.FlyTo(seed,dur);
+		yield return new WaitForSeconds(dur);
+
+		_mIn.LockInput(false);
+		_mCam.DefaultCam();
 	}
 
 	protected virtual IEnumerator OpenBox(){
