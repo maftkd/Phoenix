@@ -145,10 +145,10 @@ public class Hop : MonoBehaviour
 			transform.position+=airControl;
 
 			//hop boost
-			if(_hopTimer<_hopBoostWindow&&(Input.GetButton("Jump")||_npc)){
+			if(_hopTimer<_hopBoostWindow&&(_mIn.GetJump()||_npc)){
 				_velocity+=Time.deltaTime*_hopBoost;
 			}
-			if(Input.GetButtonUp("Jump"))
+			if(_mIn.GetJumpUp())
 				_hopTimer=_hopBoostWindow;
 
 			//apply physics

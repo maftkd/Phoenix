@@ -9,6 +9,7 @@ public class MInput : MonoBehaviour
 	public float _joySens;
 	public float _mouseSens;
 	public bool _inputLocked;
+	public bool _mouseEnabled;
 	
 	void Awake(){
 
@@ -62,13 +63,18 @@ public class MInput : MonoBehaviour
 	public bool GetJump(){
 		if(_inputLocked)
 			return false;
-		return Input.GetButton("Jump");
+		return Input.GetButton("Jump")||Input.GetMouseButton(0);
 	}
 
 	public bool GetJumpDown(){
 		if(_inputLocked)
 			return false;
-		return Input.GetButtonDown("Jump");
+		return Input.GetButtonDown("Jump")||Input.GetMouseButtonDown(0);
+	}
+	public bool GetJumpUp(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonUp("Jump")||Input.GetMouseButtonUp(0);
 	}
 
 	void RemapInputFromSquareToCircle(){
@@ -94,7 +100,9 @@ public class MInput : MonoBehaviour
 	public Vector2 GetMouseMotion(){
 		if(_inputLocked)
 			return Vector2.zero;
-		Vector2 mouseIn=new Vector2(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y"));
+		Vector2 mouseIn=Vector2.zero;
+		if(_mouseEnabled)
+			mouseIn=new Vector2(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y"));
 		Vector2 joyIn=new Vector2(Input.GetAxis("Joy X"),Input.GetAxis("Joy Y"));
 		return mouseIn*_mouseSens+joyIn*_joySens*Time.deltaTime;
 	}

@@ -90,7 +90,7 @@ public class Bird : MonoBehaviour
     void Start()
     {
 		if(!_playerControlled){
-			//_runAway.RunAwayOnPath(_startPath);
+			_runAway.RunAwayOnPath(_startPath);
 			//_follow.enabled=false;
 			//_seeds=1;
 			//StartFollowing();
