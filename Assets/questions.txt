@@ -1,4 +1,4 @@
-1/1/21
+1/1/22
 - Does a wooden puzzle box convincingly sell
 - How to motivate / intrigue players curiosity with the box
 - How to give player freedom yet highlight the puzle box arrival animation
@@ -8,7 +8,7 @@
 - "					  terrain 			"
 - What shapes seem to work best for puzzle boxes to highlight their presence, make clear their purpose, and provide visual interest
 
-1/10/21
+1/10/22
 - How does the behavior of the camera affect gameplay
 - How many puzzles should be included in the first island?
 - How can / should the player learn to interact with the game?
@@ -16,3 +16,10 @@
 - How can certain areas be gated off?
 - How does the birdo make the player feel? Does it help or harm the experience?
 - What variables are needed to save state?
+
+1/17/22
+- what does drawing a line between puzzles accomplish? Does it help with path-finding ? What about world-building/story-telling? 
+- how can we further develop the call mechanic? How important is it to make it less teleporty?
+- what do we do about seeds and puzzle rewards? What if it was just kind of this random thing where you and you and your party just go ham on some seeds? Would it be fun to have a pointless mechanic like this? If so what would happen if some birds ate more than others? Maybe the only point is to provide some sense of realistic motivation for the birds.
+- How can we develop for features that might occur later in the game like on another island?
+* keys: Bird friends, seeds, pathfinding, saving

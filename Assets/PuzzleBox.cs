@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 
 public class PuzzleBox : MonoBehaviour
@@ -29,6 +30,7 @@ public class PuzzleBox : MonoBehaviour
 	public float _ejectForceY;
 	public Vector2 _seedDispenseDelayRange;
 	public AudioClip _dispenseSound;
+	public string _puzzleId;
 
 	protected virtual void Awake(){
 		Debug.Log("Starting puzzle box");
