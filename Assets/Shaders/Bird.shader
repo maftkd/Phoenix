@@ -1,12 +1,12 @@
-﻿Shader "Custom/River"
+﻿Shader "Custom/Bird"
 {
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
+		_ColorX ("Color X", Color) = (0,0,0,0)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
-		_Whiteness ("Whiteness", Range(0,1))=0.5
     }
     SubShader
     {
@@ -30,7 +30,7 @@
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
-		fixed _Whiteness;
+		fixed3 _ColorX;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -42,13 +42,15 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
-			fixed2 uvs = fixed2(IN.uv_MainTex.x,frac(IN.uv_MainTex.y-_Time.x));
-            fixed4 c = tex2D (_MainTex, uvs);
-			c = lerp(c,fixed4(1,1,1,1),_Whiteness)*_Color;
+            //fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+			//fixed4 c = fixed4(IN.uv_MainTex,0,1);
+			fixed4 c = IN.uv_MainTex.y*_Color+IN.uv_MainTex.x*fixed4(_ColorX,0);
+			fixed uv = tex2D (_MainTex, IN.uv_MainTex).y;
             o.Albedo = c.rgb;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
+            o.Smoothness = _Glossiness*uv;
+			o.Emission=uv*_Glossiness*_Color;
             o.Alpha = c.a;
         }
         ENDCG
