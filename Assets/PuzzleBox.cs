@@ -24,16 +24,11 @@ public class PuzzleBox : MonoBehaviour
 	public UnityEvent _onActivated;
 	public bool _activateOnAwake;
 	ForceField _forceField;
-	public Transform _seedPrefab;
-	public int _numRewards;
-	public Vector2 _ejectForceRange;
-	public float _ejectForceX;
-	public float _ejectForceY;
-	public Vector2 _seedDispenseDelayRange;
-	public AudioClip _dispenseSound;
 	public string _puzzleId;
 	GameManager _gm;
 	public Bird _unlockBird;
+	public Feeder _feeder;
+	public float _liftDelay;
 
 	protected virtual void Awake(){
 		Debug.Log("Starting puzzle box");
@@ -113,7 +108,16 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	protected virtual IEnumerator OpenBox(){
-		yield return null;
+		yield return new WaitForSeconds(_liftDelay);
+		_feeder.Feed();
+		/*
+		if(_unlockBird!=null)
+		{
+			Transform seed = Instantiate(_seedPrefab,_player.position-_player.forward*0.3f,Quaternion.identity);
+			UnlockBird(seed);
+		}
+		*/
+
 	}
 
 	public virtual void Reveal(){

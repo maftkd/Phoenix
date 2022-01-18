@@ -5,10 +5,6 @@ using UnityEngine;
 public class PBButtons : PuzzleBox
 {
 	MButton [] _buttons;
-	public float _liftDelay;
-	public AudioSource _gearsAudio;
-	public AnimationCurve _liftCurve;
-	public float _liftDur;
 	Transform _box;
 
 	protected override void Awake(){
@@ -56,19 +52,5 @@ public class PBButtons : PuzzleBox
 		Debug.Log("All pressed: "+allPressed);
 		if(allPressed)
 			PuzzleSolved();
-	}
-
-	protected override IEnumerator OpenBox(){
-		yield return new WaitForSeconds(_liftDelay);
-		_gearsAudio.Play();
-		float timer=0;
-		Vector3 startPos=_box.position;
-		Vector3 endPos=startPos+Vector3.up*_box.localScale.y*1f;
-		while(timer<_liftDur){
-			timer+=Time.deltaTime;
-			_box.position=Vector3.Lerp(startPos,endPos,_liftCurve.Evaluate(timer/_liftDur));
-			yield return null;
-		}
-		_box.position=endPos;
 	}
 }
