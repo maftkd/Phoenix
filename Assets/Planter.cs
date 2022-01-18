@@ -33,6 +33,7 @@ public class Planter : MonoBehaviour
 
 	[ContextMenu("Plant")]
 	public void PlantGrass(){
+		ClearGrass();
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int grassCount=0;

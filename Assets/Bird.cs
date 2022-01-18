@@ -202,6 +202,10 @@ public class Bird : MonoBehaviour
 		return (other.transform.position-transform.position).sqrMagnitude<_triggerRadius*_triggerRadius;
 	}
 
+	public bool IsPlayerInRange(Transform other,float rad){
+		return (other.position-transform.position).sqrMagnitude<rad*rad;
+	}
+
 	public float Ruffle(){
 		_anim.SetTrigger("ruffle");
 		Instantiate(_ruffleEffects,transform.position+_size.y*0.5f*Vector3.up,Quaternion.identity,transform);

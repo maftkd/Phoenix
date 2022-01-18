@@ -40,7 +40,7 @@ public class HeightSensor : MonoBehaviour
 		float diff = transform.position.y-_player.position.y-_bird._size.y*2f;
 		diff=-diff*2f;
 		_mat.SetFloat("_HeightMark",Mathf.Max(0f,diff));
-		if(Mathf.Abs(diff-0.5f)<_targetWidth*0.5f){
+		if(Mathf.Abs(diff-0.5f)<_targetWidth*0.5f&&_bird.IsPlayerInRange(transform,2f)){
 			_targetTimer+=_uvPerSec*Time.deltaTime;
 			_progressMat.SetFloat("_FillAmount",_targetTimer);
 		}

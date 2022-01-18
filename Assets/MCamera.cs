@@ -77,8 +77,9 @@ public class MCamera : MonoBehaviour
 				_camTransform.localPosition=_cameraSlide;
 				transform.forward=-offset;
 				transform.position=_playerTarget+offset;
-				if(in01>0){
-					Vector3 vel = _playerPos-_playerPrevPos;
+				//if(in01>0){
+					//Vector3 vel = _playerPos-_playerPrevPos;
+					Vector3 vel = _player.forward;
 					theta = Mathf.Atan2(-vel.z,-vel.x);
 					if(theta<0)
 						theta=Mathf.PI*2f+theta;
@@ -91,13 +92,16 @@ public class MCamera : MonoBehaviour
 							_theta+=Mathf.PI*2f;
 					}
 					_theta=Mathf.Lerp(_theta,theta,in01*_rotationLerp*Time.deltaTime);
-				}
+					//_theta=Mathf.Lerp(_theta,theta,_rotationLerp*Time.deltaTime);
+				//}
+				/*
 				_thetaOffset+=-mouseIn.x;
 				_thetaOffset=Mathf.Lerp(_thetaOffset,0,controlIn.magnitude*Time.deltaTime*_thetaOffsetGravity);
 				if(_thetaOffset>_maxThetaOffset)
 					_thetaOffset=-_maxThetaOffset;
 				else if(_thetaOffset<-_maxThetaOffset)
 					_thetaOffset=_maxThetaOffset;
+					*/
 				//_thetaOffset=Mathf.Clamp(_thetaOffset,-_maxThetaOffset,_maxThetaOffset);
 				_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
 				break;
@@ -105,7 +109,7 @@ public class MCamera : MonoBehaviour
 				_camTransform.localPosition=_cameraSlide;
 				transform.forward=-offset;
 				transform.position=_playerTarget+offset;
-				if(in01>0||_mIn.InputLocked()){
+				//if(in01>0||_mIn.InputLocked()){
 					Vector3 diff = _playerPos-_camTarget.position;
 					theta = Mathf.Atan2(diff.z,diff.x);
 					if(theta<0)
@@ -119,7 +123,7 @@ public class MCamera : MonoBehaviour
 							_theta+=Mathf.PI*2f;
 					}
 					_theta=Mathf.Lerp(_theta,theta,_surroundLerp*Time.deltaTime);
-				}
+				//}
 				_thetaOffset+=-mouseIn.x;
 				_thetaOffset=Mathf.Lerp(_thetaOffset,0,controlIn.magnitude*Time.deltaTime*_thetaOffsetGravity);
 				//_thetaOffset=Mathf.Clamp(_thetaOffset,-_maxThetaOffset,_maxThetaOffset);

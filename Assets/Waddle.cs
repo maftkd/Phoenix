@@ -109,7 +109,12 @@ public class Waddle : MonoBehaviour
 			if(hit.transform.GetComponent<Bird>())
 				hit.transform.GetComponent<Bird>().GetWalkedInto(_bird);
 				*/
-			if(slope<_maxWalkSlope)
+			if(slope<-_maxWalkSlope){
+				_anim.SetFloat("walkSpeed",0f);
+				Debug.Log("Should hop");
+				_bird.StartHopping();
+			}
+			else if(slope<_maxWalkSlope)
 			{
 				if(slope>_minSlopeToCheckSpeed){
 					Vector3 dir=hit.point-transform.position;
