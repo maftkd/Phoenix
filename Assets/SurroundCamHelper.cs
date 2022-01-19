@@ -32,8 +32,7 @@ public class SurroundCamHelper : MonoBehaviour
 		float sqrMag = (_player.position-transform.position).sqrMagnitude;
 		if(!_playerInZone){
 			if(sqrMag<_outerRadius*_outerRadius){
-				_playerInZone=true;
-				_mCam.Surround(transform);
+				Surround();
 			}
 		}
 		else{
@@ -46,6 +45,11 @@ public class SurroundCamHelper : MonoBehaviour
 		}
         
     }
+
+	public void Surround(){
+		_playerInZone=true;
+		_mCam.Surround(transform);
+	}
 
 	void OnDrawGizmos(){
 		if(!enabled)

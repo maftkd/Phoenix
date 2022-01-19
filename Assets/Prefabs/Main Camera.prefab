@@ -75,6 +75,7 @@ MonoBehaviour:
   _joySens: 2
   _mouseSens: 0.1
   _inputLocked: 0
+  _mouseEnabled: 0
 --- !u!1 &1915179568509227261
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,7 +374,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 100
+  far clip plane: 200
   field of view: 60
   orthographic: 0
   orthographic size: 5

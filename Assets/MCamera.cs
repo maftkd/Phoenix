@@ -91,7 +91,8 @@ public class MCamera : MonoBehaviour
 						else
 							_theta+=Mathf.PI*2f;
 					}
-					_theta=Mathf.Lerp(_theta,theta,in01*_rotationLerp*Time.deltaTime);
+					//if(in01>0)
+						_theta=Mathf.Lerp(_theta,theta,_rotationLerp*Time.deltaTime);
 					//_theta=Mathf.Lerp(_theta,theta,_rotationLerp*Time.deltaTime);
 				//}
 				/*

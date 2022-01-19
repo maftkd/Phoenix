@@ -4,6 +4,7 @@ using System.IO;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SaveSlot : MonoBehaviour
 {
@@ -112,4 +113,14 @@ public class SaveSlot : MonoBehaviour
 		if(File.Exists(_saveFile))
 			File.Delete(_saveFile);
 	}
+
+	public void SelectSaveButton(){
+		//EventSystem.current.SetSelectedGameObject(transform.Find("SaveButton").gameObject);
+		//transform.Find("SaveButton").GetComponent<Button>().Select();
+	}
+	/*
+	public Button GetSaveButton(){
+		Button saveButt=transform.Find("SaveButton").GetComponent<Button>();
+	}
+	*/
 }

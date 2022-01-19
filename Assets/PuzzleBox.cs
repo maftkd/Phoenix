@@ -72,6 +72,7 @@ public class PuzzleBox : MonoBehaviour
     }
 
 	public virtual void SolveSilent(){
+		Debug.Log("silent: "+name);
 		_onSolved.Invoke();
 		//_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
@@ -79,11 +80,7 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	public virtual void PuzzleSolved(){
-		Debug.Log("Puzzle Solved");
-		if(_unlockBird!=null)
-			_mIn.LockInput(true);
-		else
-			_mCam.DefaultCam();
+		Debug.Log("Puzzle Solved "+name);
 		_onSolved.Invoke();
 		//_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
@@ -93,31 +90,9 @@ public class PuzzleBox : MonoBehaviour
 		_gm.PuzzleSolved(_puzzleId);
 	}
 
-	protected virtual void UnlockBird(Transform seed){
-		StartCoroutine(UnlockBirdR(seed));
-	}
-
-	IEnumerator UnlockBirdR(Transform seed){
-		_mCam.Surround(_unlockBird.transform);
-		float dur=3f;
-		_unlockBird.FlyTo(seed,dur);
-		yield return new WaitForSeconds(dur);
-
-		_mIn.LockInput(false);
-		_mCam.DefaultCam();
-	}
-
 	protected virtual IEnumerator OpenBox(){
 		yield return new WaitForSeconds(_liftDelay);
 		_feeder.Feed();
-		/*
-		if(_unlockBird!=null)
-		{
-			Transform seed = Instantiate(_seedPrefab,_player.position-_player.forward*0.3f,Quaternion.identity);
-			UnlockBird(seed);
-		}
-		*/
-
 	}
 
 	public virtual void Reveal(){
@@ -168,6 +143,7 @@ public class PuzzleBox : MonoBehaviour
 		_onActivated.Invoke();
 		_surroundCam.enabled=true;
 		_forceField.Deactivate();
+		Debug.Log("Activate: "+name);
 	}
 
 	void OnDrawGizmos(){

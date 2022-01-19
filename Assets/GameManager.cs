@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour
 		_sfx.Pause();
 		_pauseScreen.SetActive(true);
 		_mIn.LockInput(true);
+		SaveSlot [] slots = transform.GetComponentsInChildren<SaveSlot>();
+		slots[0].SelectSaveButton();
 	}
 
 	public void Play(){

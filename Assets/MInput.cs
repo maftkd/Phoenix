@@ -71,10 +71,17 @@ public class MInput : MonoBehaviour
 			return false;
 		return Input.GetButtonDown("Jump")||Input.GetMouseButtonDown(0);
 	}
+
 	public bool GetJumpUp(){
 		if(_inputLocked)
 			return false;
 		return Input.GetButtonUp("Jump")||Input.GetMouseButtonUp(0);
+	}
+
+	public bool GetSingDown(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonDown("Sing");
 	}
 
 	void RemapInputFromSquareToCircle(){
