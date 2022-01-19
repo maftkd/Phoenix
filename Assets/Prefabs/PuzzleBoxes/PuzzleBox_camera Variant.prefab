@@ -360,7 +360,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3332203094319988250
 Transform:
   m_ObjectHideFlags: 0
@@ -809,33 +809,6 @@ MonoBehaviour:
   _unlockBird: {fileID: 0}
   _feeder: {fileID: 6104888149589483772}
   _liftDelay: 1
-  _liftDur: 3
-  _liftCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _gearsAudio: {fileID: 5927940671223819811}
-  _mouth: {fileID: 4545478263328047283}
 --- !u!1001 &5855796476275793546
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1032,7 +1005,7 @@ PrefabInstance:
     - target: {fileID: 5807994385777114162, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5937327541773843749, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -1157,7 +1130,7 @@ PrefabInstance:
     - target: {fileID: 8353411010240560802, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8353411010240560802, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -1207,12 +1180,6 @@ PrefabInstance:
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08532e3f51afd0b4f8defe82a22f5085, type: 3}
---- !u!23 &4545478263328047283 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 4874279544685090978, guid: 08532e3f51afd0b4f8defe82a22f5085,
-    type: 3}
-  m_PrefabInstance: {fileID: 8984719801771743249}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &566405023148232103 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8893594760111625654, guid: 08532e3f51afd0b4f8defe82a22f5085,
@@ -1243,9 +1210,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfa3551f5601e074e8506c958f917984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!82 &5927940671223819811 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 3383441011532838450, guid: 08532e3f51afd0b4f8defe82a22f5085,
-    type: 3}
-  m_PrefabInstance: {fileID: 8984719801771743249}
-  m_PrefabAsset: {fileID: 0}

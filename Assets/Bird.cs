@@ -236,11 +236,13 @@ public class Bird : MonoBehaviour
 				_mate.transform.position=transform.position-diff.normalized*_summonDist;
 			}
 			else{
-				transform.LookAt(_mate.transform);
-				Vector3 eulers=transform.eulerAngles;
-				eulers.x=0;
-				transform.eulerAngles=eulers;
-				_mate.GrandEntrance();
+				if((transform.position-_mate.transform.position).sqrMagnitude<9f){
+					transform.LookAt(_mate.transform);
+					Vector3 eulers=transform.eulerAngles;
+					eulers.x=0;
+					transform.eulerAngles=eulers;
+					_mate.GrandEntrance();
+				}
 			}
 		}
 		else{
@@ -525,8 +527,8 @@ public class Bird : MonoBehaviour
 	}
 
 	public void RuffleToMate(){
-		if(_hunger.IsEating())
-			return;
+		//if(_hunger.IsEating())
+		//	return;
 		//Debug.Log(name + " got walked into by: "+b.name);
 		Vector3 diff = _mate.transform.position-transform.position;
 		diff.y=0;
@@ -628,6 +630,16 @@ public class Bird : MonoBehaviour
 		_mCam.DefaultCam();
 		_mCam.LetterBox(false);
 		_onGrandEntranceEnd.Invoke();
+	}
+
+	public void PartySnacks(){
+		_mate.GetSomeSeeds();
+	}
+
+	public void GetSomeSeeds(){
+		if(_inParty){
+			_hunger.enabled=true;
+		}
 	}
 
 	void OnDrawGizmos(){

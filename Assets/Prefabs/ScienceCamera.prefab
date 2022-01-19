@@ -278,7 +278,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _minDistToTarget: 0.1
+  _minDistToTarget: 0.15
   _flashEffectDur: 1
   _onFlash:
     m_PersistentCalls:

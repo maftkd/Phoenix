@@ -6,11 +6,6 @@ public class TutorialZone : MonoBehaviour
 {
 	Bird _bird;
 
-
-	void OnDisable(){
-		Debug.Log("what?");
-	}
-
 	void Awake(){
 		_bird=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
 		GetComponent<MeshRenderer>().enabled=false;
