@@ -37,7 +37,7 @@ public class ScienceCamera : MonoBehaviour
 
 	void Awake(){
 		_camera=transform.GetChild(1);
-		_player=GameObject.FindGameObjectWithTag(_targetTag).transform;
+		//_player=GameObject.FindGameObjectWithTag(_targetTag).transform;
 		_audio=GetComponent<AudioSource>();
 		_flash=transform.GetChild(2).GetComponent<CanvasGroup>();
 		_flashDur=_flashCharge.length;
@@ -58,15 +58,20 @@ public class ScienceCamera : MonoBehaviour
     {
 		_focusTimer+=Time.deltaTime;
 		if(_focusTimer>=_focusDelay){
-			Refocus();
+			if(_player!=null)
+				Refocus();
+			else
+				FindPlayer();
 		}
-		if((_player.position-_targetPos).sqrMagnitude<=_minDistToTarget*_minDistToTarget){
-			LightLed(true);
-			if(OtherCamLightOn())
-				StartCoroutine(Flash());
-		}
-		else{
-			LightLed(false);
+		if(_player!=null){
+			if((_player.position-_targetPos).sqrMagnitude<=_minDistToTarget*_minDistToTarget){
+				LightLed(true);
+				if(OtherCamLightOn())
+					StartCoroutine(Flash());
+			}
+			else{
+				LightLed(false);
+			}
 		}
 		_ringFill.fillAmount=Mathf.Lerp(_ringFill.fillAmount,0,Time.deltaTime);
     }
@@ -101,6 +106,12 @@ public class ScienceCamera : MonoBehaviour
 			yield return null;
 		}
 		_camera.rotation=target;
+	}
+
+	void FindPlayer(){
+		GameObject go = GameObject.FindGameObjectWithTag(_targetTag);
+		if(go!=null)
+			_player=go.transform;
 	}
 
 	IEnumerator Flash(){

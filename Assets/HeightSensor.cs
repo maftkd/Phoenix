@@ -22,7 +22,6 @@ public class HeightSensor : MonoBehaviour
 		_player=GameObject.FindGameObjectWithTag("Player").transform;
 		_mat=GetComponent<MeshRenderer>().material;
 		_bird=_player.GetComponent<Bird>();
-		Debug.Log(_mat.name);
 		_targetWidth=_mat.GetFloat("_TargetWidth");
 		_uvPerSec=1f/_targetTime;
 		_progressMat=_progressBar.material;

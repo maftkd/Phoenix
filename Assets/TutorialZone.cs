@@ -5,6 +5,8 @@ using UnityEngine;
 public class TutorialZone : MonoBehaviour
 {
 	Bird _bird;
+	public bool _hideOnButtonDown;
+	public string _buttonName;
 
 	void Awake(){
 		_bird=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
@@ -16,5 +18,10 @@ public class TutorialZone : MonoBehaviour
 	}
 	public void HideTutorial(){
 		_bird.ShowTutorial(-1);
+	}
+
+	void Update(){
+		if(_hideOnButtonDown&&Input.GetButtonDown(_buttonName))
+			HideTutorial();
 	}
 }

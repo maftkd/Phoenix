@@ -590,7 +590,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1550414671924663931}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 7b7ae5e015f4a8941bdb0981c4f4247a, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 1e111ec3dd519d74691c7b882b017142, type: 3}
   m_Controller: {fileID: 9100000, guid: a24ec9cf4c2103646a47e0497a925d6b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
@@ -641,9 +641,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e95a46172bcf9c44d9c478ca7067525e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 1
+  _walkSpeed: 0.65
   _maxWalkSlope: 1.25
-  _animSpeedMult: 3
+  _animSpeedMult: 2.5
   _stepVolume: 0.01
   _inputSmoothLerp: 10
   _slerp: 10
@@ -704,12 +704,12 @@ MonoBehaviour:
   _numFlaps: 100
   _flapHoldBoost: 2
   _maxRoll: 35
-  _soarMaxRoll: 0
-  _defaultMaxRoll: 0
+  _soarMaxRoll: 35
+  _defaultMaxRoll: 10
   _minTurnRadius: 0.1
   _rollMult: 0.2
-  _soarRollMult: 0
-  _defaultRollMult: 0
+  _soarRollMult: 0.2
+  _defaultRollMult: 0.05
   _airControl: {x: 0, y: 4, z: 1}
   _forwardness: 0
   _flapPitchRange: {x: 0.7, y: 1.5}
@@ -776,8 +776,16 @@ MonoBehaviour:
   _seeds: 0
   _ruffleEffects: {fileID: 3804091942241321643, guid: 68db3c5ff28b4c94fb2b6827ba07c304,
     type: 3}
-  _summonDist: 0
+  _summonDist: 0.1
   _puzzleZone: {fileID: 0}
+  _onGrandEntrance:
+    m_PersistentCalls:
+      m_Calls: []
+  _grandWaddleSpeed: 0
+  _colorChangeDur: 0
+  _onGrandEntranceEnd:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1792526787315343659
 GameObject:
   m_ObjectHideFlags: 0
@@ -12225,7 +12233,7 @@ GameObject:
   - component: {fileID: 6705976841946081080}
   - component: {fileID: 611946112789191230}
   m_Layer: 0
-  m_Name: cardinal
+  m_Name: birdMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12263,7 +12271,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d68688240fe639041a04fd8124ef2534, type: 2}
+  - {fileID: 2100000, guid: 535a40e8ed89f6b41863329d33afc4a7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12288,7 +12296,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -3785056746606025454, guid: 7b7ae5e015f4a8941bdb0981c4f4247a, type: 3}
+  m_Mesh: {fileID: 6071111198458852971, guid: 1e111ec3dd519d74691c7b882b017142, type: 3}
   m_Bones:
   - {fileID: 4491745896727926344}
   - {fileID: 6570790779865284988}
@@ -13290,8 +13298,8 @@ MonoBehaviour:
   _textColors:
   - {r: 0.114, g: 0.125, b: 0.133, a: 1}
   - {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  - {r: 0.9433962, g: 0.9433962, b: 0.9433962, a: 1}
-  - {r: 0.9433962, g: 0.9433962, b: 0.9433962, a: 1}
+  - {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  - {r: 0.114, g: 0.125, b: 0.133, a: 1}
   _colors:
   - {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
   - {r: 0.9716981, g: 0.9262721, b: 0, a: 1}

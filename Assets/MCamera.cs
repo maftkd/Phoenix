@@ -162,7 +162,6 @@ public class MCamera : MonoBehaviour
 	public void Surround(Transform t){
 		_state=1;
 		_camTarget=t;
-		Debug.Log("Surrounding "+t.name);
 	}
 
 	public void DefaultCam(){
@@ -170,7 +169,6 @@ public class MCamera : MonoBehaviour
 		//_thetaOffset=0;
 		_letterBox.SetActive(false);
 		_mIn.LockInput(false);
-		Debug.Log("herm");
 	}
 
 	public void TrackTarget(Transform t,Vector3 offset){
@@ -188,5 +186,9 @@ public class MCamera : MonoBehaviour
 
 	public void LetterBox(bool lb){
 		_letterBox.SetActive(lb);
+	}
+
+	public bool IsDefaultCam(){
+		return _state==0;
 	}
 }

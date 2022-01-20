@@ -60,8 +60,11 @@ public class Bird : MonoBehaviour
 	public UnityEvent _onGrandEntrance;
 	public float _grandWaddleSpeed;
 	public float _colorChangeDur;
-	bool _inParty;
 	public UnityEvent _onGrandEntranceEnd;
+	public bool _enterGrandly;
+
+	public delegate void EventHandler();
+	public event EventHandler _onCall;
 
 	void Awake(){
 		//calculations
@@ -87,11 +90,13 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 		_fly.enabled=false;
 
-		//#temp - may not always want to start with runAway
-		if(!_playerControlled){
-			_runAway.enabled=false;
+		if(!_playerControlled)
+		{
+			GameObject player = GameObject.FindGameObjectWithTag("Player");
+			_mate=player.GetComponent<Bird>();
+			_mate._mate=this;
 		}
-		
+
 		_state=0;
 	}
 
@@ -99,10 +104,10 @@ public class Bird : MonoBehaviour
     void Start()
     {
 		if(!_playerControlled){
-			//_runAway.RunAwayOnPath(_startPath);
-			//_follow.enabled=false;
-			//_seeds=1;
-			//StartFollowing();
+			if(_enterGrandly)
+				GrandEntrance();
+			else
+				ComeToPlayer();
 		}
     }
 
@@ -229,6 +234,9 @@ public class Bird : MonoBehaviour
 		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
 		if(_playerControlled)
 		{
+			if(_onCall!=null)
+				_onCall.Invoke();
+			/*
 			if(_mate._inParty)
 			{
 				Vector3 diff=transform.position-_mate.transform.position;
@@ -244,10 +252,17 @@ public class Bird : MonoBehaviour
 					_mate.GrandEntrance();
 				}
 			}
+			*/
 		}
 		else{
 			_anim.SetTrigger("sing");
 		}
+	}
+
+	public void ComeToPlayer(){
+		Vector3 diff=transform.position-_mate.transform.position;
+		//_mate.WaddleTo(transform.position-diff.normalized*_summonDist,1f);
+		transform.position=_mate.transform.position+diff.normalized*_summonDist;
 	}
 
 	public void HopTo(Vector3 loc){
@@ -571,6 +586,9 @@ public class Bird : MonoBehaviour
 	IEnumerator FlyToR(Vector3 target, float dur){
 		Vector3 start=transform.position;
 		transform.LookAt(target);
+		Vector3 eulers = transform.eulerAngles;
+		eulers.x=0;
+		transform.eulerAngles=eulers;
 		Vector3 end = target;
 		float timer=0;
 		while(timer<dur){
@@ -578,9 +596,6 @@ public class Bird : MonoBehaviour
 			transform.position=Vector3.Lerp(start,end,timer/dur);
 			yield return null;
 		}
-		Vector3 eulers = transform.eulerAngles;
-		eulers.x=0;
-		transform.eulerAngles=eulers;
 		_anim.SetTrigger("land");
 	}
 
@@ -591,7 +606,7 @@ public class Bird : MonoBehaviour
 	}
 
 	public void GrandEntrance(){
-		_onGrandEntrance.Invoke();
+		//_onGrandEntrance.Invoke();
 		StartCoroutine(GrandEntranceR());
 	}
 
@@ -600,46 +615,62 @@ public class Bird : MonoBehaviour
 		_mCam.Surround(transform);
 		_mCam.LetterBox(true);
 
+		//oreint mate
+		_mate.transform.LookAt(transform);
+		Vector3 eulers = _mate.transform.eulerAngles;
+		eulers.x=0;
+		_mate.transform.eulerAngles=eulers;
+
 		//fly to ground
 		float dur=2f;
+		Debug.Log("We flying");
 		FlyTo(_mate.transform.position+_mate.transform.forward,dur);
 		yield return new WaitForSeconds(dur);
 
 		//waddle to spot
 		WaddleTo(_mate.transform.position,_grandWaddleSpeed);
-		float colorTimer=0f;
-		ColorFilter cf = Camera.main.GetComponent<ColorFilter>();
-		cf.NextVisionLevel();
+		Debug.Log("We waddling");
+		//float colorTimer=0f;
+		//ColorFilter cf = Camera.main.GetComponent<ColorFilter>();
+		//cf.NextVisionLevel();
 		//colorFilter.SetVisionLevel++
-		float colorDur=_colorChangeDur;
+		//float colorDur=_colorChangeDur;
 		while(!ArrivedW())
 		{
-			colorTimer+=Time.deltaTime;
-			cf.LerpMask(colorTimer/colorDur);
+			//colorTimer+=Time.deltaTime;
+			//cf.LerpMask(colorTimer/colorDur);
 			//colorFilter.LerpMask(colorTimer/colorDur)
 			yield return null;
 		}
-		while(colorTimer<colorDur){
-			colorTimer+=Time.deltaTime;
-			cf.LerpMask(colorTimer/colorDur);
-			yield return null;
-		}
 
-		_inParty=true;
 		_mIn.LockInput(false);
 		_mCam.DefaultCam();
 		_mCam.LetterBox(false);
-		_onGrandEntranceEnd.Invoke();
+	}
+
+	public void GrandExit(){
+		StartCoroutine(GrandExitR());
+	}
+
+	IEnumerator GrandExitR(){
+		Vector3 target=_mate.transform.position-_mate.transform.forward*3f+Vector3.up*3f;
+
+		//fly to target
+		float dur=2f;
+		Debug.Log("We flying");
+		FlyTo(target,dur);
+		yield return new WaitForSeconds(dur);
+
+		Destroy(gameObject);
 	}
 
 	public void PartySnacks(){
-		_mate.GetSomeSeeds();
+		if(_mate!=null)
+			_mate.GetSomeSeeds();
 	}
 
 	public void GetSomeSeeds(){
-		if(_inParty){
-			_hunger.enabled=true;
-		}
+		_hunger.enabled=true;
 	}
 
 	void OnDrawGizmos(){

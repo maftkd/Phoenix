@@ -63,7 +63,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _MaxHue: 0.05
+    - _MaxHue: 0.04
     - _Metallic: 0
     - _MinHue: 0.95
     - _Mode: 0

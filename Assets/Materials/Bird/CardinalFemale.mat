@@ -77,4 +77,4 @@ Material:
     - _Color: {r: 1, g: 0, b: 0.1253066, a: 1}
     - _ColorX: {r: 0.83699995, g: 0.83699995, b: 0.670437, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 0, g: 0, b: 0, a: 1}

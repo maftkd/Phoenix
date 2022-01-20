@@ -30,7 +30,7 @@ public class SurroundCamHelper : MonoBehaviour
     void Update()
     {
 		float sqrMag = (_player.position-transform.position).sqrMagnitude;
-		if(!_playerInZone){
+		if(!_playerInZone||_mCam.IsDefaultCam()){
 			if(sqrMag<_outerRadius*_outerRadius){
 				Surround();
 			}
@@ -39,8 +39,6 @@ public class SurroundCamHelper : MonoBehaviour
 			if(sqrMag>_outerRadius*_outerRadius || sqrMag<_innerRadius*_innerRadius){
 				_playerInZone=false;
 				_mCam.DefaultCam();
-				/*
-					*/
 			}
 		}
         

@@ -31,7 +31,6 @@ public class PuzzleBox : MonoBehaviour
 	public float _liftDelay;
 
 	protected virtual void Awake(){
-		Debug.Log("Starting puzzle box");
 		_effects=transform.Find("Effects");
 		_surroundCam=GetComponent<SurroundCamHelper>();
 		_guideLine=transform.Find("GuideLine").gameObject;
@@ -72,7 +71,6 @@ public class PuzzleBox : MonoBehaviour
     }
 
 	public virtual void SolveSilent(){
-		Debug.Log("silent: "+name);
 		_onSolved.Invoke();
 		//_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
@@ -80,7 +78,6 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	public virtual void PuzzleSolved(){
-		Debug.Log("Puzzle Solved "+name);
 		_onSolved.Invoke();
 		//_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
@@ -143,7 +140,6 @@ public class PuzzleBox : MonoBehaviour
 		_onActivated.Invoke();
 		_surroundCam.enabled=true;
 		_forceField.Deactivate();
-		Debug.Log("Activate: "+name);
 	}
 
 	void OnDrawGizmos(){

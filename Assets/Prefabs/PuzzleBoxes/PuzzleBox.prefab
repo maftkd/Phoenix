@@ -5896,6 +5896,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _outerRadius: 1.5
   _innerRadius: 0
+  _checkFrequency: 0.25
 --- !u!1 &9085828445855301230
 GameObject:
   m_ObjectHideFlags: 0

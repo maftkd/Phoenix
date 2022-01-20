@@ -41,7 +41,10 @@ public class Hunger : MonoBehaviour
 		if(seeds>0)
 			StartCoroutine(GoToNextSeed());
 		else
+		{
 			enabled=false;
+			_bird.GrandExit();
+		}
 	}
 
     // Start is called before the first frame update

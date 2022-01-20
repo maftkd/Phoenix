@@ -960,6 +960,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3182363857673839651, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3182363857673839651, guid: 35fceb961da07cb4eb690edd40323047,
+        type: 3}
       propertyPath: m_LocalPosition.z
       value: -0.251
       objectReference: {fileID: 0}
@@ -1309,6 +1314,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TutorialZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984915728807272375, guid: a3062b637fe1eac4f9d908ac2c53c923,
+        type: 3}
+      propertyPath: _buttonName
+      value: Sing
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984915728807272375, guid: a3062b637fe1eac4f9d908ac2c53c923,
+        type: 3}
+      propertyPath: _hideOnButtonDown
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6597826430271001181, guid: a3062b637fe1eac4f9d908ac2c53c923,
         type: 3}

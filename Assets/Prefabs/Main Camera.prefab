@@ -46,12 +46,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2257a60967287c4aa58427e01032aa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _theta: -1.3
-  _phi: 0.05
-  _radius: 1
-  _positionLerp: 4
-  _rotationLerp: 0.75
-  _surroundLerp: 1
+  _theta: -3.1
+  _phi: 0.1
+  _radius: 0.7
+  _positionLerp: 2
+  _rotationLerp: 1
+  _surroundLerp: 2
   _thetaOffsetGravity: 1
   _maxThetaOffset: 3.14
   _phiMult: 0.25
@@ -59,7 +59,7 @@ MonoBehaviour:
   _trackRotLerp: 1
   _invertY: 1
   _state: 0
-  _cameraSlide: {x: 0, y: 0.34, z: 0}
+  _cameraSlide: {x: 0, y: 0.2, z: 0}
 --- !u!114 &2017222633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +329,7 @@ GameObject:
   - component: {fileID: 7820406972066153071}
   - component: {fileID: 7820406972066153064}
   - component: {fileID: 7820406972066153065}
+  - component: {fileID: 1543426705}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -343,13 +344,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7820406972066153066}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0.07907312, z: -0, w: 0.9968689}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 914837368030260094}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -9.071, z: 0}
 --- !u!20 &7820406972066153064
 Camera:
   m_ObjectHideFlags: 0
@@ -401,3 +402,20 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7820406972066153066}
   m_Enabled: 1
+--- !u!114 &1543426705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7820406972066153066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6264efe865073f94aae312fa88602ed4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mat: {fileID: 2100000, guid: f6e19d86f57cd7c4ea18269a24316465, type: 2}
+  _levels:
+  - _maxHue: 0.04
+    _minHue: 0.95
+    _subMask: {r: 1, g: 1, b: 1, a: 0}
