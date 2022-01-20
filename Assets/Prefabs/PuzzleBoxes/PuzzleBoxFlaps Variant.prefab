@@ -109,6 +109,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!65 &3860700673317064379
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4530647582937568159}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2916676715970167849
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,19 +201,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &3860700673317064379
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4530647582937568159}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1845161619940442883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,15 +252,10 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   _activateOnAwake: 0
-  _seedPrefab: {fileID: 0}
-  _numRewards: 0
-  _ejectForceRange: {x: 0, y: 0}
-  _ejectForceX: 0
-  _ejectForceY: 0
-  _seedDispenseDelayRange: {x: 0, y: 0}
-  _dispenseSound: {fileID: 0}
   _puzzleId: 1-3
   _unlockBird: {fileID: 0}
+  _feeder: {fileID: 0}
+  _liftDelay: 0
 --- !u!1001 &455977488369343207
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -374,6 +369,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2547701233691158078, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2547701233691158078, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6a9998d53d788c74e8db8d37157aa81a, type: 2}
     - target: {fileID: 2867679774556145161, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_Size.x
@@ -383,6 +388,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Size.z
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5807994385777114162, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5937327541773843749, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}

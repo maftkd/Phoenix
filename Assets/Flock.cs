@@ -54,7 +54,9 @@ public class Flock : MonoBehaviour
 					//birds have chance to fly
 					for(int i=0; i<_numBirds; i++){
 						if(_birdStates[i]==0&&Random.value<_flyChance){
-							StartCoroutine(FlyToRandomPerch(i));
+							Transform target = GetRandomTreePerch();
+							if((target.position-_birds[i].position).sqrMagnitude>0.01f)
+								StartCoroutine(FlyToRandomPerch(i,target));
 						}
 					}
 					_updateTimer=0;
@@ -74,12 +76,11 @@ public class Flock : MonoBehaviour
 		return tree.GetChild(Random.Range(0,tree.childCount));
 	}
 
-	IEnumerator FlyToRandomPerch(int index){
+	IEnumerator FlyToRandomPerch(int index,Transform target){
 		_birdStates[index]=1;
 		yield return null;
 		Transform bird = _birds[index];
 		Animator anim = bird.GetComponent<Animator>();
-		Transform target = GetRandomTreePerch();
 		Vector3 start=bird.position;
 		Vector3 end=target.position;
 		bird.LookAt(end);
