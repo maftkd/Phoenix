@@ -696,7 +696,7 @@ MonoBehaviour:
   _velocity: {x: 0, y: 0, z: 0}
   _defaultGravity: 2
   _soarGravity: 0.5
-  _minSoarVely: -0.5
+  _minSoarVely: -0.25
   _minDefaultVely: -2
   _maxVel: {x: 2, y: 1, z: 2}
   _flapAccel: {x: 0, y: 0.75, z: 1}
@@ -786,6 +786,7 @@ MonoBehaviour:
   _onGrandEntranceEnd:
     m_PersistentCalls:
       m_Calls: []
+  _enterGrandly: 0
 --- !u!1 &1792526787315343659
 GameObject:
   m_ObjectHideFlags: 0

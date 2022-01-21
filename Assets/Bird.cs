@@ -236,23 +236,6 @@ public class Bird : MonoBehaviour
 		{
 			if(_onCall!=null)
 				_onCall.Invoke();
-			/*
-			if(_mate._inParty)
-			{
-				Vector3 diff=transform.position-_mate.transform.position;
-				//_mate.WaddleTo(transform.position-diff.normalized*_summonDist,1f);
-				_mate.transform.position=transform.position-diff.normalized*_summonDist;
-			}
-			else{
-				if((transform.position-_mate.transform.position).sqrMagnitude<9f){
-					transform.LookAt(_mate.transform);
-					Vector3 eulers=transform.eulerAngles;
-					eulers.x=0;
-					transform.eulerAngles=eulers;
-					_mate.GrandEntrance();
-				}
-			}
-			*/
 		}
 		else{
 			_anim.SetTrigger("sing");

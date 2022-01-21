@@ -93,7 +93,7 @@ public class River : MonoBehaviour
 				float t01 = i/(float)(numCenters-1);
 				float t = t01*(_points.Count-1);
 				Vector3 centerPos = _path.GetPoint(t);
-				Vector3 tan = _path.GetTangent(t);
+				Vector3 tan = _path.GetTangent(t).normalized;
 				_centers.Add(centerPos);
 				int transformIndex = i/_resolution;
 				float width = _riverPoints.GetChild(transformIndex).localScale.x;

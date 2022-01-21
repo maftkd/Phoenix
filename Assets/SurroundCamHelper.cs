@@ -20,14 +20,13 @@ public class SurroundCamHelper : MonoBehaviour
 		_mate=_player.GetComponent<Bird>()._mate;
 		//assume first mesh is box with 2 materials
 		_mesh=transform.GetChild(0).GetComponent<MeshRenderer>();
-		Material[] mats = _mesh.materials;
-		mats[1]=_noDraw;
-		_mesh.materials=mats;
+		Outline(false);
 	}
 
 	void OnDisable(){
 		if(_mCam!=null)
 			_mCam.DefaultCam();
+		Outline(false);
 	}
 
     // Start is called before the first frame update
@@ -43,18 +42,14 @@ public class SurroundCamHelper : MonoBehaviour
 		if(!_playerInZone||_mCam.IsDefaultCam()){
 			if(sqrMag<_outerRadius*_outerRadius){
 				Surround();
-				Material[] mats = _mesh.materials;
-				mats[1]=_outline;
-				_mesh.materials=mats;
+				Outline(true);
 			}
 		}
 		else{
 			if(sqrMag>_outerRadius*_outerRadius || sqrMag<_innerRadius*_innerRadius){
 				_playerInZone=false;
 				_mCam.DefaultCam();
-				Material[] mats = _mesh.materials;
-				mats[1]=_noDraw;
-				_mesh.materials=mats;
+				Outline(false);
 			}
 		}
         
@@ -63,6 +58,12 @@ public class SurroundCamHelper : MonoBehaviour
 	public void Surround(){
 		_playerInZone=true;
 		_mCam.Surround(transform);
+	}
+
+	void Outline(bool line){
+		Material[] mats = _mesh.materials;
+		mats[1]=line? _outline : _noDraw;
+		_mesh.materials=mats;
 	}
 
 	void OnDrawGizmos(){

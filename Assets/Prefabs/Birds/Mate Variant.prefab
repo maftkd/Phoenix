@@ -124,7 +124,7 @@ PrefabInstance:
     - target: {fileID: 1820936649275779884, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
       propertyPath: _grandWaddleSpeed
-      value: 0.65
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 1820936649275779884, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}

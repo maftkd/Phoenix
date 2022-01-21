@@ -95,9 +95,9 @@ MonoBehaviour:
   _seedPrefab: {fileID: 813107435324345733, guid: 3b9b4ce4e8503704ab8cfaab42768dfb,
     type: 3}
   _numRewards: 10
-  _ejectForceRange: {x: 50, y: 75}
+  _ejectForceRange: {x: 55, y: 75}
   _ejectForceX: 50
-  _ejectForceY: 200
+  _ejectForceY: 125
   _seedDispenseDelayRange: {x: 0.025, y: 0.1}
   _dispenseSound: {fileID: 8300000, guid: 6c3a5d89f02f54ee79ae686b0fc98199, type: 3}
   _liftDur: 3

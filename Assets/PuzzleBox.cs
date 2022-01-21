@@ -74,6 +74,7 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
+		Destroy(_forceField.gameObject);
 		_gm.PuzzleSolved(_puzzleId);
 	}
 
@@ -81,6 +82,7 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
+		Destroy(_forceField.gameObject);
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
 		StartCoroutine(OpenBox());

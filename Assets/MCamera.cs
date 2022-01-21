@@ -67,6 +67,7 @@ public class MCamera : MonoBehaviour
 	Vector3 vel;
 	Vector2 _mouseIn;
 	Vector3 _controlIn;
+	Vector3 _prevControlIn;
     // Update is called once per frame
     void Update()
     {
@@ -122,6 +123,7 @@ public class MCamera : MonoBehaviour
 		_theta=Mathf.Lerp(_theta,theta,_rotationLerp*Time.deltaTime);
 
 		_playerPrevPos=_playerPos;
+		_prevControlIn=_controlIn;
     }
 
 
@@ -187,11 +189,13 @@ public class MCamera : MonoBehaviour
 
 	void CalcRotationLerp(){
 		if(_controlIn.magnitude>0&&_rotationLerp<_maxRotationLerp){
-			_rotationLerp+=_rotationLerpAccel*Time.deltaTime;
+			_rotationLerp+=_rotationLerpAccel*_controlIn.magnitude*Time.deltaTime;
 		}
 		else if(_controlIn.magnitude==0&&_rotationLerp>_minRotationLerp){
 			_rotationLerp-=_rotationLerpAccel*Time.deltaTime;
 		}
+		if(_letterBox.activeSelf)
+			_rotationLerp=_maxRotationLerp;
 	}
 
 	void OnDrawGizmos(){
