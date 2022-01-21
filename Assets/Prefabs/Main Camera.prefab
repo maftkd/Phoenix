@@ -50,8 +50,9 @@ MonoBehaviour:
   _phi: 0.1
   _radius: 0.7
   _positionLerp: 2
-  _rotationLerp: 1
-  _surroundLerp: 2
+  _minRotationLerp: 0
+  _maxRotationLerp: 1
+  _rotationLerpAccel: 1
   _thetaOffsetGravity: 1
   _maxThetaOffset: 3.14
   _phiMult: 0.25
@@ -60,6 +61,9 @@ MonoBehaviour:
   _invertY: 1
   _state: 0
   _cameraSlide: {x: 0, y: 0.2, z: 0}
+  _colLerp: 10
+  _surroundLerp: 1
+  _surroundDotAdjust: 0.7
 --- !u!114 &2017222633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,7 +333,6 @@ GameObject:
   - component: {fileID: 7820406972066153071}
   - component: {fileID: 7820406972066153064}
   - component: {fileID: 7820406972066153065}
-  - component: {fileID: 1543426705}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -402,20 +405,3 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7820406972066153066}
   m_Enabled: 1
---- !u!114 &1543426705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7820406972066153066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6264efe865073f94aae312fa88602ed4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _mat: {fileID: 2100000, guid: f6e19d86f57cd7c4ea18269a24316465, type: 2}
-  _levels:
-  - _maxHue: 0.04
-    _minHue: 0.95
-    _subMask: {r: 1, g: 1, b: 1, a: 0}

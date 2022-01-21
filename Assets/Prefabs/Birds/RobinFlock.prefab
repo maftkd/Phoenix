@@ -158,8 +158,10 @@ MonoBehaviour:
   _updateTime: 1
   _flyChance: 0.1
   _flySpeed: 2
-  _innerRadius: 2.09
-  _outerRadius: 6.29
+  _callChance: 0.7
+  _callVol: 0.3
+  _innerRadius: 2.5
+  _outerRadius: 8
 --- !u!1001 &4596203052007557491
 PrefabInstance:
   m_ObjectHideFlags: 0

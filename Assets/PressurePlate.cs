@@ -111,8 +111,6 @@ public class PressurePlate : MonoBehaviour
 		if(_load>=_requiredLoad){
 			Debug.Log("Activating!");
 			_onActivated.Invoke();
-			_mCam.TrackTargetFrom(_player.transform,
-					transform.Find("CamTarget").position,Vector3.up*0.1f);
 			StartCoroutine(UngroundAfterDelay());
 		}
 	}

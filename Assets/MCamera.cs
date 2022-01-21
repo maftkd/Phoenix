@@ -11,8 +11,10 @@ public class MCamera : MonoBehaviour
 	public float _phi;
 	public float _radius;
 	public float _positionLerp;
-	public float _rotationLerp;
-	public float _surroundLerp;
+	public float _minRotationLerp;
+	public float _maxRotationLerp;
+	float _rotationLerp;
+	public float _rotationLerpAccel;
 	public float _thetaOffsetGravity;
 	public float _maxThetaOffset;
 	public float _phiMult;
@@ -33,7 +35,14 @@ public class MCamera : MonoBehaviour
 	public Vector3 _cameraSlide;
 	Transform _camTransform;
 	Camera _cam;
-	
+
+	[Header("Collision")]
+	public float _colLerp;
+
+	[Header("Surround")]
+	public float _surroundLerp;
+	public float _surroundDotAdjust;
+
 	void Awake(){
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
 		_player=player.transform;
@@ -52,97 +61,65 @@ public class MCamera : MonoBehaviour
         
     }
 
+	//#temp - maybe move these
 	float theta;
 	Vector3 _playerPos;
+	Vector3 vel;
+	Vector2 _mouseIn;
+	Vector3 _controlIn;
     // Update is called once per frame
     void Update()
     {
 		_playerPos=_bird.GetCamTarget();
 
 		//track position
-		float y = _radius*Mathf.Sin(_phi);
-		float xzRad = _radius*Mathf.Cos(_phi);
+		float y = Mathf.Sin(_phi);
+		float xzRad = Mathf.Cos(_phi);
 		float x = xzRad*Mathf.Cos(_theta+_thetaOffset);
 		float z = xzRad*Mathf.Sin(_theta+_thetaOffset);
+
+		//calculate forward vector
 		Vector3 offset = new Vector3(x,y,z);
+		transform.forward=-offset;
 		_playerTarget=Vector3.Lerp(_playerTarget,_playerPos,_positionLerp*Time.deltaTime);
 
-		//track rotation
-		Vector2 mouseIn=_mIn.GetMouseMotion();
-		Vector3 controlIn=_mIn.GetControllerInput();
-		float in01=controlIn.magnitude;
+		//move camera
+		_camTransform.localPosition=_cameraSlide;
+		//check collision
+		RaycastHit hit;
+		if(Physics.Raycast(_playerTarget+_cameraSlide.y*Vector3.up,offset, out hit, _radius, 1)){
+			Debug.Log("Hit "+hit.transform.name);
+			_targetPos=_playerTarget+offset*hit.distance;
+			transform.position=Vector3.Lerp(transform.position,_targetPos,_colLerp*Time.deltaTime);
+		}
+		else
+		{
+			_targetPos=_playerTarget+offset*_radius;
+			transform.position=_targetPos;
+		}
+
+		//Get input stuff
+		_mouseIn=_mIn.GetMouseMotion();
+		_controlIn=_mIn.GetControllerInput();
+		CalcThetaOffset(-_mouseIn.x);
+		CalcRotationLerp();
+
+
+		//calculate cam coords for next frame
 		switch(_state){
 			case 0:
 			default://regular cam
-				_camTransform.localPosition=_cameraSlide;
-				transform.forward=-offset;
-				transform.position=_playerTarget+offset;
-				//if(in01>0){
-					//Vector3 vel = _playerPos-_playerPrevPos;
-					Vector3 vel = _player.forward;
-					theta = Mathf.Atan2(-vel.z,-vel.x);
-					if(theta<0)
-						theta=Mathf.PI*2f+theta;
-
-					if(Mathf.Abs(theta-_theta)>Mathf.PI)
-					{
-						if(theta<_theta)
-							_theta=-(Mathf.PI*2f-_theta);
-						else
-							_theta+=Mathf.PI*2f;
-					}
-					//if(in01>0)
-						_theta=Mathf.Lerp(_theta,theta,_rotationLerp*Time.deltaTime);
-					//_theta=Mathf.Lerp(_theta,theta,_rotationLerp*Time.deltaTime);
-				//}
-				/*
-				_thetaOffset+=-mouseIn.x;
-				_thetaOffset=Mathf.Lerp(_thetaOffset,0,controlIn.magnitude*Time.deltaTime*_thetaOffsetGravity);
-				if(_thetaOffset>_maxThetaOffset)
-					_thetaOffset=-_maxThetaOffset;
-				else if(_thetaOffset<-_maxThetaOffset)
-					_thetaOffset=_maxThetaOffset;
-					*/
-				//_thetaOffset=Mathf.Clamp(_thetaOffset,-_maxThetaOffset,_maxThetaOffset);
-				_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
+				vel = _player.forward;
+				theta = CalcNextTheta(-vel);
+				//_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
 				break;
 			case 1://surround
-				_camTransform.localPosition=_cameraSlide;
-				transform.forward=-offset;
-				transform.position=_playerTarget+offset;
-				//if(in01>0||_mIn.InputLocked()){
-					Vector3 diff = _playerPos-_camTarget.position;
-					theta = Mathf.Atan2(diff.z,diff.x);
-					if(theta<0)
-						theta=Mathf.PI*2f+theta;
-
-					if(Mathf.Abs(theta-_theta)>Mathf.PI)
-					{
-						if(theta<_theta)
-							_theta=-(Mathf.PI*2f-_theta);
-						else
-							_theta+=Mathf.PI*2f;
-					}
-					_theta=Mathf.Lerp(_theta,theta,_surroundLerp*Time.deltaTime);
-				//}
-				_thetaOffset+=-mouseIn.x;
-				_thetaOffset=Mathf.Lerp(_thetaOffset,0,controlIn.magnitude*Time.deltaTime*_thetaOffsetGravity);
-				//_thetaOffset=Mathf.Clamp(_thetaOffset,-_maxThetaOffset,_maxThetaOffset);
-				if(_thetaOffset>_maxThetaOffset)
-					_thetaOffset=-_maxThetaOffset;
-				else if(_thetaOffset<-_maxThetaOffset)
-					_thetaOffset=_maxThetaOffset;
-				_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
-				break;
-			case 2:
-				_camTransform.localPosition=Vector3.zero;
-				transform.position=Vector3.Lerp(transform.position,_targetPos,_trackLerp*Time.deltaTime);
-				Quaternion rot=transform.rotation;
-				transform.LookAt(_camTarget.position+_targetOffset);
-				Quaternion tRot=transform.rotation;
-				transform.rotation=Quaternion.Slerp(rot,tRot,_trackRotLerp);
+				Vector3 diff = _playerPos-_camTarget.position;
+				theta = CalcNextTheta(diff);
+				//_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
 				break;
 		}
+		_theta=Mathf.Lerp(_theta,theta,_rotationLerp*Time.deltaTime);
 
 		_playerPrevPos=_playerPos;
     }
@@ -162,6 +139,7 @@ public class MCamera : MonoBehaviour
 	public void Surround(Transform t){
 		_state=1;
 		_camTarget=t;
+		_rotationLerp=_minRotationLerp;
 	}
 
 	public void DefaultCam(){
@@ -169,19 +147,7 @@ public class MCamera : MonoBehaviour
 		//_thetaOffset=0;
 		_letterBox.SetActive(false);
 		_mIn.LockInput(false);
-	}
-
-	public void TrackTarget(Transform t,Vector3 offset){
-		TrackTargetFrom(t,transform.position,offset);
-	}
-
-	public void TrackTargetFrom(Transform t,Vector3 pos,Vector3 offset){
-		_state=2;
-		_camTarget=t;
-		_targetPos=pos;
-		_targetOffset=offset;
-		_letterBox.SetActive(true);
-		_mIn.LockInput(true);
+		_rotationLerp=_minRotationLerp;
 	}
 
 	public void LetterBox(bool lb){
@@ -190,5 +156,44 @@ public class MCamera : MonoBehaviour
 
 	public bool IsDefaultCam(){
 		return _state==0;
+	}
+
+	float CalcNextTheta(Vector3 desired){
+		float t = Mathf.Atan2(desired.z,desired.x);
+
+		//prevent negative angles
+		if(t<0)
+			t=Mathf.PI*2f+t;
+
+		//prevent differences over 180 degrees
+		if(Mathf.Abs(t-_theta)>Mathf.PI)
+		{
+			if(t<_theta)
+				_theta=-(Mathf.PI*2f-_theta);
+			else
+				_theta+=Mathf.PI*2f;
+		}
+		return t;
+	}
+
+	void CalcThetaOffset(float delta){
+		_thetaOffset+=delta;
+		_thetaOffset=Mathf.Lerp(_thetaOffset,0,_controlIn.magnitude*Time.deltaTime*_thetaOffsetGravity);
+		if(_thetaOffset>_maxThetaOffset)
+			_thetaOffset=-_maxThetaOffset;
+		else if(_thetaOffset<-_maxThetaOffset)
+			_thetaOffset=_maxThetaOffset;
+	}
+
+	void CalcRotationLerp(){
+		if(_controlIn.magnitude>0&&_rotationLerp<_maxRotationLerp){
+			_rotationLerp+=_rotationLerpAccel*Time.deltaTime;
+		}
+		else if(_controlIn.magnitude==0&&_rotationLerp>_minRotationLerp){
+			_rotationLerp-=_rotationLerpAccel*Time.deltaTime;
+		}
+	}
+
+	void OnDrawGizmos(){
 	}
 }

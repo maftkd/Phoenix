@@ -10,14 +10,24 @@ public class SurroundCamHelper : MonoBehaviour
 	bool _playerInZone;
 	MCamera _mCam;
 	Bird _mate;
+	MeshRenderer _mesh;
+	public Material _outline;
+	public Material _noDraw;
 
 	void Awake(){
 		_player=GameObject.FindGameObjectWithTag("Player").transform;
 		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
 		_mate=_player.GetComponent<Bird>()._mate;
+		//assume first mesh is box with 2 materials
+		_mesh=transform.GetChild(0).GetComponent<MeshRenderer>();
+		Material[] mats = _mesh.materials;
+		mats[1]=_noDraw;
+		_mesh.materials=mats;
 	}
 
 	void OnDisable(){
+		if(_mCam!=null)
+			_mCam.DefaultCam();
 	}
 
     // Start is called before the first frame update
@@ -33,12 +43,18 @@ public class SurroundCamHelper : MonoBehaviour
 		if(!_playerInZone||_mCam.IsDefaultCam()){
 			if(sqrMag<_outerRadius*_outerRadius){
 				Surround();
+				Material[] mats = _mesh.materials;
+				mats[1]=_outline;
+				_mesh.materials=mats;
 			}
 		}
 		else{
 			if(sqrMag>_outerRadius*_outerRadius || sqrMag<_innerRadius*_innerRadius){
 				_playerInZone=false;
 				_mCam.DefaultCam();
+				Material[] mats = _mesh.materials;
+				mats[1]=_noDraw;
+				_mesh.materials=mats;
 			}
 		}
         

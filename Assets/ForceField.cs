@@ -32,6 +32,7 @@ public class ForceField : MonoBehaviour
 			_mat=GetComponent<MeshRenderer>().material;
 		Sfx.PlayOneShot3D(_powerOff,transform.position);
 		_mat.SetFloat("_VCut",_deactivatedHeight);
+		_mat.SetFloat("_PhaseMult",0);
 		GetComponent<SphereCollider>().enabled=false;
 	}
 

@@ -8,6 +8,7 @@ public class SimpleTrigger : MonoBehaviour
 	public float _activeRadius;
 	public UnityEvent _onTriggerEnter;
 	public UnityEvent _onTriggerExit;
+	public UnityEvent _onTriggerStay;
 	public UnityEvent _onCollisionEnter;
 	MeshRenderer _mesh;
 	Collider _col;
@@ -67,6 +68,10 @@ public class SimpleTrigger : MonoBehaviour
 	}
 	void OnTriggerExit(Collider other){
 		_onTriggerExit.Invoke();
+	}
+
+	void OnTriggerStay(Collider other){
+		_onTriggerStay.Invoke();
 	}
 
 	void OnCollisionEnter(Collision other){
