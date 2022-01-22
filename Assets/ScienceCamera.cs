@@ -131,6 +131,7 @@ public class ScienceCamera : MonoBehaviour
 		while(timer<_flashDur){
 			timer+=Time.deltaTime;
 			_ringFill.fillAmount=timer/_flashDur;
+			_camera.LookAt(_player);
 			if((_player.position-_targetPos).sqrMagnitude>_minDistToTarget*_minDistToTarget||(_otherCam!=null&&!_otherCam.LedOn())){
 				enabled=true;
 				LightLed(false);

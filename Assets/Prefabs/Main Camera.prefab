@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2257a60967287c4aa58427e01032aa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _theta: -3.1
+  _theta: -1.55
   _phi: 0.1
   _radius: 0.7
   _positionLerp: 2

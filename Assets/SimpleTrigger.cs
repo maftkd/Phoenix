@@ -16,6 +16,9 @@ public class SimpleTrigger : MonoBehaviour
 	bool _active;
 	public bool _ignoreMesh;
 	public bool _ignoreCol;
+	public AudioClip _clip;
+	[Range(0,1)]
+	public float _vol;
 
 	void Awake(){
 		_mesh=GetComponent<MeshRenderer>();
@@ -65,6 +68,8 @@ public class SimpleTrigger : MonoBehaviour
 
 	void OnTriggerEnter(Collider other){
 		_onTriggerEnter.Invoke();
+		if(_clip!=null)
+			Sfx.PlayOneShot3DVol(_clip,transform.position,_vol);
 	}
 	void OnTriggerExit(Collider other){
 		_onTriggerExit.Invoke();

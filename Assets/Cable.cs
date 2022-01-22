@@ -18,6 +18,8 @@ public class Cable : MonoBehaviour
 	public float _vertexSpacing;
 	public float _radius;
 	public Terrain _terrain;
+	public AudioClip _powerClip;
+	public float _powerVol;
 
 	Dictionary<float,Vector3> _centers;
 
@@ -37,7 +39,6 @@ public class Cable : MonoBehaviour
 		_rots = new List<Quaternion>();
 		_controlPoints=transform.Find("ControlPoints");
 		_centers = new Dictionary<float,Vector3>();
-
 		_init=true;
 	}
 
@@ -193,6 +194,11 @@ public class Cable : MonoBehaviour
 
 	void OnValidate(){
 		Reset();
+	}
+
+	public void SetPower(float v){
+		_meshR.material.SetFloat("_PowerFill",v);
+		Sfx.PlayOneShot2DVol(_powerClip,_powerVol);
 	}
 
 	void OnDrawGizmos(){

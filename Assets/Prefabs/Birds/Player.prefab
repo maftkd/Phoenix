@@ -644,7 +644,7 @@ MonoBehaviour:
   _walkSpeed: 0.65
   _maxWalkSlope: 1.25
   _animSpeedMult: 2.5
-  _stepVolume: 0.01
+  _stepVolume: 0.05
   _inputSmoothLerp: 10
   _slerp: 10
   _minInput: 0.1
