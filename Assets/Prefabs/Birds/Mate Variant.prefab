@@ -45,7 +45,7 @@ MonoBehaviour:
   _foodMask:
     serializedVersion: 2
     m_Bits: 2048
-  _waddleSpeed: 0.6
+  _waddleSpeed: 0.8
 --- !u!114 &6052478643217251372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,9 +88,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 611946112789191230, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -3785056746606025454, guid: 7b7ae5e015f4a8941bdb0981c4f4247a,
+        type: 3}
+    - target: {fileID: 611946112789191230, guid: 243d99ceabd103b46884074f0d8fbdda,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 61ae7dccbfd7ba54bbf4d322be9df79b, type: 2}
+      objectReference: {fileID: 2100000, guid: d68688240fe639041a04fd8124ef2534, type: 2}
     - target: {fileID: 611946112789191230, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
@@ -211,6 +217,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5201606536296797883, guid: 243d99ceabd103b46884074f0d8fbdda,
+        type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 7b7ae5e015f4a8941bdb0981c4f4247a, type: 3}
     - target: {fileID: 5877102342922519484, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
       propertyPath: m_IsActive

@@ -52,8 +52,8 @@ public class Feeder : MonoBehaviour
 			float waitTime=Random.Range(_seedDispenseDelayRange.x,_seedDispenseDelayRange.y);
 			yield return new WaitForSeconds(waitTime);
 			Transform seed = Instantiate(_seedPrefab,mouth.position+
-					new Vector3(Random.Range(0f,mouth.localScale.x*0.5f)*MRandom.RandSign(),
-						Random.Range(0f,mouth.localScale.y*0.5f)*MRandom.RandSign(),0),
+					mouth.right*Random.Range(0f,mouth.localScale.x*0.5f)*MRandom.RandSign()+
+					mouth.up*Random.Range(0f,mouth.localScale.y*0.5f)*MRandom.RandSign(),
 					Quaternion.identity);
 			Sfx.PlayOneShot3D(_dispenseSound,seed.position,Random.Range(0.9f,1.1f));
 			Rigidbody rb = seed.GetComponent<Rigidbody>();

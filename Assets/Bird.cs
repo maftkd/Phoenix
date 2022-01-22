@@ -29,6 +29,7 @@ public class Bird : MonoBehaviour
 	public Transform _callEffects;
 	public Vector2 _callPitchRange;
 	public LayerMask _collisionLayer;
+	public LayerMask _birdLayer;
 	public float _controllerZero;
 	[Header("Footprints")]
 	public Transform _footprint;
@@ -63,6 +64,14 @@ public class Bird : MonoBehaviour
 	public UnityEvent _onGrandEntranceEnd;
 	public bool _enterGrandly;
 
+	[Header("NPC - peck")]
+	public float _peckCheckTime;
+	public float _peckChance;
+	float _peckTimer;
+	Collider[] _cols;
+	public float _flySpeed;
+	public float _maxSpeed;
+
 	public delegate void EventHandler();
 	public event EventHandler _onCall;
 
@@ -85,17 +94,20 @@ public class Bird : MonoBehaviour
 		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
 		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
 		_mIn = _mCam.GetComponent<MInput>();
+		_cols = new Collider[3];
 
 		//disable things
 		_hop.enabled=false;
 		_fly.enabled=false;
 
+		/*
 		if(!_playerControlled)
 		{
 			GameObject player = GameObject.FindGameObjectWithTag("Player");
 			_mate=player.GetComponent<Bird>();
 			_mate._mate=this;
 		}
+		*/
 
 		_state=0;
 	}
@@ -103,12 +115,6 @@ public class Bird : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		if(!_playerControlled){
-			if(_enterGrandly)
-				GrandEntrance();
-			else
-				ComeToPlayer();
-		}
     }
 
     // Update is called once per frame
@@ -201,6 +207,19 @@ public class Bird : MonoBehaviour
 			switch(_state){
 				case 0:
 				default://chilling
+					_peckTimer+=Time.deltaTime;
+					if(_peckTimer>_peckCheckTime){
+						if(Random.value<_peckChance){
+							_anim.SetTrigger("peck");
+							RaycastHit hit;
+							if(Physics.Raycast(transform.position+Vector3.up*_size.y*0.5f, Vector3.down, out hit, _size.y,1)){
+								Footstep f = hit.transform.GetComponent<Footstep>();
+								if(f!=null)
+									f.Sound(hit.point);
+							}
+						}
+						_peckTimer=0;
+					}
 					break;
 				case 1://run away
 					break;
@@ -234,18 +253,30 @@ public class Bird : MonoBehaviour
 		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
 		if(_playerControlled)
 		{
+			/*
 			if(_onCall!=null)
 				_onCall.Invoke();
+				*/
+			//if there is a bird around - mate that bad boy
+			if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
+				Bird b = _cols[0].GetComponent<Bird>();
+				//b.ComeTo(transform);
+				Vector3 diff=b.transform.position-transform.position;
+				diff.y=0;
+				b.FlyTo(transform.position+diff.normalized*_summonDist);
+				b._mate=this;
+			}
+
 		}
 		else{
 			_anim.SetTrigger("sing");
 		}
 	}
 
-	public void ComeToPlayer(){
-		Vector3 diff=transform.position-_mate.transform.position;
+	public void ComeTo(Transform t){
+		Vector3 diff=transform.position-t.position;
 		//_mate.WaddleTo(transform.position-diff.normalized*_summonDist,1f);
-		transform.position=_mate.transform.position+diff.normalized*_summonDist;
+		transform.position=t.position+diff.normalized*_summonDist;
 	}
 
 	public void HopTo(Vector3 loc){
@@ -255,6 +286,7 @@ public class Bird : MonoBehaviour
 	}
 
 	public void WaddleTo(Vector3 loc,float speed){
+		Ground();
 		_waddle.enabled=true;
 		_waddle.WaddleTo(loc,speed);
 		_state=1;
@@ -494,11 +526,6 @@ public class Bird : MonoBehaviour
 		}
 	}
 
-	public void TakeSeedFromMate(){
-		Transform seed = _mate.GiveSeed();
-		CollectSeed(seed);
-	}
-
 	public void RunAwayNextPath(){
 		_runAway.RunAwayNextPath();
 	}
@@ -517,16 +544,16 @@ public class Bird : MonoBehaviour
 
 	public void CallToMate(){
 		//Debug.Log(name + " got walked into by: "+b.name);
-		Vector3 diff = _mate.transform.position-transform.position;
-		diff.y=0;
-		transform.forward=diff;
-		Call();
+		//Vector3 diff = _mate.transform.position-transform.position;
+		//diff.y=0;
+		//transform.forward=diff;
+		//Call();
 		//Ruffle();
 	}
 
 	public void RuffleToMate(){
-		//if(_hunger.IsEating())
-		//	return;
+		if(_hunger.enabled||_mate==null)
+			return;
 		//Debug.Log(name + " got walked into by: "+b.name);
 		Vector3 diff = _mate.transform.position-transform.position;
 		diff.y=0;
@@ -550,33 +577,31 @@ public class Bird : MonoBehaviour
 		_tutorial.ShowTutorial(index);
 	}
 
-	public void SetZone(Transform t){
-		_puzzleZone=t;
-		if(!_playerControlled && _seeds>0){
-			if(t!=null&&_puzzleZone==_mate._puzzleZone)
-				StopFollowing();
-			else
-				StartFollowing();
-		}
-	}
-
-	public void FlyTo(Vector3 target, float dur){
+	public void FlyTo(Vector3 target){
 		_smr.enabled=true;
-		StartCoroutine(FlyToR(target,dur));
+		//float dur = (target-transform.position).magnitude/_flySpeed;
+		StartCoroutine(FlyToR(target));
 		_anim.SetTrigger("flyLoop");
 	}
 
-	IEnumerator FlyToR(Vector3 target, float dur){
+	IEnumerator FlyToR(Vector3 target){
 		Vector3 start=transform.position;
 		transform.LookAt(target);
 		Vector3 eulers = transform.eulerAngles;
 		eulers.x=0;
 		transform.eulerAngles=eulers;
-		Vector3 end = target;
+		Vector3 dir = (target-start);
+		float dist = dir.magnitude;
+		dir/=dist;
+		float travelDist=0;
 		float timer=0;
-		while(timer<dur){
+		float speed=0;
+		while(travelDist<dist){
 			timer+=Time.deltaTime;
-			transform.position=Vector3.Lerp(start,end,timer/dur);
+			speed = Mathf.Lerp(_flySpeed,_maxSpeed,timer);
+			Vector3 v = dir*Time.deltaTime*speed;
+			travelDist+=v.magnitude;
+			transform.position+=v;
 			yield return null;
 		}
 		_anim.SetTrigger("land");
@@ -588,6 +613,7 @@ public class Bird : MonoBehaviour
 			_smr.enabled=true;
 	}
 
+	/*
 	public void GrandEntrance(){
 		//_onGrandEntrance.Invoke();
 		StartCoroutine(GrandEntranceR());
@@ -609,6 +635,7 @@ public class Bird : MonoBehaviour
 		Debug.Log("We flying");
 		FlyTo(_mate.transform.position+_mate.transform.forward,dur);
 		yield return new WaitForSeconds(dur);
+		Ground();
 
 		//waddle to spot
 		WaddleTo(_mate.transform.position,_grandWaddleSpeed);
@@ -630,7 +657,9 @@ public class Bird : MonoBehaviour
 		_mCam.DefaultCam();
 		_mCam.LetterBox(false);
 	}
+	*/
 
+	/*
 	public void GrandExit(){
 		StartCoroutine(GrandExitR());
 	}
@@ -646,14 +675,23 @@ public class Bird : MonoBehaviour
 
 		Destroy(gameObject);
 	}
+	*/
 
 	public void PartySnacks(){
-		if(_mate!=null)
-			_mate.GetSomeSeeds();
+		if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
+			Bird b = _cols[0].GetComponent<Bird>();
+			b.GetSomeSeeds();
+		}
 	}
 
 	public void GetSomeSeeds(){
 		_hunger.enabled=true;
+	}
+
+	public void FlyToNextPuzzle(){
+		PuzzleBox latest = PuzzleBox._latestPuzzle;
+		Transform perch=latest.GetPerch();
+		FlyTo(perch.position);
 	}
 
 	void OnDrawGizmos(){

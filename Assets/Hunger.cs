@@ -20,12 +20,14 @@ public class Hunger : MonoBehaviour
 
 	void OnEnable(){
 		Debug.Log("Time to nom!");
+		/*
 		//teleport to first seed
 		int seeds = Physics.OverlapSphereNonAlloc(_bird._mate.transform.position,1f,_cols,_foodMask);
 		Debug.Log("Found "+seeds+" seeds");
 		int startSeed=Random.Range(0,seeds);
 		Transform seed = _cols[startSeed].transform;
 		transform.position=seed.position+Vector3.down*0.07f;
+		*/
 		StartCoroutine(GoToNextSeed());
 	}
 
@@ -43,7 +45,9 @@ public class Hunger : MonoBehaviour
 		else
 		{
 			enabled=false;
-			_bird.GrandExit();
+			//_bird.GrandExit();
+			Debug.Log("Done snacking");
+			_bird.FlyToNextPuzzle();
 		}
 	}
 

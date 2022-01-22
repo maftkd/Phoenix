@@ -49,7 +49,7 @@ public class CollisionHelper : MonoBehaviour
     }
 
 	void OnTriggerEnter(Collider other){
-		if(other.GetComponent<Bird>()!=null)
+		if(other.GetComponent<Bird>()!=null&&other.gameObject.tag=="Player")
 		{
 			_onBirdEnter.Invoke();
 			if(_hasMeshCollider)

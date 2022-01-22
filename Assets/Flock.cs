@@ -127,9 +127,10 @@ public class Flock : MonoBehaviour
 	}
 
 	public void PlayerCalled(){
+		/*
 		if(_mate!=null){
 			Debug.Log("Mate comes to player");
-			_mate.ComeToPlayer();
+			//_mate.ComeToPlayer();
 		}
 		else if(_player._mate==null){//check that player does not have a mate from any other flock
 			if((_player.transform.position-_center).sqrMagnitude<=_innerRadius){
@@ -139,6 +140,7 @@ public class Flock : MonoBehaviour
 				_mate._enterGrandly=true;
 			}
 		}
+		*/
 		//if player is within range
 		//	if mate is not already deployed
 		//		deploy mate from random perch

@@ -29,6 +29,7 @@ public class PuzzleBox : MonoBehaviour
 	public Bird _unlockBird;
 	public Feeder _feeder;
 	public float _liftDelay;
+	public static PuzzleBox _latestPuzzle;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
@@ -75,7 +76,7 @@ public class PuzzleBox : MonoBehaviour
 		_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
 		Destroy(_forceField.gameObject);
-		_gm.PuzzleSolved(_puzzleId);
+		_gm.PuzzleSolved(this);
 	}
 
 	public virtual void PuzzleSolved(){
@@ -86,7 +87,7 @@ public class PuzzleBox : MonoBehaviour
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
 		StartCoroutine(OpenBox());
-		_gm.PuzzleSolved(_puzzleId);
+		_gm.PuzzleSolved(this);
 	}
 
 	protected virtual IEnumerator OpenBox(){
@@ -142,6 +143,11 @@ public class PuzzleBox : MonoBehaviour
 		_onActivated.Invoke();
 		_surroundCam.enabled=true;
 		_forceField.Deactivate();
+		_latestPuzzle=this;
+	}
+
+	public Transform GetPerch(){
+		return transform.Find("Perch");
 	}
 
 	void OnDrawGizmos(){

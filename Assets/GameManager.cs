@@ -59,8 +59,8 @@ public class GameManager : MonoBehaviour
 		_mIn.LockInput(false);
 	}
 
-	public void PuzzleSolved(string puzzleId){
-		_solvedPuzzles.Add(puzzleId);
+	public void PuzzleSolved(PuzzleBox pb){
+		_solvedPuzzles.Add(pb._puzzleId);
 	}
 
 	public List<string> GetSolvedPuzzles(){
