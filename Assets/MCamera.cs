@@ -50,6 +50,7 @@ public class MCamera : MonoBehaviour
 		_playerTarget=_player.position;
 		_letterBox=transform.GetChild(0).gameObject;
 		_cam=Camera.main;
+		_cam.depthTextureMode= DepthTextureMode.Depth;
 		_camTransform=_cam.transform;
 		_camTransform.localPosition=_cameraSlide;
 	}
