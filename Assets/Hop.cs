@@ -221,24 +221,13 @@ public class Hop : MonoBehaviour
 	}
 
 	public void KnockBack(Vector3 dir){
-		//Debug.Log("Time to hop back "+dir);
 		_anim.SetFloat("hopTime",-1f/_hopTime);
 		_knockBack=true;
-		//#why - do we need to ensure magnitude is > 0.1 ?
-		//float mag = _input.magnitude;
-		//mag = Mathf.Max(0.1f,mag);
-		//reflect previous input over dir
 		_input=Vector3.Reflect(_input,dir)*_knockBackMult;
-		//_input=dir*mag*_knockBackMult;
-		//check for head bonkers
 		float dot = Vector3.Dot(dir,Vector3.down);
-		//Debug.Log("dot: "+dot);
 		if(dot>=_dotToKillVert){
 			_velocity=0;
 		}
-		//_input=dir*_knockBackMult;
-		//_input=dir;
-		//
 	}
 
 	void CompleteHop(Transform ground){
@@ -258,6 +247,7 @@ public class Hop : MonoBehaviour
 				PlayStepParticles();
 				_bird.MakeFootprint();
 				_bird.MakeFootprint(0.01f);
+				_bird.SaveLastSpot();
 			}
 			else{
 				_bird.Dive(0.5f);

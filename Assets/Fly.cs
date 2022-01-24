@@ -275,22 +275,14 @@ public class Fly : MonoBehaviour
 	void Flap(){
 		FlapEffects();
 		_flapCounter++;
-			/*
-		foreach(AudioSource a in _flapSounds){
-			if(!a.isPlaying){
-				a.transform.position=transform.position;
-				a.Play();
-				a.pitch=Random.Range(_flapPitchRange.x,_flapPitchRange.y);
-				a.volume=_flapVolume;
-				return;
-			}
-		}
-		*/
 	}
 
 	public void FlapEffects(){
 		Instantiate(_flapParts,transform.position+_bird._size.y*Vector3.up,Quaternion.identity);
-		//Sfx.PlayOneShot2D(_flapSound,Random.Range(_flapPitchRange.x,_flapPitchRange.y),_flapVolume);
+		FlapSounds();
+	}
+
+	public void FlapSounds(){
 		Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(_flapPitchRange.x,_flapPitchRange.y),_flapVolume);
 	}
 

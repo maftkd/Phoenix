@@ -9,6 +9,7 @@ public class Hunger : MonoBehaviour
 	Collider [] _cols;
 	public LayerMask _foodMask;
 	public float _waddleSpeed;
+	Vector3 _waddleTarget;
 
 	void Awake(){
 		_bird=GetComponent<Bird>();
@@ -29,14 +30,14 @@ public class Hunger : MonoBehaviour
 	}
 
 	IEnumerator GoToNextSeed(){
-		int seeds = Physics.OverlapSphereNonAlloc(_bird._mate.transform.position,1f,_cols,_foodMask);
+		int seeds = Physics.OverlapSphereNonAlloc(_bird._mate.transform.position,2f,_cols,_foodMask);
 		Debug.Log("Found "+seeds+" seeds");
 		int startSeed=Random.Range(0,seeds);
-		Vector3 targetPos=_cols[startSeed].transform.position+Vector3.down*0.07f;
-		_bird.WaddleTo(targetPos,_waddleSpeed);
+		_waddleTarget=_cols[startSeed].transform.position+Vector3.down*0.07f;
+		_bird.WaddleTo(_waddleTarget,_waddleSpeed);
 		while(!_bird.ArrivedW())
 			yield return null;
-		seeds = Physics.OverlapSphereNonAlloc(_bird._mate.transform.position,1f,_cols,_foodMask);
+		seeds = Physics.OverlapSphereNonAlloc(_bird._mate.transform.position,2f,_cols,_foodMask);
 		if(seeds>0)
 			StartCoroutine(GoToNextSeed());
 		else
@@ -48,15 +49,9 @@ public class Hunger : MonoBehaviour
 		}
 	}
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
+	void OnDrawGizmos(){
+		Gizmos.color=Color.red;
+		Gizmos.DrawWireSphere(_waddleTarget,0.2f);
+	}
 
 }

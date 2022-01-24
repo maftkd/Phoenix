@@ -105,14 +105,12 @@ public class Waddle : MonoBehaviour
 			float dy = (targetPos.y-transform.position.y);
 			float dx = move.magnitude;
 			float slope = dy/dx;
-			/*
-			if(hit.transform.GetComponent<Bird>())
-				hit.transform.GetComponent<Bird>().GetWalkedInto(_bird);
-				*/
 			if(slope<-_maxWalkSlope*0.5f){
-				_anim.SetFloat("walkSpeed",0f);
-				Debug.Log("Should hop");
-				_bird.StartHopping();
+				if(dx>0){
+					_anim.SetFloat("walkSpeed",0f);
+					Debug.Log("Should hop "+dy +"/"+dx);
+					_bird.StartHopping();
+				}
 			}
 			else if(slope<_maxWalkSlope)
 			{

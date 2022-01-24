@@ -66,7 +66,7 @@ public class Bird : MonoBehaviour
 	Collider[] _cols;
 	public float _flySpeed;
 	public float _maxSpeed;
-	public AudioClip _flapSound;
+	public float _flapDur;
 
 	void Awake(){
 		//calculations
@@ -328,7 +328,7 @@ public class Bird : MonoBehaviour
 		_anim.SetTrigger("fly");
 	}
 	public void Land(){
-		_lastSpot=transform.position;
+		SaveLastSpot();
 		_fly.enabled=false;
 		_state=0;
 		_anim.SetFloat("walkSpeed",0f);
@@ -337,6 +337,7 @@ public class Bird : MonoBehaviour
 	}
 
 	public void Dive(float vel){
+		SaveLastSpot();
 		_fly.enabled=false;
 		_hop.enabled=false;
 		_state=4;
@@ -588,8 +589,9 @@ public class Bird : MonoBehaviour
 		while(travelDist<dist){
 			timer+=Time.deltaTime;
 			flapTimer+=Time.deltaTime;
-			if(flapTimer>_fly._flapDur){
-				_fly.FlapEffects();
+			if(flapTimer>_flapDur){
+				_fly.FlapSounds();
+				flapTimer=0;
 			}
 			speed = Mathf.Lerp(_flySpeed,_maxSpeed,timer);
 			Vector3 v = dir*Time.deltaTime*speed;
@@ -598,6 +600,7 @@ public class Bird : MonoBehaviour
 			yield return null;
 		}
 		_anim.SetTrigger("land");
+		Ground();
 	}
 
 	public void SetSeeds(int s){
@@ -644,6 +647,10 @@ public class Bird : MonoBehaviour
 
 	public void ResetState(){
 		_state=0;
+	}
+
+	public void SaveLastSpot(){
+		_lastSpot=transform.position;
 	}
 
 	void OnDrawGizmos(){
