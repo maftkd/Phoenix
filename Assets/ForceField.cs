@@ -7,6 +7,7 @@ public class ForceField : MonoBehaviour
 	public AudioClip _powerOff;
 	Material _mat;
 	public float _deactivatedHeight;
+	public float _deactivatedPhase;
 
 	void Awake(){
 		_mat=GetComponent<MeshRenderer>().material;
@@ -32,7 +33,7 @@ public class ForceField : MonoBehaviour
 			_mat=GetComponent<MeshRenderer>().material;
 		Sfx.PlayOneShot3D(_powerOff,transform.position);
 		_mat.SetFloat("_VCut",_deactivatedHeight);
-		_mat.SetFloat("_PhaseMult",0);
+		_mat.SetFloat("_PhaseMult",_deactivatedPhase);
 		GetComponent<SphereCollider>().enabled=false;
 	}
 

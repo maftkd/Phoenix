@@ -8,6 +8,10 @@
 		_ColorShallow ("Color Shallow", Color) = (0,0,0,0)
 		_MinStep ("Min Step", Float) = 0
 		_MaxStep ("Max Step", Float) = 1
+		_MinAlpha ("Min Alpha", Range(0,1)) = 0.5
+		_FoamDist ("Foam Distance", Float) = 0.1
+		_FoamColor ("Foam Color", Color) = (1,1,1,1)
+		_FoamFreq ("Foam Frequency", Float) = 1
     }
     SubShader
     {
@@ -34,6 +38,9 @@
 		fixed4 _ColorShallow;
 		fixed _MinStep;
 		fixed _MaxStep;
+		fixed _MinAlpha;
+		fixed _FoamDist;
+		fixed4 _FoamColor;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -50,10 +57,11 @@
 
 			fixed s=smoothstep(_MinStep,_MaxStep,depth);
 			fixed4 col = lerp(_ColorShallow,_ColorDeep,s);
-			col.a=s;
 
-			o.Albedo=col.rgb;
-            o.Alpha = col.a;
+			fixed foam = step(depth,_FoamDist);
+
+			o.Albedo=col.rgb*(1-foam)+foam*_FoamColor;
+            o.Alpha = lerp(_MinAlpha,1,s)*(1-foam)+foam*_FoamColor.a;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
