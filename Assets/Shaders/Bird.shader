@@ -33,6 +33,7 @@
         half _Metallic;
         fixed4 _Color;
 		fixed3 _ColorX;
+		fixed4 _RimColor;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -44,11 +45,12 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
-            //fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+            //fixed4 d = tex2D (_MainTex, IN.uv_MainTex).r;
 			//fixed4 c = fixed4(IN.uv_MainTex,0,1);
 			fixed4 c = IN.uv_MainTex.y*_Color+IN.uv_MainTex.x*fixed4(_ColorX,0);
 			fixed uv = tex2D (_MainTex, IN.uv_MainTex).y;
-            o.Albedo = c.rgb;
+            //o.Albedo = d*_RimColor+(1-d)*c.rgb;
+			o.Albedo=c.rgb;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness*uv;

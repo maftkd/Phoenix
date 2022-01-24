@@ -42,6 +42,16 @@ public class Sfx : MonoBehaviour
 		Destroy(foo,clip.length);
 	}
 
+	public static void PlayOneShot2D(AudioClip clip, float pitch, float vol){
+		GameObject foo = new GameObject("one-shot audio");
+		AudioSource audio = foo.AddComponent<AudioSource>();
+		audio.pitch=pitch;
+		audio.volume=vol;
+		audio.clip=clip;
+		audio.Play();
+		Destroy(foo,clip.length);
+	}
+
 	public static void PlayOneShot3D(AudioClip clip,Vector3 pos){
 		GameObject foo = new GameObject("one-shot audio");
 		foo.transform.position=pos;
@@ -68,6 +78,18 @@ public class Sfx : MonoBehaviour
 		AudioSource audio = foo.AddComponent<AudioSource>();
 		audio.spatialBlend=1f;
 		audio.volume=volume;
+		audio.clip=clip;
+		audio.Play();
+		Destroy(foo,clip.length);
+	}
+
+	public static void PlayOneShot3D(AudioClip clip,Vector3 pos,float pitch, float vol){
+		GameObject foo = new GameObject("one-shot audio");
+		foo.transform.position=pos;
+		AudioSource audio = foo.AddComponent<AudioSource>();
+		audio.spatialBlend=1f;
+		audio.pitch=pitch;
+		audio.volume=vol;
 		audio.clip=clip;
 		audio.Play();
 		Destroy(foo,clip.length);

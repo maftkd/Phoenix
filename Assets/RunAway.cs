@@ -25,7 +25,7 @@ public class RunAway : MonoBehaviour
 			}
 		}
 		_bird=GetComponent<Bird>();
-		_mCam=Camera.main.transform.parent.GetComponent<MCamera>();
+		_mCam=GameManager._mCam;
 	}
 
 	void OnEnable(){

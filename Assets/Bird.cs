@@ -56,13 +56,7 @@ public class Bird : MonoBehaviour
 	[HideInInspector]
 	public Transform _puzzleZone;
 	SkinnedMeshRenderer _smr;
-
-	[Header("Grand entrance")]
-	public UnityEvent _onGrandEntrance;
-	public float _grandWaddleSpeed;
-	public float _colorChangeDur;
-	public UnityEvent _onGrandEntranceEnd;
-	public bool _enterGrandly;
+	Vector3 _lastSpot;
 
 	[Header("NPC - peck")]
 	public float _peckCheckTime;
@@ -71,9 +65,7 @@ public class Bird : MonoBehaviour
 	Collider[] _cols;
 	public float _flySpeed;
 	public float _maxSpeed;
-
-	public delegate void EventHandler();
-	public event EventHandler _onCall;
+	public AudioClip _flapSound;
 
 	void Awake(){
 		//calculations
@@ -92,22 +84,15 @@ public class Bird : MonoBehaviour
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
 		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
-		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
-		_mIn = _mCam.GetComponent<MInput>();
+		_mCam = GameManager._mCam;
+		_mIn = GameManager._mIn;
 		_cols = new Collider[3];
 
 		//disable things
 		_hop.enabled=false;
 		_fly.enabled=false;
 
-		/*
-		if(!_playerControlled)
-		{
-			GameObject player = GameObject.FindGameObjectWithTag("Player");
-			_mate=player.GetComponent<Bird>();
-			_mate._mate=this;
-		}
-		*/
+		_lastSpot=transform.position;
 
 		_state=0;
 	}
@@ -253,10 +238,6 @@ public class Bird : MonoBehaviour
 		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
 		if(_playerControlled)
 		{
-			/*
-			if(_onCall!=null)
-				_onCall.Invoke();
-				*/
 			//if there is a bird around - mate that bad boy
 			if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
 				Bird b = _cols[0].GetComponent<Bird>();
@@ -346,6 +327,7 @@ public class Bird : MonoBehaviour
 		_anim.SetTrigger("fly");
 	}
 	public void Land(){
+		_lastSpot=transform.position;
 		_fly.enabled=false;
 		_state=0;
 		_anim.SetFloat("walkSpeed",0f);
@@ -577,10 +559,14 @@ public class Bird : MonoBehaviour
 		_tutorial.ShowTutorial(index);
 	}
 
+	IEnumerator _flyRoutine;
 	public void FlyTo(Vector3 target){
 		_smr.enabled=true;
 		//float dur = (target-transform.position).magnitude/_flySpeed;
-		StartCoroutine(FlyToR(target));
+		if(_flyRoutine!=null)
+			StopCoroutine(_flyRoutine);
+		_flyRoutine=FlyToR(target);
+		StartCoroutine(_flyRoutine);
 		_anim.SetTrigger("flyLoop");
 	}
 
@@ -596,8 +582,13 @@ public class Bird : MonoBehaviour
 		float travelDist=0;
 		float timer=0;
 		float speed=0;
+		float flapTimer=0;
 		while(travelDist<dist){
 			timer+=Time.deltaTime;
+			flapTimer+=Time.deltaTime;
+			if(flapTimer>_fly._flapDur){
+				_fly.FlapEffects();
+			}
 			speed = Mathf.Lerp(_flySpeed,_maxSpeed,timer);
 			Vector3 v = dir*Time.deltaTime*speed;
 			travelDist+=v.magnitude;
@@ -612,70 +603,6 @@ public class Bird : MonoBehaviour
 		if(!_playerControlled&&s>0)
 			_smr.enabled=true;
 	}
-
-	/*
-	public void GrandEntrance(){
-		//_onGrandEntrance.Invoke();
-		StartCoroutine(GrandEntranceR());
-	}
-
-	IEnumerator GrandEntranceR(){
-		_mIn.LockInput(true);
-		_mCam.Surround(transform);
-		_mCam.LetterBox(true);
-
-		//oreint mate
-		_mate.transform.LookAt(transform);
-		Vector3 eulers = _mate.transform.eulerAngles;
-		eulers.x=0;
-		_mate.transform.eulerAngles=eulers;
-
-		//fly to ground
-		float dur=2f;
-		Debug.Log("We flying");
-		FlyTo(_mate.transform.position+_mate.transform.forward,dur);
-		yield return new WaitForSeconds(dur);
-		Ground();
-
-		//waddle to spot
-		WaddleTo(_mate.transform.position,_grandWaddleSpeed);
-		Debug.Log("We waddling");
-		//float colorTimer=0f;
-		//ColorFilter cf = Camera.main.GetComponent<ColorFilter>();
-		//cf.NextVisionLevel();
-		//colorFilter.SetVisionLevel++
-		//float colorDur=_colorChangeDur;
-		while(!ArrivedW())
-		{
-			//colorTimer+=Time.deltaTime;
-			//cf.LerpMask(colorTimer/colorDur);
-			//colorFilter.LerpMask(colorTimer/colorDur)
-			yield return null;
-		}
-
-		_mIn.LockInput(false);
-		_mCam.DefaultCam();
-		_mCam.LetterBox(false);
-	}
-	*/
-
-	/*
-	public void GrandExit(){
-		StartCoroutine(GrandExitR());
-	}
-
-	IEnumerator GrandExitR(){
-		Vector3 target=_mate.transform.position-_mate.transform.forward*3f+Vector3.up*3f;
-
-		//fly to target
-		float dur=2f;
-		Debug.Log("We flying");
-		FlyTo(target,dur);
-		yield return new WaitForSeconds(dur);
-
-		Destroy(gameObject);
-	}
-	*/
 
 	public void PartySnacks(){
 		if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
@@ -692,6 +619,29 @@ public class Bird : MonoBehaviour
 		PuzzleBox latest = PuzzleBox._latestPuzzle;
 		Transform perch=latest.GetPerch();
 		FlyTo(perch.position);
+	}
+
+	public void Drown(){
+		_state=7;
+		_anim.SetFloat("walkSpeed",0f);
+		if(_fly.enabled)
+			_anim.SetTrigger("land");
+		_waddle.enabled=false;
+		_hop.enabled=false;
+		_fly.enabled=false;
+		_smr.enabled=false;
+	}
+
+	public void Respawn(){
+		transform.position=_lastSpot;
+		Vector3 eulers = transform.eulerAngles;
+		eulers.x=0;
+		transform.eulerAngles=eulers;
+		_smr.enabled=true;
+	}
+
+	public void ResetState(){
+		_state=0;
 	}
 
 	void OnDrawGizmos(){

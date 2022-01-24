@@ -14,7 +14,7 @@ public class Tool : MonoBehaviour
 
 	void Awake(){
 		_toolCanvas=transform.Find("ToolCanvas");
-		_mIn=Camera.main.GetComponent<MInput>();
+		_mIn=GameManager._mIn;
 	}
 
 	void OnEnable(){

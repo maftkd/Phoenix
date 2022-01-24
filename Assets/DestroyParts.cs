@@ -9,7 +9,7 @@ public class DestroyParts : MonoBehaviour
     void Start()
     {
 		_parts=GetComponent<ParticleSystem>();
-		Destroy(gameObject,_parts.main.startLifetime.constantMax);
+		Destroy(gameObject,_parts.main.startLifetime.constantMax+_parts.main.duration);
     }
 
     // Update is called once per frame

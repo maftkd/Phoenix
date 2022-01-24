@@ -29,9 +29,8 @@ public class Lock : MonoBehaviour
 	public UnityEvent _onUnlock;
 
 	void Awake(){
-		GameObject player =GameObject.FindGameObjectWithTag("Player");
-		_bird=player.GetComponent<Bird>();
-		_mCam=Camera.main.GetComponent<MCamera>();
+		_bird=GameManager._player;
+		_mCam=GameManager._mCam;
 		_cylinder=transform.GetChild(0);
 	}
 

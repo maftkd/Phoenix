@@ -7,7 +7,7 @@ public class Fly : MonoBehaviour
 {
 	bool _init;
 	Collider[] _cols;
-	AudioSource[] _flapSounds;
+	public AudioClip _flapSound;
 	[HideInInspector]
 	public Vector3 _velocity;
 	float _gravity;
@@ -57,9 +57,8 @@ public class Fly : MonoBehaviour
 	float _knockBackTimer;
 
 	void Awake(){
-		_mIn=Camera.main.transform.parent.GetComponent<MInput>();
+		_mIn=GameManager._mIn;
 		_cols=new Collider[4];
-		_flapSounds=transform.Find("FlapSounds").GetComponentsInChildren<AudioSource>();
 		_bird=GetComponent<Bird>();
 		_anim=GetComponent<Animator>();
 		_soarParticles=transform.Find("SoarParticles").GetComponent<ParticleSystem>();
@@ -274,8 +273,9 @@ public class Fly : MonoBehaviour
     }
 
 	void Flap(){
-		Instantiate(_flapParts,transform.position+_bird._size.y*Vector3.up,Quaternion.identity);
+		FlapEffects();
 		_flapCounter++;
+			/*
 		foreach(AudioSource a in _flapSounds){
 			if(!a.isPlaying){
 				a.transform.position=transform.position;
@@ -285,6 +285,13 @@ public class Fly : MonoBehaviour
 				return;
 			}
 		}
+		*/
+	}
+
+	public void FlapEffects(){
+		Instantiate(_flapParts,transform.position+_bird._size.y*Vector3.up,Quaternion.identity);
+		//Sfx.PlayOneShot2D(_flapSound,Random.Range(_flapPitchRange.x,_flapPitchRange.y),_flapVolume);
+		Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(_flapPitchRange.x,_flapPitchRange.y),_flapVolume);
 	}
 
 	void Soar(bool soaring){

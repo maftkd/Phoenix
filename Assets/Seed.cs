@@ -17,7 +17,7 @@ public class Seed : MonoBehaviour
 	public float _scaleDown;
 
 	void Awake(){
-		_player=GameObject.FindGameObjectWithTag("Player").transform;
+		_player=GameManager._player.transform;
 		_rb = GetComponent<Rigidbody>();
 	}
     // Start is called before the first frame update

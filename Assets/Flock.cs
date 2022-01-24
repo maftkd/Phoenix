@@ -6,7 +6,6 @@ public class Flock : MonoBehaviour
 {
 
 	public Transform _birdPrefab;
-	public Transform _matePrefab;
 	public Material [] _mats;
 	public int _numBirds;
 	public Transform [] _trees;
@@ -33,7 +32,6 @@ public class Flock : MonoBehaviour
 
 	public float _innerRadius;
 	public float _outerRadius;
-	Bird _mate;
 
 	void Awake(){
 		_birds = new Transform[_numBirds];
@@ -54,8 +52,6 @@ public class Flock : MonoBehaviour
 		_centerTransform=transform.GetChild(0);
 		_center=_centerTransform.position;
 		_centerTransform.gameObject.SetActive(false);
-		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
-		_player._onCall+=PlayerCalled;
 	}
 
     // Start is called before the first frame update
@@ -69,21 +65,6 @@ public class Flock : MonoBehaviour
     {
 		switch(_flockMode){
 			case FlockMode.IN_TREE:
-				_updateTimer+=Time.deltaTime;
-				if(_updateTimer>=_updateTime){
-					_playerDist=(_center-_player.transform.position).magnitude;
-					if(_playerDist<_outerRadius){
-						//birds have chance to fly
-						for(int i=0; i<_numBirds; i++){
-							if(_birdStates[i]==0&&Random.value<_flyChance){
-								Transform target = GetRandomTreePerch();
-								if((target.position-_birds[i].position).sqrMagnitude>0.01f)
-									StartCoroutine(FlyToRandomPerch(i,target));
-							}
-						}
-					}
-					_updateTimer=0;
-				}
 				break;
 			case FlockMode.FLY_AWAY:
 				break;
@@ -124,27 +105,6 @@ public class Flock : MonoBehaviour
 		}
 		else
 			anim.SetTrigger("land");
-	}
-
-	public void PlayerCalled(){
-		/*
-		if(_mate!=null){
-			Debug.Log("Mate comes to player");
-			//_mate.ComeToPlayer();
-		}
-		else if(_player._mate==null){//check that player does not have a mate from any other flock
-			if((_player.transform.position-_center).sqrMagnitude<=_innerRadius){
-				Transform perch = GetRandomTreePerch();
-				Transform m = Instantiate(_matePrefab,perch.position,Quaternion.identity);
-				_mate=m.GetComponent<Bird>();
-				_mate._enterGrandly=true;
-			}
-		}
-		*/
-		//if player is within range
-		//	if mate is not already deployed
-		//		deploy mate from random perch
-		//		have mate make grand entrance
 	}
 
 	void OnDrawGizmos(){

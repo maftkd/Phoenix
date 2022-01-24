@@ -35,7 +35,7 @@ public class Waddle : MonoBehaviour
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
-		_mIn = Camera.main.transform.parent.GetComponent<MInput>();
+		_mIn = GameManager._mIn;
 		_bird = GetComponent<Bird>();
 		_cols = new Collider[2];
 	}
@@ -109,7 +109,7 @@ public class Waddle : MonoBehaviour
 			if(hit.transform.GetComponent<Bird>())
 				hit.transform.GetComponent<Bird>().GetWalkedInto(_bird);
 				*/
-			if(slope<-_maxWalkSlope){
+			if(slope<-_maxWalkSlope*0.5f){
 				_anim.SetFloat("walkSpeed",0f);
 				Debug.Log("Should hop");
 				_bird.StartHopping();

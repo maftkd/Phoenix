@@ -18,14 +18,12 @@ public class PuzzleBox : MonoBehaviour
 	public float _shotDistance;
 	public float _shotHeight;
 	bool _shotTaken;
-	public Transform _player;
 	public UnityEvent _onRevealed;
 	public UnityEvent _onShot;
 	public UnityEvent _onActivated;
 	public bool _activateOnAwake;
 	ForceField _forceField;
 	public string _puzzleId;
-	GameManager _gm;
 	public Bird _unlockBird;
 	public Feeder _feeder;
 	public float _liftDelay;
@@ -35,9 +33,8 @@ public class PuzzleBox : MonoBehaviour
 		_effects=transform.Find("Effects");
 		_surroundCam=GetComponent<SurroundCamHelper>();
 		_guideLine=transform.Find("GuideLine").gameObject;
-		_mCam=Camera.main.transform.parent.GetComponent<MCamera>();
-		_mIn=_mCam.GetComponent<MInput>();
-		_player=GameObject.FindGameObjectWithTag("Player").transform;
+		_mCam=GameManager._mCam;
+		_mIn=GameManager._mIn;
 		_forceField=transform.GetComponentInChildren<ForceField>();
 		if(_activateOnAwake)
 			Activate();
@@ -46,7 +43,6 @@ public class PuzzleBox : MonoBehaviour
 
 		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
 		label.GetComponent<Text>().text=_puzzleId;
-		_gm=GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
 	}
 
 	protected virtual void OnEnable(){
@@ -66,9 +62,6 @@ public class PuzzleBox : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-		if(!_shotTaken&&(_player.position-transform.position).sqrMagnitude<_shotRadius*_shotRadius){
-			StartCoroutine(FocusOnBox());
-		}
     }
 
 	public virtual void SolveSilent(){
@@ -76,7 +69,7 @@ public class PuzzleBox : MonoBehaviour
 		_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
 		Destroy(_forceField.gameObject);
-		_gm.PuzzleSolved(this);
+		GameManager._instance.PuzzleSolved(this);
 	}
 
 	public virtual void PuzzleSolved(){
@@ -87,7 +80,7 @@ public class PuzzleBox : MonoBehaviour
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
 		StartCoroutine(OpenBox());
-		_gm.PuzzleSolved(this);
+		GameManager._instance.PuzzleSolved(this);
 	}
 
 	protected virtual IEnumerator OpenBox(){
@@ -120,23 +113,6 @@ public class PuzzleBox : MonoBehaviour
 		yield return new WaitForSeconds(_resetCamDelay);
 		_mCam.DefaultCam();
 		_onRevealed.Invoke();
-	}
-
-	public virtual IEnumerator FocusOnBox(){
-		_shotTaken=true;
-		yield return null;
-		/*
-		Vector3 dir=transform.position-_mCam.transform.position;
-		dir.y=0;
-		Vector3 targetPos=transform.position-dir.normalized*_shotDistance+Vector3.up*_shotHeight;
-		//_mCam.TrackTargetFrom(transform,targetPos,transform.localScale.y*Vector3.up*0.5f);
-		//_mCam.TrackTarget(transform,transform.localScale.y*0.5f*Vector3.up);
-		_mCam.LetterBox(true);
-		yield return new WaitForSeconds(3f);
-		//_mCam.DefaultCam();
-		_mCam.LetterBox(false);
-		_onShot.Invoke();
-		*/
 	}
 
 	public virtual void Activate(){

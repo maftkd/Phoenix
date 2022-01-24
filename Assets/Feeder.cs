@@ -62,6 +62,6 @@ public class Feeder : MonoBehaviour
 			forceVector+=Vector3.up*Random.value*_ejectForceY;
 			rb.AddForce(forceVector);
 		}
-		GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>().PartySnacks();
+		GameManager._player.PartySnacks();
 	}
 }

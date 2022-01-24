@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 public class SaveSlot : MonoBehaviour
 {
 	public int _slotNumber;
-	GameManager _gm;
 	string _saveFile;
 	static string _divider = "---";
 
@@ -20,7 +19,6 @@ public class SaveSlot : MonoBehaviour
 		loadButt.onClick.AddListener(delegate {LoadGame();});
 		Button deleteButt=transform.Find("DeleteButton").GetComponent<Button>();
 		deleteButt.onClick.AddListener(delegate {DeleteGame();});
-		_gm=GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
 		_saveFile=Application.streamingAssetsPath+"/saveSlot"+_slotNumber+".txt";
 	}
     // Start is called before the first frame update
@@ -50,7 +48,7 @@ public class SaveSlot : MonoBehaviour
 		saveData+=_divider+System.Environment.NewLine;
 
 		//get puzzle data
-		List<string> puzzles=_gm.GetSolvedPuzzles();
+		List<string> puzzles=GameManager._instance.GetSolvedPuzzles();
 		foreach(string p in puzzles)
 			saveData+=p+System.Environment.NewLine;
 
@@ -106,7 +104,7 @@ public class SaveSlot : MonoBehaviour
 			}
 		}
 
-		_gm.Play();
+		GameManager._instance.Play();
 	}
 
 	public void DeleteGame(){

@@ -6,10 +6,12 @@ public class TutorialZone : MonoBehaviour
 {
 	Bird _bird;
 	public bool _hideOnButtonDown;
+	public bool _hideOnButtonHold;
+	float _holdTimer;
 	public string _buttonName;
 
 	void Awake(){
-		_bird=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
+		_bird=GameManager._player;
 		GetComponent<MeshRenderer>().enabled=false;
 	}
 
@@ -23,5 +25,15 @@ public class TutorialZone : MonoBehaviour
 	void Update(){
 		if(_hideOnButtonDown&&Input.GetButtonDown(_buttonName))
 			HideTutorial();
+		if(_hideOnButtonHold){
+			if(Input.GetButton(_buttonName))
+			{
+				_holdTimer+=Time.deltaTime;
+				if(_holdTimer>1f)
+					HideTutorial();
+			}
+			else
+				_holdTimer=0;
+		}
 	}
 }

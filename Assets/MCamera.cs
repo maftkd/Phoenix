@@ -44,10 +44,9 @@ public class MCamera : MonoBehaviour
 	public float _surroundDotAdjust;
 
 	void Awake(){
-		GameObject player = GameObject.FindGameObjectWithTag("Player");
-		_player=player.transform;
-		_bird=_player.GetComponent<Bird>();
-		_mIn=GetComponent<MInput>();
+		_bird=GameManager._player;
+		_player=_bird.transform;
+		_mIn=GameManager._mIn;
 		_playerTarget=_player.position;
 		_letterBox=transform.GetChild(0).gameObject;
 		_cam=Camera.main;
@@ -188,14 +187,31 @@ public class MCamera : MonoBehaviour
 	}
 
 	void CalcRotationLerp(){
+		float dt = Vector3.Dot(_player.forward,transform.forward);
+		dt=(dt+1)*0.5f;
+		float control = _controlIn.magnitude;
+		//rotations are stronger when dt is higher and control is higher
+
+		//gravity
+		if(control==0 && _rotationLerp>_minRotationLerp){
+			_rotationLerp-=_rotationLerpAccel*Time.deltaTime;
+		}
+		else if(_rotationLerp<_maxRotationLerp){
+			_rotationLerp+=_rotationLerpAccel*control*dt*Time.deltaTime;
+		}
+		/*
 		if(_controlIn.magnitude>0&&_rotationLerp<_maxRotationLerp){
 			_rotationLerp+=_rotationLerpAccel*_controlIn.magnitude*Time.deltaTime;
 		}
 		else if(_controlIn.magnitude==0&&_rotationLerp>_minRotationLerp){
 			_rotationLerp-=_rotationLerpAccel*Time.deltaTime;
 		}
+		*/
+
+		/*
 		if(_letterBox.activeSelf)
 			_rotationLerp=_maxRotationLerp;
+			*/
 	}
 
 	void OnDrawGizmos(){

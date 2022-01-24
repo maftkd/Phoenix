@@ -6,15 +6,12 @@ public class Hunger : MonoBehaviour
 {
 	Bird _bird;
 	int _state;
-	Transform _player;
 	Collider [] _cols;
 	public LayerMask _foodMask;
 	public float _waddleSpeed;
 
 	void Awake(){
 		_bird=GetComponent<Bird>();
-		GameObject player = GameObject.FindGameObjectWithTag("Player");
-		_player=player.transform;
 		_cols = new Collider[10];
 	}
 

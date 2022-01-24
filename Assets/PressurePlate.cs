@@ -22,9 +22,9 @@ public class PressurePlate : MonoBehaviour
 
 	void Awake(){
 		_col=GetComponent<BoxCollider>();
-		_mCam=Camera.main.GetComponent<MCamera>();
+		_mCam=GameManager._mCam;
 		_startPos=transform.position;
-		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
+		_player=GameManager._player;
 		_mate=_player._mate;
 	}
 

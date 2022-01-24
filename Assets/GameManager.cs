@@ -7,14 +7,20 @@ public class GameManager : MonoBehaviour
 {
 	Sfx _sfx;
 	GameObject _pauseScreen;
-	MInput _mIn;
 	List<string> _solvedPuzzles;
+	public static GameManager _instance;
+	public static Bird _player;
+	public static MCamera _mCam;
+	public static MInput _mIn;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
 		_pauseScreen=transform.GetChild(0).gameObject;
-		_mIn=FindObjectOfType<MInput>();
 		_solvedPuzzles=new List<string>();
+		_instance=this;
+		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
+		_mCam=Camera.main.transform.parent.GetComponent<MCamera>();
+		_mIn=_mCam.GetComponent<MInput>();
 	}
 
     // Start is called before the first frame update

@@ -15,8 +15,8 @@ public class SurroundCamHelper : MonoBehaviour
 	public Material _noDraw;
 
 	void Awake(){
-		_player=GameObject.FindGameObjectWithTag("Player").transform;
-		_mCam = Camera.main.transform.parent.GetComponent<MCamera>();
+		_player=GameManager._player.transform;
+		_mCam = GameManager._mCam;
 		_mate=_player.GetComponent<Bird>()._mate;
 		//assume first mesh is box with 2 materials
 		_mesh=transform.GetChild(0).GetComponent<MeshRenderer>();

@@ -12,11 +12,6 @@ public class Footstep : MonoBehaviour
 	float _runSpeed;
 	public UnityEvent _onPlay;
 
-	public class FootstepEventArgs : System.EventArgs{
-		public Vector3 pos;
-	}
-	public delegate void EventHandler(FootstepEventArgs args);
-	public event EventHandler OnFootstep;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,27 +42,5 @@ public class Footstep : MonoBehaviour
 		if(_clips.Length==0)
 			return;
 		Sfx.PlayOneShot3DVol(_clips[Random.Range(0,_clips.Length)],pos,volume<0? _volume : volume);
-		/*
-		foreach(AudioSource s in _sources){
-			if(!s.isPlaying){
-
-				s.volume=volume<0? _volume : volume;
-				//s.volume=Mathf.InverseLerp(0,_runSpeed,speed)*_volume;
-				//s.volume=_volume;
-				s.spatialBlend=s.volume==1f?0:1f;
-				s.transform.position=pos;
-				s.clip=_clips[Random.Range(0,_clips.Length)];
-				s.Play();
-				_onPlay.Invoke();
-				if(OnFootstep!=null)
-				{
-					FootstepEventArgs args= new FootstepEventArgs();
-					args.pos=pos;
-					OnFootstep.Invoke(args);
-				}
-				return;
-			}
-		}
-		*/
 	}
 }

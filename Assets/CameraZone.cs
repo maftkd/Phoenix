@@ -8,7 +8,7 @@ public class CameraZone : MonoBehaviour
 	Transform _camTarget;
 
 	void Awake(){
-		_mCam=Camera.main.GetComponent<MCamera>();
+		_mCam=GameManager._mCam;
 		_camTarget=transform.GetChild(0);
 		if(_camTarget.GetComponent<MeshRenderer>()!=null)
 			_camTarget.GetComponent<MeshRenderer>().enabled=false;

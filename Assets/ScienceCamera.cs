@@ -37,7 +37,6 @@ public class ScienceCamera : MonoBehaviour
 
 	void Awake(){
 		_camera=transform.GetChild(1);
-		//_player=GameObject.FindGameObjectWithTag(_targetTag).transform;
 		_audio=GetComponent<AudioSource>();
 		_flash=transform.GetChild(2).GetComponent<CanvasGroup>();
 		_flashDur=_flashCharge.length;

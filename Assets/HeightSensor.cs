@@ -19,9 +19,9 @@ public class HeightSensor : MonoBehaviour
 	public UnityEvent _progressMaxed;
 
 	void Awake(){
-		_player=GameObject.FindGameObjectWithTag("Player").transform;
+		_bird=GameManager._player;
+		_player=_bird.transform;
 		_mat=GetComponent<MeshRenderer>().material;
-		_bird=_player.GetComponent<Bird>();
 		_targetWidth=_mat.GetFloat("_TargetWidth");
 		_uvPerSec=1f/_targetTime;
 		_progressMat=_progressBar.material;

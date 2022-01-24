@@ -16,7 +16,8 @@ public class Key : MonoBehaviour
 		}
 		else
 			_groundEffects = Instantiate(_groundEffectsPrefab,transform.position,Quaternion.identity);
-		_player=GameObject.FindGameObjectWithTag("Player").transform;
+		Bird b = GameManager._player;
+		_player=b.transform;
 	}
     // Start is called before the first frame update
     void Start()
