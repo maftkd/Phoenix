@@ -33,6 +33,7 @@ public class Bird : MonoBehaviour
 	public float _controllerZero;
 	[Header("Footprints")]
 	public Transform _footprint;
+	public Transform _wallprint;
 	public Vector3 _footprintOffset;
 	int _leftRightPrint=1;
 	[Header("Explosion")]
@@ -354,7 +355,8 @@ public class Bird : MonoBehaviour
 	public void MakeFootprint(float offset=0){
 		Transform fp = Instantiate(_footprint,transform.position,Quaternion.identity);
 		//orientate
-		fp.forward=Vector3.down;
+		fp.forward=transform.forward;
+		//fp.up=transform.forward;
 		//offset footprint
 		fp.position+=Vector3.up*_footprintOffset.y+transform.right*_footprintOffset.x*_leftRightPrint;
 		fp.position+=offset*transform.forward;
@@ -378,7 +380,7 @@ public class Bird : MonoBehaviour
 			return;
 		if(!supress){
 			//add particel to collision
-			Transform fp = Instantiate(_footprint,ch._hitPoint,Quaternion.identity);
+			Transform fp = Instantiate(_wallprint,ch._hitPoint,Quaternion.identity);
 			//orientate
 			fp.forward=-dir;
 			//offset footprint
