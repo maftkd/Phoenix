@@ -1,31 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PressurePlate : MonoBehaviour
 {
-	bool _npcOnPlate;
-	BoxCollider _col;
-	MCamera _mCam;
-	int _load;
-	public int _requiredLoad;
-	Vector3 _startPos;
-	public float _moveAmount;
-	public float _moveLerp;
-	public AudioClip _pressAudio;
-	public Transform _dustParts;
+	Collider [] _cols;
+	BoxCollider _box;
+	Transform _button;
+	Vector3 _defaultPos;
+	Vector3 _halfExtents;
+	public LayerMask _birdMask;
+	public float _hitBoxY;
+	int _state;
+	public float _pressDepth;
+	public float _pressSpeed;
+	public Vector4 _pitchRange;
 	Bird _player;
-	Bird _mate;
-	public UnityEvent _onActivated;
-	bool _activated;
+	public AudioClip _buttonDown;
 
 	void Awake(){
-		_col=GetComponent<BoxCollider>();
-		_mCam=GameManager._mCam;
-		_startPos=transform.position;
-		_player=GameManager._player;
-		_mate=_player._mate;
+		_cols=new Collider[3];
+		_button=transform.GetChild(0);
+		_defaultPos=_button.localPosition;
+		_box=_button.GetComponent<BoxCollider>();
+		_halfExtents=_box.size*0.5f;
+		_halfExtents.y=_hitBoxY;
+		_player = GameManager._player;
 	}
 
     // Start is called before the first frame update
@@ -37,107 +37,86 @@ public class PressurePlate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		float pressed=_load/(float)_requiredLoad;
-		Vector3 target=_startPos+Vector3.down*_moveAmount*pressed;
-		transform.position=Vector3.Lerp(transform.position,target,_moveLerp*Time.deltaTime);
+		//#temp
+		_halfExtents.y=_hitBoxY;
+		//center is transform.position+
+		int hits=Physics.OverlapBoxNonAlloc(_button.position+Vector3.up*_box.size.y,_halfExtents,_cols,Quaternion.identity,_birdMask);
+		switch(_state){
+			case 0://idle
+				if(hits>0&&HitsAbove(hits)){
+					StartCoroutine(ButtonDown());
+				}
+				break;
+			case 1://going down
+				break;
+			case 2://pressed
+				if(hits==0){
+					StopAllCoroutines();
+					StartCoroutine(ButtonUp());
+				}
+				break;
+			default:
+				break;
+		}
     }
 
-	void OnTriggerEnter(Collider other){
-		if(_activated)
-			return;
-		if(other.GetComponent<Bird>()!=null){
-			Bird b = other.GetComponent<Bird>();
-			if(!_npcOnPlate&&b==_mate)
-				StartCoroutine(PutNpcOnPlate());
-			else if(b._playerControlled){
-				Debug.Log("Player hit plate");
-				if(b.transform.position.y>=transform.position.y+transform.localScale.y*0.5f)
-					Debug.Log("Player on top of plate!");
-			}
-		}
-	}
-
-	IEnumerator PutNpcOnPlate(){
-		_npcOnPlate=true;
-		Debug.Log("Putting npc on plate");
-		_mate.StopRunningAway();
-		_mate.transform.position-=_mate.transform.forward*0.1f;
-		_mate.HopTo(transform.position+Vector3.up*transform.localScale.y*0.5f);
-		while(!_mate.Arrived())
+	IEnumerator ButtonDown(){
+		_state=1;
+		Sfx.PlayOneShot3D(_buttonDown,transform.position,Random.Range(_pitchRange.x,_pitchRange.y));
+		float timer=0;
+		Vector3 start=_button.localPosition;
+		Vector3 end=_defaultPos+Vector3.down*_pressDepth;
+		float dist=(end-start).magnitude;
+		float dur=dist/_pressSpeed;
+		while(timer<dur)
+		{
+			timer+=Time.deltaTime;
+			_button.localPosition=Vector3.Lerp(start,end,timer/dur);
 			yield return null;
-		_mate.StopHopping();
-		Debug.Log("Npc is on plate");
-		_mate.transform.SetParent(transform);
-		GroundBirdOnPlate(_mate);
-		_load++;
-		PlayFx();
-		CheckLoad();
-	}
-
-	public void PlayerOnPlate(){
-		if(_activated)
-			return;
-		if(_player.transform.parent==transform)
-			return;
-		_player.transform.SetParent(transform);
-		_load++;
-		PlayFx();
-		GroundBirdOnPlate(_player);
-		if(!_npcOnPlate){
-			//ForceNpcToPlate();
 		}
-		CheckLoad();
+		_button.localPosition=end;
+		_state=2;
 	}
 
-	public void PlayerOffPlate(){
-		Debug.Log("Player is off plate");
-		if(_player.transform.parent!=transform)
-			return;
-		_player.transform.SetParent(null);
-		_load--;
-		/*
-		PlayFx();
-		GroundBirdOnPlate(_player);
-		if(!_npcOnPlate){
-			ForceNpcToPlate();
+	IEnumerator ButtonUp(){
+		_state=3;
+		Sfx.PlayOneShot3D(_buttonDown,transform.position,Random.Range(_pitchRange.z,_pitchRange.w));
+		float timer=0;
+		Vector3 start=_button.localPosition;
+		Vector3 end=_defaultPos;
+		float dist=(end-start).magnitude;
+		float dur=dist/_pressSpeed;
+		while(timer<dur)
+		{
+			timer+=Time.deltaTime;
+			_button.localPosition=Vector3.Lerp(start,end,timer/dur);
+			yield return null;
 		}
-		CheckLoad();
-		*/
+		_button.localPosition=end;
+		_state=0;
 	}
 
-	void CheckLoad(){
-		if(_activated)
-			return;
-		if(_load>=_requiredLoad){
-			Debug.Log("Activating!");
-			_onActivated.Invoke();
-			StartCoroutine(UngroundAfterDelay());
+	bool HitsAbove(int numHits){
+		for(int i=0; i<numHits; i++){
+			Collider c = _cols[i];
+			if(c.transform.position.y<_button.position.y+_box.size.y)
+				return false;
+			if(Mathf.Abs(c.transform.position.x-_button.position.x)>_halfExtents.x)
+				return false;
+			if(Mathf.Abs(c.transform.position.z-_button.position.z)>_halfExtents.z)
+				return false;
+			if(_player.GoingUp())
+				return false;
 		}
+		return true;
 	}
 
-	void PlayFx(){
-		Sfx.PlayOneShot3D(_pressAudio,transform.position);
-		Instantiate(_dustParts,transform.position,Quaternion.identity);
-	}
+	void OnDrawGizmos(){
+		if(_halfExtents!=null&&_box!=null)
+		{
+			Gizmos.color=Color.red;
+			Gizmos.DrawWireCube(_button.position+Vector3.up*_box.size.y,_halfExtents*2f);
 
-	void ForceNpcToPlate(){
-		Vector3 dir = transform.position-_mate.transform.position;
-		dir.Normalize();
-		_mate.transform.position=transform.position-dir;
-		StartCoroutine(PutNpcOnPlate());
-	}
-
-	void GroundBirdOnPlate(Bird b){
-		Vector3 localPos=b.transform.localPosition;
-		localPos.y=0.5f;
-		b.transform.localPosition=localPos;
-	}
-
-	public IEnumerator UngroundAfterDelay(){
-		yield return new WaitForSeconds(1f);
-		_player.transform.SetParent(null);
-		_mate.transform.SetParent(null);
-		_activated=true;
-		enabled=false;
+		}
 	}
 }

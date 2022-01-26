@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
 		_mIn.LockInput(true);
 		SaveSlot [] slots = transform.GetComponentsInChildren<SaveSlot>();
 		slots[0].SelectSaveButton();
+		_mCam.enabled=false;
 	}
 
 	public void Play(){
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
 		_sfx.Play();
 		_pauseScreen.SetActive(false);
 		_mIn.LockInput(false);
+		_mCam.enabled=true;
 	}
 
 	public void PuzzleSolved(PuzzleBox pb){

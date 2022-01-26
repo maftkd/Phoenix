@@ -48,6 +48,7 @@ public class Bird : MonoBehaviour
 	public float _waddleKnockVolume;
 	public float _hopKnockVolume;
 	Vector3 _prevPos;
+	Vector3 _vel;
 	public Transform _mandible;
 	Transform _curKey;
 	Transform _curSeed;
@@ -96,6 +97,7 @@ public class Bird : MonoBehaviour
 		_lastSpot=transform.position;
 
 		_state=0;
+		Ground();
 	}
 
     // Start is called before the first frame update
@@ -106,11 +108,13 @@ public class Bird : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		_vel=transform.position-_prevPos;
 		if(_playerControlled){
 			//player update
 			switch(_state){
 				case 0://chilling
 				default:
+					Ground();
 					if(_mIn.GetJump())
 						StartHopping();
 					else if(_mIn.GetControllerInput().sqrMagnitude>_controllerZero*_controllerZero)
@@ -353,8 +357,8 @@ public class Bird : MonoBehaviour
 		_afterDiveTimer=0;
 	}
 
-	public void MakeFootprint(float offset=0){
-		Transform fp = Instantiate(_footprint,transform.position,Quaternion.identity);
+	public void MakeFootprint(Transform surface, float offset=0){
+		Transform fp = Instantiate(_footprint,transform.position,Quaternion.identity,surface);
 		//orientate
 		fp.forward=transform.forward;
 		//fp.up=transform.forward;
@@ -413,7 +417,6 @@ public class Bird : MonoBehaviour
 		_waddle.enabled=false;
 		_hop.enabled=false;
 		_fly.enabled=false;
-		Debug.Log("Shaking it off");
 		_anim.SetFloat("walkSpeed",0f);
 		_shakeTimer=0;
 		_state=5;
@@ -422,6 +425,14 @@ public class Bird : MonoBehaviour
 	public void RevertToPreviousPosition(){
 		//move back to previous frame, to prevent collider from getting stuck overlapping
 		transform.position=_prevPos;
+	}
+
+	public bool GoingUp(){
+		return _vel.y>0;
+	}
+
+	public float GetVel(){
+		return _vel.magnitude/Time.deltaTime;
 	}
 
 	public void CollectKey(Transform t){

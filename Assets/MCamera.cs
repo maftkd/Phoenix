@@ -11,10 +11,8 @@ public class MCamera : MonoBehaviour
 	public float _phi;
 	public float _radius;
 	public float _positionLerp;
-	public float _minRotationLerp;
-	public float _maxRotationLerp;
-	float _rotationLerp;
-	public float _rotationLerpAccel;
+	float _diff;
+	public float _diffLerp;
 	public float _thetaOffsetGravity;
 	public float _maxThetaOffset;
 	public float _phiMult;
@@ -102,8 +100,8 @@ public class MCamera : MonoBehaviour
 		//Get input stuff
 		_mouseIn=_mIn.GetMouseMotion();
 		_controlIn=_mIn.GetControllerInput();
-		CalcThetaOffset(-_mouseIn.x);
-		CalcRotationLerp();
+		//CalcThetaOffset(-_mouseIn.x);
+		//CalcRotationLerp();
 
 
 		//calculate cam coords for next frame
@@ -120,7 +118,11 @@ public class MCamera : MonoBehaviour
 				//_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
 				break;
 		}
-		_theta=Mathf.Lerp(_theta,theta,_rotationLerp*Time.deltaTime);
+		float d = theta-_theta;
+		_diff=Mathf.Lerp(_diff,d,Time.deltaTime*_diffLerp);
+		_theta+=_diff*Time.deltaTime*_controlIn.magnitude;//_bird.GetVel();
+		//theta offset
+		_theta+=-_mouseIn.x;
 
 		_playerPrevPos=_playerPos;
 		_prevControlIn=_controlIn;
@@ -141,7 +143,7 @@ public class MCamera : MonoBehaviour
 	public void Surround(Transform t){
 		_state=1;
 		_camTarget=t;
-		_rotationLerp=_minRotationLerp;
+		//_rotationLerp=_minRotationLerp;
 	}
 
 	public void DefaultCam(){
@@ -149,7 +151,7 @@ public class MCamera : MonoBehaviour
 		//_thetaOffset=0;
 		_letterBox.SetActive(false);
 		_mIn.LockInput(false);
-		_rotationLerp=_minRotationLerp;
+		//_rotationLerp=_minRotationLerp;
 	}
 
 	public void LetterBox(bool lb){
@@ -185,34 +187,6 @@ public class MCamera : MonoBehaviour
 			_thetaOffset=-_maxThetaOffset;
 		else if(_thetaOffset<-_maxThetaOffset)
 			_thetaOffset=_maxThetaOffset;
-	}
-
-	void CalcRotationLerp(){
-		float dt = Vector3.Dot(_player.forward,transform.forward);
-		dt=(dt+1)*0.5f;
-		float control = _controlIn.magnitude;
-		//rotations are stronger when dt is higher and control is higher
-
-		//gravity
-		if(control==0 && _rotationLerp>_minRotationLerp){
-			_rotationLerp-=_rotationLerpAccel*Time.deltaTime;
-		}
-		else if(_rotationLerp<_maxRotationLerp){
-			_rotationLerp+=_rotationLerpAccel*control*dt*Time.deltaTime;
-		}
-		/*
-		if(_controlIn.magnitude>0&&_rotationLerp<_maxRotationLerp){
-			_rotationLerp+=_rotationLerpAccel*_controlIn.magnitude*Time.deltaTime;
-		}
-		else if(_controlIn.magnitude==0&&_rotationLerp>_minRotationLerp){
-			_rotationLerp-=_rotationLerpAccel*Time.deltaTime;
-		}
-		*/
-
-		/*
-		if(_letterBox.activeSelf)
-			_rotationLerp=_maxRotationLerp;
-			*/
 	}
 
 	void OnDrawGizmos(){

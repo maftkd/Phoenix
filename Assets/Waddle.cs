@@ -23,7 +23,6 @@ public class Waddle : MonoBehaviour
 	Vector3 _knockBackDir;
 	public float _knockBackSpeedMult;
 	Collider [] _cols;
-	PressurePlate _plate;
 
 	//npc
 	Terrain _terrain;
@@ -99,7 +98,7 @@ public class Waddle : MonoBehaviour
 		Vector3 targetPos = transform.position+move;
 
 		RaycastHit hit;
-		if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y*1.5f,_bird._collisionLayer)){
+		if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y*1.1f,_bird._collisionLayer)){
 			//raycast to ground
 			targetPos.y=hit.point.y;
 			float dy = (targetPos.y-transform.position.y);
@@ -107,9 +106,12 @@ public class Waddle : MonoBehaviour
 			float slope = dy/dx;
 			if(slope<-_maxWalkSlope*0.5f){
 				if(dx>0){
+					/*
 					_anim.SetFloat("walkSpeed",0f);
 					Debug.Log("Should hop "+dy +"/"+dx);
 					_bird.StartHopping();
+					*/
+					_bird.Ground();
 				}
 			}
 			else if(slope<_maxWalkSlope)
@@ -144,7 +146,7 @@ public class Waddle : MonoBehaviour
 		Footstep f = t.GetComponent<Footstep>();
 		if(f!=null)
 			f.Sound(transform.position,_stepVolume);
-		_bird.MakeFootprint();
+		_bird.MakeFootprint(t);
 		if(_npc){
 			//recalibrate
 			float mag = _npcInput.magnitude;
@@ -152,16 +154,6 @@ public class Waddle : MonoBehaviour
 			diff.y=0;
 			diff.Normalize();
 			_npcInput=diff*mag;
-		}
-		PressurePlate pp = t.GetComponent<PressurePlate>();
-		if(pp!=null)
-		{
-			pp.PlayerOnPlate();
-			_plate=pp;
-		}
-		else if(_plate!=null){
-			_plate.PlayerOffPlate();
-			_plate=null;
 		}
 	}
 

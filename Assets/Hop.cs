@@ -43,7 +43,6 @@ public class Hop : MonoBehaviour
 	bool _knockBack;
 	public float _knockBackMult;
 	public float _dotToKillVert;
-	PressurePlate _plate;
 
 	//ai hopping
 	Terrain _terrain;
@@ -169,8 +168,6 @@ public class Hop : MonoBehaviour
 					//check collision along vert
 					transform.position=hit.point;
 					CompleteHop(hit.transform);
-					if(!_npc)
-						CheckForPressurePlate(hit.transform);
 				}
 				else//vertical is free
 					transform.position=startPos+Vector3.up*posDelta.y;
@@ -245,8 +242,8 @@ public class Hop : MonoBehaviour
 			}
 			if(!_diving){
 				PlayStepParticles();
-				_bird.MakeFootprint();
-				_bird.MakeFootprint(0.01f);
+				_bird.MakeFootprint(ground);
+				_bird.MakeFootprint(ground,0.01f);
 				_bird.SaveLastSpot();
 			}
 			else{
@@ -279,17 +276,8 @@ public class Hop : MonoBehaviour
 
 		_hopAudio.pitch=Random.Range(0.8f,1.2f);
 		_hopAudio.Play();
-		if(_plate!=null)
-			_plate.PlayerOffPlate();
 	}
 
-	void CheckForPressurePlate(Transform t){
-		_plate = t.GetComponent<PressurePlate>();
-		if(_plate!=null)
-		{
-			_plate.PlayerOnPlate();
-		}
-	}
 
 	void OnDrawGizmos(){
 		/*

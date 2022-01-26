@@ -49,6 +49,8 @@ public class CollisionHelper : MonoBehaviour
     }
 
 	void OnTriggerEnter(Collider other){
+		if(!enabled)
+			return;
 		if(other.GetComponent<Bird>()!=null&&other.gameObject.tag=="Player")
 		{
 			_onBirdEnter.Invoke();
@@ -61,7 +63,6 @@ public class CollisionHelper : MonoBehaviour
 				_hitPoint=_col.ClosestPoint(other.transform.position);
 			}
 			_hitNormal=other.transform.position-_hitPoint;
-			Debug.Log("yo yo yo, hit on the norm: "+_hitNormal);
 			if(_hitNormal.sqrMagnitude==0)
 				_hitNormal=-other.transform.forward;
 			Bird b = other.GetComponent<Bird>();
