@@ -33,7 +33,10 @@ public class Hunger : MonoBehaviour
 		int seeds = Physics.OverlapSphereNonAlloc(_bird._mate.transform.position,2f,_cols,_foodMask);
 		Debug.Log("Found "+seeds+" seeds");
 		int startSeed=Random.Range(0,seeds);
-		_waddleTarget=_cols[startSeed].transform.position+Vector3.down*0.07f;
+		Transform seed = _cols[startSeed].transform;
+		_waddleTarget=seed.position+Vector3.down*0.07f;
+		Vector3 diff=seed.position-transform.position;
+		_waddleTarget+=diff.normalized*0.05f;
 		_bird.WaddleTo(_waddleTarget,_waddleSpeed);
 		while(!_bird.ArrivedW())
 			yield return null;

@@ -27,7 +27,8 @@ public class ScienceCamera : MonoBehaviour
 	public AnimationCurve _flashCurve;
 	public float _minDistToTarget;
 	public float _flashEffectDur;
-	Image _ringFill;
+	public MeshRenderer _progressBar;
+	Material _progressMat;
 	public UnityEvent _onFlash;
 	Quaternion _startRot;
 	public GameObject [] _ledLit;
@@ -40,7 +41,8 @@ public class ScienceCamera : MonoBehaviour
 		_audio=GetComponent<AudioSource>();
 		_flash=transform.GetChild(2).GetComponent<CanvasGroup>();
 		_flashDur=_flashCharge.length;
-		_ringFill=transform.GetChild(3).GetChild(1).GetComponent<Image>();
+		if(_progressBar!=null)
+			_progressMat=_progressBar.material;
 		_startRot=transform.rotation;
 		_targetPos=_ex.position;
 		_lit=true;
@@ -72,7 +74,9 @@ public class ScienceCamera : MonoBehaviour
 				LightLed(false);
 			}
 		}
-		_ringFill.fillAmount=Mathf.Lerp(_ringFill.fillAmount,0,Time.deltaTime);
+
+		if(_progressMat!=null)
+			_progressMat.SetFloat("_FillAmount",Mathf.Lerp(_progressMat.GetFloat("_FillAmount"),0,Time.deltaTime));
     }
 
 	void Refocus(){
@@ -129,7 +133,8 @@ public class ScienceCamera : MonoBehaviour
 		float timer=0;
 		while(timer<_flashDur){
 			timer+=Time.deltaTime;
-			_ringFill.fillAmount=timer/_flashDur;
+			if(_progressMat!=null)
+				_progressMat.SetFloat("_FillAmount",timer/_flashDur);
 			_camera.LookAt(_player);
 			if((_player.position-_targetPos).sqrMagnitude>_minDistToTarget*_minDistToTarget||(_otherCam!=null&&!_otherCam.LedOn())){
 				enabled=true;
