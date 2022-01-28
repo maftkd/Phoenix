@@ -99,9 +99,6 @@ public class MCamera : MonoBehaviour
 		//Get input stuff
 		_mouseIn=_mIn.GetMouseMotion();
 		_controlIn=_mIn.GetControllerInput();
-		//CalcThetaOffset(-_mouseIn.x);
-		//CalcRotationLerp();
-
 
 		//calculate cam coords for next frame
 		switch(_state){
@@ -177,15 +174,6 @@ public class MCamera : MonoBehaviour
 				_theta+=Mathf.PI*2f;
 		}
 		return t;
-	}
-
-	void CalcThetaOffset(float delta){
-		_thetaOffset+=delta;
-		_thetaOffset=Mathf.Lerp(_thetaOffset,0,_controlIn.magnitude*Time.deltaTime*_thetaOffsetGravity);
-		if(_thetaOffset>_maxThetaOffset)
-			_thetaOffset=-_maxThetaOffset;
-		else if(_thetaOffset<-_maxThetaOffset)
-			_thetaOffset=_maxThetaOffset;
 	}
 
 	void OnDrawGizmos(){

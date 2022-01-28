@@ -11,7 +11,7 @@ public class PressurePlate : MonoBehaviour
 	Vector3 _halfExtents;
 	public LayerMask _birdMask;
 	public float _hitBoxY;
-	int _state;
+	public int _state;
 	public float _pressDepth;
 	public float _pressSpeed;
 	public Vector4 _pitchRange;

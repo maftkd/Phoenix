@@ -197,6 +197,7 @@ public class Bird : MonoBehaviour
 			switch(_state){
 				case 0:
 				default://chilling
+					Ground();
 					_peckTimer+=Time.deltaTime;
 					if(_peckTimer>_peckCheckTime){
 						if(Random.value<_peckChance){
@@ -532,10 +533,13 @@ public class Bird : MonoBehaviour
 	}
 
 	public Vector3 GetCamTarget(){
+		/*
 		if(_state==2)
 			return _hop.GetCamTarget();
 		else
 			return transform.position;
+			*/
+		return transform.position;
 	}
 
 	public void CallToMate(){

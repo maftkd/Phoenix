@@ -1,19 +1,16 @@
-﻿Shader "Unlit/Grass"
+﻿Shader "Unlit/Timer"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
-		_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
-		_AlphaDist ("Alpha distance mult", Float) = 0.5
-		_Color ("Color mult", Color) = (1,1,1,1)
-		_Bend ("Bend", Float) = 0.5
+		_Color ("On color", Color) = (1,1,1,1)
+		_ColorB ("Off color", Color) = (0,0,0,0)
+		_FillAmount ("Fill Amount", Range(0,1)) = 0.5
+		_OutlineThickness ("Outline", Range(0,1)) = 0.1
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent"}
+        Tags { "RenderType"="Opaque" }
         LOD 100
-		Cull Off
-		Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -36,36 +33,36 @@
                 float2 uv : TEXCOORD0;
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
-				float dist : DIST;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-			fixed _Cutoff;
-			fixed _AlphaDist;
-			fixed4 _Color;
-			fixed _Bend;
 
             v2f vert (appdata v)
             {
                 v2f o;
-				fixed4 worldSpace = mul(unity_ObjectToWorld, v.vertex);
-				_Bend*= sin(_Time.z+worldSpace.x);
-				v.vertex.z+=_Bend*v.vertex.y;
-				o.dist=min(1,length(ObjSpaceViewDir(v.vertex))*_AlphaDist);
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.uv=v.uv;
                 UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;
             }
 
+			fixed4 _Color;
+			fixed4 _ColorB;
+			fixed _FillAmount;
+			fixed _OutlineThickness;
+
             fixed4 frag (v2f i) : SV_Target
             {
-                // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv)*_Color;
-				col.a*=i.dist;
-				clip(col.a-_Cutoff);
-				//col.a=1;
+				fixed r = 0.5;
+				fixed2 center = fixed2(0.5,0.5);
+				fixed2 diff = i.uv-center;
+				fixed mag = sqrt(dot(diff,diff));
+				fixed theta = atan2(diff.y,diff.x);
+				fixed fAngle=((1-_FillAmount)-0.5)*3.14152*2;
+				fixed fLerp = step(theta,fAngle);
+				clip(r-mag);
+				fixed4 col = lerp(_Color,_ColorB,fLerp);
+				fixed outline = step(r-mag,_OutlineThickness);
+				col = outline*fixed4(0,0,0,0)+(1-outline)*col;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
