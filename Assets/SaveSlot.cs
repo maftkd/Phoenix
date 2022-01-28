@@ -40,8 +40,9 @@ public class SaveSlot : MonoBehaviour
 		Bird[] birds = FindObjectsOfType<Bird>();
 		foreach(Bird b in birds){
 			Debug.Log(b.name + " is at "+ b.transform.position);
+			string mate = b._mate==null? "null" : b._mate.name;
 			saveData+=b.name+"%"+b.transform.position.x+"%"+b.transform.position.y+"%"+b.transform.position.z
-				+"%"+b._seeds+System.Environment.NewLine;
+				+"%"+b._seeds+"%"+mate+System.Environment.NewLine;
 		}
 
 		//add divider
@@ -84,12 +85,19 @@ public class SaveSlot : MonoBehaviour
 					float.TryParse(parts[2],NumberStyles.Float,CultureInfo.InvariantCulture,out y);
 					float.TryParse(parts[3],NumberStyles.Float,CultureInfo.InvariantCulture,out z);
 					int.TryParse(parts[4],NumberStyles.Integer,CultureInfo.InvariantCulture, out seeds);
+					string mate = parts[5];
 					Vector3 pos = new Vector3(x,y,z);
 					foreach(Bird b in birds){
 						if(b.name==birdName)
 						{
 							b.transform.position=pos;
 							b.SetSeeds(seeds);
+							if(mate!="null"){
+								foreach(Bird m in birds){
+									if(m.name==mate)
+										b._mate=m;
+								}
+							}
 						}
 					}
 					break;

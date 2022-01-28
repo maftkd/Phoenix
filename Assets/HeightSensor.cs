@@ -50,6 +50,9 @@ public class HeightSensor : MonoBehaviour
 		}
 
 		if(_targetTimer>1f)
+		{
 			_progressMaxed.Invoke();
+			enabled=false;
+		}
     }
 }

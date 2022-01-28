@@ -584,6 +584,9 @@ public class Bird : MonoBehaviour
 		_anim.SetTrigger("flyLoop");
 	}
 
+	public delegate void BirdEvent();
+	public event BirdEvent _onDoneFlying;
+
 	IEnumerator FlyToR(Vector3 target){
 		Vector3 start=transform.position;
 		transform.LookAt(target);
@@ -612,6 +615,8 @@ public class Bird : MonoBehaviour
 		}
 		_anim.SetTrigger("land");
 		Ground();
+		if(_onDoneFlying!=null)
+			_onDoneFlying.Invoke();
 	}
 
 	public void SetSeeds(int s){

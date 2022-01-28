@@ -35,6 +35,7 @@ public class ScienceCamera : MonoBehaviour
 	public GameObject [] _ledUnlit;
 	public ScienceCamera _otherCam;
 	bool _lit;
+	public bool _noFlash;
 
 	void Awake(){
 		_camera=transform.GetChild(1);
@@ -144,22 +145,29 @@ public class ScienceCamera : MonoBehaviour
 			}
 			yield return null;
 		}
+		
+		if(!_noFlash){
+			//start effects
+			_onFlash.Invoke();
+			LightLed(false);
 
-		//shutter
-		_audio.clip=_shutter;
-		_audio.Play();
-		timer=0;
-		float dur = _flashEffectDur;
-		while(timer<dur){
-			timer+=Time.deltaTime;
-			_flash.alpha=_flashCurve.Evaluate(timer/dur);
-			yield return null;
+			//shutter
+			_audio.clip=_shutter;
+			_audio.Play();
+			timer=0;
+			float dur = _flashEffectDur;
+			while(timer<dur){
+				timer+=Time.deltaTime;
+				_flash.alpha=_flashCurve.Evaluate(timer/dur);
+				yield return null;
+			}
+			_flash.alpha=0;
 		}
-		_flash.alpha=0;
-
-		//start effects
-		_onFlash.Invoke();
-		LightLed(false);
+		else{
+			while(_otherCam.LedOn())
+				yield return null;
+			LightLed(false);
+		}
 	}
 
 	void LightLed(bool lit){

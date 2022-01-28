@@ -87,7 +87,6 @@ public class MCamera : MonoBehaviour
 		//check collision
 		RaycastHit hit;
 		if(Physics.Raycast(_playerTarget+_cameraSlide.y*Vector3.up,offset, out hit, _radius, 1)){
-			Debug.Log("Hit "+hit.transform.name);
 			_targetPos=_playerTarget+offset*hit.distance;
 			transform.position=Vector3.Lerp(transform.position,_targetPos,_colLerp*Time.deltaTime);
 		}

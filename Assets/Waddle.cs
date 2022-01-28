@@ -52,6 +52,9 @@ public class Waddle : MonoBehaviour
 		_stepTimer=0;
 		_input=_mIn.GetInputDir();
 	}
+
+	void OnDisable(){
+	}
     // Start is called before the first frame update
     void Start()
     {

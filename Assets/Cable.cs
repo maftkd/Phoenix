@@ -145,7 +145,7 @@ public class Cable : MonoBehaviour
 					Vector3 pos=centerPos;
 					pos+=right*_radius*Mathf.Cos(ang);
 					pos+=up*_radius*Mathf.Sin(ang);
-					vertices[vertexCounter]=pos;
+					vertices[vertexCounter]=transform.InverseTransformPoint(pos);
 					norms[vertexCounter]=pos-centerPos;
 					vertexCounter++;
 				}
@@ -198,7 +198,8 @@ public class Cable : MonoBehaviour
 
 	public void SetPower(float v){
 		_meshR.material.SetFloat("_PowerFill",v);
-		Sfx.PlayOneShot2DVol(_powerClip,_powerVol);
+		if(v>0)
+			Sfx.PlayOneShot2D(_powerClip,Random.Range(0.8f,1.2f),_powerVol);
 	}
 
 	void OnDrawGizmos(){

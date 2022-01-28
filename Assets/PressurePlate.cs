@@ -18,6 +18,13 @@ public class PressurePlate : MonoBehaviour
 	Bird _player;
 	public AudioClip _buttonDown;
 
+	bool _powered;
+
+	public Circuit[] _circuits;
+	public Cable _cable;
+
+	public bool _isToggle;
+
 	void Awake(){
 		_cols=new Collider[3];
 		_button=transform.GetChild(0);
@@ -53,6 +60,8 @@ public class PressurePlate : MonoBehaviour
 				if(hits==0){
 					StopAllCoroutines();
 					StartCoroutine(ButtonUp());
+					if(!_isToggle)
+						Power(false);
 				}
 				break;
 			default:
@@ -76,6 +85,12 @@ public class PressurePlate : MonoBehaviour
 		}
 		_button.localPosition=end;
 		_state=2;
+
+		if(_isToggle)
+			TogglePower();
+		else{
+			Power(true);
+		}
 	}
 
 	IEnumerator ButtonUp(){
@@ -109,6 +124,23 @@ public class PressurePlate : MonoBehaviour
 				return false;
 		}
 		return true;
+	}
+
+	void TogglePower(){
+		_powered=!_powered;
+		UpdateWires();
+	}
+
+	void Power(bool p){
+		_powered=p;
+		UpdateWires();
+	}
+
+	void UpdateWires(){
+		foreach(Circuit c in _circuits){
+			c.Power(_powered);
+			_cable.SetPower(_powered? 1f : 0f);
+		}
 	}
 
 	void OnDrawGizmos(){
