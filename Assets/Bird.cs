@@ -212,7 +212,7 @@ public class Bird : MonoBehaviour
 						_peckTimer=0;
 					}
 					break;
-				case 1://run away
+				case 1://flying
 					break;
 				case 2://following
 					break;
@@ -445,18 +445,6 @@ public class Bird : MonoBehaviour
 	}
 
 	public void CollectSeed(Transform t){
-		/*
-		if(t==null)
-			Debug.Log("oopsies");
-		t.SetParent(_mandible);
-		t.localPosition=Vector3.zero;
-		t.localEulerAngles=Vector3.up*90f;
-		t.localScale=Vector3.one*0.25f;
-		_curSeed=t;
-		if(_playerControlled)
-			_mCam.Surround(_mate.transform);
-			*/
-		//Destroy(t.gameObject);
 		_anim.SetTrigger("peck");
 		_seeds++;
 	}
@@ -592,6 +580,7 @@ public class Bird : MonoBehaviour
 	public event BirdEvent _onDoneFlying;
 
 	IEnumerator FlyToR(Vector3 target){
+		_state=1;
 		Vector3 start=transform.position;
 		transform.LookAt(target);
 		Vector3 eulers = transform.eulerAngles;
@@ -619,6 +608,7 @@ public class Bird : MonoBehaviour
 		}
 		_anim.SetTrigger("land");
 		Ground();
+		_state=0;
 		if(_onDoneFlying!=null)
 			_onDoneFlying.Invoke();
 	}
