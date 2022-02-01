@@ -77,7 +77,16 @@ public class ScienceCamera : MonoBehaviour
 		}
 
 		if(_progressMat!=null)
-			_progressMat.SetFloat("_FillAmount",Mathf.Lerp(_progressMat.GetFloat("_FillAmount"),0,Time.deltaTime));
+		{
+			float prog=_progressMat.GetFloat("_FillAmount");
+			if(prog>0)
+			{
+				prog-=Time.deltaTime;
+				if(prog<0)
+					prog=0;
+				_progressMat.SetFloat("_FillAmount",prog);
+			}
+		}
     }
 
 	void Refocus(){

@@ -77,8 +77,8 @@
 			o.Albedo=col.rgb*(1-foam)+foam*_FoamColor;
             o.Alpha = lerp(_MinAlpha,1,s)*(1-foam)+foam*_FoamColor.a;
             // Metallic and smoothness come from slider variables
-            o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;//*saturate(noiseDif*noiseDif);
+            o.Metallic = _Metallic;//*saturate(noiseDif);
+            o.Smoothness = _Glossiness*saturate(noiseDif);
         }
         ENDCG
     }

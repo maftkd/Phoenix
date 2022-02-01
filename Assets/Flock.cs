@@ -20,7 +20,8 @@ public class Flock : MonoBehaviour
 	public enum FlockMode {
 		IN_TREE=0,
 		FLY_AWAY=1,
-		FLY_OVER=2
+		FLY_OVER=2,
+		FORAGE=3
 	}
 	public FlockMode _flockMode;
 	float _updateTimer;
@@ -32,13 +33,24 @@ public class Flock : MonoBehaviour
 
 	public float _innerRadius;
 	public float _outerRadius;
+	public Terrain _terrain;
 
 	void Awake(){
 		_birds = new Transform[_numBirds];
 		_birdStates = new Dictionary<int,int>();
 		for(int i=0; i<_numBirds;i++){
-			Transform bird = Instantiate(_birdPrefab);
-			bird.position=GetRandomTreePerch().position;
+			Transform bird = Instantiate(_birdPrefab,transform);
+			switch(_flockMode){
+				case FlockMode.IN_TREE:
+					bird.position=GetRandomTreePerch().position;
+					break;
+				case FlockMode.FORAGE:
+					bird.position=GetRandomPositionOnGround();
+					break;
+				default:
+					break;
+
+			}
 			bird.localEulerAngles = Vector3.up*Random.value*360f;
 			SkinnedMeshRenderer smr = bird.GetComponentInChildren<SkinnedMeshRenderer>();
 			if(_mats.Length>1)
@@ -52,6 +64,7 @@ public class Flock : MonoBehaviour
 		_centerTransform=transform.GetChild(0);
 		_center=_centerTransform.position;
 		_centerTransform.gameObject.SetActive(false);
+		_player=GameManager._player;
 	}
 
     // Start is called before the first frame update
@@ -69,6 +82,16 @@ public class Flock : MonoBehaviour
 			case FlockMode.FLY_AWAY:
 				break;
 			case FlockMode.FLY_OVER:
+				break;
+			case FlockMode.FORAGE:
+				if(_player.IsPlayerInRange(_centerTransform,_innerRadius)){
+					Debug.Log("Player close");
+					foreach(Transform t in _birds)
+					{
+						Vector3 flyDir=new Vector3(Random.value,0.5f,Random.value);
+						t.GetComponent<BirdSimple>().FlyAway(flyDir);
+					}
+				}
 				break;
 			default:
 				break;
@@ -105,6 +128,13 @@ public class Flock : MonoBehaviour
 		}
 		else
 			anim.SetTrigger("land");
+	}
+
+	public Vector3 GetRandomPositionOnGround(){
+		Vector2 v = Random.insideUnitCircle*_innerRadius;
+		Vector3 pos = transform.position+Vector3.right*v.x+Vector3.forward*v.y;
+		pos.y=_terrain.SampleHeight(pos);
+		return pos;
 	}
 
 	void OnDrawGizmos(){
