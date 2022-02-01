@@ -20,13 +20,13 @@ public class SurroundCamHelper : MonoBehaviour
 		_mate=_player.GetComponent<Bird>()._mate;
 		//assume first mesh is box with 2 materials
 		_mesh=transform.GetChild(0).GetComponent<MeshRenderer>();
-		Outline(false);
+		//Outline(false);
 	}
 
 	void OnDisable(){
 		if(_mCam!=null)
 			_mCam.DefaultCam();
-		Outline(false);
+		//Outline(false);
 	}
 
     // Start is called before the first frame update
@@ -42,14 +42,14 @@ public class SurroundCamHelper : MonoBehaviour
 		if(!_playerInZone||_mCam.IsDefaultCam()){
 			if(sqrMag<_outerRadius*_outerRadius){
 				Surround();
-				Outline(true);
+				//Outline(true);
 			}
 		}
 		else{
 			if(sqrMag>_outerRadius*_outerRadius || sqrMag<_innerRadius*_innerRadius){
 				_playerInZone=false;
 				_mCam.DefaultCam();
-				Outline(false);
+				//Outline(false);
 			}
 		}
         

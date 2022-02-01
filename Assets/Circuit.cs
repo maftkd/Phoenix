@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Circuit : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Circuit : MonoBehaviour
 	public event CircuitEvent _powerChange;
 
 	bool _powered;
+	public UnityEvent _onPowered;
 
 	void Awake(){
 		_mat=GetComponent<Renderer>().material;
@@ -34,6 +36,8 @@ public class Circuit : MonoBehaviour
 		{
 			_powerChange.Invoke();
 		}
+		if(_powered)
+			_onPowered.Invoke();
 	}
 
 	public bool Powered(){

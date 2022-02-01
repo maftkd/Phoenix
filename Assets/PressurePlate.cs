@@ -112,16 +112,30 @@ public class PressurePlate : MonoBehaviour
 	}
 
 	bool HitsAbove(int numHits){
+		Debug.Log("checking "+numHits+" hits");
 		for(int i=0; i<numHits; i++){
 			Collider c = _cols[i];
-			if(c.transform.position.y<_button.position.y+_box.size.y)
+			if(c.transform.position.y+0.001f<_button.position.y+_box.size.y)
+			{
+				float diff = _button.position.y+_box.size.y-c.transform.position.y;
+				Debug.Log("a by "+diff);
 				return false;
+			}
 			if(Mathf.Abs(c.transform.position.x-_button.position.x)>_halfExtents.x)
+			{
+				Debug.Log("b");
 				return false;
+			}
 			if(Mathf.Abs(c.transform.position.z-_button.position.z)>_halfExtents.z)
+			{
+				Debug.Log("c");
 				return false;
+			}
 			if(_player.GoingUp())
+			{
+				Debug.Log("d");
 				return false;
+			}
 		}
 		return true;
 	}
@@ -139,7 +153,8 @@ public class PressurePlate : MonoBehaviour
 	void UpdateWires(){
 		foreach(Circuit c in _circuits){
 			c.Power(_powered);
-			_cable.SetPower(_powered? 1f : 0f);
+			if(_cable!=null)
+				_cable.SetPower(_powered? 1f : 0f);
 		}
 	}
 

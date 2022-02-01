@@ -73,6 +73,10 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	public virtual void PuzzleSolved(){
+		//#temp - may need better way to track solved states of puzzles
+		//ignore puzzle solved if already solved - aka surround cam disabled
+		if(!_surroundCam.enabled)
+			return;
 		_onSolved.Invoke();
 		_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
