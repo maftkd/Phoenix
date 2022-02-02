@@ -50,14 +50,8 @@ MonoBehaviour:
   _phi: 0.1
   _radius: 0.7
   _positionLerp: 2
-  _diffLerp: 2
-  _diffMult: 0
-  _thetaOffsetGravity: 1
-  _maxThetaOffset: 3.14
-  _phiMult: 0.25
-  _trackLerp: 5
-  _trackRotLerp: 1
-  _invertY: 1
+  _diffLerp: 3
+  _controlLerp: 0
   _state: 0
   _cameraSlide: {x: 0, y: 0.2, z: 0}
   _colLerp: 10

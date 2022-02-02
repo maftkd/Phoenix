@@ -809,7 +809,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _activateOnAwake: 0
-  _puzzleId: 2-2
+  _puzzleId: 2-3
   _unlockBird: {fileID: 0}
   _feeder: {fileID: 6154101623139285960}
   _liftDelay: 0.5

@@ -69,6 +69,8 @@ public class Bird : MonoBehaviour
 	public float _maxSpeed;
 	public float _flapDur;
 
+	Bird[] _birds;
+
 	void Awake(){
 		//calculations
 		_smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -89,6 +91,7 @@ public class Bird : MonoBehaviour
 		_mCam = GameManager._mCam;
 		_mIn = GameManager._mIn;
 		_cols = new Collider[3];
+		_birds = FindObjectsOfType<Bird>();
 
 		//disable things
 		_hop.enabled=false;
@@ -244,7 +247,17 @@ public class Bird : MonoBehaviour
 		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
 		if(_playerControlled)
 		{
-			//if there is a bird around - mate that bad boy
+			//find existing mate
+			foreach(Bird b in _birds)
+			{
+				if(b._mate==this){
+					Vector3 diff=b.transform.position-transform.position;
+					diff.y=0;
+					b.FlyTo(transform.position+diff.normalized*_summonDist);
+					return;
+				}
+			}
+			//find new mate
 			if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
 				Bird b = _cols[0].GetComponent<Bird>();
 				//b.ComeTo(transform);
@@ -405,6 +418,7 @@ public class Bird : MonoBehaviour
 				break;
 			case 2://hopping
 				ch.Sound(_hopKnockVolume);
+				Debug.Log("Knock back hop");
 				_hop.KnockBack(dir);
 				break;
 			case 3://flying
@@ -430,6 +444,10 @@ public class Bird : MonoBehaviour
 
 	public bool GoingUp(){
 		return _vel.y>0;
+	}
+
+	public Vector3 GetVelocity(){
+		return _vel/Time.deltaTime;
 	}
 
 	public float GetVel(){
@@ -521,13 +539,11 @@ public class Bird : MonoBehaviour
 	}
 
 	public Vector3 GetCamTarget(){
-		/*
 		if(_state==2)
 			return _hop.GetCamTarget();
 		else
 			return transform.position;
-			*/
-		return transform.position;
+		//return transform.position;
 	}
 
 	public void CallToMate(){

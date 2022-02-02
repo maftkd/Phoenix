@@ -19,15 +19,6 @@ public class Hunger : MonoBehaviour
 
 	void OnEnable(){
 		Debug.Log("Time to nom!");
-		/*
-		//teleport to first seed
-		int seeds = Physics.OverlapSphereNonAlloc(_bird._mate.transform.position,1f,_cols,_foodMask);
-		Debug.Log("Found "+seeds+" seeds");
-		int startSeed=Random.Range(0,seeds);
-		Transform seed = _cols[startSeed].transform;
-		transform.position=seed.position+Vector3.down*0.07f;
-		*/
-		//StartCoroutine(GoToNextSeed());
 		Transform seed = FindRandomSeed();
 		FlyToSeed(seed);
 	}
@@ -54,7 +45,6 @@ public class Hunger : MonoBehaviour
 		{
 			yield return null;
 			enabled=false;
-			//_bird.GrandExit();
 			Debug.Log("Done snacking");
 			_bird.FlyToNextPuzzle();
 
@@ -62,7 +52,7 @@ public class Hunger : MonoBehaviour
 	}
 
 	Transform FindRandomSeed(){
-		int seeds = Physics.OverlapSphereNonAlloc(_bird._mate.transform.position,2f,_cols,_foodMask);
+		int seeds = Physics.OverlapSphereNonAlloc(_bird.transform.position,2f,_cols,_foodMask);
 		if(seeds>0)
 			return _cols[Random.Range(0,seeds)].transform;
 		else

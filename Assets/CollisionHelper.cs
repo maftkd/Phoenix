@@ -77,7 +77,10 @@ public class CollisionHelper : MonoBehaviour
 				other.transform.position=curPos;
 			}
 			else
+			{
+				Debug.Log("Multiple knockbacks");
 				other.GetComponent<Bird>().KnockBack(this,_hitNormal.normalized,_supressHitFx,_supressNpcKnockback);
+			}
 		}
 	}
 

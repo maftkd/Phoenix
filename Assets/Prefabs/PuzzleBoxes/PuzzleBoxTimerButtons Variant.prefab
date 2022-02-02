@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 1872416692107663976, guid: c98973663f7f5f24ba0f5ea8a9a5874d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1872416692107663976, guid: c98973663f7f5f24ba0f5ea8a9a5874d,
         type: 3}
@@ -124,7 +124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1733156540, guid: 112f5d0295f666c498010746844d4435, type: 3}
       propertyPath: _puzzleId
-      value: 2-3
+      value: 2-4
       objectReference: {fileID: 0}
     - target: {fileID: 1733156540, guid: 112f5d0295f666c498010746844d4435, type: 3}
       propertyPath: _onSolved.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -141,7 +141,7 @@ PrefabInstance:
     - target: {fileID: 454542492555470865, guid: 112f5d0295f666c498010746844d4435,
         type: 3}
       propertyPath: m_Name
-      value: PuzzleBoxTimerButtons
+      value: PuzzleBoxTimerButtons Variant
       objectReference: {fileID: 0}
     - target: {fileID: 2161460583415413483, guid: 112f5d0295f666c498010746844d4435,
         type: 3}

@@ -144,7 +144,7 @@ public class Hop : MonoBehaviour
 			transform.position+=airControl;
 
 			//hop boost
-			if(_hopTimer<_hopBoostWindow&&(_mIn.GetJump()||_npc)){
+			if(_hopTimer<_hopBoostWindow&&(_mIn.GetJump()||_npc)&&_velocity>0){
 				_velocity+=Time.deltaTime*_hopBoost;
 			}
 			if(_mIn.GetJumpUp())
@@ -220,11 +220,18 @@ public class Hop : MonoBehaviour
 	public void KnockBack(Vector3 dir){
 		_anim.SetFloat("hopTime",-1f/_hopTime);
 		_knockBack=true;
-		_input=Vector3.Reflect(_input,dir)*_knockBackMult;
-		float dot = Vector3.Dot(dir,Vector3.down);
+		Vector3 reflected = Vector3.Reflect(_input,dir)*_knockBackMult;
+		//make sure reflected is more than 90 degrees away from original
+		float dot = Vector3.Dot(_input.normalized,reflected.normalized);
+		if(dot>0)
+			_input=-_input*_knockBackMult;
+		else
+			_input=reflected;
+		dot = Vector3.Dot(dir,Vector3.down);
 		if(dot>=_dotToKillVert){
 			_velocity=0;
 		}
+		//Debug.Break();
 	}
 
 	void CompleteHop(Transform ground){
@@ -280,6 +287,8 @@ public class Hop : MonoBehaviour
 
 
 	void OnDrawGizmos(){
+		Gizmos.color=Color.green;
+		Gizmos.DrawLine(transform.position,transform.position+_input.normalized);
 		/*
 		Gizmos.color=Color.green;
 		Gizmos.DrawSphere(_hopStart,0.05f);

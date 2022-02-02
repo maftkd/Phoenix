@@ -372,7 +372,7 @@ PrefabInstance:
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
       propertyPath: _puzzleId
-      value: 2-1
+      value: 2-2
       objectReference: {fileID: 0}
     - target: {fileID: 1964930542043818369, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
@@ -747,7 +747,7 @@ PrefabInstance:
     - target: {fileID: 6567483864263378432, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6911727765603073583, guid: 35fceb961da07cb4eb690edd40323047,
         type: 3}

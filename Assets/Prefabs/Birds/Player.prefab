@@ -674,7 +674,7 @@ MonoBehaviour:
   _hopCancelWindow: 0.1
   _minDotToHop: 0.5
   _footOffset: 0.015
-  _hopBoostWindow: 1
+  _hopBoostWindow: 0.5
   _hopBoost: 3.5
   _divePitchMult: 0.25
   _knockBackMult: 0.5
@@ -787,7 +787,7 @@ MonoBehaviour:
   _peckChance: 0
   _flySpeed: 0
   _maxSpeed: 0
-  _flapSound: {fileID: 0}
+  _flapDur: 0
 --- !u!1 &1792526787315343659
 GameObject:
   m_ObjectHideFlags: 0

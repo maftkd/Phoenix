@@ -70,7 +70,7 @@ public class PuzzleBox : MonoBehaviour
 
 	public virtual void SolveSilent(){
 		_onSolved.Invoke();
-		//_surroundCam.enabled=false;
+		_surroundCam.enabled=false;
 		_solved=true;
 		_guideLine.SetActive(false);
 		Destroy(_forceField.gameObject);
@@ -82,7 +82,7 @@ public class PuzzleBox : MonoBehaviour
 			return;
 		_onSolved.Invoke();
 		_solved=true;
-		//_surroundCam.enabled=false;
+		_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
 		//Destroy(_forceField.gameObject);
 		if(_effects!=null)
@@ -125,7 +125,7 @@ public class PuzzleBox : MonoBehaviour
 
 	public virtual void Activate(){
 		_onActivated.Invoke();
-		_surroundCam.enabled=true;
+		//_surroundCam.enabled=true;
 		_forceField.Deactivate();
 		_latestPuzzle=this;
 	}

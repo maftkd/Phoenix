@@ -12,16 +12,20 @@ public class MCamera : MonoBehaviour
 	public float _radius;
 	public float _positionLerp;
 	float _diff;
-	public float _diffLerp;
-	public float _thetaOffsetGravity;
-	public float _maxThetaOffset;
-	public float _phiMult;
-	public float _trackLerp;
-	public float _trackRotLerp;
+	float _diffLerp;
+	
+	public float _minDiffLerp;
+	public float _maxDiffLerp;
+	public float _minDiff;
+	public float _maxDiff;
+	[Tooltip("The rate at which control vector approaches raw input")]
+	public float _controlLerp;
+	[Tooltip("The minimum control vector before grounding diff to 0")]
+	public float _minControl;
+	public float _minVel;
 	Vector3 _playerPrevPos;
 	MInput _mIn;
 	Vector3 _playerTarget;
-	public bool _invertY;
 	public int _state;
 	Transform _camTarget;
 	Vector3 _targetPos;
@@ -60,12 +64,13 @@ public class MCamera : MonoBehaviour
     }
 
 	//#temp - maybe move these
-	float theta;
+	float _thetaTarget;
 	Vector3 _playerPos;
 	Vector3 vel;
 	Vector2 _mouseIn;
 	Vector3 _controlIn;
 	Vector3 _prevControlIn;
+	Vector3 _controlSmoothed;
     // Update is called once per frame
     void Update()
     {
@@ -104,19 +109,42 @@ public class MCamera : MonoBehaviour
 		switch(_state){
 			case 0:
 			default://regular cam
-				vel = _player.forward;
-				theta = CalcNextTheta(-vel);
-				//_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
+				//vel = _player.forward;
+				vel=_bird.GetVelocity();
+				if(vel.sqrMagnitude<=_minVel)
+					vel=_player.forward;
+				_thetaTarget = CalcNextTheta(-vel);
 				break;
 			case 1://surround
 				Vector3 diff = _playerPos-_camTarget.position;
-				theta = CalcNextTheta(diff);
-				//_phi+=(_invertY?-1f : 1f )*mouseIn.y*_phiMult;
+				_thetaTarget = CalcNextTheta(diff);
 				break;
 		}
-		float d = theta-_theta;
-		_diff=Mathf.Lerp(_diff,d,Time.deltaTime*_diffLerp);
-		_theta+=_diff*Time.deltaTime*_controlIn.magnitude;//_bird.GetVel();
+		float diffTargetActual = _thetaTarget-_theta;
+
+		//allow faster turns while moving
+		if(_controlIn.sqrMagnitude>_controlSmoothed.sqrMagnitude)
+			_controlSmoothed=_controlIn;
+		//when moving less, smoothly adjust control 
+		else
+		{
+			_controlSmoothed=Vector3.Lerp(_controlSmoothed,_controlIn,Time.deltaTime*_controlLerp);
+			if(_controlSmoothed.sqrMagnitude<_minControl*_minControl)
+			{
+				_controlSmoothed=Vector3.zero;
+				//force diff to 0 if control is grounded
+				_diff=0;
+				diffTargetActual=0;
+			}
+		}
+
+		//calc diff
+		_diffLerp=Mathf.Lerp(_maxDiffLerp,_minDiffLerp,Mathf.InverseLerp(_minDiff,_maxDiff,Mathf.Abs(diffTargetActual)));
+		_diff=Mathf.Lerp(_diff,diffTargetActual,Time.deltaTime*_diffLerp);
+		DebugScreen.Print(_diff,0);
+
+		//rotate
+		_theta+=_diff*Time.deltaTime*_controlSmoothed.magnitude;//_bird.GetVel();
 		//theta offset
 		_theta+=-_mouseIn.x;
 
@@ -147,6 +175,8 @@ public class MCamera : MonoBehaviour
 		//_thetaOffset=0;
 		_letterBox.SetActive(false);
 		_mIn.LockInput(false);
+		_controlSmoothed=Vector3.zero;
+		_diff=0;
 		//_rotationLerp=_minRotationLerp;
 	}
 
