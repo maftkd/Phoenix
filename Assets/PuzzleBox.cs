@@ -28,6 +28,7 @@ public class PuzzleBox : MonoBehaviour
 	public Feeder _feeder;
 	public float _liftDelay;
 	public static PuzzleBox _latestPuzzle;
+	bool _solved;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
@@ -35,11 +36,14 @@ public class PuzzleBox : MonoBehaviour
 		_guideLine=transform.Find("GuideLine").gameObject;
 		_mCam=GameManager._mCam;
 		_mIn=GameManager._mIn;
-		_forceField=transform.GetComponentInChildren<ForceField>();
+		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
+
 		if(_activateOnAwake)
 			Activate();
 		else
+		{
 			_forceField.Activate();
+		}
 
 		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
 		label.GetComponent<Text>().text=_puzzleId;
@@ -66,21 +70,21 @@ public class PuzzleBox : MonoBehaviour
 
 	public virtual void SolveSilent(){
 		_onSolved.Invoke();
-		_surroundCam.enabled=false;
+		//_surroundCam.enabled=false;
+		_solved=true;
 		_guideLine.SetActive(false);
 		Destroy(_forceField.gameObject);
 		GameManager._instance.PuzzleSolved(this);
 	}
 
 	public virtual void PuzzleSolved(){
-		//#temp - may need better way to track solved states of puzzles
-		//ignore puzzle solved if already solved - aka surround cam disabled
-		if(!_surroundCam.enabled)
+		if(_solved)
 			return;
 		_onSolved.Invoke();
-		_surroundCam.enabled=false;
+		_solved=true;
+		//_surroundCam.enabled=false;
 		_guideLine.SetActive(false);
-		Destroy(_forceField.gameObject);
+		//Destroy(_forceField.gameObject);
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
 		StartCoroutine(OpenBox());

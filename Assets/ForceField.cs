@@ -38,6 +38,7 @@ public class ForceField : MonoBehaviour
 	}
 
 	public void Activate(){
+		gameObject.SetActive(true);
 		if(_mat==null)
 			_mat=GetComponent<MeshRenderer>().material;
 		_mat.SetFloat("_VCut",1f);

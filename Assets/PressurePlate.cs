@@ -117,23 +117,18 @@ public class PressurePlate : MonoBehaviour
 			Collider c = _cols[i];
 			if(c.transform.position.y+0.001f<_button.position.y+_box.size.y)
 			{
-				float diff = _button.position.y+_box.size.y-c.transform.position.y;
-				Debug.Log("a by "+diff);
 				return false;
 			}
 			if(Mathf.Abs(c.transform.position.x-_button.position.x)>_halfExtents.x)
 			{
-				Debug.Log("b");
 				return false;
 			}
 			if(Mathf.Abs(c.transform.position.z-_button.position.z)>_halfExtents.z)
 			{
-				Debug.Log("c");
 				return false;
 			}
 			if(_player.GoingUp())
 			{
-				Debug.Log("d");
 				return false;
 			}
 		}

@@ -25,6 +25,7 @@ public class BirdSimple : MonoBehaviour
 	public AudioClip _flapSound;
 	public float _flapPeriod;
 	public float _flapVol;
+	public Transform _flapParts;
 
 	void Awake(){
 		//randomly offset update timer
@@ -124,6 +125,8 @@ public class BirdSimple : MonoBehaviour
 		float delay=Random.value*_flapPeriod;
 		yield return new WaitForSeconds(delay);
 		_anim.SetTrigger("flyLoop");
+		Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(0.8f,1.2f),_flapVol);
+		Instantiate(_flapParts,transform.position+_size.y*Vector3.up,Quaternion.identity);
 
 		transform.forward=dir;
 
@@ -138,6 +141,7 @@ public class BirdSimple : MonoBehaviour
 			flapTimer+=Time.deltaTime;
 			if(flapTimer>=_flapPeriod){
 				Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(0.8f,1.2f),_flapVol);
+				Instantiate(_flapParts,transform.position+_size.y*Vector3.up,Quaternion.identity);
 				flapTimer=0;
 			}
 			transform.position+=dir*Time.deltaTime*_flySpeed;
