@@ -14,6 +14,7 @@ public class Feeder : MonoBehaviour
 	Material _mat;
 	public float _liftDur;
 	public AudioClip _gearsAudio;
+	public float _gearSpeed;
 
 	void Awake(){
 		_mat=GetComponent<MeshRenderer>().material;
@@ -40,9 +41,15 @@ public class Feeder : MonoBehaviour
 		float timer=0;
 		float mouthStart=_mat.GetFloat("_OpenAmount");
 		float mouthEnd=1f;
+		Transform gearLeft=transform.parent.GetChild(1);
+		Transform gearRight=transform.parent.GetChild(2);
+
 		while(timer<_liftDur){
 			timer+=Time.deltaTime;
 			_mat.SetFloat("_OpenAmount", Mathf.Lerp(mouthStart,mouthEnd,timer/_liftDur));
+			gearLeft.Rotate(Vector3.up*Time.deltaTime*_gearSpeed);
+			gearRight.Rotate(Vector3.up*Time.deltaTime*_gearSpeed);
+
 			yield return null;
 		}
 		Debug.Log("Time to roll out the seeds");

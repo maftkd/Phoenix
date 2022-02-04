@@ -1,0 +1,4 @@
+this file is for documenting changes to script execution order
+GameManager - this is first because many other scripts obtain references to game manager on awake.
+Bird - unknown, maybe we should figure out if this is really neccessary
+Cable - Cable needs to initialize and set up its points before puzzle box makes a call to fill the cable

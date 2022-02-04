@@ -272,8 +272,7 @@ MonoBehaviour:
   _activateOnAwake: 0
   _puzzleId: 1-1
   _unlockBird: {fileID: 0}
-  _feeder: {fileID: 6104888149589483772}
-  _liftDelay: 0.5
+  _liftDelay: 0
 --- !u!1 &774595476639266567
 GameObject:
   m_ObjectHideFlags: 0
@@ -1199,18 +1198,6 @@ PrefabInstance:
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08532e3f51afd0b4f8defe82a22f5085, type: 3}
---- !u!114 &6104888149589483772 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2884775889709578477, guid: 08532e3f51afd0b4f8defe82a22f5085,
-    type: 3}
-  m_PrefabInstance: {fileID: 8984719801771743249}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfa3551f5601e074e8506c958f917984, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &545483396630721317 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8872602865916046132, guid: 08532e3f51afd0b4f8defe82a22f5085,

@@ -32,8 +32,16 @@ public class Cable : MonoBehaviour
 		Init();
 	}
 
+	[ContextMenu("Show Handles")]
+	public void ShowHandles(){
+		foreach(Transform t in _controlPoints){
+			t.GetComponent<MeshRenderer>().enabled=true;
+		}
+	}
+
 	void Init(){
 		_meshR = GetComponent<MeshRenderer>();
+		_meshF = GetComponent<MeshFilter>();
 		_points = new List<Vector3>();
 		_groundPoints = new List<Vector3>();
 		_rots = new List<Quaternion>();
@@ -177,7 +185,6 @@ public class Cable : MonoBehaviour
 			m.normals = norms;
 			m.uv=uvs;
 			m.RecalculateBounds();
-			_meshF = GetComponent<MeshFilter>();
 			_meshF.sharedMesh=m;
 		}
     }
@@ -200,6 +207,21 @@ public class Cable : MonoBehaviour
 		_meshR.material.SetFloat("_PowerFill",v);
 		if(v>0)
 			Sfx.PlayOneShot2D(_powerClip,Random.Range(0.8f,1.2f),_powerVol);
+	}
+
+	public void FillNearPosition(Vector3 pos){
+		float minSqrDist=1000;
+		int minIndex=-1;
+		Vector3[] verts = _meshF.sharedMesh.vertices;
+		for(int i=0; i<verts.Length; i++){
+			float sqrDist = (verts[i]-pos).sqrMagnitude;
+			if(sqrDist<minSqrDist){
+				minSqrDist=sqrDist;
+				minIndex=i;
+			}
+		}
+		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
+		SetPower(fillAmount);
 	}
 
 	void OnDrawGizmos(){

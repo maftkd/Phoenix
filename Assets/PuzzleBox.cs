@@ -25,10 +25,11 @@ public class PuzzleBox : MonoBehaviour
 	ForceField _forceField;
 	public string _puzzleId;
 	public Bird _unlockBird;
-	public Feeder _feeder;
+	Feeder _feeder;
 	public float _liftDelay;
 	public static PuzzleBox _latestPuzzle;
 	bool _solved;
+	public Cable _cable;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
@@ -37,6 +38,7 @@ public class PuzzleBox : MonoBehaviour
 		_mCam=GameManager._mCam;
 		_mIn=GameManager._mIn;
 		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
+		_feeder=transform.GetComponentInChildren<Feeder>();
 
 		if(_activateOnAwake)
 			Activate();
@@ -128,6 +130,8 @@ public class PuzzleBox : MonoBehaviour
 		//_surroundCam.enabled=true;
 		_forceField.Deactivate();
 		_latestPuzzle=this;
+
+		_cable.FillNearPosition(transform.position);
 	}
 
 	public Transform GetPerch(){
