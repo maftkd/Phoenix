@@ -71,6 +71,9 @@ public class Bird : MonoBehaviour
 
 	Bird[] _birds;
 
+	public Transform _band;
+	public Color _bandColor;
+
 	void Awake(){
 		//calculations
 		_smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -98,6 +101,9 @@ public class Bird : MonoBehaviour
 		_fly.enabled=false;
 
 		_lastSpot=transform.position;
+
+		//band
+		_band.GetComponent<MeshRenderer>().material.SetColor("_Color",_bandColor);
 
 		_state=0;
 		Ground();
@@ -524,9 +530,15 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 		_state=0;
 		RaycastHit hit;
+		if(Physics.SphereCast(transform.position+_size.y*Vector3.up,0.1f,Vector3.down, out hit, 1f, _collisionLayer))
+			transform.position=hit.point;
+		/*
 		if(Physics.Raycast(transform.position+_size.y*Vector3.up,Vector3.down, out hit,1f,_collisionLayer)){
+			if(Mathf.Abs(hit.point.y-transform.position.y)>0.25f)
+				Debug.Log("Oh snap");
 			transform.position=hit.point;
 		}
+		*/
 	}
 
 	public void RunAwayNextPath(){

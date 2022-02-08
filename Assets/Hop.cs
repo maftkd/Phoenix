@@ -50,6 +50,17 @@ public class Hop : MonoBehaviour
 	public bool _npc;
 	Vector3 _npcInput;
 
+	//squash and stretch
+	Vector3 _defaultScale;
+	public float _squashMult;
+	Vector3 _squashScale;
+	public float _stretchMult;
+	Vector3 _stretchScale;
+	//and rotate
+	public float _leanAngle;
+	float _defaultAngle;
+	Transform _mesh;
+
 	void Awake(){
 		_cols = new Collider[2];
 		_camTarget=transform.position;
@@ -61,6 +72,13 @@ public class Hop : MonoBehaviour
 		_input=Vector3.zero;
 		_soarAudio=transform.Find("SoarParticles").GetComponent<AudioSource>();
 		_hopAudio=transform.Find("JumpSound").GetComponent<AudioSource>();
+		_defaultScale=transform.localScale;
+		_squashScale=_defaultScale;
+		_squashScale.y*=_squashMult;
+		_stretchScale=_defaultScale;
+		_stretchScale.y*=_stretchMult;
+		_mesh=transform.GetChild(0);
+		_defaultAngle=_mesh.localEulerAngles.y;
 	}
 
 	void OnEnable(){
@@ -76,6 +94,7 @@ public class Hop : MonoBehaviour
 	}
 
 	void OnDisable(){
+		transform.localScale=_defaultScale;
 	}
 
     // Start is called before the first frame update
@@ -157,6 +176,13 @@ public class Hop : MonoBehaviour
 			if(_camTarget.y>_hopStartPos.y)
 				_camTarget.y=_hopStartY;
 
+			//squash and stretch
+			float lerpy = Mathf.Abs(_velocity/(_hopAccel*2));
+			lerpy = Mathf.Clamp01(lerpy);
+			transform.localScale=Vector3.Lerp(_squashScale,_stretchScale,lerpy);
+			//Vector3 eulers=_mesh.localEulerAngles;
+			//eulers.y=Mathf.Lerp(_leanAngle,_defaultAngle,lerpy);
+			//_mesh.localEulerAngles=eulers;
 
 			//hit detection
 			Vector3 posDelta=transform.position-startPos;
@@ -266,6 +292,11 @@ public class Hop : MonoBehaviour
 		if(_knockBack){
 			_bird.ShakeItOff();
 		}
+
+		transform.localScale=_defaultScale;
+		Vector3 eulers=_mesh.localEulerAngles;
+		eulers.y=_defaultAngle;
+		_mesh.localEulerAngles=eulers;
 	}
 
 	void StartHop(){

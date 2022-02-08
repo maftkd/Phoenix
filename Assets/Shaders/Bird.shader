@@ -3,12 +3,14 @@
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
-		_ColorX ("Color X", Color) = (0,0,0,0)
+		_ColorB ("Color B", Color) = (0,0,0,0)
+		_ColorC ("Color C", Color) = (0,0,0,0)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
 		_OutlineThickness ("Outline thickness",Float) = 0.001
 		_RimColor ("Outline color", Color) = (1,1,1,1)
+		_Shiney ("Shiney vec", Vector) = (0,1,1,1)
     }
     SubShader
     {
@@ -17,7 +19,7 @@
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf Standard fullforwardshadows
+        #pragma surface surf Standard fullforwardshadows vertex:vert
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
@@ -27,13 +29,23 @@
         struct Input
         {
             float2 uv_MainTex;
+			float3 worldNormal;
+			float3 viewDir;
+			float3 localPos;
         };
+
+		void vert (inout appdata_full v, out Input o) {
+			UNITY_INITIALIZE_OUTPUT(Input,o);
+			o.localPos = v.vertex.xyz;
+		}
 
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
-		fixed3 _ColorX;
+		fixed4 _ColorB;
+		fixed4 _ColorC;
 		fixed4 _RimColor;
+		fixed4 _Shiney;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -46,12 +58,11 @@
         {
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
-			//fixed4 c = fixed4(IN.uv_MainTex,0,1);
-			//fixed4 c = IN.uv_MainTex.y*_Color+IN.uv_MainTex.x*fixed4(_ColorX,0);
-			//fixed uv = tex2D (_MainTex, IN.uv_MainTex).y;
-            //o.Albedo = d*_RimColor+(1-d)*c.rgb;
-			o.Albedo=c.rgb;
-            // Metallic and smoothness come from slider variables
+			fixed dt = abs(dot(IN.viewDir,_WorldSpaceLightPos0.xyz));
+			fixed4 col = lerp(lerp(_Color,_ColorB,dt*2),_ColorC,dt*2-1);
+			fixed shiney = smoothstep(_Shiney.x,_Shiney.y,dot(IN.viewDir,IN.worldNormal));
+			o.Albedo=lerp(c.rgb,col.rgb,shiney);
+
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;

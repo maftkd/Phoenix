@@ -84,7 +84,16 @@ public class Flock : MonoBehaviour
 			case FlockMode.FLY_OVER:
 				break;
 			case FlockMode.FORAGE:
+				bool flyAway=false;
 				if(_player.IsPlayerInRange(_centerTransform,_outerRadius)){
+					foreach(Transform t in _birds)
+					{
+						if(_player.IsPlayerInRange(t,0.1f)){
+							flyAway=true;
+						}
+					}
+				}
+				if(flyAway){
 					foreach(Transform t in _birds)
 					{
 						Vector3 flyDir=new Vector3(Random.value,0.5f,Random.value);

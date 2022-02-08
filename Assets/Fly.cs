@@ -122,52 +122,6 @@ public class Fly : MonoBehaviour
 			_diving=!_mIn.GetJump();
 		}
 
-		/*
-		if(Input.GetButton("Jump")){
-			if(_flapTimer<_flapDur){
-				if(_knockBackTimer<=0)
-					_velocity.y+=_curFlapAccel.y*Time.deltaTime*_flapHoldBoost;
-				_flapTimer+=Time.deltaTime;
-				if(_flapTimer>=_flapDur){
-					//soar
-					_anim.SetTrigger("soar");
-					Soar(true);
-				}
-			}
-		}
-		if(Input.GetButtonUp("Jump")){
-			_flapTimer=_flapDur;
-			//soar
-			_anim.SetTrigger("soar");
-			Soar(true);
-		}
-		*/
-
-		//dive
-		/*
-		if(Input.GetButtonDown("Dive")){
-			Debug.Log("Dive time");
-			_flapTimer=_flapDur;
-			_anim.ResetTrigger("soar");
-			_anim.SetTrigger("dive");
-			Soar(false);
-			_diving=true;
-			_soarAudio.pitch=_divePitch;
-			_soarAudio.volume=_diveVolume;
-			_soarAudio.Play();
-		}
-		if(Input.GetButton("Dive")){
-			_velocity.y-=_airControl.y*Time.deltaTime;
-		}
-		if(Input.GetButtonUp("Dive")){
-			//back to soaring
-			_anim.SetTrigger("soar");
-			Soar(true);
-			_diving=false;
-		}
-		*/
-
-		
 		//add air control
 		Vector3 input=_mIn.GetControllerInput();
 
@@ -217,8 +171,10 @@ public class Fly : MonoBehaviour
 			Vector3 eulerAngles=transform.eulerAngles;
 			eulerAngles.z=rollAngle;
 			float targetPitch=0;
+			/*
 			if(_diving)
 				targetPitch=-Mathf.Atan2(_velocity.y,flatVel.magnitude)*Mathf.Rad2Deg;
+				*/
 			eulerAngles.x=targetPitch;
 			transform.eulerAngles=eulerAngles;
 

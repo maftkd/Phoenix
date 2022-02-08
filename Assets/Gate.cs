@@ -15,6 +15,9 @@ public class Gate : MonoBehaviour
 	public float _chargeDur;
 	float _chargeTimer;
 
+	public Transform _sparks;
+	public AudioClip _sparkClip;
+
 	void Awake(){
 		foreach(Circuit c in _inputs){
 			c._powerChange+=CheckGate;
@@ -83,8 +86,21 @@ public class Gate : MonoBehaviour
 			//charger gate stays active
 			//default gate goes to sleep after power
 			if(_chargeDur==0)
+			{
 				enabled=false;
+				MakeSparks();
+			}
 			_onGateActivated.Invoke();
 		}
+	}
+
+	void MakeSparks(){
+		Transform sparks = Instantiate(_sparks,transform);
+		sparks.SetParent(null);
+		Vector3 eulers=sparks.eulerAngles;
+		eulers.z=0;
+		sparks.eulerAngles=eulers;
+		sparks.localScale=Vector3.one;
+		Sfx.PlayOneShot3D(_sparkClip,transform.position);
 	}
 }
