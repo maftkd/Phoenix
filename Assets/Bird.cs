@@ -28,6 +28,7 @@ public class Bird : MonoBehaviour
 	[Header("Call")]
 	public Transform _callEffects;
 	public Vector2 _callPitchRange;
+	public AudioClip _call;
 	public LayerMask _collisionLayer;
 	public LayerMask _birdLayer;
 	public float _controllerZero;
@@ -73,6 +74,7 @@ public class Bird : MonoBehaviour
 
 	public Transform _band;
 	public Color _bandColor;
+	Bird _player;
 
 	void Awake(){
 		//calculations
@@ -104,6 +106,8 @@ public class Bird : MonoBehaviour
 
 		//band
 		_band.GetComponent<MeshRenderer>().material.SetColor("_Color",_bandColor);
+
+		_player=GameManager._player;
 
 		_state=0;
 		Ground();
@@ -250,13 +254,16 @@ public class Bird : MonoBehaviour
 		//_anim.SetTrigger("sing");
 		Transform call = Instantiate(_callEffects,transform.position+Vector3.up*_size.y,Quaternion.identity);
 		AudioSource source = call.GetComponent<AudioSource>();
+		source.clip=_call;
 		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
+		source.Play();
 		if(_playerControlled)
 		{
 			//find existing mate
 			foreach(Bird b in _birds)
 			{
-				if(b._mate==this){
+				if(b!=null&&b._mate==this){
+					//only fly to a spot if it is within current puzzle bounds
 					Vector3 diff=b.transform.position-transform.position;
 					diff.y=0;
 					b.FlyTo(transform.position+diff.normalized*_summonDist);
@@ -277,6 +284,10 @@ public class Bird : MonoBehaviour
 		else{
 			_anim.SetTrigger("sing");
 		}
+	}
+
+	public void CopyCall(Bird other){
+		_call=other._call;
 	}
 
 	public void ComeTo(Transform t){
@@ -530,15 +541,16 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 		_state=0;
 		RaycastHit hit;
-		if(Physics.SphereCast(transform.position+_size.y*Vector3.up,0.1f,Vector3.down, out hit, 1f, _collisionLayer))
-			transform.position=hit.point;
 		/*
+		if(Physics.SphereCast(transform.position+_size.y*Vector3.up,0.05f,Vector3.down, out hit, 1f, _collisionLayer))
+			transform.position=hit.point;
+			*/
 		if(Physics.Raycast(transform.position+_size.y*Vector3.up,Vector3.down, out hit,1f,_collisionLayer)){
 			if(Mathf.Abs(hit.point.y-transform.position.y)>0.25f)
 				Debug.Log("Oh snap");
-			transform.position=hit.point;
+			else
+				transform.position=hit.point;
 		}
-		*/
 	}
 
 	public void RunAwayNextPath(){

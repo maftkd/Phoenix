@@ -25,6 +25,8 @@ public class PressurePlate : MonoBehaviour
 
 	public bool _isToggle;
 
+	Material _mat;
+
 	void Awake(){
 		_cols=new Collider[3];
 		_button=transform.GetChild(0);
@@ -33,6 +35,7 @@ public class PressurePlate : MonoBehaviour
 		_halfExtents=_box.size*0.5f;
 		_halfExtents.y=_hitBoxY;
 		_player = GameManager._player;
+		_mat=_button.GetComponent<MeshRenderer>().material;
 	}
 
     // Start is called before the first frame update
@@ -146,6 +149,7 @@ public class PressurePlate : MonoBehaviour
 	}
 
 	void UpdateWires(){
+		_mat.SetColor("_EmissionColor", _powered? Color.red : Color.black);
 		foreach(Circuit c in _circuits){
 			c.Power(_powered);
 			if(_cable!=null)

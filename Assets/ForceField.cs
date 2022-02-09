@@ -44,4 +44,8 @@ public class ForceField : MonoBehaviour
 		_mat.SetFloat("_VCut",1f);
 		GetComponent<SphereCollider>().enabled=true;
 	}
+
+	public void SetColor(Color c){
+		_mat.SetColor("_Color",c);
+	}
 }

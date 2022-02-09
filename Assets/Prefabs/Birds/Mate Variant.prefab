@@ -124,6 +124,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1820936649275779884, guid: 243d99ceabd103b46884074f0d8fbdda,
         type: 3}
+      propertyPath: _call
+      value: 
+      objectReference: {fileID: 8300000, guid: 15eb67c4de828884da65709ea4b506f9, type: 3}
+    - target: {fileID: 1820936649275779884, guid: 243d99ceabd103b46884074f0d8fbdda,
+        type: 3}
       propertyPath: _mate
       value: 
       objectReference: {fileID: 0}

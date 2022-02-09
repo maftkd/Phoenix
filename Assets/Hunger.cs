@@ -46,9 +46,14 @@ public class Hunger : MonoBehaviour
 			yield return null;
 			enabled=false;
 			Debug.Log("Done snacking");
-			_bird.FlyToNextPuzzle();
-
+			_bird.FlyTo(transform.position+new Vector3(1,1,1)*3f);
+			_bird._mate=null;
+			_bird._onDoneFlying+=DoneFlying;
 		}
+	}
+
+	public void DoneFlying(){
+		Destroy(gameObject);
 	}
 
 	Transform FindRandomSeed(){

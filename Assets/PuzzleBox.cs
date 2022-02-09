@@ -30,6 +30,8 @@ public class PuzzleBox : MonoBehaviour
 	public static PuzzleBox _latestPuzzle;
 	bool _solved;
 	public Cable _cable;
+	Bird _player;
+	Transform _box;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
@@ -38,7 +40,9 @@ public class PuzzleBox : MonoBehaviour
 		_mCam=GameManager._mCam;
 		_mIn=GameManager._mIn;
 		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
+		_box=transform.GetChild(0);
 		_feeder=transform.GetComponentInChildren<Feeder>();
+		_player=GameManager._player;
 
 		if(_activateOnAwake)
 			Activate();
@@ -46,6 +50,7 @@ public class PuzzleBox : MonoBehaviour
 		{
 			_forceField.Activate();
 		}
+		_forceField.SetColor(_box.GetComponent<MeshRenderer>().material.color);
 
 		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
 		label.GetComponent<Text>().text=_puzzleId;
@@ -68,6 +73,11 @@ public class PuzzleBox : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
+		if(_unlockBird!=null && _player.IsPlayerInRange(transform,_surroundCam._outerRadius)){
+			_unlockBird.Call();
+			_player.CopyCall(_unlockBird);
+			_unlockBird=null;
+		}
     }
 
 	public virtual void SolveSilent(){

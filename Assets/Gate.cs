@@ -18,6 +18,8 @@ public class Gate : MonoBehaviour
 	public Transform _sparks;
 	public AudioClip _sparkClip;
 
+	public bool _inverter;
+
 	void Awake(){
 		foreach(Circuit c in _inputs){
 			c._powerChange+=CheckGate;
@@ -60,6 +62,8 @@ public class Gate : MonoBehaviour
 		bool powered=true;
 		for(int i=0; i<_inputs.Length; i++){
 			bool inputPowered=_inputs[i].Powered();
+			if(_inverter)
+				inputPowered=!inputPowered;
 			if(!inputPowered)
 				powered=false;
 			//color the input arrows
@@ -68,6 +72,10 @@ public class Gate : MonoBehaviour
 			Material[] mats = r.materials;
 			mats[0]=inputPowered?_on :_off;
 			r.materials=mats;
+		}
+
+		if(_inverter){
+			_mat.SetFloat("_Invert",powered? 1 : 0);
 		}
 		_charging=powered;
 		if(_chargeDur>0)
@@ -85,7 +93,7 @@ public class Gate : MonoBehaviour
 		if(powered){
 			//charger gate stays active
 			//default gate goes to sleep after power
-			if(_chargeDur==0)
+			if(_chargeDur==0&&!_inverter)
 			{
 				enabled=false;
 				MakeSparks();
