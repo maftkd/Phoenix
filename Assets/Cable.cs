@@ -82,7 +82,7 @@ public class Cable : MonoBehaviour
 		}
 		if(needsRegen){
 			UpdatePoints();
-			Debug.Log("regenerating "+name);
+			//Debug.Log("regenerating "+name);
 			if(_points.Count<=1){
 				Debug.Log("Need at least two points to regen");
 				return;

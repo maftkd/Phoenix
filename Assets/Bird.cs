@@ -111,6 +111,7 @@ public class Bird : MonoBehaviour
 
 		_state=0;
 		Ground();
+		_prevPos=transform.position;
 	}
 
     // Start is called before the first frame update
