@@ -74,9 +74,10 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.38640508, g: 0.023584902, b: 1, a: 1}
-    - _ColorB: {r: 0, g: 0.13914824, b: 1, a: 0}
+    - _Color: {r: 0, g: 0.98944926, b: 1, a: 0}
+    - _ColorB: {r: 1, g: 0, b: 0.87986803, a: 0}
     - _ColorC: {r: 0, g: 1, b: 0.19907355, a: 0}
+    - _ColorParams: {r: -0.5, g: 0.3, b: 1, a: 1}
     - _ColorX: {r: 0, g: 0.1451273, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0, g: 0, b: 0, a: 1}

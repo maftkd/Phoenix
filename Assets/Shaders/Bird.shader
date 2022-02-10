@@ -11,6 +11,7 @@
 		_OutlineThickness ("Outline thickness",Float) = 0.001
 		_RimColor ("Outline color", Color) = (1,1,1,1)
 		_Shiney ("Shiney vec", Vector) = (0,1,1,1)
+		_ColorParams ("Color vec", Vector) = (0,1,1,1)
     }
     SubShader
     {
@@ -46,6 +47,7 @@
 		fixed4 _ColorC;
 		fixed4 _RimColor;
 		fixed4 _Shiney;
+		fixed4 _ColorParams;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -58,10 +60,17 @@
         {
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
-			fixed dt = abs(dot(IN.viewDir,_WorldSpaceLightPos0.xyz));
-			fixed4 col = lerp(lerp(_Color,_ColorB,dt*2),_ColorC,dt*2-1);
+			fixed dt = dot(IN.viewDir,_WorldSpaceLightPos0.xyz);
+
+			//fixed4 col = dt<0
+			//fixed4 col = lerp(lerp(_Color,_ColorB,smoothstep(-1,-0.333,dt)),_ColorC,smoothstep(0.333,1,dt));
+			fixed4 col = lerp(lerp(_Color,_ColorB,smoothstep(_ColorParams.x,_ColorParams.y,dt)),
+					_ColorC,smoothstep(_ColorParams.y,1,dt));
+			//fixed4 col = lerp(_Color,_ColorB,smoothstep(_ColorParams.x,_ColorParams.y,dt));
+			//fixed4 col = lerp(_ColorB,_ColorC,smoothstep(_ColorParams.y,1,dt));
 			fixed shiney = smoothstep(_Shiney.x,_Shiney.y,dot(IN.viewDir,IN.worldNormal));
 			o.Albedo=lerp(c.rgb,col.rgb,shiney);
+			//o.Albedo=col.rgb;
 
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

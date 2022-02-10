@@ -15,6 +15,7 @@
         _NoiseTex ("Albedo (RGB)", 2D) = "white" {}
 		_WindDir ("Wind direction", Vector) = (1,0,1,0)
 		_WindSpeed ("Wind multiplier", Float) = 0.25
+		_SineMult ("Sine Multiplier", Float) = 0.1
     }
     SubShader
     {
@@ -44,10 +45,12 @@
 		fixed _MaxStep;
 		fixed _MinAlpha;
 		fixed _FoamDist;
+		fixed _FoamFreq;
 		fixed4 _FoamColor;
 		sampler2D _NoiseTex;
 		fixed4 _WindDir;
 		fixed _WindSpeed;
+		fixed _SineMult;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -65,14 +68,17 @@
 			fixed s=smoothstep(_MinStep,_MaxStep,depth);
 			fixed4 col = lerp(_ColorShallow,_ColorDeep,s);
 
-			fixed foam = step(depth,_FoamDist);
 
 			fixed2 baseUV = IN.uv_NoiseTex;
-			fixed2 scrolledUV = baseUV+_Time.x*_WindDir.xy*_WindSpeed;
-			fixed2 offsetScrolledUV = baseUV-_Time.x*_WindDir.zw*_WindSpeed;
+			fixed sn = sin(_Time.x);
+			fixed2 scrolledUV = baseUV+_Time.x*_WindDir.xy*_WindSpeed-sn*_WindDir.xy*_SineMult;
+			fixed2 offsetScrolledUV = baseUV-_Time.x*_WindDir.zw*_WindSpeed+sn*_WindDir.zw*_SineMult;
 			fixed noise = tex2D(_NoiseTex, scrolledUV).r;
 			fixed noiseB = tex2D(_NoiseTex, offsetScrolledUV).r;
 			fixed noiseDif=1-noise*noiseB;
+
+			fixed foamNoise=tex2D(_NoiseTex,scrolledUV*_FoamFreq);
+			fixed foam = step(depth,_FoamDist+foamNoise-0.5);
 
 			o.Albedo=col.rgb*(1-foam)+foam*_FoamColor;
             o.Alpha = lerp(_MinAlpha,1,s)*(1-foam)+foam*_FoamColor.a;

@@ -141,7 +141,7 @@ public class MCamera : MonoBehaviour
 		//calc diff
 		_diffLerp=Mathf.Lerp(_maxDiffLerp,_minDiffLerp,Mathf.InverseLerp(_minDiff,_maxDiff,Mathf.Abs(diffTargetActual)));
 		_diff=Mathf.Lerp(_diff,diffTargetActual,Time.deltaTime*_diffLerp);
-		DebugScreen.Print(_diff,0);
+		//DebugScreen.Print(_diff,0);
 
 		//rotate
 		_theta+=_diff*Time.deltaTime*_controlSmoothed.magnitude;//_bird.GetVel();

@@ -49,7 +49,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
         m_Texture: {fileID: 2800000, guid: 67cacab8b61dce748aca08575a4e02b9, type: 3}
-        m_Scale: {x: 6, y: 6}
+        m_Scale: {x: 12, y: 12}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
@@ -64,10 +64,10 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FoamDist: 0.2
-    - _FoamFreq: 1
+    - _FoamDist: 0.4
+    - _FoamFreq: 3.32
     - _GlossMapScale: 1
-    - _Glossiness: 1
+    - _Glossiness: 0.754
     - _GlossyReflections: 1
     - _MaxStep: 2.39
     - _Metallic: 0
@@ -76,6 +76,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _SineMult: 0.4
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -84,7 +85,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.036517646, g: 0.17688234, b: 0.291, a: 1}
-    - _ColorDeep: {r: 0.09748147, g: 0.28548145, b: 0.376, a: 1}
+    - _ColorDeep: {r: 0, g: 0.25419718, b: 0.376, a: 1}
     - _ColorShallow: {r: 0, g: 0.5885999, b: 0.872, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}

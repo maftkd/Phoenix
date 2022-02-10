@@ -260,6 +260,11 @@ public class Bird : MonoBehaviour
 		source.Play();
 		if(_playerControlled)
 		{
+			//#temp
+			//this stuff should be reworked a bit
+			//The logic for finding a new mate should depend on both bird and mate being within the same puzzle sphere
+			//the logic for finding an existing mate, should verify that the target location is within puzzle sphere
+			//basically we just need a quick check, what puzzle sphere is a bird in?
 			//find existing mate
 			foreach(Bird b in _birds)
 			{
