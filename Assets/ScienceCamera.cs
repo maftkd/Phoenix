@@ -20,8 +20,7 @@ public class ScienceCamera : MonoBehaviour
 	float _flashDur;
 	float _flashTimer;
 	Transform _camera;
-	Transform _player;
-	public string _targetTag;
+	public Transform _bird;
 	AudioSource _audio;
 	CanvasGroup _flash;
 	public AnimationCurve _flashCurve;
@@ -60,13 +59,11 @@ public class ScienceCamera : MonoBehaviour
     {
 		_focusTimer+=Time.deltaTime;
 		if(_focusTimer>=_focusDelay){
-			if(_player!=null)
+			if(_bird!=null)
 				Refocus();
-			else
-				FindPlayer();
 		}
-		if(_player!=null){
-			if((_player.position-_targetPos).sqrMagnitude<=_minDistToTarget*_minDistToTarget){
+		if(_bird!=null){
+			if((_bird.position-_targetPos).sqrMagnitude<=_minDistToTarget*_minDistToTarget){
 				LightLed(true);
 				if(OtherCamLightOn())
 					StartCoroutine(Flash());
@@ -91,7 +88,7 @@ public class ScienceCamera : MonoBehaviour
 
 	void Refocus(){
 		Quaternion curRot=_camera.rotation;
-		_camera.LookAt(_player);
+		_camera.LookAt(_bird);
 		Quaternion targetRot=_camera.rotation;
 		_camera.rotation=curRot;
 		float angle=Quaternion.Angle(_startRot,targetRot);
@@ -122,15 +119,12 @@ public class ScienceCamera : MonoBehaviour
 	}
 
 	void FindPlayer(){
-		GameObject go = GameObject.FindGameObjectWithTag(_targetTag);
-		if(go!=null)
-			_player=go.transform;
 	}
 
 	IEnumerator Flash(){
 		enabled=false;
 		//zoom
-		_camera.LookAt(_player);
+		_camera.LookAt(_bird);
 		_audio.clip=_zoom;
 		_audio.pitch=Random.Range(_zoomPitchRange.x,_zoomPitchRange.y);
 		_audio.Play();
@@ -145,8 +139,8 @@ public class ScienceCamera : MonoBehaviour
 			timer+=Time.deltaTime;
 			if(_progressMat!=null)
 				_progressMat.SetFloat("_FillAmount",timer/_flashDur);
-			_camera.LookAt(_player);
-			if((_player.position-_targetPos).sqrMagnitude>_minDistToTarget*_minDistToTarget||(_otherCam!=null&&!_otherCam.LedOn())){
+			_camera.LookAt(_bird);
+			if((_bird.position-_targetPos).sqrMagnitude>_minDistToTarget*_minDistToTarget||(_otherCam!=null&&!_otherCam.LedOn())){
 				enabled=true;
 				LightLed(false);
 				_audio.Stop();
