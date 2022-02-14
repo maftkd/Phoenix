@@ -11,6 +11,7 @@ public class Clouds : MonoBehaviour
 	public Vector2 _verticalRange;
 	public Vector3 _minScale;
 	public Vector3 _maxScale;
+	public bool _onlyCloudOne;
 
 	void Awake(){
 		int numClouds = Random.Range(_minClouds,_maxClouds+1);
@@ -21,7 +22,8 @@ public class Clouds : MonoBehaviour
 			float z = Mathf.Sin(theta)*radius;
 			float y = Random.Range(_verticalRange.x,_verticalRange.y);
 			Vector3 pos = new Vector3(x,y,z);
-			Transform cloud = Instantiate(_cloudPrefabs[Random.Range(0,_cloudPrefabs.Length)],pos,Quaternion.identity,transform);
+			int index=_onlyCloudOne? 0 : Random.Range(0,_cloudPrefabs.Length);
+			Transform cloud = Instantiate(_cloudPrefabs[index],pos,Quaternion.identity,transform);
 			cloud.localScale=new Vector3(Random.Range(_minScale.x,_maxScale.x),
 					Random.Range(_minScale.y,_maxScale.y),
 					Random.Range(_minScale.z,_maxScale.z));

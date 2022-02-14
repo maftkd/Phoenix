@@ -66,8 +66,6 @@
 			//fixed4 col = lerp(lerp(_Color,_ColorB,smoothstep(-1,-0.333,dt)),_ColorC,smoothstep(0.333,1,dt));
 			fixed4 col = lerp(lerp(_Color,_ColorB,smoothstep(_ColorParams.x,_ColorParams.y,dt)),
 					_ColorC,smoothstep(_ColorParams.y,1,dt));
-			//fixed4 col = lerp(_Color,_ColorB,smoothstep(_ColorParams.x,_ColorParams.y,dt));
-			//fixed4 col = lerp(_ColorB,_ColorC,smoothstep(_ColorParams.y,1,dt));
 			fixed shiney = smoothstep(_Shiney.x,_Shiney.y,dot(IN.viewDir,IN.worldNormal));
 			o.Albedo=lerp(c.rgb,col.rgb,shiney);
 			//o.Albedo=col.rgb;

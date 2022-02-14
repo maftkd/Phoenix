@@ -152,9 +152,9 @@ public class PressurePlate : MonoBehaviour
 		_mat.SetColor("_EmissionColor", _powered? Color.red : Color.black);
 		foreach(Circuit c in _circuits){
 			c.Power(_powered);
-			if(_cable!=null)
-				_cable.SetPower(_powered? 1f : 0f);
 		}
+		if(_cable!=null)
+			_cable.SetPower(_powered? 1f : 0f);
 	}
 
 	void OnDrawGizmos(){

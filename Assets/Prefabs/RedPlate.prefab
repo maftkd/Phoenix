@@ -155,7 +155,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d0757a0dee082f340a3e2577f9b3e86f, type: 2}
+  - {fileID: 2100000, guid: 8f00bc685fec5914f94c9de0e1a48293, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -205,6 +205,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4608
   _hitBoxY: 0.0475
+  _state: 0
   _pressDepth: 0.035
   _pressSpeed: 0.2
   _pitchRange: {x: 0.8, y: 1, z: 1, w: 1.2}
@@ -213,6 +214,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   _cable: {fileID: 0}
+  _isToggle: 0
 --- !u!114 &6434090556959303584
 MonoBehaviour:
   m_ObjectHideFlags: 0
