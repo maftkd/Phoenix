@@ -14,6 +14,8 @@
 		_PowerFill ("Power Fill", Range(0,1)) = 0
 		_OffColor ("Off color", Color) = (0.5,0.5,0.5,1)
 		_EmissionMult ("Emission", Float) = 1
+		_WavePow ("wave Power", Float) = 40
+		_WaveCutoff ("Wave cutoff", Range(0,1)) = 0.8
     }
     SubShader
     {
@@ -44,6 +46,8 @@
 		fixed _PowerFill;
 		fixed4 _OffColor;
 		fixed _EmissionMult;
+		fixed _WavePow;
+		fixed _WaveCutoff;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -58,13 +62,15 @@
 			//fixed4 c = _Color;
 			fixed xDiff=abs(IN.uv_MainTex.x-0.5);
 			fixed inBand=step(xDiff,_BandWidth*0.5);
-			fixed wave = 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
-			//fixed4 bandColor=lerp(_BandColor,_PowerColor,wave);
+			//fixed wave = 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
+			fixed wave= 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
+			wave=pow(wave*step(_WaveCutoff,wave),_WavePow);
+
 			fixed4 bandColor=_PowerColor*wave;
 			fixed powered = step(IN.uv_MainTex.y,_PowerFill);
 			bandColor=bandColor*powered+(1-powered)*_OffColor;
             o.Albedo = inBand*bandColor+(1-inBand)*_Color;
-			o.Emission=o.Albedo*powered*_EmissionMult*wave;
+			o.Emission=inBand*o.Albedo*powered*_EmissionMult*wave;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

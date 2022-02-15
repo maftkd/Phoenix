@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 244681460047375567, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}
       propertyPath: m_Name
-      value: Charger
+      value: Charger Variant
       objectReference: {fileID: 0}
     - target: {fileID: 244681460047375567, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}
@@ -25,17 +25,17 @@ PrefabInstance:
     - target: {fileID: 495056132133028590, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.064964175
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 495056132133028590, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.06496418
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 495056132133028590, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.067629814
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 495056132133028590, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}

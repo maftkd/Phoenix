@@ -117,6 +117,7 @@ MonoBehaviour:
   _chargeDur: 0
   _sparks: {fileID: 6793288934807558136, guid: 1d61f1b574e0d0a4e9734bb66e0f3ab6, type: 3}
   _sparkClip: {fileID: 8300000, guid: 5733488fbc57c834984e63d028ef820a, type: 3}
+  _inverter: 0
 --- !u!1 &2646336827882733524
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,8 +144,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2646336827882733524}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.348, z: -0}
-  m_LocalScale: {x: 0.2517823, y: 0.2517823, z: 0.2517823}
+  m_LocalPosition: {x: 0, y: 0.358, z: -0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 495056132133028590}
   m_RootOrder: 0

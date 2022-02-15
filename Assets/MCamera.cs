@@ -144,7 +144,10 @@ public class MCamera : MonoBehaviour
 		//DebugScreen.Print(_diff,0);
 
 		//rotate
-		_theta+=_diff*Time.deltaTime*_controlSmoothed.magnitude;//_bird.GetVel();
+		if(_state==0)
+			_theta+=_diff*Time.deltaTime*_controlSmoothed.magnitude*_bird.GetVel();
+		else
+			_theta+=_diff*Time.deltaTime*_controlSmoothed.magnitude;
 		//theta offset
 		_theta+=-_mouseIn.x;
 

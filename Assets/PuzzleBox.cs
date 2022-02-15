@@ -9,7 +9,6 @@ public class PuzzleBox : MonoBehaviour
 	Transform _effects;
 	public UnityEvent _onSolved;
 	SurroundCamHelper _surroundCam;
-	GameObject _guideLine;
 	float _revealDur=1f;
 	MCamera _mCam;
 	MInput _mIn;
@@ -25,24 +24,25 @@ public class PuzzleBox : MonoBehaviour
 	ForceField _forceField;
 	public string _puzzleId;
 	public Bird _unlockBird;
-	Feeder _feeder;
 	public float _liftDelay;
 	public static PuzzleBox _latestPuzzle;
 	bool _solved;
 	public Cable _cable;
 	Bird _player;
 	Transform _box;
+	Transform _key;
+	Material _keyMat;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
 		_surroundCam=GetComponent<SurroundCamHelper>();
-		_guideLine=transform.Find("GuideLine").gameObject;
 		_mCam=GameManager._mCam;
 		_mIn=GameManager._mIn;
 		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
 		_box=transform.GetChild(0);
-		_feeder=transform.GetComponentInChildren<Feeder>();
 		_player=GameManager._player;
+		_key=transform.Find("Key").transform;
+		_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 
 		if(_activateOnAwake)
 			Activate();
@@ -50,7 +50,6 @@ public class PuzzleBox : MonoBehaviour
 		{
 			_forceField.Activate();
 		}
-		_forceField.SetColor(_box.GetComponent<MeshRenderer>().material.color);
 
 		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
 		label.GetComponent<Text>().text=_puzzleId;
@@ -84,7 +83,6 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		_surroundCam.enabled=false;
 		_solved=true;
-		_guideLine.SetActive(false);
 		Destroy(_forceField.gameObject);
 		GameManager._instance.PuzzleSolved(this);
 	}
@@ -94,8 +92,8 @@ public class PuzzleBox : MonoBehaviour
 			return;
 		_onSolved.Invoke();
 		_solved=true;
+		_keyMat.SetFloat("_Powered",1);
 		_surroundCam.enabled=false;
-		_guideLine.SetActive(false);
 		//Destroy(_forceField.gameObject);
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
@@ -105,7 +103,6 @@ public class PuzzleBox : MonoBehaviour
 
 	protected virtual IEnumerator OpenBox(){
 		yield return new WaitForSeconds(_liftDelay);
-		_feeder.Feed();
 	}
 
 	public virtual void Reveal(){

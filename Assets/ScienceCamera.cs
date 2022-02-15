@@ -35,6 +35,8 @@ public class ScienceCamera : MonoBehaviour
 	public ScienceCamera _otherCam;
 	bool _lit;
 	public bool _noFlash;
+	public Circuit [] _outputs;
+	bool _birdPrevOnEx;
 
 	void Awake(){
 		_camera=transform.GetChild(1);
@@ -63,14 +65,13 @@ public class ScienceCamera : MonoBehaviour
 				Refocus();
 		}
 		if(_bird!=null){
-			if((_bird.position-_targetPos).sqrMagnitude<=_minDistToTarget*_minDistToTarget){
-				LightLed(true);
-				if(OtherCamLightOn())
-					StartCoroutine(Flash());
+			bool birdOnEx=(_bird.position-_targetPos).sqrMagnitude<=_minDistToTarget*_minDistToTarget;
+			if(birdOnEx!=_birdPrevOnEx){
+				foreach(Circuit c in _outputs){
+					c.Power(birdOnEx);
+				}
 			}
-			else{
-				LightLed(false);
-			}
+			_birdPrevOnEx=birdOnEx;
 		}
 
 		if(_progressMat!=null)
@@ -174,6 +175,7 @@ public class ScienceCamera : MonoBehaviour
 	}
 
 	void LightLed(bool lit){
+		/*
 		if(lit==_lit)
 			return;
 		foreach(GameObject go in _ledLit)
@@ -181,6 +183,7 @@ public class ScienceCamera : MonoBehaviour
 		foreach(GameObject go in _ledUnlit)
 			go.SetActive(!lit);
 		_lit=lit;
+		*/
 	}
 
 	public bool LedOn(){
