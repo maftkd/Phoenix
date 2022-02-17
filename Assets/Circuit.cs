@@ -12,6 +12,7 @@ public class Circuit : MonoBehaviour
 
 	bool _powered;
 	public UnityEvent _onPowered;
+	public UnityEvent _onPoweredOff;
 
 	void Awake(){
 		_mat=GetComponent<Renderer>().material;
@@ -38,6 +39,8 @@ public class Circuit : MonoBehaviour
 		}
 		if(_powered)
 			_onPowered.Invoke();
+		else
+			_onPoweredOff.Invoke();
 	}
 
 	public bool Powered(){

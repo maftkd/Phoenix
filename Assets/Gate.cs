@@ -22,12 +22,32 @@ public class Gate : MonoBehaviour
 
 	public bool _inverter;
 
+	AudioSource _source;
+	[Header ("Charger audio settings")]
+	public float _maxVolume;
+	public float _minPitch;
+	public float _maxPitch;
+	public float _toneFrequency;
+	public float _toneNoise;
+	public float _decayVolMult;
+
 	void Awake(){
 		foreach(Circuit c in _inputs){
 			c._powerChange+=CheckGate;
 		}
 		_mat=GetComponent<Renderer>().material;
 		_mat.SetFloat("_FillAmount",0);
+
+		//setup charger
+		if(_chargeDur>0)
+		{
+			_source=gameObject.AddComponent<AudioSource>();
+			//_source.clip=Synthesizer.GenerateSineWave(880,1f,0.05f);
+			_source.clip=Synthesizer.GenerateSquareWave(_toneFrequency,1f,_toneNoise);
+			_source.spatialBlend=1f;
+			_source.loop=true;
+			_source.volume=0;
+		}
 	}
     // Start is called before the first frame update
     void Start()
@@ -43,21 +63,29 @@ public class Gate : MonoBehaviour
 				case 0://idle
 				default:
 					if(_inputsOn)
+					{
 						_chargeState=1;
+						_source.Play();
+
+					}
 					break;
 				case 1://charge up
 					if(!_inputsOn){
 						_chargeState=2;
+						_source.Play();
 						break;
 					}
 					if(_chargeTimer<_chargeDur){
 						_chargeTimer+=Time.deltaTime;
+						_source.volume=Mathf.Lerp(0,_maxVolume,_chargeTimer/_chargeDur);
+						_source.pitch=Mathf.Lerp(_minPitch,_maxPitch,_chargeTimer/_chargeDur);
 						if(_chargeTimer>_chargeDur)
 						{
 							_chargeTimer=_chargeDur;
 							_powered=true;
 							CheckGate();
 							MakeSparks();
+							_source.Stop();
 						}
 						_mat.SetFloat("_FillAmount", _chargeTimer/_chargeDur);
 					}
@@ -69,11 +97,15 @@ public class Gate : MonoBehaviour
 					}
 					if(_chargeTimer>0){
 						_chargeTimer-=Time.deltaTime;
+						_source.volume=Mathf.Lerp(0,_maxVolume*_decayVolMult,_chargeTimer/_chargeDur);
+						_source.pitch=Mathf.Lerp(_minPitch,_maxPitch,_chargeTimer/_chargeDur);
 						if(_chargeTimer<0)
 						{
 							_chargeTimer=0;
 							_powered=false;
 							CheckGate();
+							_source.Stop();
+							_chargeState=0;
 						}
 						_mat.SetFloat("_FillAmount", _chargeTimer/_chargeDur);
 					}

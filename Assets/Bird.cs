@@ -13,14 +13,12 @@ public class Bird : MonoBehaviour
 	Fly _fly;
 	Waddle _waddle;
 	Tool _tool;
-	RunAway _runAway;
 	Hunger _hunger;
 	Follow _follow;
 	Tutorial _tutorial;
 	Animator _anim;
 	AudioSource _ruffleAudio;
 	public bool _playerControlled;
-	MCamera _mCam;
 	MInput _mIn;
 	public Bird _mate;
 	[HideInInspector]
@@ -76,6 +74,9 @@ public class Bird : MonoBehaviour
 	public Color _bandColor;
 	Bird _player;
 
+	//cameras
+	public Camera _waddleCam;
+
 	void Awake(){
 		//calculations
 		_smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -86,17 +87,17 @@ public class Bird : MonoBehaviour
 		_fly=GetComponent<Fly>();
 		_waddle=GetComponent<Waddle>();
 		_tool=GetComponent<Tool>();
-		_runAway=GetComponent<RunAway>();
 		_hunger=GetComponent<Hunger>();
 		_follow=GetComponent<Follow>();
 		_tutorial=GetComponentInChildren<Tutorial>();
 		_anim=GetComponent<Animator>();
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
 		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
-		_mCam = GameManager._mCam;
 		_mIn = GameManager._mIn;
 		_cols = new Collider[3];
 		_birds = FindObjectsOfType<Bird>();
+		if(_playerControlled)
+			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
 
 		//disable things
 		_hop.enabled=false;
@@ -226,7 +227,7 @@ public class Bird : MonoBehaviour
 						_peckTimer=0;
 					}
 					break;
-				case 1://flying
+				case 3://flying
 					break;
 				case 2://following
 					break;
@@ -414,7 +415,6 @@ public class Bird : MonoBehaviour
 	IEnumerator PlayExplodeParticlesR(float vel){
 		Instantiate(_explodeParts,transform.position,Quaternion.identity);
 		yield return new WaitForSeconds(_divePartsDelay);
-		//_mCam.Shake(vel);
 	}
 
 	public void KnockBack(CollisionHelper ch, Vector3 dir,bool supress=false,bool ignoreNpc=false){
@@ -536,9 +536,6 @@ public class Bird : MonoBehaviour
 		return _curSeed;
 	}
 
-	public bool IsRunningAway(){
-		return _runAway.enabled;
-	}
 
 	public void Ground(){
 		_waddle.enabled=false;
@@ -553,19 +550,12 @@ public class Bird : MonoBehaviour
 			*/
 		if(Physics.Raycast(transform.position+_size.y*Vector3.up,Vector3.down, out hit,1f,_collisionLayer)){
 			if(Mathf.Abs(hit.point.y-transform.position.y)>0.25f)
-				Debug.Log("Oh snap");
+			{
+				//Debug.Log("Oh snap");
+			}
 			else
 				transform.position=hit.point;
 		}
-	}
-
-	public void RunAwayNextPath(){
-		_runAway.RunAwayNextPath();
-	}
-
-	public void StopRunningAway(){
-		if(_runAway!=null)
-			_runAway.enabled=false;
 	}
 
 	public Vector3 GetCamTarget(){
@@ -612,21 +602,22 @@ public class Bird : MonoBehaviour
 	}
 
 	IEnumerator _flyRoutine;
-	public void FlyTo(Vector3 target){
+	public void FlyTo(Vector3 target, float flapChance=1){
 		_smr.enabled=true;
 		//float dur = (target-transform.position).magnitude/_flySpeed;
 		if(_flyRoutine!=null)
 			StopCoroutine(_flyRoutine);
-		_flyRoutine=FlyToR(target);
+		_flyRoutine=FlyToR(target,flapChance);
 		StartCoroutine(_flyRoutine);
-		_anim.SetTrigger("flyLoop");
+		//_anim.SetTrigger("flyLoop");
+		_anim.SetTrigger("fly");
 	}
 
 	public delegate void BirdEvent();
 	public event BirdEvent _onDoneFlying;
 
-	IEnumerator FlyToR(Vector3 target){
-		_state=1;
+	IEnumerator FlyToR(Vector3 target,float flapChance){
+		_state=3;
 		Vector3 start=transform.position;
 		transform.LookAt(target);
 		Vector3 eulers = transform.eulerAngles;
@@ -643,7 +634,14 @@ public class Bird : MonoBehaviour
 			timer+=Time.deltaTime;
 			flapTimer+=Time.deltaTime;
 			if(flapTimer>_flapDur){
-				_fly.FlapSounds();
+				if(Random.value<flapChance){
+					_fly.FlapSounds();
+					_anim.SetTrigger("fly");
+					_fly.Soar(false);
+				}
+				else{
+					_fly.Soar(true);
+				}
 				flapTimer=0;
 			}
 			speed = Mathf.Lerp(_flySpeed,_maxSpeed,timer);
@@ -652,6 +650,7 @@ public class Bird : MonoBehaviour
 			transform.position+=v;
 			yield return null;
 		}
+		_fly.Soar(false);
 		_anim.SetTrigger("land");
 		Ground();
 		_state=0;

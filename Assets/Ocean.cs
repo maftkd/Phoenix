@@ -5,7 +5,6 @@ using UnityEngine;
 public class Ocean : MonoBehaviour
 {
 	bool _wet;
-	MCamera _mCam;
 	MInput _mIn;
 
 	public AudioClip _splash;
@@ -15,7 +14,6 @@ public class Ocean : MonoBehaviour
 	public float _drownDur;
 
 	void Awake(){
-		_mCam=GameManager._mCam;
 		_mIn=GameManager._mIn;
 	}
 

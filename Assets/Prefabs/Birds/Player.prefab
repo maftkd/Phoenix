@@ -761,6 +761,7 @@ MonoBehaviour:
   _callEffects: {fileID: 6580318309100034790, guid: 05c05cf52b1947043adf1786ef2edb27,
     type: 3}
   _callPitchRange: {x: 0.9, y: 1.1}
+  _call: {fileID: 0}
   _collisionLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -788,9 +789,9 @@ MonoBehaviour:
   _puzzleZone: {fileID: 0}
   _peckCheckTime: 0
   _peckChance: 0
-  _flySpeed: 0
-  _maxSpeed: 0
-  _flapDur: 0
+  _flySpeed: 1
+  _maxSpeed: 2
+  _flapDur: 0.4
   _band: {fileID: 2837362357988309745}
   _bandColor: {r: 1, g: 1, b: 1, a: 0}
 --- !u!1 &1792526787315343659

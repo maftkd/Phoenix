@@ -118,6 +118,7 @@ MonoBehaviour:
   _sparks: {fileID: 6793288934807558136, guid: 1d61f1b574e0d0a4e9734bb66e0f3ab6, type: 3}
   _sparkClip: {fileID: 8300000, guid: 5733488fbc57c834984e63d028ef820a, type: 3}
   _inverter: 0
+  _maxVolume: 0.4
 --- !u!1 &2646336827882733524
 GameObject:
   m_ObjectHideFlags: 0

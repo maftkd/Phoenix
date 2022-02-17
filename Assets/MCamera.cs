@@ -5,210 +5,188 @@ using UnityEngine.UI;
 
 public class MCamera : MonoBehaviour
 {
-	Transform _player;
-	Bird _bird;
-	public float _theta;
-	public float _phi;
-	public float _radius;
-	public float _positionLerp;
-	float _diff;
-	float _diffLerp;
-	
-	public float _minDiffLerp;
-	public float _maxDiffLerp;
-	public float _minDiff;
-	public float _maxDiff;
-	[Tooltip("The rate at which control vector approaches raw input")]
-	public float _controlLerp;
-	[Tooltip("The minimum control vector before grounding diff to 0")]
-	public float _minControl;
-	public float _minVel;
-	Vector3 _playerPrevPos;
-	MInput _mIn;
-	Vector3 _playerTarget;
-	public int _state;
-	Transform _camTarget;
-	Vector3 _targetPos;
-	Vector3 _targetOffset;
-	float _thetaOffset;
-	GameObject _letterBox;
+	Camera _camera;
+	Camera[] _cams;
+	[Header("Wipe")]
+	public Material _wipe;
+	public float _wipeDur;
+	[Header("Fade")]
+	public Material _fade;
+	public float _fadeDur;
+	[Header("Letterbox")]
+	public Material _letterBox;
+	[Header("Orbit")]
+	public AnimationCurve _orbitCurve;
 
-	[Header("Camera Slide")]
-	public Vector3 _cameraSlide;
-	Transform _camTransform;
-	Camera _cam;
-
-	[Header("Collision")]
-	public float _colLerp;
-
-	[Header("Surround")]
-	public float _surroundLerp;
-	public float _surroundDotAdjust;
+	public enum Transitions {CUT, FADE, WIPE, LERP, ORBIT};
 
 	void Awake(){
-		_bird=GameManager._player;
-		_player=_bird.transform;
-		_mIn=GameManager._mIn;
-		_playerTarget=_player.position;
-		_letterBox=transform.GetChild(0).gameObject;
-		_cam=Camera.main;
-		_cam.depthTextureMode= DepthTextureMode.Depth;
-		_camTransform=_cam.transform;
-		_camTransform.localPosition=_cameraSlide;
+		_camera=GetComponent<Camera>();
+		//disable all cameras
+		_cams=FindObjectsOfType<Camera>();
+		foreach(Camera c in _cams)
+			c.enabled=false;
+		//except this one
+		_camera.enabled=true;
+
+		//reset transitions
+		_wipe.SetFloat("_Amount",0);
+		_fade.SetFloat("_Amount",0);
+		_letterBox.SetFloat("_Amount",0);
 	}
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
-	//#temp - maybe move these
-	float _thetaTarget;
-	Vector3 _playerPos;
-	Vector3 vel;
-	Vector2 _mouseIn;
-	Vector3 _controlIn;
-	Vector3 _prevControlIn;
-	Vector3 _controlSmoothed;
+
     // Update is called once per frame
     void Update()
     {
-		_playerPos=_bird.GetCamTarget();
-
-		//track position
-		float y = Mathf.Sin(_phi);
-		float xzRad = Mathf.Cos(_phi);
-		float x = xzRad*Mathf.Cos(_theta+_thetaOffset);
-		float z = xzRad*Mathf.Sin(_theta+_thetaOffset);
-
-		//calculate forward vector
-		Vector3 offset = new Vector3(x,y,z);
-		transform.forward=-offset;
-		_playerTarget=Vector3.Lerp(_playerTarget,_playerPos,_positionLerp*Time.deltaTime);
-
-		//move camera
-		_camTransform.localPosition=_cameraSlide;
-		//check collision
-		RaycastHit hit;
-		if(Physics.Raycast(_playerTarget+_cameraSlide.y*Vector3.up,offset, out hit, _radius, 1)){
-			_targetPos=_playerTarget+offset*hit.distance;
-			transform.position=Vector3.Lerp(transform.position,_targetPos,_colLerp*Time.deltaTime);
-		}
-		else
-		{
-			_targetPos=_playerTarget+offset*_radius;
-			transform.position=_targetPos;
-		}
-
-		//Get input stuff
-		_mouseIn=_mIn.GetMouseMotion();
-		_controlIn=_mIn.GetControllerInput();
-
-		//calculate cam coords for next frame
-		switch(_state){
-			case 0:
-			default://regular cam
-				//vel = _player.forward;
-				vel=_bird.GetVelocity();
-				if(vel.sqrMagnitude<=_minVel)
-					vel=_player.forward;
-				_thetaTarget = CalcNextTheta(-vel);
-				break;
-			case 1://surround
-				Vector3 diff = _playerPos-_camTarget.position;
-				_thetaTarget = CalcNextTheta(diff);
-				break;
-		}
-		float diffTargetActual = _thetaTarget-_theta;
-
-		//allow faster turns while moving
-		if(_controlIn.sqrMagnitude>_controlSmoothed.sqrMagnitude)
-			_controlSmoothed=_controlIn;
-		//when moving less, smoothly adjust control 
-		else
-		{
-			_controlSmoothed=Vector3.Lerp(_controlSmoothed,_controlIn,Time.deltaTime*_controlLerp);
-			if(_controlSmoothed.sqrMagnitude<_minControl*_minControl)
-			{
-				_controlSmoothed=Vector3.zero;
-				//force diff to 0 if control is grounded
-				_diff=0;
-				diffTargetActual=0;
-			}
-		}
-
-		//calc diff
-		_diffLerp=Mathf.Lerp(_maxDiffLerp,_minDiffLerp,Mathf.InverseLerp(_minDiff,_maxDiff,Mathf.Abs(diffTargetActual)));
-		_diff=Mathf.Lerp(_diff,diffTargetActual,Time.deltaTime*_diffLerp);
-		//DebugScreen.Print(_diff,0);
-
-		//rotate
-		if(_state==0)
-			_theta+=_diff*Time.deltaTime*_controlSmoothed.magnitude*_bird.GetVel();
-		else
-			_theta+=_diff*Time.deltaTime*_controlSmoothed.magnitude;
-		//theta offset
-		_theta+=-_mouseIn.x;
-
-		_playerPrevPos=_playerPos;
-		_prevControlIn=_controlIn;
     }
 
-
-	public void Shake(float v){
-		//StartCoroutine(ShakeR(v));
+	public void SnapToCamera(Camera cam){
+		Transform camT = cam.transform;
+		transform.position=camT.position;
+		transform.rotation=camT.rotation;
+		_camera.fieldOfView=cam.fieldOfView;
+		transform.SetParent(camT);
 	}
 
-	public void SetCamPlane(Transform t){
-	}
-
-
-	public void MoveToTransform(Transform t){
-	}
-
-	public void Surround(Transform t){
-		_state=1;
-		_camTarget=t;
-		//_rotationLerp=_minRotationLerp;
-	}
-
-	public void DefaultCam(){
-		_state=0;
-		//_thetaOffset=0;
-		_letterBox.SetActive(false);
-		_mIn.LockInput(false);
-		_controlSmoothed=Vector3.zero;
-		_diff=0;
-		//_rotationLerp=_minRotationLerp;
-	}
-
-	public void LetterBox(bool lb){
-		_letterBox.SetActive(lb);
-	}
-
-	public bool IsDefaultCam(){
-		return _state==0;
-	}
-
-	float CalcNextTheta(Vector3 desired){
-		float t = Mathf.Atan2(desired.z,desired.x);
-
-		//prevent negative angles
-		if(t<0)
-			t=Mathf.PI*2f+t;
-
-		//prevent differences over 180 degrees
-		if(Mathf.Abs(t-_theta)>Mathf.PI)
-		{
-			if(t<_theta)
-				_theta=-(Mathf.PI*2f-_theta);
-			else
-				_theta+=Mathf.PI*2f;
+	public void Transition(Camera cam, Transitions transition,float letterBox=0,Transform target=null,float dur=1){
+		switch(transition){
+			case Transitions.WIPE:
+				StartCoroutine(WipeTo(cam));
+				break;
+			case Transitions.FADE:
+				StartCoroutine(FadeTo(cam,letterBox));
+				break;
+			case Transitions.ORBIT:
+				StartCoroutine(OrbitTo(cam,target,dur,letterBox));
+				break;
+			default:
+				break;
 		}
-		return t;
+	}
+
+	//wipe
+	IEnumerator WipeTo(Camera cam){
+		float timer=0;
+		float dur=_wipeDur*0.333f;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			_wipe.SetFloat("_Amount",timer/dur);
+			yield return null;
+		}
+		//snap to target cam
+		SnapToCamera(cam);
+		_wipe.SetFloat("_Amount",1f);
+
+		//hold
+		yield return new WaitForSeconds(dur);
+
+		//wipe down
+		timer=0;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			_wipe.SetFloat("_Amount",1-timer/dur);
+			yield return null;
+		}
+		_wipe.SetFloat("_Amount",0f);
+	}
+
+	//fade
+	IEnumerator FadeTo(Camera cam,float letterBox){
+		float timer=0;
+		float dur=_fadeDur*0.333f;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			_fade.SetFloat("_Amount",timer/dur);
+			yield return null;
+		}
+		//snap to target cam
+		SnapToCamera(cam);
+		_fade.SetFloat("_Amount",1f);
+
+		//hold
+		yield return new WaitForSeconds(dur);
+		_letterBox.SetFloat("_Amount",letterBox);
+
+		//wipe down
+		timer=0;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			_fade.SetFloat("_Amount",1-timer/dur);
+			yield return null;
+		}
+		_fade.SetFloat("_Amount",0f);
+	}
+
+	//orbit
+	IEnumerator OrbitTo(Camera cam, Transform target, float dur, float letterBox){
+		float startR=(target.position-transform.position).magnitude;
+		float targetR=(target.position-cam.transform.position).magnitude;
+		float startLb=_letterBox.GetFloat("_Amount");
+		float endLb=letterBox;
+		Quaternion startRot=transform.rotation;
+		Quaternion endRot=cam.transform.rotation;
+		float startFov=_camera.fieldOfView;
+		float targetFov=cam.fieldOfView;
+		float startHeight=transform.position.y;
+		float endHeight=cam.transform.position.y;
+
+		transform.SetParent(null);
+		float timer=0;
+		float radius=0;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			float frac=_orbitCurve.Evaluate(timer/dur);
+			radius=Mathf.Lerp(startR,targetR,frac);
+			transform.rotation=Quaternion.Slerp(startRot,endRot,frac);
+			Vector3 pos=target.position-transform.forward*radius;
+			pos.y=Mathf.Lerp(startHeight,endHeight,frac);
+			transform.position=pos;
+			_camera.fieldOfView=Mathf.Lerp(startFov,targetFov,frac);
+			_letterBox.SetFloat("_Amount",Mathf.Lerp(startLb,endLb,frac));
+			yield return null;
+		}
+
+		transform.SetParent(cam.transform);
+	}
+
+	public void LerpLetterBox(float target, float dur){
+		StartCoroutine(LerpLetterBoxR(target,dur));
+	}
+
+	IEnumerator LerpLetterBoxR(float target, float dur){
+		float startLb=_letterBox.GetFloat("_Amount");
+		float endLb=target;
+		float timer=0;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			float frac=(timer/dur);
+			_letterBox.SetFloat("_Amount",Mathf.Lerp(startLb,endLb,frac));
+			yield return null;
+		}
+		_letterBox.SetFloat("_Amount",target);
 	}
 
 	void OnDrawGizmos(){
+		if(_camera!=null){
+			Gizmos.matrix = transform.localToWorldMatrix;
+			Gizmos.color=Color.green;
+			Gizmos.DrawFrustum(Vector3.zero,_camera.fieldOfView,1f,0.01f,1.777f);
+		}
+		if(_cams!=null){
+			foreach(Camera c in _cams){
+				if(c!=_camera){
+					Gizmos.matrix=c.transform.localToWorldMatrix;
+					Gizmos.color=Color.red;
+					Gizmos.DrawFrustum(Vector3.zero,c.fieldOfView,0.5f,0.01f,1.777f);
+				}
+			}
+		}
 	}
 }

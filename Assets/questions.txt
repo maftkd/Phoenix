@@ -23,3 +23,12 @@
 - what do we do about seeds and puzzle rewards? What if it was just kind of this random thing where you and you and your party just go ham on some seeds? Would it be fun to have a pointless mechanic like this? If so what would happen if some birds ate more than others? Maybe the only point is to provide some sense of realistic motivation for the birds.
 - How can we develop for features that might occur later in the game like on another island?
 * keys: Bird friends, seeds, pathfinding, saving
+
+2/16/22
+- What does a camera look like that follows the behaviour of a bird, yet is stable enough for the human mind?
+- How can camera shots help define the interest curve?
+- What does a procedurally generated island look like, and what makes them more fun to fly around? What is the balance of terrain height variation and additional geometry?
+- What is the right amount of puzzles on the island? What is the right level of mental challenge for the game?
+- How is the flying experience changed by the incorperation of wind currents?
+- Can the game feel like a cohesive whole while including navigational and puzzle solving elements? How can the flying through rings be integrated? Is there maybe some kind of counter associated with those and data collection for the scientists?
+

@@ -8,12 +8,9 @@ public class PuzzleBox : MonoBehaviour
 {
 	Transform _effects;
 	public UnityEvent _onSolved;
-	SurroundCamHelper _surroundCam;
 	float _revealDur=1f;
-	MCamera _mCam;
 	MInput _mIn;
 	float _resetCamDelay=1f;
-	public float _shotRadius;
 	public float _shotDistance;
 	public float _shotHeight;
 	bool _shotTaken;
@@ -23,7 +20,6 @@ public class PuzzleBox : MonoBehaviour
 	public bool _activateOnAwake;
 	ForceField _forceField;
 	public string _puzzleId;
-	public Bird _unlockBird;
 	public float _liftDelay;
 	public static PuzzleBox _latestPuzzle;
 	bool _solved;
@@ -32,11 +28,11 @@ public class PuzzleBox : MonoBehaviour
 	Transform _box;
 	Transform _key;
 	Material _keyMat;
+	public Transform _openPanel;
+	public AudioClip _buzzClip;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
-		_surroundCam=GetComponent<SurroundCamHelper>();
-		_mCam=GameManager._mCam;
 		_mIn=GameManager._mIn;
 		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
 		_box=transform.GetChild(0);
@@ -72,16 +68,12 @@ public class PuzzleBox : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-		if(_unlockBird!=null && _player.IsPlayerInRange(transform,_surroundCam._outerRadius)){
-			_unlockBird.Call();
-			_player.CopyCall(_unlockBird);
-			_unlockBird=null;
-		}
     }
 
+	//#todo - there's some overlap between solve silent and puzzle solved
 	public virtual void SolveSilent(){
 		_onSolved.Invoke();
-		_surroundCam.enabled=false;
+		_keyMat.SetFloat("_Powered",1);
 		_solved=true;
 		Destroy(_forceField.gameObject);
 		GameManager._instance.PuzzleSolved(this);
@@ -93,7 +85,6 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		_solved=true;
 		_keyMat.SetFloat("_Powered",1);
-		_surroundCam.enabled=false;
 		//Destroy(_forceField.gameObject);
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
@@ -103,6 +94,38 @@ public class PuzzleBox : MonoBehaviour
 
 	protected virtual IEnumerator OpenBox(){
 		yield return new WaitForSeconds(_liftDelay);
+		if(_openPanel!=null){
+			Vector3 startPos=_openPanel.position;
+			Vector3 endPos=startPos+Vector3.back*0.1f;
+			float timer=0;
+			Sfx.PlayOneShot3D(_buzzClip,startPos,1f+(Random.value*2-1)*0.2f);
+			while(timer<1f){
+				timer+=Time.deltaTime;
+				_openPanel.position=Vector3.Lerp(startPos,endPos,timer);
+				yield return null;
+			}
+			timer=0;
+			startPos=_openPanel.position;
+			endPos=startPos+Vector3.up*0.35f;
+			Sfx.PlayOneShot3D(_buzzClip,startPos,1f+(Random.value*2-1)*0.2f);
+			while(timer<1f){
+				timer+=Time.deltaTime;
+				_openPanel.position=Vector3.Lerp(startPos,endPos,timer);
+				yield return null;
+			}
+		}
+
+		/*
+			Quaternion startRot=_openPanel.rotation;
+			_openPanel.Rotate(Vector3.right*-90f);
+			Quaternion endRot=_openPanel.rotation;
+			float timer=0;
+			while(timer<1f){
+				timer+=Time.deltaTime;
+				_openPanel.rotation=Quaternion.Slerp(startRot,endRot,timer);
+				yield return null;
+			}
+			*/
 	}
 
 	public virtual void Reveal(){
@@ -128,13 +151,11 @@ public class PuzzleBox : MonoBehaviour
 		Destroy(carrier.gameObject);
 		Destroy(carrierMesh.gameObject);
 		yield return new WaitForSeconds(_resetCamDelay);
-		_mCam.DefaultCam();
 		_onRevealed.Invoke();
 	}
 
 	public virtual void Activate(){
 		_onActivated.Invoke();
-		//_surroundCam.enabled=true;
 		_forceField.Deactivate();
 		_latestPuzzle=this;
 
@@ -146,7 +167,5 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	void OnDrawGizmos(){
-		Gizmos.color=Color.green;
-		Gizmos.DrawWireSphere(transform.position,_shotRadius);
 	}
 }

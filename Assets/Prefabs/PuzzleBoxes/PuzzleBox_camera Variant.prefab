@@ -250,8 +250,9 @@ MonoBehaviour:
   _activateOnAwake: 1
   _puzzleId: 1-1
   _unlockBird: {fileID: 0}
-  _liftDelay: 0
+  _liftDelay: 1
   _cable: {fileID: 0}
+  _openPanel: {fileID: 0}
 --- !u!1001 &368347466739441845
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -616,7 +617,7 @@ PrefabInstance:
     - target: {fileID: 349100208933151281, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 349100208933151281, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -686,7 +687,7 @@ PrefabInstance:
     - target: {fileID: 4131526481616456287, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5757202897918872174, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -876,7 +877,7 @@ PrefabInstance:
     - target: {fileID: 8353411010240560802, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8872602865916046132, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}

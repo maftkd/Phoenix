@@ -242,7 +242,7 @@ public class Fly : MonoBehaviour
 		Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(_flapPitchRange.x,_flapPitchRange.y),_flapVolume);
 	}
 
-	void Soar(bool soaring){
+	public void Soar(bool soaring){
 		if(soaring)
 		{
 			if(!_soarParticles.isPlaying)
@@ -257,6 +257,7 @@ public class Fly : MonoBehaviour
 			_soarParticles.Stop();
 			_soarAudio.Stop();
 		}
+		_anim.SetBool("soar",soaring);
 	}
 
 	public float GetSpeedFraction(){

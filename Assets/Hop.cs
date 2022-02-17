@@ -173,8 +173,10 @@ public class Hop : MonoBehaviour
 			transform.position+=_velocity*Vector3.up*Time.deltaTime;
 			_velocity-=_gravity*Time.deltaTime;
 			_camTarget=transform.position;
+			/*
 			if(_camTarget.y>_hopStartPos.y)
 				_camTarget.y=_hopStartY;
+				*/
 
 			//squash and stretch
 			float lerpy = Mathf.Abs(_velocity/(_hopAccel*2));

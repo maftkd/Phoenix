@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
 	List<string> _solvedPuzzles;
 	public static GameManager _instance;
 	public static Bird _player;
-	public static MCamera _mCam;
 	public static MInput _mIn;
+	public static MCamera _mCam;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
@@ -19,14 +19,14 @@ public class GameManager : MonoBehaviour
 		_solvedPuzzles=new List<string>();
 		_instance=this;
 		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
-		_mCam=Camera.main.transform.parent.GetComponent<MCamera>();
-		_mIn=_mCam.GetComponent<MInput>();
+		_mIn=FindObjectOfType<MInput>();
+		_mCam=FindObjectOfType<MCamera>();
 	}
 
     // Start is called before the first frame update
     void Start()
     {
-		Play();
+		//Play();
     }
 
     // Update is called once per frame
@@ -56,7 +56,6 @@ public class GameManager : MonoBehaviour
 		_mIn.LockInput(true);
 		SaveSlot [] slots = transform.GetComponentsInChildren<SaveSlot>();
 		slots[0].SelectSaveButton();
-		_mCam.enabled=false;
 	}
 
 	public void Play(){
@@ -64,7 +63,6 @@ public class GameManager : MonoBehaviour
 		_sfx.Play();
 		_pauseScreen.SetActive(false);
 		_mIn.LockInput(false);
-		_mCam.enabled=true;
 	}
 
 	public void PuzzleSolved(PuzzleBox pb){

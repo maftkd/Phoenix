@@ -62,7 +62,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EmissionMult: 1
-    - _Frequency: 20
+    - _Frequency: 42.16
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
@@ -70,12 +70,14 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _PhaseMult: 3
+    - _PhaseMult: 2.47
     - _PowerFill: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _WaveCutoff: 0
+    - _WavePow: 0.3
     - _ZWrite: 1
     m_Colors:
     - _BandColor: {r: 1, g: 0.018810872, b: 0, a: 1}
