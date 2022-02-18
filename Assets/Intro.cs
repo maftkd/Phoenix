@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Intro : MonoBehaviour
 {
-	public enum Mode {DEFAULT,SKIP,COVER_ART};
+	public enum Mode {DEFAULT,FAST,SKIP,COVER_ART};
 	public Mode _mode;
 	MCamera _mCam;
 	MInput _mIn;
@@ -39,6 +39,7 @@ public class Intro : MonoBehaviour
 	public float _landPartsDelay;
 	public float _orbitDur;
 	public float _letterBoxFadeDur;
+	public GameObject _coverArtIsland;
 
 	[Header("Cover art mode")]
 	public GameObject _rock;
@@ -52,8 +53,15 @@ public class Intro : MonoBehaviour
 		_player=GameManager._player;
 		_landingPan = _landingCam.GetComponent<Pan>();
 
+		if(_mode==Mode.FAST){
+			_dollyDur*=0.1f;
+			_truckDur*=0.1f;
+			_orbitDur*=0.1f;
+		}
+
 		switch(_mode){
 			case Mode.DEFAULT:
+			case Mode.FAST:
 			default:
 				_platePos=_introBird.transform.position;
 				_introBird.transform.position+=Vector3.up*_birdStartDistance;
@@ -69,6 +77,12 @@ public class Intro : MonoBehaviour
 				_mCam.SnapToCamera(_introCam);
 				_rock.SetActive(false);
 				_titleMat.SetFloat("_Power",0);
+				break;
+			case Mode.SKIP:
+				GameManager._instance.Play();
+				_coverArtIsland.SetActive(false);
+				enabled=false;
+				_mCam.SnapToCamera(_player._waddleCam);
 				break;
 		}
 	}
@@ -97,6 +111,7 @@ public class Intro : MonoBehaviour
     {
 		switch(_mode){
 			case Mode.DEFAULT:
+			case Mode.FAST:
 			default:
 				_introBird._onDoneFlying+=Alighted;
 				_introBird.FlyTo(_platePos);
@@ -187,7 +202,7 @@ public class Intro : MonoBehaviour
 		yield return new WaitForSeconds(_letterBoxFadeDur);
 		//free input, etc.
 		GameManager._instance.Play();
-		//wait some time
-		//give player control
+		_coverArtIsland.SetActive(false);
+		enabled=false;
 	}
 }

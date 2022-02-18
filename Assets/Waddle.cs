@@ -32,11 +32,14 @@ public class Waddle : MonoBehaviour
 	float _timeEstimate;
 	float _walkTimer;
 
+	WaddleCam _cam;
+
 	void Awake(){
 		_anim=GetComponent<Animator>();
 		_mIn = GameManager._mIn;
 		_bird = GetComponent<Bird>();
 		_cols = new Collider[2];
+		_cam=transform.GetComponentInChildren<WaddleCam>();
 	}
 
 	void OnEnable(){
@@ -51,9 +54,23 @@ public class Waddle : MonoBehaviour
 		}
 		_stepTimer=0;
 		_input=_mIn.GetInputDir();
+		if(!_npc)
+		{
+			_cam.enabled=true;
+			//mCam -> transition(bird's waddle cam, transitions.lerp, 0, null, 1)
+			GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.LERP,0,null,1f);
+			//GameManager._mCam.SnapToCamera(_bird._waddleCam);
+		}
 	}
 
 	void OnDisable(){
+		if(!_npc)
+		{
+			_cam.enabled=false;
+			//mCam -> transition (bird's idle cam,Transitions.ReverseSnap) 
+			GameManager._mCam.Transition(_bird._idleCam,MCamera.Transitions.CUT_BACK);
+			//GameManager._mCam.SnapToCamera(_bird._idleCam);
+		}
 	}
     // Start is called before the first frame update
     void Start()
@@ -198,11 +215,16 @@ public class Waddle : MonoBehaviour
 		//bool timeOut=_walkTimer>_timeEstimate+0.5f;
 		return  closeEnough;// || timeOut ;
 	}
+
 	public void StopWaddling(){
 		//transform.position=_destination;
 		_npcInput=Vector3.zero;
 		_anim.SetFloat("walkSpeed",0f);
 		enabled=false;
+	}
+
+	public void ToggleCamLines(){
+		_cam.ToggleCamLines();
 	}
 
 	void OnDrawGizmos(){

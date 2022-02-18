@@ -76,6 +76,7 @@ public class Bird : MonoBehaviour
 
 	//cameras
 	public Camera _waddleCam;
+	public Camera _idleCam;
 
 	void Awake(){
 		//calculations
@@ -97,7 +98,10 @@ public class Bird : MonoBehaviour
 		_cols = new Collider[3];
 		_birds = FindObjectsOfType<Bird>();
 		if(_playerControlled)
+		{
 			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
+			_idleCam = transform.Find("IdleCam").GetComponent<Camera>();
+		}
 
 		//disable things
 		_hop.enabled=false;
@@ -206,6 +210,9 @@ public class Bird : MonoBehaviour
 					break;
 				case 6://using tool
 					break;
+			}
+			if(Input.GetKeyDown(KeyCode.F1)){
+				_waddle.ToggleCamLines();
 			}
 		}
 		else{

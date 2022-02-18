@@ -18,7 +18,7 @@ public class MCamera : MonoBehaviour
 	[Header("Orbit")]
 	public AnimationCurve _orbitCurve;
 
-	public enum Transitions {CUT, FADE, WIPE, LERP, ORBIT};
+	public enum Transitions {CUT, FADE, WIPE, LERP, ORBIT, CUT_BACK};
 
 	void Awake(){
 		_camera=GetComponent<Camera>();
@@ -53,6 +53,7 @@ public class MCamera : MonoBehaviour
 		transform.rotation=camT.rotation;
 		_camera.fieldOfView=cam.fieldOfView;
 		transform.SetParent(camT);
+		Debug.Log("Snapped to: "+cam.name);
 	}
 
 	public void Transition(Camera cam, Transitions transition,float letterBox=0,Transform target=null,float dur=1){
@@ -65,6 +66,12 @@ public class MCamera : MonoBehaviour
 				break;
 			case Transitions.ORBIT:
 				StartCoroutine(OrbitTo(cam,target,dur,letterBox));
+				break;
+			case Transitions.CUT_BACK:
+				CutBack(cam);
+				break;
+			case Transitions.LERP:
+				StartCoroutine(LerpTo(cam,dur));
 				break;
 			default:
 				break;
@@ -152,8 +159,20 @@ public class MCamera : MonoBehaviour
 			_letterBox.SetFloat("_Amount",Mathf.Lerp(startLb,endLb,frac));
 			yield return null;
 		}
+		/*
+		radius=targetR;
+		Vector3 pos=target.position-transform.forward*radius;
+		pos.y=Mathf.Lerp(startHeight,endHeight,frac);
+		*/
+		_letterBox.SetFloat("_Amount",endLb);
+		SnapToCamera(cam);
+		/*
+		transform.rotation=endRot;
+		transform.position=cam.transform.position;
+		_camera.fieldOfView=targetFov;
 
 		transform.SetParent(cam.transform);
+		*/
 	}
 
 	public void LerpLetterBox(float target, float dur){
@@ -171,6 +190,35 @@ public class MCamera : MonoBehaviour
 			yield return null;
 		}
 		_letterBox.SetFloat("_Amount",target);
+	}
+
+	void CutBack(Camera cam){
+		//copy from cur to next
+		cam.transform.position=transform.position;
+		cam.transform.rotation=transform.rotation;
+		cam.fieldOfView=_camera.fieldOfView;
+		//parent
+		SnapToCamera(cam);
+	}
+
+	IEnumerator LerpTo(Camera target, float dur){
+		transform.SetParent(null);
+
+		Vector3 startPos=transform.position;
+		Quaternion startRot=transform.rotation;
+		float startFov=_camera.fieldOfView;
+
+		float timer=0;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			float frac=_orbitCurve.Evaluate(timer/dur);
+			transform.position=Vector3.Lerp(startPos,target.transform.position,frac);
+			transform.rotation=Quaternion.Slerp(startRot,target.transform.rotation,frac);
+			_camera.fieldOfView=Mathf.Lerp(startFov,target.fieldOfView,frac);
+			yield return null;
+		}
+
+		SnapToCamera(target);
 	}
 
 	void OnDrawGizmos(){
