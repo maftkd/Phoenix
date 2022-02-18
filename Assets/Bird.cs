@@ -333,6 +333,7 @@ public class Bird : MonoBehaviour
 		_state=1;
 		_waddle.enabled=true;
 		_hop.enabled=false;
+		Idle(false);
 	}
 
 	public bool IsHopping(){
@@ -713,6 +714,10 @@ public class Bird : MonoBehaviour
 
 	public void SaveLastSpot(){
 		_lastSpot=transform.position;
+	}
+	
+	public void Idle(bool on=true){
+		_idleCam.GetComponent<IdleCam>().enabled=on;
 	}
 
 	void OnDrawGizmos(){

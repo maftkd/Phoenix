@@ -7,6 +7,7 @@ public class WaddleCam : MonoBehaviour
 {
 	Vector3 _dollyDir;
 	float _yOffset;
+	public float _yLerp;
 	Bird _player;
 	public RectTransform _sweetSpot;
 	public RectTransform _playerPos;
@@ -36,6 +37,8 @@ public class WaddleCam : MonoBehaviour
 	}
 
 	void OnEnable(){
+		_position=transform.position;
+		_rotation=transform.rotation;
 		UpdateDolly();
 	}
 
@@ -92,7 +95,7 @@ public class WaddleCam : MonoBehaviour
 			_position+=_dollyDir*moveAmount*_distanceMoveMult*Time.deltaTime;
 		}
 		//fix y offset
-		_position.y=_player.transform.position.y+_yOffset;
+		_position.y=Mathf.Lerp(_position.y,_player.transform.position.y+_yOffset,_yLerp*Time.deltaTime);
     }
 
 	public void ToggleCamLines(){

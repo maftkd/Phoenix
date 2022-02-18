@@ -57,6 +57,8 @@ public class MCamera : MonoBehaviour
 	}
 
 	public void Transition(Camera cam, Transitions transition,float letterBox=0,Transform target=null,float dur=1){
+		//#unsafe - stopping all coroutines could interupt things we care about. Needs further testing
+		StopAllCoroutines();
 		switch(transition){
 			case Transitions.WIPE:
 				StartCoroutine(WipeTo(cam));

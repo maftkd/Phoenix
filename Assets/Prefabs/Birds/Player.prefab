@@ -643,7 +643,7 @@ MonoBehaviour:
   _walkSpeed: 0.65
   _maxWalkSlope: 2
   _animSpeedMult: 2.5
-  _stepVolume: 0.05
+  _stepVolume: 0.01
   _inputSmoothLerp: 10
   _slerp: 10
   _minInput: 0.1
@@ -794,6 +794,8 @@ MonoBehaviour:
   _flapDur: 0.4
   _band: {fileID: 2837362357988309745}
   _bandColor: {r: 1, g: 1, b: 1, a: 0}
+  _waddleCam: {fileID: 0}
+  _idleCam: {fileID: 0}
 --- !u!1 &1792526787315343659
 GameObject:
   m_ObjectHideFlags: 0

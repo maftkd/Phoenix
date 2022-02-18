@@ -56,9 +56,10 @@ public class Waddle : MonoBehaviour
 		_input=_mIn.GetInputDir();
 		if(!_npc)
 		{
-			_cam.enabled=true;
 			//mCam -> transition(bird's waddle cam, transitions.lerp, 0, null, 1)
-			GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.LERP,0,null,1f);
+			//GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.LERP,0,null,1f);
+			GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.CUT_BACK);
+			_cam.enabled=true;
 			//GameManager._mCam.SnapToCamera(_bird._waddleCam);
 		}
 	}
@@ -67,9 +68,8 @@ public class Waddle : MonoBehaviour
 		if(!_npc)
 		{
 			_cam.enabled=false;
-			//mCam -> transition (bird's idle cam,Transitions.ReverseSnap) 
 			GameManager._mCam.Transition(_bird._idleCam,MCamera.Transitions.CUT_BACK);
-			//GameManager._mCam.SnapToCamera(_bird._idleCam);
+			_bird.Idle();
 		}
 	}
     // Start is called before the first frame update
