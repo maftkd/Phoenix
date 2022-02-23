@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WaddleCam : MonoBehaviour
+public class WaddleCam : Shot
 {
 	Vector3 _dollyDir;
 	float _yOffset;
@@ -14,16 +14,25 @@ public class WaddleCam : MonoBehaviour
 	Vector2 _panBounds;
 	Vector2 _dollyBounds;
 	public float _panMult;
+	public float _maxPan;
 	public float _dollyMult;
+	public float _maxDolly;
 	Vector3 _position;
 	Quaternion _rotation;
-	Camera _cam;
 	[Header("Distance based constraints")]
 	public float _maxDistance;
 	public float _distanceMoveMult;
+	public float _maxDistanceMoveMult;
 	bool _debugLines;
 
-	void Awake(){
+	[Header("Warm up period")]
+	[Range(0,1)]
+	[Tooltip("Power is a multiplier across all movement. It ramps up based on warm up speed")]
+	public float _power;
+	public float _warmUpSpeed;
+
+	protected override void Awake(){
+		base.Awake();
 		_player=GameManager._player;
 		Vector2 refRes=new Vector2(1920,1080);
 		Vector2 midPoint=refRes*0.5f;
@@ -31,7 +40,6 @@ public class WaddleCam : MonoBehaviour
 		_dollyBounds=new Vector2(midPoint.y+_sweetSpot.offsetMin.y, midPoint.y+_sweetSpot.offsetMax.y)/refRes.y;
 		_position=transform.position;
 		_rotation=transform.rotation;
-		_cam=GetComponent<Camera>();
 		_yOffset=transform.position.y-_player.transform.position.y;
 		SetDebugLines(_debugLines);
 	}
@@ -39,6 +47,7 @@ public class WaddleCam : MonoBehaviour
 	void OnEnable(){
 		_position=transform.position;
 		_rotation=transform.rotation;
+		_power=0;
 		UpdateDolly();
 	}
 
@@ -49,13 +58,13 @@ public class WaddleCam : MonoBehaviour
 		_dollyDir.Normalize();
 	}
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
         
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
 		//cancel out the parent/child effect
 		transform.position=_position;
@@ -70,21 +79,25 @@ public class WaddleCam : MonoBehaviour
 		{
 			//rotate as a function of distance from sweet spot
 			float rotationAmount=viewPoint.x-_panBounds.x;
+			rotationAmount=Mathf.Clamp(rotationAmount,-_maxPan,_maxPan)*_power;
 			_rotation=Quaternion.Euler(0,rotationAmount*Time.deltaTime*_panMult,0)*_rotation;
 			UpdateDolly();
 		}
 		else if(viewPoint.x>_panBounds.y)
 		{
 			float rotationAmount=viewPoint.x-_panBounds.y;
+			rotationAmount=Mathf.Clamp(rotationAmount,-_maxPan,_maxPan)*_power;
 			_rotation=Quaternion.Euler(0,rotationAmount*Time.deltaTime*_panMult,0)*_rotation;
 			UpdateDolly();
 		}
 		if(viewPoint.y<_dollyBounds.x){
 			float moveAmount=viewPoint.y-_dollyBounds.x;
+			moveAmount=Mathf.Clamp(moveAmount,-_maxDolly,_maxDolly)*_power;
 			_position+=_dollyDir*moveAmount*_dollyMult*Time.deltaTime;
 		}
 		else if(viewPoint.y>_dollyBounds.y){
 			float moveAmount=viewPoint.y-_dollyBounds.y;
+			moveAmount=Mathf.Clamp(moveAmount,-_maxDolly,_maxDolly)*_power;
 			_position+=_dollyDir*moveAmount*_dollyMult*Time.deltaTime;
 		}
 
@@ -92,10 +105,18 @@ public class WaddleCam : MonoBehaviour
 		float sqrDist=(transform.position-_player.transform.position).sqrMagnitude;
 		if(sqrDist>_maxDistance*_maxDistance){
 			float moveAmount=Mathf.Sqrt(sqrDist)-_maxDistance;
+			moveAmount=Mathf.Clamp(moveAmount,-_maxDistanceMoveMult,_maxDistanceMoveMult)*_power;
 			_position+=_dollyDir*moveAmount*_distanceMoveMult*Time.deltaTime;
 		}
 		//fix y offset
-		_position.y=Mathf.Lerp(_position.y,_player.transform.position.y+_yOffset,_yLerp*Time.deltaTime);
+		_position.y=Mathf.Lerp(_position.y,_player.transform.position.y+_yOffset,_yLerp*Time.deltaTime*_power);
+
+		//ramp up power
+		if(_power<1f){
+			_power+=Time.deltaTime*_warmUpSpeed;
+			if(_power>1f)
+				_power=1f;
+		}
     }
 
 	public void ToggleCamLines(){

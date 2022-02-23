@@ -20,6 +20,7 @@ public class Bird : MonoBehaviour
 	AudioSource _ruffleAudio;
 	public bool _playerControlled;
 	MInput _mIn;
+	MCamera _mCam;
 	public Bird _mate;
 	[HideInInspector]
 	public Vector3 _size;
@@ -77,6 +78,7 @@ public class Bird : MonoBehaviour
 	//cameras
 	public Camera _waddleCam;
 	public Camera _idleCam;
+	public Camera _hopCam;
 
 	void Awake(){
 		//calculations
@@ -95,12 +97,14 @@ public class Bird : MonoBehaviour
 		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
 		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
 		_mIn = GameManager._mIn;
+		_mCam = GameManager._mCam;
 		_cols = new Collider[3];
 		_birds = FindObjectsOfType<Bird>();
 		if(_playerControlled)
 		{
 			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
 			_idleCam = transform.Find("IdleCam").GetComponent<Camera>();
+			_hopCam = transform.Find("HopCam").GetComponent<Camera>();
 		}
 
 		//disable things
@@ -151,9 +155,12 @@ public class Bird : MonoBehaviour
 					break;
 				case 1://waddling
 					if(!_waddle.IsWaddling()){
+						StopWaddling();
+						/*
 						_state=0;
 						_waddle.enabled=false;
 						_anim.SetFloat("walkSpeed",0f);
+						*/
 					}
 					else if(_waddle.IsKnockBack()){
 						//just wait
@@ -174,10 +181,13 @@ public class Bird : MonoBehaviour
 				case 2://hopping
 					if(!_hop.IsHopping()){
 						if(_mIn.GetControllerInput().sqrMagnitude<=_controllerZero*_controllerZero){
+							StopHopping();
 							//go to idle
+							/*
 							_state=0;
 							_hop.enabled=false;
 							_anim.SetFloat("walkSpeed",0f);
+							*/
 						}
 						else{
 							StartWaddling();
@@ -327,13 +337,14 @@ public class Bird : MonoBehaviour
 		_state=2;
 		_hop.enabled=true;
 		_waddle.enabled=false;
+		GameManager._mCam.Transition(_hopCam,MCamera.Transitions.CUT_BACK);
 	}
 
 	void StartWaddling(){
 		_state=1;
 		_waddle.enabled=true;
 		_hop.enabled=false;
-		Idle(false);
+		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);
 	}
 
 	public bool IsHopping(){
@@ -345,11 +356,14 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 		_anim.SetFloat("walkSpeed",0f);
 		_state=0;
+		GameManager._mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK);
 	}
 
 	public void StopWaddling(){
 		_waddle.StopWaddling();
 		_state=0;
+		GameManager._mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK);
+		//Debug.Log("We stop waddling yooo");
 	}
 
 	public bool Arrived(){
@@ -715,9 +729,23 @@ public class Bird : MonoBehaviour
 	public void SaveLastSpot(){
 		_lastSpot=transform.position;
 	}
-	
-	public void Idle(bool on=true){
-		_idleCam.GetComponent<IdleCam>().enabled=on;
+
+	public void TransitionToRelevantCamera(){
+
+		switch(_state){
+			case 0://idle cam
+				_mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK,0,null,0f,true);
+				break;
+			case 1://waddle cam
+			case 2://hop
+				//_mCam.Transition(_waddleCam,MCamera.Transitions.LERP,0,null,0.5f,true);
+				_mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK,0,null,0f,true);
+				break;
+			case 3://flying
+				break;
+			default://tbd 
+				break;
+		}
 	}
 
 	void OnDrawGizmos(){

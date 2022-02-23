@@ -10,6 +10,7 @@ public class PuzzleBox : MonoBehaviour
 	public UnityEvent _onSolved;
 	float _revealDur=1f;
 	MInput _mIn;
+	MCamera _mCam;
 	float _resetCamDelay=1f;
 	public float _shotDistance;
 	public float _shotHeight;
@@ -28,16 +29,16 @@ public class PuzzleBox : MonoBehaviour
 	Transform _box;
 	Transform _key;
 	Material _keyMat;
-	public Transform _openPanel;
 	public AudioClip _buzzClip;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
 		_mIn=GameManager._mIn;
+		_mCam=GameManager._mCam;
 		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
 		_box=transform.GetChild(0);
 		_player=GameManager._player;
-		_key=transform.Find("Key").transform;
+		_key=_box.Find("Key").transform;
 		_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 
 		if(_activateOnAwake)
@@ -75,7 +76,7 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		_keyMat.SetFloat("_Powered",1);
 		_solved=true;
-		Destroy(_forceField.gameObject);
+		RemoveForceField();
 		GameManager._instance.PuzzleSolved(this);
 	}
 
@@ -84,6 +85,7 @@ public class PuzzleBox : MonoBehaviour
 			return;
 		_onSolved.Invoke();
 		_solved=true;
+		RemoveForceField(true);
 		_keyMat.SetFloat("_Powered",1);
 		//Destroy(_forceField.gameObject);
 		if(_effects!=null)
@@ -94,38 +96,19 @@ public class PuzzleBox : MonoBehaviour
 
 	protected virtual IEnumerator OpenBox(){
 		yield return new WaitForSeconds(_liftDelay);
-		if(_openPanel!=null){
-			Vector3 startPos=_openPanel.position;
-			Vector3 endPos=startPos+Vector3.back*0.1f;
-			float timer=0;
-			Sfx.PlayOneShot3D(_buzzClip,startPos,1f+(Random.value*2-1)*0.2f);
-			while(timer<1f){
-				timer+=Time.deltaTime;
-				_openPanel.position=Vector3.Lerp(startPos,endPos,timer);
-				yield return null;
-			}
-			timer=0;
-			startPos=_openPanel.position;
-			endPos=startPos+Vector3.up*0.35f;
-			Sfx.PlayOneShot3D(_buzzClip,startPos,1f+(Random.value*2-1)*0.2f);
-			while(timer<1f){
-				timer+=Time.deltaTime;
-				_openPanel.position=Vector3.Lerp(startPos,endPos,timer);
-				yield return null;
-			}
-		}
+		Transform bottomPanel=_box.Find("Bottom");
+		bottomPanel.SetParent(transform);
 
-		/*
-			Quaternion startRot=_openPanel.rotation;
-			_openPanel.Rotate(Vector3.right*-90f);
-			Quaternion endRot=_openPanel.rotation;
-			float timer=0;
-			while(timer<1f){
-				timer+=Time.deltaTime;
-				_openPanel.rotation=Quaternion.Slerp(startRot,endRot,timer);
-				yield return null;
-			}
-			*/
+		Vector3 startPos=_box.position;
+		Vector3 endPos=startPos+Vector3.up*0.3f;
+		float timer=0;
+		Sfx.PlayOneShot3D(_buzzClip,startPos,1f+(Random.value*2-1)*0.2f);
+		float dur=2f;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			_box.position=Vector3.Lerp(startPos,endPos,timer/dur);
+			yield return null;
+		}
 	}
 
 	public virtual void Reveal(){
@@ -164,6 +147,14 @@ public class PuzzleBox : MonoBehaviour
 
 	public Transform GetPerch(){
 		return transform.Find("Perch");
+	}
+
+	void RemoveForceField(bool transition=false){
+		Destroy(_forceField.gameObject);
+		PuzzleCam pc = transform.GetComponentInChildren<PuzzleCam>();
+		pc.enabled=false;
+		if(transition)
+			_player.TransitionToRelevantCamera();
 	}
 
 	void OnDrawGizmos(){

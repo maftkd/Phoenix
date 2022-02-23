@@ -10,33 +10,47 @@ public class Intro : MonoBehaviour
 	MInput _mIn;
 
 	[Header("Intro bird")]
+	[Tooltip("The bird that lands on the button")]
 	public Bird _introBird;
 	public float _birdStartDistance;
 	Vector3 _platePos;
 
 	[Header("Intro text")]
+	[Tooltip("The Sign's material that shows the title Avian Brain")]
 	public Material _titleMat;
+	IEnumerator _titleAnimRoutine;
 	public CanvasGroup _startPrompt;
+	[Tooltip("The period of the Press Start Prompt alpha fade")]
 	public float _blinkDur;
+	[Tooltip("How long it takes to turn on/off the title sign")]
 	public float _powerDur;
 	public AudioClip _powerSound;
 
 	[Header("FlightSequence")]
 	public float _letterBoxAmount;
+	[Tooltip("The camera that frames the main menu / cover art")]
 	public Camera _introCam;
+	[Tooltip("The camera with the dolly that follows the overhead bird")]
 	public Camera _overheadCam;
+	[Tooltip("A seperate bird that flys over the island for intro shots")]
 	public Bird _overheadBird;
+	[Tooltip("Flight Distance of overhead bird. Should be sufficiently long to accommade dolly and truck shots")]
 	public float _flightDist;
+	[Tooltip("Duration of dolly shot including transition time")]
 	public float _dollyDur;
 	public float _truckDur;
+	[Tooltip("Duration of fades between dolly, truck, and and pan cam")]
+	public float _fadeDur;
 	Dolly _overheadDolly;
 	public Camera _truckCam;
 	Truck _overheadTruck;
 	Bird _player;
+	[Tooltip("Panning camera that captures the the main player bird landing on island")]
 	public Camera _landingCam;
 	Pan _landingPan;
 	public Transform _landingParts;
 	public float _landPartsDelay;
+	[Tooltip("Duration of transition from landing cam pan shot to waddle cam")]
 	public float _orbitDur;
 	public float _letterBoxFadeDur;
 	public GameObject _coverArtIsland;
@@ -82,13 +96,16 @@ public class Intro : MonoBehaviour
 				GameManager._instance.Play();
 				_coverArtIsland.SetActive(false);
 				enabled=false;
-				_mCam.SnapToCamera(_player._waddleCam);
+				_mCam.SnapToCamera(_player._idleCam);
 				break;
 		}
 	}
 
 	public void PowerTitleSign(bool p){
-		StartCoroutine(PowerTitleSignR(p?1f:0.1f));
+		if(_titleAnimRoutine!=null)
+			StopCoroutine(_titleAnimRoutine);
+		_titleAnimRoutine=PowerTitleSignR(p?1f:0.1f);
+		StartCoroutine(_titleAnimRoutine);
 		if(p)
 			Sfx.PlayOneShot2D(_powerSound);
 	}
@@ -122,7 +139,7 @@ public class Intro : MonoBehaviour
     }
 
 	public void Alighted(){
-		Debug.Log("Alighted!");
+		//Debug.Log("Alighted!");
 		StartCoroutine(BlinkPrompt());
 	}
 
@@ -139,8 +156,8 @@ public class Intro : MonoBehaviour
 		if(timer>100f){
 			_startPrompt.gameObject.SetActive(false);
 			//bird flies behind cam
-			Vector3 flightTarget=_introCam.transform.position;
-			flightTarget+=Vector3.up*0.2f;
+			Vector3 flightTarget=_introCam.transform.position-_introCam.transform.forward*0.1f;
+			flightTarget+=Vector3.up*0.1f;
 			_introBird._onDoneFlying-=Alighted;
 			_introBird._onDoneFlying+=BirdBehindCam;
 			_introBird.FlyTo(flightTarget);
@@ -153,53 +170,57 @@ public class Intro : MonoBehaviour
 	}
 
 	public void BirdBehindCam(){
-		_mCam.Transition(_overheadCam,MCamera.Transitions.FADE,_letterBoxAmount);
+		//transition to dolly cam
+		_mCam.Transition(_overheadCam,MCamera.Transitions.FADE,_letterBoxAmount,_overheadBird.transform,_fadeDur);
+
+		//overhead bird starts flight
 		Vector3 start=_overheadBird.transform.position;
 		Vector3 target=start+_overheadBird.transform.forward*_flightDist;
 		_overheadBird.FlyTo(target,0.2f);
-		_overheadDolly.StartTracking(_overheadBird.transform);
-		_overheadTruck.StartTracking(_overheadBird.transform);
 
+		//Start camera routine
 		StartCoroutine(FlightCapture());
 	}
 
 	IEnumerator FlightCapture(){
-		//overhead cam already set up
+		//wait for dolly shot
 		yield return new WaitForSeconds(_dollyDur);
+
 		//transition to truck cam
-		_mCam.Transition(_truckCam,MCamera.Transitions.FADE,_letterBoxAmount);
+		_mCam.Transition(_truckCam,MCamera.Transitions.FADE,_letterBoxAmount,_overheadBird.transform,_fadeDur);
 		yield return new WaitForSeconds(_truckDur);
-		_overheadDolly.enabled=false;
+
 		//player flies in
 		Vector3 startPos=_player.transform.position;
-		Vector3 target=startPos-_player.transform.forward*12f;
-		target+=Vector3.up*3f;
+		Vector3 target=startPos-_player.transform.forward*8f;
+		target+=Vector3.up*2f;
 		_player.transform.position=target;
 		_player.FlyTo(startPos,0.8f);
 		_player._onDoneFlying+=PlayerArrived;
-		_landingPan.StartTracking(_player.transform);
-		//transition to track cam
-		_mCam.Transition(_landingCam,MCamera.Transitions.FADE,_letterBoxAmount);
+
+		//transition to pan cam as bird lands
+		_mCam.Transition(_landingCam,MCamera.Transitions.FADE,_letterBoxAmount,_player.transform,_fadeDur);
+
+		//landing particles
 		yield return new WaitForSeconds(_landPartsDelay);
-		_overheadTruck.enabled=false;
 		Instantiate(_landingParts,startPos,Quaternion.identity);
 	}
 
 	public void PlayerArrived(){
-		Debug.Log("Player arrived!");
-		//disable intro cams
-		_landingPan.enabled=false;
-		_overheadTruck.enabled=false;
 		_player.Ruffle();
 		StartCoroutine(GivePlayerControl());
 	}
 
 	IEnumerator GivePlayerControl(){
-		//mCam. transition to (bird cam, orbit transition)
-		_mCam.Transition(_player._waddleCam,MCamera.Transitions.ORBIT,_letterBoxAmount,_player.transform,_orbitDur);
+		
+		//orbit to idle cam
+		_mCam.Transition(_player._idleCam,MCamera.Transitions.ORBIT,_letterBoxAmount,_player.transform,_orbitDur);
 		yield return new WaitForSeconds(_orbitDur);
+
+		//remove letterbox
 		_mCam.LerpLetterBox(0,_letterBoxFadeDur);
 		yield return new WaitForSeconds(_letterBoxFadeDur);
+
 		//free input, etc.
 		GameManager._instance.Play();
 		_coverArtIsland.SetActive(false);

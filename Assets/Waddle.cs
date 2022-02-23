@@ -13,6 +13,7 @@ public class Waddle : MonoBehaviour
 	public float _stepVolume;
 	float _stepTimer;
 	Vector3 _input;
+	Vector3 _rawInput;
 	public float _inputSmoothLerp;
 	public float _slerp;
 	public float _minInput;
@@ -56,20 +57,16 @@ public class Waddle : MonoBehaviour
 		_input=_mIn.GetInputDir();
 		if(!_npc)
 		{
-			//mCam -> transition(bird's waddle cam, transitions.lerp, 0, null, 1)
-			//GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.LERP,0,null,1f);
-			GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.CUT_BACK);
-			_cam.enabled=true;
-			//GameManager._mCam.SnapToCamera(_bird._waddleCam);
+			//transition to waddle cam
+			//GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.CUT_BACK);
 		}
 	}
 
 	void OnDisable(){
 		if(!_npc)
 		{
-			_cam.enabled=false;
-			GameManager._mCam.Transition(_bird._idleCam,MCamera.Transitions.CUT_BACK);
-			_bird.Idle();
+			//transition to idle cam
+			//GameManager._mCam.Transition(_bird._idleCam,MCamera.Transitions.CUT_BACK);
 		}
 	}
     // Start is called before the first frame update
@@ -83,10 +80,8 @@ public class Waddle : MonoBehaviour
 		_stepTimer+=Time.deltaTime;
 		_walkTimer+=Time.deltaTime;
 		if(_knockBackTimer<=0){
-			Vector3 rawInput = _npc? _npcInput : _mIn.GetInputDir();
-			//if(_input.sqrMagnitude<=rawInput.sqrMagnitude)
-			_input=Vector3.Lerp(_input,rawInput,_inputSmoothLerp*Time.deltaTime);
-			//_input=rawInput;
+			_rawInput = _npc? _npcInput : _mIn.GetInputDir();
+			_input=Vector3.Lerp(_input,_rawInput,_inputSmoothLerp*Time.deltaTime);
 			if(_input.sqrMagnitude<_minInput*_minInput)
 				return;
 		}
@@ -178,7 +173,7 @@ public class Waddle : MonoBehaviour
 	}
 
 	public bool IsWaddling(){
-		return _input.sqrMagnitude>=_minInput*_minInput;
+		return _input.sqrMagnitude>=_minInput*_minInput||_rawInput.sqrMagnitude>_minInput*_minInput;
 	}
 	
 	public bool IsKnockBack(){

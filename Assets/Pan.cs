@@ -2,32 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pan : MonoBehaviour
+public class Pan : Shot
 {
-	Transform _trackTarget;
 	float _pitch;
 
-	void Awake(){
-		enabled=false;
+	protected override void Awake(){
+		base.Awake();
 		_pitch=transform.eulerAngles.x;
 	}
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
         
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
-		transform.LookAt(_trackTarget);
+		transform.LookAt(_target);
 		Vector3 eulers=transform.eulerAngles;
 		eulers.x=_pitch;
 		transform.eulerAngles=eulers;
     }
 
-	public void StartTracking(Transform t){
-		_trackTarget=t;
-		enabled=true;
+	public override void StartTracking(Transform t){
+		base.StartTracking(t);
 	}
 }

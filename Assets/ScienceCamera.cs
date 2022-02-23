@@ -70,6 +70,12 @@ public class ScienceCamera : MonoBehaviour
 				foreach(Circuit c in _outputs){
 					c.Power(birdOnEx);
 				}
+				if(!_audio.isPlaying){
+					_audio.clip=_zoom;
+					_audio.pitch=Random.Range(_zoomPitchRange.x,_zoomPitchRange.y);
+					_audio.Play();
+				}
+
 			}
 			_birdPrevOnEx=birdOnEx;
 		}
@@ -104,11 +110,6 @@ public class ScienceCamera : MonoBehaviour
 	}
 
 	IEnumerator RefocusR(float angle, Quaternion start, Quaternion target){
-		if(!_audio.isPlaying){
-			_audio.clip=_zoom;
-			_audio.pitch=Random.Range(_zoomPitchRange.x,_zoomPitchRange.y);
-			_audio.Play();
-		}
 		float dur = angle/_anglesPerSec;
 		float timer=0;
 		while(timer<dur){

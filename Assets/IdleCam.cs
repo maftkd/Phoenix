@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IdleCam : MonoBehaviour
+public class IdleCam : Shot
 {
 
 	int _lerpState;
@@ -31,11 +31,17 @@ public class IdleCam : MonoBehaviour
 	public float _sideDur;
 	public float _sideOffset;
 
-	void Awake(){
-		enabled=false;
+	protected override void Awake(){
+		base.Awake();
 		_player=GameManager._player;
 		_yOffset=transform.position.y-_player.transform.position.y;
 	}
+
+	/*
+	public override void StartTracking(Transform t){
+		base.StartTracking(t);
+	}
+	*/
 
 	void OnEnable(){
 		_restPos=transform.position;

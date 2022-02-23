@@ -115,7 +115,7 @@ public class PressurePlate : MonoBehaviour
 	}
 
 	bool HitsAbove(int numHits){
-		Debug.Log("checking "+numHits+" hits");
+		//Debug.Log("checking "+numHits+" hits");
 		for(int i=0; i<numHits; i++){
 			Collider c = _cols[i];
 			if(c.transform.position.y+0.001f<_button.position.y+_box.size.y)

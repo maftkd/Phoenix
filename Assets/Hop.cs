@@ -91,10 +91,21 @@ public class Hop : MonoBehaviour
 
 		//start da hop
 		StartHop();
+
+		if(!_npc)
+		{
+			//transition to hop cam
+			//GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.CUT_BACK);
+		}
 	}
 
 	void OnDisable(){
 		transform.localScale=_defaultScale;
+		if(!_npc)
+		{
+			//transition to idle cam
+			//GameManager._mCam.Transition(_bird._idleCam,MCamera.Transitions.CUT_BACK);
+		}
 	}
 
     // Start is called before the first frame update

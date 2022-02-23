@@ -65,7 +65,7 @@ public class Hunger : MonoBehaviour
 	}
 
 	void BirdArrived(){
-		Debug.Log("Arrived");
+		//Debug.Log("Arrived");
 		if(!enabled)
 			return;
 		Transform seed = FindRandomSeed();
