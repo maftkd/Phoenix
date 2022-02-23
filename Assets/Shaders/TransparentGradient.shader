@@ -8,10 +8,9 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent""Queue"="Geometry-1" }
+        Tags { "RenderType"="Transparent""Queue"="Geometry" }
         LOD 100
 		Blend SrcAlpha OneMinusSrcAlpha
-		ZTest Off
 		Cull Off
         Pass
         {

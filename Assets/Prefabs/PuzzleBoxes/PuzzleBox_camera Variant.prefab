@@ -251,6 +251,7 @@ MonoBehaviour:
   _liftDelay: 1
   _cable: {fileID: 0}
   _buzzClip: {fileID: 0}
+  _nextPuzzle: {fileID: 0}
 --- !u!1001 &368347466739441845
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -509,7 +510,7 @@ PrefabInstance:
     - target: {fileID: 1872416692107663976, guid: c98973663f7f5f24ba0f5ea8a9a5874d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.2501
+      value: 0.2505
       objectReference: {fileID: 0}
     - target: {fileID: 1872416692107663976, guid: c98973663f7f5f24ba0f5ea8a9a5874d,
         type: 3}
@@ -642,6 +643,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.15
       objectReference: {fileID: 0}
+    - target: {fileID: 349100208933151281, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.251
+      objectReference: {fileID: 0}
     - target: {fileID: 2485334602903755861, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
@@ -675,7 +681,7 @@ PrefabInstance:
     - target: {fileID: 2737233402884908326, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.2501
+      value: 0.2505
       objectReference: {fileID: 0}
     - target: {fileID: 2851975696912391697, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -696,6 +702,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Size.z
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3761237346242789387, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3991802690800023684, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
@@ -956,6 +967,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8959332515089361297, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9086368102283080723, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}

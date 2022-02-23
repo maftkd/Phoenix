@@ -115,8 +115,38 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}
+      propertyPath: _maxPitch
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
+      propertyPath: _minPitch
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
       propertyPath: _chargeDur
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
+      propertyPath: _maxVolume
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
+      propertyPath: _toneNoise
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
+      propertyPath: _decayVolMult
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
+      propertyPath: _toneFrequency
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}

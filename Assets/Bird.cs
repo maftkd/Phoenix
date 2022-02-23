@@ -337,7 +337,8 @@ public class Bird : MonoBehaviour
 		_state=2;
 		_hop.enabled=true;
 		_waddle.enabled=false;
-		GameManager._mCam.Transition(_hopCam,MCamera.Transitions.CUT_BACK);
+		//GameManager._mCam.Transition(_hopCam,MCamera.Transitions.CUT_BACK);
+		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);
 	}
 
 	void StartWaddling(){

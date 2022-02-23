@@ -30,6 +30,7 @@ public class PuzzleBox : MonoBehaviour
 	Transform _key;
 	Material _keyMat;
 	public AudioClip _buzzClip;
+	public PuzzleBox _nextPuzzle;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
@@ -135,6 +136,16 @@ public class PuzzleBox : MonoBehaviour
 		Destroy(carrierMesh.gameObject);
 		yield return new WaitForSeconds(_resetCamDelay);
 		_onRevealed.Invoke();
+	}
+
+	public void ActivateNextPuzzle(){
+		//light up seed lines
+		Circuit seedLines = transform.Find("SeedLines").GetComponentInChildren<Circuit>();
+		seedLines.Power(true);
+
+		//activate next puzzle
+		if(_nextPuzzle!=null)
+			_nextPuzzle.Activate();
 	}
 
 	public virtual void Activate(){

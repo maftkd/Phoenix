@@ -8,9 +8,6 @@ public class Seed : MonoBehaviour
 	Transform _groundEffects;
 	public AudioClip _choir;
 	Transform _player;
-	bool _effectsPlayed;
-	Rigidbody _rb;
-	float _lifeTimer=0;
 	public float _riseAmount;
 	public float _riseTime;
 	public float _riseDelay;
@@ -18,7 +15,7 @@ public class Seed : MonoBehaviour
 
 	void Awake(){
 		_player=GameManager._player.transform;
-		_rb = GetComponent<Rigidbody>();
+		StartEffects();
 	}
     // Start is called before the first frame update
     void Start()
@@ -29,16 +26,10 @@ public class Seed : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(!_effectsPlayed){
-			_lifeTimer+=Time.deltaTime;
-			if(_rb.velocity.sqrMagnitude<0.1f&&_lifeTimer>0.25f)
-				StartEffects();
-		}
     }
 
 	void StartEffects(){
 
-		_effectsPlayed=true;
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position,Vector3.down, out hit, 1f, 1)){
 			_groundEffects = Instantiate(_groundEffectsPrefab,hit.point,Quaternion.identity);
@@ -50,12 +41,17 @@ public class Seed : MonoBehaviour
 	void OnTriggerEnter(Collider other){
 		if(other.GetComponent<Bird>()==null)
 			return;
+		//activate next puzzle
+		PuzzleBox puzzle = transform.GetComponentInParent<PuzzleBox>();
+		puzzle.ActivateNextPuzzle();
+
+		//collect seed
 		CollectSeed(other.GetComponent<Bird>());
 		GetComponent<Rotator>().enabled=false;
+
 	}
 
 	public void CollectSeed(Bird other){
-		_effectsPlayed=true;//prevents effects from starting after collection
 		if(_groundEffects!=null)
 			Destroy(_groundEffects.gameObject);
 		else
@@ -64,8 +60,6 @@ public class Seed : MonoBehaviour
 		Sfx.PlayOneShot2D(_choir);
 		other.CollectSeed(transform);
 		GetComponent<Collider>().enabled=false;
-		_rb.isKinematic=true;
-		_rb.useGravity=false;
 		StartCoroutine(CollectSeedR(other.transform));
 	}
 
