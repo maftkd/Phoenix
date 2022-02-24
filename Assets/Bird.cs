@@ -79,6 +79,7 @@ public class Bird : MonoBehaviour
 	public Camera _waddleCam;
 	public Camera _idleCam;
 	public Camera _hopCam;
+	public Camera _flyCam;
 
 	void Awake(){
 		//calculations
@@ -105,6 +106,7 @@ public class Bird : MonoBehaviour
 			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
 			_idleCam = transform.Find("IdleCam").GetComponent<Camera>();
 			_hopCam = transform.Find("HopCam").GetComponent<Camera>();
+			_flyCam = transform.Find("FlyCam").GetComponent<Camera>();
 		}
 
 		//disable things
@@ -391,6 +393,8 @@ public class Bird : MonoBehaviour
 		_fly.enabled=true;
 		_state=3;
 		_anim.SetTrigger("fly");
+		//GameManager._mCam.Transition(_flyCam,MCamera.Transitions.LERP,0f,null,0.5f);
+		GameManager._mCam.Transition(_flyCam,MCamera.Transitions.CUT_BACK);
 	}
 	public void Land(){
 		SaveLastSpot();
@@ -399,6 +403,16 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 		_anim.SetTrigger("land");
 		_hop.PlayStepParticles();
+		Debug.Log("landing");
+		//reset puzzle box cam - puzzle box needs to re-check if player is in zone after landing
+		//because typically flight takes priority
+		PuzzleBox._latestPuzzle.ResetCamera();
+
+		//reset flight priority to 0
+		_flyCam.GetComponent<FlyCam>().ResetPriority();
+
+		//which allows us to switch back to the idle cam
+		GameManager._mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK);
 	}
 
 	public void Dive(float vel){
@@ -743,6 +757,7 @@ public class Bird : MonoBehaviour
 				_mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK,0,null,0f,true);
 				break;
 			case 3://flying
+				_mCam.Transition(_flyCam,MCamera.Transitions.CUT_BACK,0,null,0f,true);
 				break;
 			default://tbd 
 				break;

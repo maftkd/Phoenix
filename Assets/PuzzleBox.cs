@@ -31,6 +31,7 @@ public class PuzzleBox : MonoBehaviour
 	Material _keyMat;
 	public AudioClip _buzzClip;
 	public PuzzleBox _nextPuzzle;
+	PuzzleCam _puzzleCam;
 
 	protected virtual void Awake(){
 		_effects=transform.Find("Effects");
@@ -41,6 +42,7 @@ public class PuzzleBox : MonoBehaviour
 		_player=GameManager._player;
 		_key=_box.Find("Key").transform;
 		_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
+		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
 
 		if(_activateOnAwake)
 			Activate();
@@ -162,10 +164,13 @@ public class PuzzleBox : MonoBehaviour
 
 	void RemoveForceField(bool transition=false){
 		Destroy(_forceField.gameObject);
-		PuzzleCam pc = transform.GetComponentInChildren<PuzzleCam>();
-		pc.enabled=false;
+		_puzzleCam.enabled=false;
 		if(transition)
 			_player.TransitionToRelevantCamera();
+	}
+
+	public void ResetCamera(){
+		_puzzleCam.ResetZone();
 	}
 
 	void OnDrawGizmos(){

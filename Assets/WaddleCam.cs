@@ -21,6 +21,7 @@ public class WaddleCam : Shot
 	Quaternion _rotation;
 	[Header("Distance based constraints")]
 	public float _maxDistance;
+	public float _minDistance;
 	public float _distanceMoveMult;
 	public float _maxDistanceMoveMult;
 	bool _debugLines;
@@ -105,6 +106,11 @@ public class WaddleCam : Shot
 		float sqrDist=(transform.position-_player.transform.position).sqrMagnitude;
 		if(sqrDist>_maxDistance*_maxDistance){
 			float moveAmount=Mathf.Sqrt(sqrDist)-_maxDistance;
+			moveAmount=Mathf.Clamp(moveAmount,-_maxDistanceMoveMult,_maxDistanceMoveMult)*_power;
+			_position+=_dollyDir*moveAmount*_distanceMoveMult*Time.deltaTime;
+		}
+		else if(sqrDist<_minDistance*_minDistance){
+			float moveAmount=_minDistance-Mathf.Sqrt(sqrDist);
 			moveAmount=Mathf.Clamp(moveAmount,-_maxDistanceMoveMult,_maxDistanceMoveMult)*_power;
 			_position+=_dollyDir*moveAmount*_distanceMoveMult*Time.deltaTime;
 		}

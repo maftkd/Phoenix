@@ -310,6 +310,7 @@ MonoBehaviour:
   - {fileID: 3626042848966626126}
   _otherCam: {fileID: 0}
   _noFlash: 0
+  _outputs: []
 --- !u!82 &5855796476123310176
 AudioSource:
   m_ObjectHideFlags: 0
@@ -609,7 +610,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d0757a0dee082f340a3e2577f9b3e86f, type: 2}
+  - {fileID: 2100000, guid: 7a146973488f24e4182fa79c98c9bd19, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

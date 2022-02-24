@@ -3,3 +3,4 @@ GameManager - this is first because many other scripts obtain references to game
 Bird - unknown, maybe we should figure out if this is really neccessary
 Cable - Cable needs to initialize and set up its points before puzzle box makes a call to fill the cable
 MCamera - needs to get Camera before Intro can make calls to snap camera
+FlyCam - needs to be after-default to counter-rotate and counter-translate any other motion of the bird

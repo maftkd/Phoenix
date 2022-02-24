@@ -75,13 +75,12 @@ public class MCamera : MonoBehaviour
 			_targetCam=null;
 		if(handleTracking)
 		{
-			Debug.Log("uhm?");
 			HandleTracking(cam,null,0.001f);
 			_prevCam=cam;
 		}
 	}
 
-	public void Transition(Camera cam, Transitions transition,float letterBox=0,Transform target=null,float dur=0.001f,
+	public void Transition(Camera cam, Transitions transition,float letterBox=0,Transform target=null,float dur=0f,
 			bool overridePriority=false){
 		//check for same cam transition
 		if(_prevCam!=null&&cam==_prevCam)
@@ -137,7 +136,12 @@ public class MCamera : MonoBehaviour
 		if(_prevCam!=null){
 			shot = _prevCam.GetComponent<Shot>();
 			if(shot!=null)
-				StartCoroutine(StopTrackingShot(shot,dur));
+			{
+				if(dur==0)
+					shot.StopTracking();
+				else
+					StartCoroutine(StopTrackingShot(shot,dur));
+			}
 		}
 
 

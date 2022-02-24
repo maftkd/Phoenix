@@ -73,13 +73,14 @@
 
 			fixed2 baseUV = IN.uv_NoiseTex;
 			fixed sn = sin(_Time.x);
-			fixed2 scrolledUV = baseUV+_Time.x*_WindDir.xy*_WindSpeed-sn*_WindDir.xy*_SineMult+fixed2(0.25,0);
+			fixed2 scrollOffset=_Time.x*_WindDir.xy*_WindSpeed-sn*_WindDir.xy*_SineMult+fixed2(0.25,0);
+			fixed2 scrolledUV = baseUV+scrollOffset;
 			fixed2 offsetScrolledUV = baseUV-_Time.x*_WindDir.zw*_WindSpeed+sn*_WindDir.zw*_SineMult;
 			fixed noise = tex2D(_NoiseTex, scrolledUV).r;
 			fixed noiseB = tex2D(_NoiseTex, offsetScrolledUV).r;
 			fixed noiseDif=1-noise*noiseB;
 
-			fixed foamNoise=tex2D(_NoiseTex,scrolledUV*_FoamFreq);
+			fixed foamNoise=tex2D(_NoiseTex,(baseUV*_FoamFreq)+scrollOffset);
 			fixed foam = step(depth,_FoamDist+foamNoise-0.5);
 
 			fixed wavePow=pow(noiseDif,_WavePower);

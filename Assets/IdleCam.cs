@@ -8,17 +8,10 @@ public class IdleCam : Shot
 	int _lerpState;
 	float _yOffset;
 	Bird _player;
-	Vector3 _restPos;
 
-	[Header("Vertical lerp")]
-	public float _vertAmount;
-	public float _vDelay;
-	public float _vDur;
-	public AnimationCurve _vertCurve;
-
-	[Header("Lower lerp")]
-	public float _lDelay;
-	public float _lDur;
+	[Header("Close in")]
+	public float _closeInSpeed;
+	public float _minDistance;
 
 	[Header("Behind Player lerp")]
 	public float _distance;
@@ -44,7 +37,6 @@ public class IdleCam : Shot
 	*/
 
 	void OnEnable(){
-		_restPos=transform.position;
 		StartLerp(0);
 	}
 
@@ -59,12 +51,13 @@ public class IdleCam : Shot
 			_lerpState++;
 		switch(_lerpState){
 			case 0:
-				StartCoroutine(LerpToBehindPlayer());
+				StartCoroutine(CloseInOnPlayer());
 				break;
 			case 1:
-				StartCoroutine(LerpToSide());
+				StartCoroutine(LerpToBehindPlayer());
 				break;
 			case 2:
+				StartCoroutine(LerpToSide());
 				break;
 			case 3:
 				break;
@@ -73,46 +66,8 @@ public class IdleCam : Shot
 		}
 	}
 
-	IEnumerator LerpAbovePlayer(){
-		Vector3 startPos=transform.position;
-		Vector3 targetPos=startPos+Vector3.up*_vertAmount;
-
-		yield return new WaitForSeconds(_vDelay);
-
-		float timer=0;
-		float dur = _vDur;
-		while(timer<dur){
-			timer+=Time.deltaTime;
-			float frac = _vertCurve.Evaluate(timer/dur);
-			transform.position=Vector3.Lerp(startPos,targetPos,frac);
-			yield return null;
-		}
-		transform.position=targetPos;
-
-		StartLerp();
-	}
-
-	IEnumerator LerpToRestPos(){
-		Vector3 startPos=transform.position;
-		Vector3 targetPos=_restPos;
-
-		yield return new WaitForSeconds(_lDelay);
-		float timer=0;
-		float dur = _lDur;
-		while(timer<dur){
-			timer+=Time.deltaTime;
-			float frac = _vertCurve.Evaluate(timer/dur);
-			transform.position=Vector3.Lerp(startPos,targetPos,frac);
-			yield return null;
-		}
-		transform.position=targetPos;
-
-		StartLerp();
-	}
-
 
 	IEnumerator LerpToBehindPlayer(){
-
 		yield return new WaitForSeconds(_plDelay);
 		Vector3 startPos=transform.position;
 		Vector3 targetPos=_player.transform.position-_player.transform.forward*_distance;
@@ -134,9 +89,6 @@ public class IdleCam : Shot
 		transform.position=targetPos;
 		transform.rotation=targetRot;
 
-		_restPos=transform.position;
-
-
 		StartLerp();
 	}
 
@@ -156,7 +108,16 @@ public class IdleCam : Shot
 		transform.position=targetPos;
 
 		StartLerp();
+	}
 
+	IEnumerator CloseInOnPlayer(){
+		float sqrDist = (_player.transform.position-transform.position).sqrMagnitude;
+		while(sqrDist>_minDistance*_minDistance){
+			Vector3 diff = _player.transform.position-transform.position;
+			transform.position+=diff.normalized*_closeInSpeed*Time.deltaTime;
+			sqrDist = (_player.transform.position-transform.position).sqrMagnitude;
+			yield return null;
+		}
 	}
 
 }

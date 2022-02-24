@@ -94,7 +94,7 @@ MonoBehaviour:
   _forceField: {fileID: 4131526481616456287}
   _shotRadius: 1.5
   _shotHeight: 0.5
-  _targetYOffset: 0
+  _zoneHeight: 0.4
   _lerp: 3
 --- !u!1 &658184841204701521
 GameObject:

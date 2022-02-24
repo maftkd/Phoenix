@@ -14,7 +14,7 @@ public class PuzzleCam : Shot
 	bool _tracking;
 	public float _shotRadius;
 	public float _shotHeight;
-	public float _targetYOffset;
+	public float _zoneHeight;
 	Vector3 _targetPos;
 	Quaternion _targetRot;
 	public float _lerp;
@@ -39,7 +39,8 @@ public class PuzzleCam : Shot
 		
 		//zone check
 		float sqrDist = (_player.transform.position-_center.position).sqrMagnitude;
-		_inZone=sqrDist<_forceFieldRadius*_forceFieldRadius;
+		_inZone=sqrDist<_forceFieldRadius*_forceFieldRadius
+			&&_player.transform.position.y<_center.position.y+_zoneHeight;
 		//#todo - also do a vertical check for in zone. This stuff should kinda disable if the bird is flying or standing on top the box
 
 		if(_inZone!=_prevInZone){
@@ -72,8 +73,11 @@ public class PuzzleCam : Shot
 			transform.rotation=Quaternion.Slerp(curRot,_targetRot,_lerp*Time.deltaTime);
 		}
 
-
-
 		_prevInZone=_inZone;
     }
+
+	public void ResetZone(){
+		_inZone=false;
+		_prevInZone=false;
+	}
 }
