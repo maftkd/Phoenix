@@ -54,6 +54,7 @@ public class Fly : MonoBehaviour
 	[Header("Knockback")]
 	public float _knockBackDelay;
 	public float _knockBackMult;
+	public float _minKnockBackMag;
 	float _knockBackTimer;
 
 	void Awake(){
@@ -164,17 +165,11 @@ public class Fly : MonoBehaviour
 			else{
 				rollAngle=0;
 			}
-			//DebugScreen.Print(_forwardness>0,0);
-			//DebugScreen.Print(_turnRadius,1);
-			//DebugScreen.Print(flatVel.sqrMagnitude,2);
+
 			//adjust pitch
 			Vector3 eulerAngles=transform.eulerAngles;
 			eulerAngles.z=rollAngle;
 			float targetPitch=0;
-			/*
-			if(_diving)
-				targetPitch=-Mathf.Atan2(_velocity.y,flatVel.magnitude)*Mathf.Rad2Deg;
-				*/
 			eulerAngles.x=targetPitch;
 			transform.eulerAngles=eulerAngles;
 
@@ -269,6 +264,13 @@ public class Fly : MonoBehaviour
 		_knockBackTimer+=Time.deltaTime;
 		_velocity.x*=-_knockBackMult;
 		_velocity.z*=-_knockBackMult;
+		Vector2 kb =new Vector2(_velocity.x,_velocity.z);
+		float mag = kb.magnitude;
+		if(mag<_minKnockBackMag){
+			kb=kb.normalized*_minKnockBackMag;
+		}
+		_velocity.x=kb.x;
+		_velocity.z=kb.y;
 	}
 
 	void OnDrawGizmos(){

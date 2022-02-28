@@ -38,7 +38,7 @@ public class PuzzleBox : MonoBehaviour
 		_mIn=GameManager._mIn;
 		_mCam=GameManager._mCam;
 		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
-		_box=transform.GetChild(0);
+		_box=transform.Find("BoxDetailed");
 		_player=GameManager._player;
 		_key=_box.Find("Key").transform;
 		_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
@@ -81,6 +81,11 @@ public class PuzzleBox : MonoBehaviour
 		_solved=true;
 		RemoveForceField();
 		GameManager._instance.PuzzleSolved(this);
+		SnapOpen();
+		//destroy seed
+		GameObject seed = transform.GetComponentInChildren<Seed>().gameObject;
+		Destroy(seed);
+		ActivateNextPuzzle();
 	}
 
 	public virtual void PuzzleSolved(){
@@ -112,6 +117,14 @@ public class PuzzleBox : MonoBehaviour
 			_box.position=Vector3.Lerp(startPos,endPos,timer/dur);
 			yield return null;
 		}
+	}
+
+	void SnapOpen(){
+		Transform bottomPanel=_box.Find("Bottom");
+		bottomPanel.SetParent(transform);
+		Vector3 startPos=_box.position;
+		Vector3 endPos=startPos+Vector3.up*0.3f;
+		_box.position=endPos;
 	}
 
 	public virtual void Reveal(){

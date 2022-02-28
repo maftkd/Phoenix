@@ -210,6 +210,8 @@ public class Cable : MonoBehaviour
 	}
 
 	public void FillNearPosition(Vector3 pos){
+		if(!gameObject.activeSelf)
+			return;
 		float minSqrDist=1000;
 		int minIndex=-1;
 		Vector3[] verts = _meshF.sharedMesh.vertices;
@@ -220,6 +222,7 @@ public class Cable : MonoBehaviour
 				minIndex=i;
 			}
 		}
+		Debug.Log("min index: "+minIndex+" - "+name);
 		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
 		SetPower(fillAmount);
 	}

@@ -403,7 +403,6 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 		_anim.SetTrigger("land");
 		_hop.PlayStepParticles();
-		Debug.Log("landing");
 		//reset puzzle box cam - puzzle box needs to re-check if player is in zone after landing
 		//because typically flight takes priority
 		PuzzleBox._latestPuzzle.ResetCamera();
@@ -574,12 +573,14 @@ public class Bird : MonoBehaviour
 	}
 
 
-	public void Ground(){
-		_waddle.enabled=false;
-		_hop.enabled=false;
-		_fly.enabled=false;
-		_anim.SetFloat("walkSpeed",0f);
-		_state=0;
+	public void Ground(bool resetState=true){
+		if(resetState){
+			_waddle.enabled=false;
+			_hop.enabled=false;
+			_fly.enabled=false;
+			_anim.SetFloat("walkSpeed",0f);
+			_state=0;
+		}
 		RaycastHit hit;
 		/*
 		if(Physics.SphereCast(transform.position+_size.y*Vector3.up,0.05f,Vector3.down, out hit, 1f, _collisionLayer))

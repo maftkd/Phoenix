@@ -121,11 +121,6 @@ public class Waddle : MonoBehaviour
 			float slope = dy/dx;
 			if(slope<-_maxWalkSlope*0.5f){
 				if(dx>0){
-					/*
-					_anim.SetFloat("walkSpeed",0f);
-					Debug.Log("Should hop "+dy +"/"+dx);
-					_bird.StartHopping();
-					*/
 					_bird.Ground();
 				}
 			}
@@ -141,6 +136,8 @@ public class Waddle : MonoBehaviour
 				else
 					transform.position=hit.point;
 			}
+			//always ground?
+			_bird.Ground(false);
 			if(_stepTimer>=0.5f/animSpeed){
 				TakeStep(hit.transform);
 				_stepTimer=0;
@@ -152,7 +149,6 @@ public class Waddle : MonoBehaviour
 		}
 		else{
 			_anim.SetFloat("walkSpeed",0f);
-			Debug.Log("Should hop");
 			_bird.StartHopping();
 		}
     }

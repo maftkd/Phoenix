@@ -484,6 +484,60 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.99999994, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6296542913492173498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853427466637254881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d9cee3144601a5468a6b9a3ee6a2e1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onSolved:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1784277555329062040}
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_MethodName: Activate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _shotDistance: 0
+  _shotHeight: 0
+  _onRevealed:
+    m_PersistentCalls:
+      m_Calls: []
+  _onShot:
+    m_PersistentCalls:
+      m_Calls: []
+  _onActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _activateOnAwake: 0
+  _puzzleId: 1.2
+  _liftDelay: 0.5
+  _cable: {fileID: 0}
+  _buzzClip: {fileID: 8300000, guid: 89762456f8d88b741a8736f263f11712, type: 3}
+  _nextPuzzle: {fileID: 0}
 --- !u!1 &3828279013560013194
 GameObject:
   m_ObjectHideFlags: 0
@@ -1112,60 +1166,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scale: {x: 1.01, y: 1.4, z: 1.01}
   _outlineMat: {fileID: 2100000, guid: f6568eed691aec646bce3a3e7ee5821b, type: 2}
---- !u!114 &6296542913492173498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1853427466637254881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d9cee3144601a5468a6b9a3ee6a2e1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _onSolved:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1784277555329062040}
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: Activate
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  _shotDistance: 0
-  _shotHeight: 0
-  _onRevealed:
-    m_PersistentCalls:
-      m_Calls: []
-  _onShot:
-    m_PersistentCalls:
-      m_Calls: []
-  _onActivated:
-    m_PersistentCalls:
-      m_Calls: []
-  _activateOnAwake: 0
-  _puzzleId: 1.2
-  _liftDelay: 0.5
-  _cable: {fileID: 0}
-  _buzzClip: {fileID: 8300000, guid: 89762456f8d88b741a8736f263f11712, type: 3}
-  _nextPuzzle: {fileID: 0}
 --- !u!1001 &2337619029855493600
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1434,6 +1434,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 406607766866815339, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: _zoneHeight
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2262762927785079632, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}

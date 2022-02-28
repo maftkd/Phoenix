@@ -16,6 +16,8 @@ public class FlyCam : Shot
 	public int _flightPriority;
 	int _defaultPriority;
 	Vector3 _offset;
+	float _warmUp;
+	public float _warmUpMult;
 
 	protected override void Awake(){
 		base.Awake();
@@ -27,6 +29,7 @@ public class FlyCam : Shot
 		_position=transform.position;
 		_rotation=transform.rotation;
 		_forward=transform.forward;
+		_warmUp=0;
 	}
 
 	public override void StartTracking(Transform t){
@@ -61,13 +64,20 @@ public class FlyCam : Shot
 		transform.position=_position;
 		transform.rotation=_rotation;
 
+		//warmup
+		if(_warmUp<1f){
+			_warmUp+=Time.deltaTime*_warmUpMult;
+			if(_warmUp>1f)
+				_warmUp=1f;
+		}
+
 		//calc phi
 		Vector3 diff=transform.position-_player.transform.position;
 		float r = diff.magnitude;
 		float phi=Mathf.Asin(diff.y/diff.magnitude);
-		phi=Mathf.Lerp(phi,_targetPhi,_lerp*Time.deltaTime);
+		phi=Mathf.Lerp(phi,_targetPhi,_lerp*Time.deltaTime*_warmUp);
 		DebugScreen.Print(phi,0);
-		r=Mathf.Lerp(r,_targetR,_rLerp*Time.deltaTime);
+		r=Mathf.Lerp(r,_targetR,_rLerp*Time.deltaTime*_warmUp);
 		DebugScreen.Print(r,1);
 
 		//calc theta
@@ -94,7 +104,7 @@ public class FlyCam : Shot
 				targetTheta+=Mathf.PI*2f;
 		}
 
-		theta=Mathf.Lerp(theta,targetTheta,_lerp*Time.deltaTime);
+		theta=Mathf.Lerp(theta,targetTheta,_lerp*Time.deltaTime*_warmUp);
 		DebugScreen.Print(theta,2);
 		DebugScreen.Print(targetTheta,3);
 
@@ -110,72 +120,10 @@ public class FlyCam : Shot
 
 		transform.forward=-_offset;
 		Quaternion targetRot=transform.rotation;
-		_rotation=Quaternion.Slerp(_rotation,targetRot,_slerp*Time.deltaTime);
-		//_position=Vector3.Lerp(_position,targetPos,_lerp*Time.deltaTime);
-		/*
-		transform.forward=-offset;
-		Quaternion targetRot=transform.rotation;
-
-		_rotation=Quaternion.Slerp(_rotation,targetRot,_lerp*Time.deltaTime);
-		*/
+		_rotation=Quaternion.Slerp(_rotation,targetRot,_slerp*Time.deltaTime*_warmUp);
 
 		transform.position=_position;
 		transform.rotation=_rotation;
-
-
-		//old code
-		//warmup
-		/*
-		if(_warmUp<1f){
-			_warmUp+=Time.deltaTime*_warmUpSpeed;
-			if(_warmUp>1f)
-				_warmUp=1f;
-		}
-		*/
-		//determine lerp speed
-		/*
-		Vector3 viewPoint = _cam.WorldToViewportPoint(_player.transform.position+_player._size.y*Vector3.up);
-		float lerp = Mathf.Lerp(_minLerp,_maxLerp,Mathf.Abs(viewPoint.y-0.5f)*2f)*_warmUp;
-		float slerp = Mathf.Lerp(_minLerp,_maxLerp,Mathf.Abs(viewPoint.x-0.5f)*2f)*_warmUp;
-		*/
-
-		//calc targetpos
-		/*
-		Vector3 flatRight=_player.transform.right;
-		flatRight.y=0;
-		flatRight.Normalize();
-		Vector3 targetPos=_player.transform.position 
-			- _player.transform.forward*_trackOffset.z
-			+ Vector3.up*_trackOffset.y
-			+ flatRight*_trackOffset.x;
-			*/
-
-		//calc targetRot
-		/*
-		transform.position=_position;
-		Quaternion curRot=_rotation;
-		transform.LookAt(_player.transform);
-		Quaternion targetRot=transform.rotation;
-		*/
-
-		//lerp transform
-		/*
-		_position=Vector3.Lerp(_position,targetPos,lerp*Time.deltaTime);
-		_rotation=Quaternion.Slerp(_rotation,targetRot,slerp*Time.deltaTime);
-		*/
-
-		/*
-		transform.position=_position;
-		transform.rotation=_rotation;
-		*/
-
-		//cancel out roll
-		/*
-		Vector3 eulers=transform.eulerAngles;
-		eulers.z=0;
-		transform.eulerAngles=eulers;
-		_rotation=transform.rotation;
-		*/
 
     }
 
