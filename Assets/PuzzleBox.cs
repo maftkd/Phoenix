@@ -164,6 +164,8 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	public virtual void Activate(){
+		if(!gameObject.activeSelf)
+			return;
 		_onActivated.Invoke();
 		_forceField.Deactivate();
 		_latestPuzzle=this;

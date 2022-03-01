@@ -713,6 +713,7 @@ MonoBehaviour:
   _rollMult: 0.2
   _soarRollMult: 0.2
   _defaultRollMult: 0.05
+  _pitchMult: 15
   _airControl: {x: 0, y: 4, z: 1}
   _forwardness: 0
   _flapPitchRange: {x: 0.8, y: 1.2}
@@ -767,6 +768,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   _birdLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _oceanLayer:
     serializedVersion: 2
     m_Bits: 0
   _controllerZero: 0.1

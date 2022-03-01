@@ -37,6 +37,7 @@ public class Fly : MonoBehaviour
 	public float _rollMult;
 	public float _soarRollMult;
 	public float _defaultRollMult;
+	public float _pitchMult;
 	public Vector3 _airControl;
 	Animator _anim;
 	[HideInInspector]
@@ -56,6 +57,11 @@ public class Fly : MonoBehaviour
 	public float _knockBackMult;
 	public float _minKnockBackMag;
 	float _knockBackTimer;
+
+	//shadow
+	Transform _flyShadow;
+	Transform _sun;
+	bool _prevShowShadow;
 
 	void Awake(){
 		_mIn=GameManager._mIn;
@@ -166,12 +172,6 @@ public class Fly : MonoBehaviour
 				rollAngle=0;
 			}
 
-			//adjust pitch
-			Vector3 eulerAngles=transform.eulerAngles;
-			eulerAngles.z=rollAngle;
-			float targetPitch=0;
-			eulerAngles.x=targetPitch;
-			transform.eulerAngles=eulerAngles;
 
 			//cap velocity
 			if(flatVel.sqrMagnitude>_maxVel.z*_maxVel.z){
@@ -179,6 +179,13 @@ public class Fly : MonoBehaviour
 				_velocity.x=flatVel.x;
 				_velocity.z=flatVel.z;
 			}
+			
+			//adjust pitch
+			Vector3 eulerAngles=transform.eulerAngles;
+			eulerAngles.z=rollAngle;
+			float targetPitch=-_velocity.y*_pitchMult;
+			eulerAngles.x=targetPitch;
+			transform.eulerAngles=eulerAngles;
 		}
 
 
@@ -195,6 +202,7 @@ public class Fly : MonoBehaviour
 		_minVely=_mIn.GetJump()?_minSoarVely : _minDefaultVely;
 		if(_velocity.y<_minVely)
 			_velocity.y=_minVely;
+		
 
 		Vector3 ray = transform.position-prevPos;
 		RaycastHit hit;
@@ -209,10 +217,7 @@ public class Fly : MonoBehaviour
 			float vol = _diving? 1f : 0.1f;
 			if(footstep!=null)
 				footstep.Sound(_groundPoint,vol);
-			if(_velocity.y>_minDefaultVely)
-				_bird.Land();
-			else
-				_bird.Dive(1);
+			_bird.Land();
 		}
 
 		//update kb timer
@@ -220,6 +225,23 @@ public class Fly : MonoBehaviour
 			_knockBackTimer+=Time.deltaTime;
 			if(_knockBackTimer>_knockBackDelay)
 				_knockBackTimer=0;
+		}
+
+		//checking enabled because bird script may have disabled already from Land or Dive
+		if(enabled){
+			bool showShadow=false;
+			if(Physics.Raycast(transform.position,_sun.forward, out hit, 50f, _bird._oceanLayer)){
+				if(hit.transform.name=="Ocean")
+				{
+					showShadow=true;
+					_flyShadow.position=hit.point;
+					_flyShadow.rotation=Quaternion.identity;
+				}
+			}
+			if(showShadow!=_prevShowShadow){
+				_flyShadow.gameObject.SetActive(showShadow);
+			}
+			_prevShowShadow=showShadow;
 		}
     }
 
@@ -271,6 +293,14 @@ public class Fly : MonoBehaviour
 		}
 		_velocity.x=kb.x;
 		_velocity.z=kb.y;
+	}
+
+	public void SetupFlyShadow(){
+		_flyShadow=transform.Find("FlyShadow");
+		if(_flyShadow==null)
+			return;
+		_flyShadow.gameObject.SetActive(false);
+		_sun=GameObject.FindGameObjectWithTag("Sun").transform;
 	}
 
 	void OnDrawGizmos(){

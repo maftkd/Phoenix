@@ -30,6 +30,7 @@ public class Bird : MonoBehaviour
 	public AudioClip _call;
 	public LayerMask _collisionLayer;
 	public LayerMask _birdLayer;
+	public LayerMask _oceanLayer;
 	public float _controllerZero;
 	[Header("Footprints")]
 	public Transform _footprint;
@@ -117,6 +118,9 @@ public class Bird : MonoBehaviour
 
 		//band
 		_band.GetComponent<MeshRenderer>().material.SetColor("_Color",_bandColor);
+
+		//setup things
+		_fly.SetupFlyShadow();
 
 		_player=GameManager._player;
 
@@ -394,6 +398,7 @@ public class Bird : MonoBehaviour
 		_state=3;
 		_anim.SetTrigger("fly");
 		//GameManager._mCam.Transition(_flyCam,MCamera.Transitions.LERP,0f,null,0.5f);
+		Debug.Log("Flying");
 		GameManager._mCam.Transition(_flyCam,MCamera.Transitions.CUT_BACK);
 	}
 	public void Land(){
@@ -477,7 +482,6 @@ public class Bird : MonoBehaviour
 				break;
 			case 2://hopping
 				ch.Sound(_hopKnockVolume);
-				Debug.Log("Knock back hop");
 				_hop.KnockBack(dir);
 				break;
 			case 3://flying
@@ -759,6 +763,7 @@ public class Bird : MonoBehaviour
 				break;
 			case 3://flying
 				_mCam.Transition(_flyCam,MCamera.Transitions.CUT_BACK,0,null,0f,true);
+				Debug.Log("Going to fly cam");
 				break;
 			default://tbd 
 				break;
