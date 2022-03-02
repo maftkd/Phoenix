@@ -66,9 +66,9 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.754
     - _GlossyReflections: 1
-    - _MaxStep: 1.91
+    - _MaxStep: 4.09
     - _Metallic: 0
-    - _MinAlpha: 0.534
+    - _MinAlpha: 0.286
     - _MinStep: 0
     - _Mode: 0
     - _OcclusionStrength: 1

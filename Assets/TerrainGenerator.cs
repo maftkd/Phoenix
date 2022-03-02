@@ -46,6 +46,7 @@ public class TerrainGenerator : MonoBehaviour
 	public Texture2D _riverMap;
 	public int _riverSeed;
 	public float _minRiverHeight;
+	public float _maxRiverHeight;
 	public float _seaLevel;
 	public int _numRivers;
 	public float _riseCapacity;
@@ -66,6 +67,7 @@ public class TerrainGenerator : MonoBehaviour
 	public float _noiseAmplitude;
 	public float _riverDepression;
 	public Vector2 _riverDepressionRange;
+	public float _puzzleRadius;
 	public int _blurAmount;
 	public bool _applyCombined;
 	public bool _autoApplyCombined;
@@ -124,10 +126,23 @@ public class TerrainGenerator : MonoBehaviour
 	}
 
 	void Update(){
+		//check for movement of terrain as whole
 		if(transform.hasChanged){
 			if(_genRidgeOnTransform)
 				GenRidgeMap();
 			transform.hasChanged=false;
+		}
+
+		//check for movement of puzzles
+		Transform puzzleParent = transform.parent.Find("Puzzles");
+		bool puzzleMoved=false;
+		foreach(Transform puzzle in puzzleParent){
+			if(puzzle.hasChanged){
+				puzzleMoved=true;
+			}
+		}
+		if(puzzleMoved&&_autoApplyCombined){
+			ApplyCombinedMaps();
 		}
 	}
 
@@ -360,7 +375,7 @@ public class TerrainGenerator : MonoBehaviour
 		transform.GetChild(3).GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex",_distanceMap);
 	}
 
-	public void ApplyCombinedMaps(){
+	public void ApplyCombinedMaps(bool ignorePuzzles=false){
 		Terrain t = GetComponent<Terrain>();
 		TerrainData td = t.terrainData;
 		int res = td.heightmapResolution;
@@ -399,12 +414,52 @@ public class TerrainGenerator : MonoBehaviour
 				heights[z,x]=height/maxHeight;
 			}
 		}
-		float[,] heightsSmoothed = new float[res,res];
+		
+		//handle snapping of puzzles to base terrain
+		Transform puzzleParent = transform.parent.Find("Puzzles");
+		foreach(Transform puzzle in puzzleParent){
+			if(puzzle.hasChanged){
+				Vector3 worldSpace=puzzle.position;
+				if(worldSpace.x>transform.position.x&&worldSpace.x<transform.position.x+td.size.x &&
+						worldSpace.z>transform.position.z&&worldSpace.z<transform.position.z+td.size.z){
+					float yPos=t.SampleHeight(worldSpace);
+					float xNorm=(worldSpace.x-transform.position.x)/td.size.x;
+					float zNorm=(worldSpace.z-transform.position.z)/td.size.z;
+					worldSpace.y=heights[Mathf.RoundToInt(zNorm*res),Mathf.RoundToInt(xNorm*res)]*maxHeight;
+					puzzle.position=worldSpace;
+				}
+				puzzle.hasChanged=false;
+			}
+		}
+
+		if(!ignorePuzzles){
+			//flatten puzzle regions
+			for(int z=0;z<res;z++){
+				float zNorm = z/(float)(res-1);
+				for(int x=0;x<res;x++){
+					float xNorm=x/(float)(res-1);
+					Vector3 worldPos=transform.position+Vector3.right*xNorm*td.size.x+Vector3.forward*zNorm*td.size.z;
+					worldPos.y=heights[z,x]*maxHeight;
+					//check each puzzle against each terrain point
+					foreach(Transform puzzle in puzzleParent){
+						float sqrDst=(worldPos-puzzle.position).sqrMagnitude;
+						if(sqrDst<_puzzleRadius*_puzzleRadius)
+						{
+							heights[z,x]=puzzle.position.y/maxHeight;
+						}
+					}
+				}
+			}
+		}
+
 		//smooth the heights
+		float[,] heightsSmoothed = new float[res,res];
 		MImage.Blur(heights,heightsSmoothed,_blurAmount,res);
+
 		td.SetHeights(0,0,heightsSmoothed);
 	}
 
+	//river gen
 	public void GenRiverMap(){
 		ClearRiverMap();
 		_riverMap = new Texture2D(_texRes,_texRes);
@@ -416,6 +471,7 @@ public class TerrainGenerator : MonoBehaviour
 		float maxHeight = td.size.y;
 		Random.InitState(_riverSeed);
 
+		//generate river data
 		List<Vector2> river = new List<Vector2>();
 		List<Vector3> riverPoints= new List<Vector3>();
 		List<Vector3> riverNormals= new List<Vector3>();
@@ -437,7 +493,7 @@ public class TerrainGenerator : MonoBehaviour
 				int z = Mathf.FloorToInt(riverPos.y);
 				h=heights[z,x];
 				h*=maxHeight;
-				if(h>_minRiverHeight)
+				if(h>_minRiverHeight&&h<_maxRiverHeight)
 				{
 					//convert terrain riverHead to texture coords
 					float xNorm=x/(float)res;
@@ -524,7 +580,7 @@ public class TerrainGenerator : MonoBehaviour
 			riverComp.Setup(riverPoints,riverNormals,_riverMat,_riverWidth,_riverRecession,_riverClip);
 		}
 
-
+		//Paint river map
 		for(int y=0; y<_texRes; y++){
 			for(int x=0; x<_texRes; x++){
 				bool inRiver=false;
@@ -543,6 +599,7 @@ public class TerrainGenerator : MonoBehaviour
 		transform.GetChild(4).GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex",_riverMap);
 	}
 
+	//Clear rivers
 	public void ClearRiverMap(){
 		_riverMap = new Texture2D(_texRes,_texRes);
 		for(int y=0; y<_texRes; y++){
@@ -557,9 +614,10 @@ public class TerrainGenerator : MonoBehaviour
 		River [] rivers = transform.GetComponentsInChildren<River>();
 		StartCoroutine(DestroyRivers(rivers));
 
-		ApplyCombinedMaps();
+		ApplyCombinedMaps(true);
 	}
 
+	//destroy rivers - done in coroutine because editor doesn't like destroying onValidate
 	IEnumerator DestroyRivers(River[] rivers){
 		yield return null;
 		for(int i=0; i<rivers.Length; i++){
