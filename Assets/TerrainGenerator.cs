@@ -14,9 +14,12 @@ public class TerrainGenerator : MonoBehaviour
 	public Texture2D _baseMap;
 	public int _texRes;
 	public int _seed;
+	[Tooltip("Perlin noise scale")]
 	public float _shoreScale;
+	[Tooltip("Multiplied by radius from center. Affects how much the shore is distorted")]
 	public float _shoreNoiseAmplitude;
 	public float _shoreCutoff;
+	[Tooltip("Affects the steepness of the shore, I think. Plays closely with shore Noise Amplitude. Todo, make this more descriptive")]
 	public float _shoreSmooth;
 	public bool _autoGenBaseMap;
 	public bool _applyBaseMap;
@@ -32,12 +35,12 @@ public class TerrainGenerator : MonoBehaviour
 	public Texture2D _heightMap;
 	public int _heightSeed;
 	public float _heightNoiseScale;
-	public float _minHeightNoise;
 	public bool _autoGenHeightMap;
 	public bool _hideHeightMap;
 
 	[Header("Distance map")]
 	public Texture2D _distanceMap;
+	[Tooltip("An arbitrary multiplier of the distance field to achieve desired gradient. Can be used for flat tops")]
 	public float _distMult;
 	public bool _genDistanceMap;
 	public bool _hideDistanceMap;
@@ -45,14 +48,20 @@ public class TerrainGenerator : MonoBehaviour
 	[Header("River map")]
 	public Texture2D _riverMap;
 	public int _riverSeed;
+	[Tooltip("The minimum height at which a river head can spawn")]
 	public float _minRiverHeight;
+	[Tooltip("The maximum height at which a river head can spawn")]
 	public float _maxRiverHeight;
+	[Tooltip("The height at which the river stops generation. The mouth of the river...")]
 	public float _seaLevel;
 	public int _numRivers;
+	[Tooltip("How much can a river flow upwards before it seeks a new direction")]
 	public float _riseCapacity;
 	public Material _riverMat;
 	public float _riverWidth;
+	[Tooltip("The step size of each river point calculation")]
 	public float _riverInc;
+	[Tooltip("The amount that the river geometry is lowered from the earth surface level")]
 	public float _riverRecession;
 	public AudioClip _riverClip;
 	public bool _genRiverMap;
@@ -60,17 +69,40 @@ public class TerrainGenerator : MonoBehaviour
 	public bool _clearRiverMap;
 
 	[Header("Combine Maps")]
-	public float _heightAmplitude;
+	[Tooltip("Mountain height multiplier. Should be called mountain amplitude")]
+	public float _mountainAmplitude;
 	[Range(0,1)]
+	[Tooltip("Distance from shore at which mountains start")]
 	public float _mountainStart;
 	public AnimationCurve _mountainCurve;
 	public float _noiseAmplitude;
+	[Tooltip("Max depth cut into terrain for rivers")]
 	public float _riverDepression;
+	[Tooltip("X = min river dep. Y = max. Provides a gradient from higher up on terrain to sea level")]
 	public Vector2 _riverDepressionRange;
 	public float _puzzleRadius;
 	public int _blurAmount;
 	public bool _applyCombined;
 	public bool _autoApplyCombined;
+
+	[Header("Texture Pass")]
+	public int _textureSeed;
+	public float _textureNoiseScale;
+	public int _numLayers;
+	public int _sandLayer;
+	public float _pebbleDot;
+	public int _pebbleLayer;
+	public float _grassDot;
+	public int _grassLayer;
+	public float _grassPerlinCutoff;
+	public float _mountainHeight;
+	public int _rockLayer;
+	public float _rockPerlinCutoff;
+	public int _dirtLayer;
+	public int _puzzleSurfaceLayer;
+	public bool _resetTexture;
+	public bool _updateTexture;
+	public bool _autoUpdateTexture;
 
 	void OnValidate(){
 		if(_levelTerrain){
@@ -113,9 +145,20 @@ public class TerrainGenerator : MonoBehaviour
 			_clearRiverMap=false;
 		}
 
+		//apply combined
 		if(_applyCombined||_autoApplyCombined){
 			ApplyCombinedMaps();
 			_applyCombined=false;
+		}
+
+		//texturing
+		if(_resetTexture){
+			ResetTexture();
+			_resetTexture=false;
+		}
+		else if(_updateTexture||_autoUpdateTexture){
+			UpdateTexture();
+			_updateTexture=false;
 		}
 
 		transform.GetChild(0).GetComponent<MeshRenderer>().enabled=!_hideBaseMap;
@@ -137,6 +180,8 @@ public class TerrainGenerator : MonoBehaviour
 		Transform puzzleParent = transform.parent.Find("Puzzles");
 		bool puzzleMoved=false;
 		foreach(Transform puzzle in puzzleParent){
+			if(!puzzle.gameObject.activeSelf)
+				continue;
 			if(puzzle.hasChanged){
 				puzzleMoved=true;
 			}
@@ -396,7 +441,7 @@ public class TerrainGenerator : MonoBehaviour
 
 				//add mountains
 				float hOffset=Mathf.InverseLerp(_mountainStart,1f,distance);
-				hOffset=_mountainCurve.Evaluate(hOffset)*_heightAmplitude;
+				hOffset=_mountainCurve.Evaluate(hOffset)*_mountainAmplitude;
 
 				//add random noise
 				float noise = _heightMap.GetPixel(pixX,pixY).b;
@@ -418,6 +463,8 @@ public class TerrainGenerator : MonoBehaviour
 		//handle snapping of puzzles to base terrain
 		Transform puzzleParent = transform.parent.Find("Puzzles");
 		foreach(Transform puzzle in puzzleParent){
+			if(!puzzle.gameObject.activeSelf)
+				continue;
 			if(puzzle.hasChanged){
 				Vector3 worldSpace=puzzle.position;
 				if(worldSpace.x>transform.position.x&&worldSpace.x<transform.position.x+td.size.x &&
@@ -442,6 +489,8 @@ public class TerrainGenerator : MonoBehaviour
 					worldPos.y=heights[z,x]*maxHeight;
 					//check each puzzle against each terrain point
 					foreach(Transform puzzle in puzzleParent){
+						if(!puzzle.gameObject.activeSelf)
+							continue;
 						float sqrDst=(worldPos-puzzle.position).sqrMagnitude;
 						if(sqrDst<_puzzleRadius*_puzzleRadius)
 						{
@@ -623,5 +672,96 @@ public class TerrainGenerator : MonoBehaviour
 		for(int i=0; i<rivers.Length; i++){
 			DestroyImmediate(rivers[i].gameObject);
 		}
+	}
+
+	void ResetTexture(){
+		Terrain ter = GetComponent<Terrain>();
+		TerrainData td = ter.terrainData;
+		int mapSize=_numLayers;
+		float [,,] alphaMaps = new float[td.alphamapWidth,td.alphamapHeight,mapSize];
+		for(int y=0;y<td.alphamapHeight;y++){
+			for(int x=0;x<td.alphamapWidth;x++){
+				for(int m=0;m<mapSize;m++){
+					if(m==_sandLayer)
+						alphaMaps[x,y,m]=1f;
+					else
+						alphaMaps[x,y,m]=0f;
+				}
+			}
+		}
+		td.SetAlphamaps(0,0,alphaMaps);
+
+	}
+
+	void UpdateTexture(){
+
+		Random.InitState(_seed);
+		float offset=Random.value;
+		float offset2=Random.value;
+
+		//Get puzzle data
+		Transform puzzleParent = transform.parent.Find("Puzzles");
+
+		//get terrain data
+		Terrain ter = GetComponent<Terrain>();
+		TerrainData td = ter.terrainData;
+		int mapSize=_numLayers;
+		int res = td.heightmapResolution;
+		float maxHeight = td.size.y;
+		float[,] heights=td.GetHeights(0,0,res,res);
+		float [,,] alphaMaps = new float[td.alphamapWidth,td.alphamapHeight,mapSize];
+		for(int y=0;y<td.alphamapHeight;y++){
+			float yNorm=y/(float)(td.alphamapHeight-1);
+			for(int x=0;x<td.alphamapWidth;x++){
+				float xNorm=x/(float)(td.alphamapWidth-1);
+
+				//get random
+				float perlin = Mathf.PerlinNoise((xNorm+offset)*_textureNoiseScale,(yNorm+offset)*_textureNoiseScale);
+				float perlin2 = Mathf.PerlinNoise((xNorm+offset2)*_textureNoiseScale,(yNorm+offset2)*_textureNoiseScale);
+
+				//get dot and world normal
+				Vector3 worldNormal = td.GetInterpolatedNormal(yNorm,xNorm);
+				float upness = Vector3.Dot(worldNormal,Vector3.up);
+
+				//get height
+				float height = 0;
+				if(yNorm <1 && xNorm<1)
+					height=heights[Mathf.FloorToInt(xNorm*res),Mathf.FloorToInt(yNorm*res)]*maxHeight;
+
+				int layer=_sandLayer;
+				if(upness>_grassDot&&height>_seaLevel&&height<_mountainHeight)
+					layer=_grassLayer;
+				else if(upness>_pebbleDot)
+					layer=_pebbleLayer;
+				if(height>_mountainHeight&&layer==_sandLayer){
+					if(perlin<_rockPerlinCutoff)
+						layer=_rockLayer;
+					else
+						layer=_pebbleLayer;
+				}
+				if(layer==_grassLayer){
+					if(perlin2<1-_grassPerlinCutoff)
+						layer=_sandLayer;
+				}
+				Vector3 worldPos=transform.position+xNorm*td.size.x*Vector3.forward+Vector3.right*yNorm*td.size.z;
+				worldPos.y=height;
+				foreach(Transform puzzle in puzzleParent){
+					if(!puzzle.gameObject.activeSelf)
+						continue;
+					float sqrDist = (puzzle.position-worldPos).sqrMagnitude;
+					if(sqrDist<_puzzleRadius*_puzzleRadius)
+						layer=_puzzleSurfaceLayer;
+				}
+
+				for(int m=0;m<mapSize;m++){
+					if(m==layer)
+						alphaMaps[x,y,m]=1f;
+					else
+						alphaMaps[x,y,m]=0f;
+				}
+			}
+		}
+		td.SetAlphamaps(0,0,alphaMaps);
+
 	}
 }
