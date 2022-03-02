@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: River
+  m_Name: RiverNew
   m_Shader: {fileID: 4800000, guid: 1300fe10c2e17ad43ad57f2949d331aa, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -41,7 +41,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 0f3f29d7ed001314598923261fcaddbc, type: 3}
-        m_Scale: {x: 1, y: 0.3}
+        m_Scale: {x: 0.5, y: 0.1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -60,19 +60,28 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _FlowSpeedMult: 4.12
+    - _FoamDist: 0.1
+    - _FoamNoise: 0.1
     - _GlossMapScale: 1
-    - _Glossiness: 0.85
+    - _Glossiness: 0.754
     - _GlossyReflections: 1
-    - _Metallic: 0.06
+    - _MaxStep: 1.91
+    - _Metallic: 0
+    - _MinAlpha: 0.534
+    - _MinStep: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _StreamFoam: 1.19
     - _UVSec: 0
-    - _Whiteness: 0.553
+    - _Whiteness: 0.5
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.036517646, g: 0.17688234, b: 0.291, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 0.6509804}
+    - _ColorDeep: {r: 0, g: 0.37184316, b: 0.7924528, a: 1}
+    - _ColorShallow: {r: 0, g: 0.5885999, b: 0.872, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

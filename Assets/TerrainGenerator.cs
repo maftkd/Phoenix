@@ -34,7 +34,6 @@ public class TerrainGenerator : MonoBehaviour
 	public float _heightNoiseScale;
 	public float _minHeightNoise;
 	public bool _autoGenHeightMap;
-	public bool _autoApplyHeightMap;
 	public bool _hideHeightMap;
 
 	[Header("Distance map")]
@@ -43,11 +42,31 @@ public class TerrainGenerator : MonoBehaviour
 	public bool _genDistanceMap;
 	public bool _hideDistanceMap;
 
+	[Header("River map")]
+	public Texture2D _riverMap;
+	public int _riverSeed;
+	public float _minRiverHeight;
+	public float _seaLevel;
+	public int _numRivers;
+	public float _riseCapacity;
+	public Material _riverMat;
+	public float _riverWidth;
+	public float _riverInc;
+	public float _riverRecession;
+	public AudioClip _riverClip;
+	public bool _genRiverMap;
+	public bool _hideRiverMap;
+	public bool _clearRiverMap;
+
 	[Header("Combine Maps")]
 	public float _heightAmplitude;
+	[Range(0,1)]
 	public float _mountainStart;
 	public AnimationCurve _mountainCurve;
 	public float _noiseAmplitude;
+	public float _riverDepression;
+	public Vector2 _riverDepressionRange;
+	public int _blurAmount;
 	public bool _applyCombined;
 	public bool _autoApplyCombined;
 
@@ -82,6 +101,16 @@ public class TerrainGenerator : MonoBehaviour
 			_genDistanceMap=false;
 		}
 
+		//river map
+		if(_genRiverMap){
+			GenRiverMap();
+			_genRiverMap=false;
+		}
+		if(_clearRiverMap){
+			ClearRiverMap();
+			_clearRiverMap=false;
+		}
+
 		if(_applyCombined||_autoApplyCombined){
 			ApplyCombinedMaps();
 			_applyCombined=false;
@@ -91,6 +120,7 @@ public class TerrainGenerator : MonoBehaviour
 		transform.GetChild(1).GetComponent<MeshRenderer>().enabled=!_hideRidgeMap;
 		transform.GetChild(2).GetComponent<MeshRenderer>().enabled=!_hideHeightMap;
 		transform.GetChild(3).GetComponent<MeshRenderer>().enabled=!_hideDistanceMap;
+		transform.GetChild(4).GetComponent<MeshRenderer>().enabled=!_hideRiverMap;
 	}
 
 	void Update(){
@@ -360,11 +390,180 @@ public class TerrainGenerator : MonoBehaviour
 				//get ridge map
 				float ridge = _ridgeMap.GetPixel(pixX,pixY).g;
 				height+=hOffset*ridge;
+
+				//cut out river
+				float river = _riverMap.GetPixel(pixX,pixY).g;
+				float riverEffect=Mathf.InverseLerp(_riverDepressionRange.y,_riverDepressionRange.x,height);
+				height-=river*_riverDepression*riverEffect;
 				
 				heights[z,x]=height/maxHeight;
 			}
 		}
-		td.SetHeights(0,0,heights);
+		float[,] heightsSmoothed = new float[res,res];
+		//smooth the heights
+		MImage.Blur(heights,heightsSmoothed,_blurAmount,res);
+		td.SetHeights(0,0,heightsSmoothed);
+	}
 
+	public void GenRiverMap(){
+		ClearRiverMap();
+		_riverMap = new Texture2D(_texRes,_texRes);
+
+		//get terrain data
+		Terrain ter = GetComponent<Terrain>();
+		TerrainData td = ter.terrainData;
+		int res = td.heightmapResolution;
+		float maxHeight = td.size.y;
+		Random.InitState(_riverSeed);
+
+		List<Vector2> river = new List<Vector2>();
+		List<Vector3> riverPoints= new List<Vector3>();
+		List<Vector3> riverNormals= new List<Vector3>();
+		for(int nr=0;nr<_numRivers;nr++){
+			riverPoints.Clear();
+			riverNormals.Clear();
+			//get river head
+			float[,] heights=td.GetHeights(0,0,res,res);
+			Vector2 riverHead=Vector2.zero;
+			Vector2 riverPos=Vector2.zero;
+			float riverHeight=0;
+			int maxSteps=1000;
+			float h=0;
+			int i=0;
+			while(riverHead==Vector2.zero&&i<maxSteps){
+				//get random coord on terrain
+				riverPos=new Vector2(Random.value*res,Random.value*res);
+				int x = Mathf.FloorToInt(riverPos.x);
+				int z = Mathf.FloorToInt(riverPos.y);
+				h=heights[z,x];
+				h*=maxHeight;
+				if(h>_minRiverHeight)
+				{
+					//convert terrain riverHead to texture coords
+					float xNorm=x/(float)res;
+					float zNorm=z/(float)res;
+					riverHead = new Vector2(xNorm*_texRes,zNorm*_texRes);
+					riverPoints.Add(new Vector3(transform.position.x+xNorm*td.size.x,
+								h,
+								transform.position.z+zNorm*td.size.z));
+					riverNormals.Add(td.GetInterpolatedNormal(xNorm,zNorm));
+					riverHeight=h;
+				}
+				i++;
+			}
+			if(i>=maxSteps){
+				Debug.Log("Failed to find a start point in: "+maxSteps +" steps. Please optimize algorithm ;)");
+				return;
+			}
+
+			//generate river - texture space
+			bool canFlow=true;
+			float theta=-1;
+			i=0;
+			int maxIters=50;
+			Vector2 offset=Vector2.zero;
+
+			int riverSize=0;
+			while(canFlow&&i<maxSteps){
+				//iterate over theta
+				int thetaIter=0;
+				if(theta!=-1){
+					//if theta already set - check h
+					int xPos=Mathf.RoundToInt(riverPos.x+offset.x);
+					int zPos=Mathf.RoundToInt(riverPos.y+offset.y);
+
+					//make sure position is within terrain bounds
+					//todo also check if height is at water level
+					if(xPos>=0&&xPos<res&&zPos>=0&&zPos<res){
+						h=heights[zPos,xPos];
+						h*=maxHeight;
+					}
+					else
+						canFlow=false;
+				}
+				while(theta==-1 || canFlow&&h>riverHeight+_riseCapacity&&thetaIter<maxIters){
+					//h is too high or theta has not been set
+					theta=Mathf.PI*2f*Random.value;
+					offset = new Vector2(Mathf.Cos(theta),Mathf.Sin(theta))*_riverInc;
+					int xPos=Mathf.RoundToInt(riverPos.x+offset.x);
+					int zPos=Mathf.RoundToInt(riverPos.y+offset.y);
+					h=heights[zPos,xPos];
+					h*=maxHeight;
+					thetaIter++;
+				}
+				if(canFlow&&thetaIter>=maxIters){
+					canFlow=false;
+				}
+				else if(canFlow){
+					//update riverPos - XZ terrain space
+					riverPos+=offset;
+					if(h<riverHeight)//only update river height if h has actually fallen
+						riverHeight=h;
+					riverSize++;
+					float xNorm=riverPos.x/(float)res;
+					float zNorm=riverPos.y/(float)res;
+					Vector2 rPos=new Vector2(xNorm*_texRes,zNorm*_texRes);
+					if(!river.Contains(rPos))
+					{
+						river.Add(rPos);
+						riverPoints.Add(new Vector3(transform.position.x+xNorm*td.size.x,
+									h,
+									transform.position.z+zNorm*td.size.z));
+						riverNormals.Add(td.GetInterpolatedNormal(xNorm,zNorm));
+					}
+					if(riverHeight<=_seaLevel)
+						canFlow=false;
+				}
+				i++;
+			}
+			Debug.Log("River size: "+riverSize);
+			//create new river
+			GameObject riverGo = new GameObject("River");
+			riverGo.transform.SetParent(transform);
+			River riverComp = riverGo.AddComponent<River>();
+			riverComp.Setup(riverPoints,riverNormals,_riverMat,_riverWidth,_riverRecession,_riverClip);
+		}
+
+
+		for(int y=0; y<_texRes; y++){
+			for(int x=0; x<_texRes; x++){
+				bool inRiver=false;
+				foreach(Vector2 v in river){
+					if(x==Mathf.RoundToInt(v.x)&&y==Mathf.RoundToInt(v.y))
+					{
+						_riverMap.SetPixel(x,y,Color.cyan);
+						inRiver=true;
+					}
+				}
+				if(!inRiver)
+					_riverMap.SetPixel(x,y,Color.white*0);
+			}
+		}
+		_riverMap.Apply();
+		transform.GetChild(4).GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex",_riverMap);
+	}
+
+	public void ClearRiverMap(){
+		_riverMap = new Texture2D(_texRes,_texRes);
+		for(int y=0; y<_texRes; y++){
+			for(int x=0; x<_texRes; x++){
+				_riverMap.SetPixel(x,y,Color.white*0);
+			}
+		}
+		_riverMap.Apply();
+		transform.GetChild(4).GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex",_riverMap);
+
+		//clear rivers
+		River [] rivers = transform.GetComponentsInChildren<River>();
+		StartCoroutine(DestroyRivers(rivers));
+
+		ApplyCombinedMaps();
+	}
+
+	IEnumerator DestroyRivers(River[] rivers){
+		yield return null;
+		for(int i=0; i<rivers.Length; i++){
+			DestroyImmediate(rivers[i].gameObject);
+		}
 	}
 }

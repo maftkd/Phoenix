@@ -47,4 +47,37 @@ public class MImage : MonoBehaviour
 		if(apply)
 			blurred.Apply();
 	}
+
+	public static void Blur(float[,] original, float[,] blurred, int blurSize,int res){
+		int width=res;
+		int height=res;
+		// look at every pixel in the blur rectangle
+		for (int xx = 0; xx < width; xx++)
+		{
+			for (int yy = 0; yy < height; yy++)
+			{
+				float avg=0;
+				int blurPixelCount = 0;
+
+				// average the color of the red, green and blue for each pixel in the
+				// blur size while making sure you don't go outside the image bounds
+				for (int x = xx; (x < xx + blurSize && x < width); x++)
+				{
+					for (int y = yy; (y < yy + blurSize && y < height); y++)
+					{
+						//Color pixel = image.GetPixel(x, y);
+						float h = original[x,y];
+						avg+=h;
+						blurPixelCount++;
+					}
+				}
+
+				avg/=blurPixelCount;
+
+				for (int x = xx; x < xx + blurSize && x < width; x++)
+				for (int y = yy; y < yy + blurSize && y < height; y++)
+				blurred[x,y]=avg;
+			}
+		}
+	}
 }
