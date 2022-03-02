@@ -744,6 +744,7 @@ public class Bird : MonoBehaviour
 
 	public void ResetState(){
 		_state=0;
+		TransitionToRelevantCamera();
 	}
 
 	public void SaveLastSpot(){
