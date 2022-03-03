@@ -84,22 +84,7 @@ public class SaveSlot : MonoBehaviour
 					Bird b = GameManager._player;
 					b.transform.position=pos;
 					b.SetSeeds(seeds);
-					/*
-					string mate = parts[5];
-					foreach(Bird b in birds){
-						if(b.name==birdName)
-						{
-							b.transform.position=pos;
-							b.SetSeeds(seeds);
-							if(mate!="null"){
-								foreach(Bird m in birds){
-									if(m.name==mate)
-										b._mate=m;
-								}
-							}
-						}
-					}
-					*/
+					b.ResetState();
 					break;
 				case 1://puzzles
 					foreach(PuzzleBox pb in puzzles){

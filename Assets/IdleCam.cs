@@ -7,11 +7,12 @@ public class IdleCam : Shot
 
 	int _lerpState;
 	float _yOffset;
-	Bird _player;
+	Vector3 _startOffset;
 
 	[Header("Close in")]
 	public float _closeInSpeed;
 	public float _minDistance;
+	public float _maxDistance;
 
 	[Header("Behind Player lerp")]
 	public float _distance;
@@ -28,6 +29,7 @@ public class IdleCam : Shot
 		base.Awake();
 		_player=GameManager._player;
 		_yOffset=transform.position.y-_player.transform.position.y;
+		_startOffset=transform.position-_player.transform.position;
 	}
 
 	/*
@@ -37,6 +39,7 @@ public class IdleCam : Shot
 	*/
 
 	void OnEnable(){
+		Debug.Log("Starting idle cam");
 		StartLerp(0);
 	}
 
@@ -107,16 +110,35 @@ public class IdleCam : Shot
 		}
 		transform.position=targetPos;
 
-		StartLerp();
 	}
 
 	IEnumerator CloseInOnPlayer(){
 		float sqrDist = (_player.transform.position-transform.position).sqrMagnitude;
-		while(sqrDist>_minDistance*_minDistance){
-			Vector3 diff = _player.transform.position-transform.position;
-			transform.position+=diff.normalized*_closeInSpeed*Time.deltaTime;
-			sqrDist = (_player.transform.position-transform.position).sqrMagnitude;
+		if(sqrDist>_maxDistance*_maxDistance){
 			yield return null;
+			transform.position=_player.transform.position+_startOffset*_minDistance;
+		}
+		else{
+			while(sqrDist>_minDistance*_minDistance){
+				Vector3 diff = _player.transform.position-transform.position;
+				transform.position+=diff.normalized*_closeInSpeed*Time.deltaTime;
+				sqrDist = (_player.transform.position-transform.position).sqrMagnitude;
+				yield return null;
+			}
+		}
+		StartLerp();
+	}
+	
+    // Update is called once per frame
+    protected override void Update()
+    {
+		//after all is said and done
+		if(HandleMouseMotion()){
+			StopAllCoroutines();
+			_lerpState=-1;
+		}
+		else if(_lerpState==-1){
+			StartLerp(0);
 		}
 	}
 

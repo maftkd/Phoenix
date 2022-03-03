@@ -29,6 +29,7 @@ public class PuzzleBox : MonoBehaviour
 	Bird _player;
 	Transform _box;
 	Transform _boxLp;
+	Transform _pistons;
 	float _lodDist=10f;
 	bool _prevInZone;
 	Transform _key;
@@ -58,6 +59,15 @@ public class PuzzleBox : MonoBehaviour
 
 		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
 		label.GetComponent<Text>().text=_puzzleId;
+
+		//set piston colors
+		_pistons=transform.Find("Pistons");
+		Material mat = _boxLp.GetComponent<MeshRenderer>().sharedMaterial;
+		Transform bottomPanel=_box.Find("Bottom");
+		foreach(Transform p in _pistons){
+			Transform b = p.GetChild(0);
+			b.GetComponent<MeshRenderer>().material=mat;
+		}
 	}
 
 	protected virtual void OnEnable(){

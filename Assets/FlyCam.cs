@@ -7,7 +7,6 @@ public class FlyCam : Shot
 	Vector3 _position;
 	Quaternion _rotation;
 	Vector3 _forward;
-	Bird _player;
 	Fly _fly;
 	public float _targetPhi;
 	public float _targetR;
@@ -85,9 +84,9 @@ public class FlyCam : Shot
 		else
 			phi=Mathf.Lerp(phi,_targetPhi,_phiFlapLerp*Time.deltaTime*_warmUp);
 		//phi=Mathf.Lerp(phi,_targetPhi,_warmUp);
-		DebugScreen.Print(phi,0);
+		//DebugScreen.Print(phi,0);
 		r=Mathf.Lerp(r,_targetR,_rLerp*Time.deltaTime*_warmUp);
-		DebugScreen.Print(r,1);
+		//DebugScreen.Print(r,1);
 
 		//calc theta
 		Vector3 camBack=-transform.forward;
@@ -114,8 +113,8 @@ public class FlyCam : Shot
 		}
 
 		theta=Mathf.Lerp(theta,targetTheta,_lerp*Time.deltaTime*_warmUp);
-		DebugScreen.Print(theta,2);
-		DebugScreen.Print(targetTheta,3);
+		//DebugScreen.Print(theta,2);
+		//DebugScreen.Print(targetTheta,3);
 
 		float y = Mathf.Sin(phi);
 		float xzRad = Mathf.Cos(phi);

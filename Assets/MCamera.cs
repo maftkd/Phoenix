@@ -123,6 +123,7 @@ public class MCamera : MonoBehaviour
 
 		//stop tracking old, start tracking new
 		HandleTracking(cam,target, dur);
+		Debug.Log("Transition to: "+cam.name);
 	}
 
 	void HandleTracking(Camera newCam,Transform t,float dur){

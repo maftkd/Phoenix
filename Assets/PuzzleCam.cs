@@ -7,7 +7,6 @@ public class PuzzleCam : Shot
 	public Transform _center;
 	public Transform _forceField;
 	float _forceFieldRadius;
-	Bird _player;
 	bool _inZone;
 	bool _prevInZone;
 	MCamera _mCam;

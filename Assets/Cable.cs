@@ -28,6 +28,10 @@ public class Cable : MonoBehaviour
 	public float _maxAudioDist;
 	public float _maxHumVolume;
 	int _fillIndex;
+	public bool _freeFloating;
+
+	public bool _showHandles;
+	public bool _hideHandles;
 
 	Dictionary<float,Vector3> _centers;
 
@@ -126,7 +130,8 @@ public class Cable : MonoBehaviour
 			_groundPoints.Clear();
 			foreach(Vector3 p in _points){
 				Vector3 pos=p;
-				pos.y=_terrain.SampleHeight(pos);
+				if(!_freeFloating)
+					pos.y=_terrain.SampleHeight(pos);
 				_groundPoints.Add(pos);
 			}
 			_path = new CubicBezierPath(_groundPoints.ToArray());
@@ -137,8 +142,11 @@ public class Cable : MonoBehaviour
 			float last=0;
 			for(float i=0; i<_groundPoints.Count-1;i+=inc){
 				Vector3 pos = _path.GetPoint(i);
-				float y = _terrain.SampleHeight(pos);
-				pos.y=y;
+				if(!_freeFloating)
+				{
+					float y = _terrain.SampleHeight(pos);
+					pos.y=y;
+				}
 				pointsRaw.Add(i,pos);
 				last=i;
 			}
@@ -234,6 +242,13 @@ public class Cable : MonoBehaviour
 	}
 
 	void OnValidate(){
+		if(_showHandles||_hideHandles){
+			foreach(Transform t in _controlPoints){
+				t.GetComponent<MeshRenderer>().enabled=_showHandles;
+			}
+			_showHandles=false;
+			_hideHandles=false;
+		}
 		Reset();
 	}
 
@@ -256,11 +271,9 @@ public class Cable : MonoBehaviour
 				minIndex=i;
 			}
 		}
-		Debug.Log("min index: "+minIndex+" - "+name);
 		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
 		int centerIndex=minIndex/_vertsPerCenter;
 		_fillIndex=centerIndex;
-		Debug.Log(name+ " Filled to center index: "+centerIndex);
 		SetPower(fillAmount);
 	}
 

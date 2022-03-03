@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class WaddleCam : Shot
 {
 	Vector3 _dollyDir;
-	float _yOffset;
+	public float _yOffset;
 	public float _yLerp;
-	Bird _player;
+	public float _lookLerp;
 	public RectTransform _sweetSpot;
 	public RectTransform _playerPos;
 	Vector2 _panBounds;
@@ -21,7 +21,6 @@ public class WaddleCam : Shot
 	Quaternion _rotation;
 	[Header("Distance based constraints")]
 	public float _maxDistance;
-	public float _minDistance;
 	public float _distanceMoveMult;
 	public float _maxDistanceMoveMult;
 	bool _debugLines;
@@ -41,7 +40,7 @@ public class WaddleCam : Shot
 		_dollyBounds=new Vector2(midPoint.y+_sweetSpot.offsetMin.y, midPoint.y+_sweetSpot.offsetMax.y)/refRes.y;
 		_position=transform.position;
 		_rotation=transform.rotation;
-		_yOffset=transform.position.y-_player.transform.position.y;
+		//_yOffset=transform.position.y-_player.transform.position.y;
 		SetDebugLines(_debugLines);
 	}
 
@@ -109,13 +108,14 @@ public class WaddleCam : Shot
 			moveAmount=Mathf.Clamp(moveAmount,-_maxDistanceMoveMult,_maxDistanceMoveMult)*_power;
 			_position+=_dollyDir*moveAmount*_distanceMoveMult*Time.deltaTime;
 		}
-		else if(sqrDist<_minDistance*_minDistance){
-			float moveAmount=_minDistance-Mathf.Sqrt(sqrDist);
-			moveAmount=Mathf.Clamp(moveAmount,-_maxDistanceMoveMult,_maxDistanceMoveMult)*_power;
-			_position+=_dollyDir*moveAmount*_distanceMoveMult*Time.deltaTime;
-		}
 		//fix y offset
 		_position.y=Mathf.Lerp(_position.y,_player.transform.position.y+_yOffset,_yLerp*Time.deltaTime*_power);
+
+		//after all is said and done
+		if(HandleMouseMotion()){
+			_position=Vector3.Lerp(_position,transform.position,_lookLerp*Time.deltaTime);
+			_rotation=Quaternion.Slerp(_rotation,transform.rotation,_lookLerp*Time.deltaTime);
+		}
 
 		//ramp up power
 		if(_power<1f){
