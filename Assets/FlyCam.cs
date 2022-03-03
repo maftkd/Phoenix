@@ -8,10 +8,12 @@ public class FlyCam : Shot
 	Quaternion _rotation;
 	Vector3 _forward;
 	Bird _player;
+	Fly _fly;
 	public float _targetPhi;
 	public float _targetR;
 	public float _lerp;
 	public float _phiLerp;
+	public float _phiFlapLerp;
 	public float _slerp;
 	public float _rLerp;
 	public int _flightPriority;
@@ -23,6 +25,7 @@ public class FlyCam : Shot
 	protected override void Awake(){
 		base.Awake();
 		_player=GameManager._player;
+		_fly=_player.GetComponent<Fly>();
 		_defaultPriority=_priority;
 	}
 
@@ -77,7 +80,10 @@ public class FlyCam : Shot
 		float r = diff.magnitude;
 		float phi=Mathf.Asin(diff.y/diff.magnitude);
 		//phi=Mathf.Lerp(phi,_targetPhi,_lerp*Time.deltaTime*_warmUp);
-		phi=Mathf.Lerp(phi,_targetPhi,_phiLerp*Time.deltaTime*_warmUp);
+		if(_fly._soaring||_warmUp<1f)
+			phi=Mathf.Lerp(phi,_targetPhi,_phiLerp*Time.deltaTime*_warmUp);
+		else
+			phi=Mathf.Lerp(phi,_targetPhi,_phiFlapLerp*Time.deltaTime*_warmUp);
 		//phi=Mathf.Lerp(phi,_targetPhi,_warmUp);
 		DebugScreen.Print(phi,0);
 		r=Mathf.Lerp(r,_targetR,_rLerp*Time.deltaTime*_warmUp);

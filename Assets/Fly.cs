@@ -48,6 +48,7 @@ public class Fly : MonoBehaviour
 	ParticleSystem _soarParticles;
 	AudioSource _soarAudio;
 	public float _soarVolume;
+	public bool _soaring;
 	public float _diveVolume;
 	public float _divePitch;
 	public ParticleSystem _flapParts;
@@ -260,6 +261,7 @@ public class Fly : MonoBehaviour
 	}
 
 	public void Soar(bool soaring){
+		_soaring=soaring;
 		if(soaring)
 		{
 			if(!_soarParticles.isPlaying)
