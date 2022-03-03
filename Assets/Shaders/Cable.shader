@@ -63,14 +63,14 @@
 			fixed xDiff=abs(IN.uv_MainTex.x-0.5);
 			fixed inBand=step(xDiff,_BandWidth*0.5);
 			//fixed wave = 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
-			fixed wave= 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
-			wave=pow(wave*step(_WaveCutoff,wave),_WavePow);
+			//fixed wave= 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
+			//wave=pow(wave*step(_WaveCutoff,wave),_WavePow);
 
-			fixed4 bandColor=_PowerColor*wave;
+			fixed4 bandColor=_BandColor;//*wave;
 			fixed powered = step(IN.uv_MainTex.y,_PowerFill);
 			bandColor=bandColor*powered+(1-powered)*_OffColor;
             o.Albedo = inBand*bandColor+(1-inBand)*_Color;
-			o.Emission=inBand*o.Albedo*powered*_EmissionMult*wave;
+			o.Emission=inBand*_PowerColor.rgb*powered*_EmissionMult;//*wave;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

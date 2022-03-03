@@ -104,6 +104,17 @@ public class TerrainGenerator : MonoBehaviour
 	public bool _updateTexture;
 	public bool _autoUpdateTexture;
 
+	[Header("Rock Pass")]
+	public int _rockSeed;
+	public Transform [] _rocks;
+	public int _numRocks;
+	public Vector2 _rockHeightRange;
+	public Vector3 _minRockScale;
+	public Vector3 _maxRockScale;
+	public bool _clearRocks;
+	public bool _updateRocks;
+	public bool _autoUpdateRocks;
+
 	void OnValidate(){
 		if(_levelTerrain){
 			LevelTerrain();
@@ -159,6 +170,16 @@ public class TerrainGenerator : MonoBehaviour
 		else if(_updateTexture||_autoUpdateTexture){
 			UpdateTexture();
 			_updateTexture=false;
+		}
+
+		//rocks
+		if(_clearRocks){
+			ClearRocks();
+			_clearRocks=false;
+		}
+		else if(_updateRocks||_autoUpdateRocks){
+			GenRocks();
+			_updateRocks=false;
 		}
 
 		transform.GetChild(0).GetComponent<MeshRenderer>().enabled=!_hideBaseMap;
@@ -762,6 +783,60 @@ public class TerrainGenerator : MonoBehaviour
 			}
 		}
 		td.SetAlphamaps(0,0,alphaMaps);
+	}
 
+	void ClearRocks(){
+		Transform rockParent=transform.Find("Rocks");
+		if(rockParent.childCount==0)
+			return;
+		Transform [] rocks = new Transform[rockParent.childCount];
+		for(int i=0;i<rockParent.childCount; i++)
+			rocks[i]=rockParent.GetChild(i);
+		StartCoroutine(ClearRocksR(rocks));
+	}
+
+	IEnumerator ClearRocksR(Transform[] rocks){
+		yield return null;
+		foreach(Transform t in rocks)
+			DestroyImmediate(t.gameObject);
+	}
+
+	void GenRocks(){
+		Random.InitState(_rockSeed);
+		ClearRocks();
+		Transform rockParent=transform.Find("Rocks");
+		//get terrain data
+		Terrain ter = GetComponent<Terrain>();
+		TerrainData td = ter.terrainData;
+		int mapSize=_numLayers;
+		int res = td.heightmapResolution;
+		float maxHeight = td.size.y;
+		float[,] heights=td.GetHeights(0,0,res,res);
+
+		int maxIters=100;
+		for(int i=0;i<_numRocks; i++){
+
+			//find a spot where height is within range
+			float height=-1f;
+			int iter=0;
+			float xNorm=0;
+			float yNorm=0;
+			while((height<_rockHeightRange.x||height>_rockHeightRange.y) && iter<maxIters){
+				xNorm=Random.value;
+				yNorm=Random.value;
+				int xPos=Mathf.FloorToInt(xNorm*res);
+				int yPos=Mathf.FloorToInt(yNorm*res);
+				height = heights[yPos,xPos]*maxHeight;
+				iter++;
+			}
+
+			Transform rock = Instantiate(_rocks[Random.Range(0,_rocks.Length)],rockParent);
+			rock.position = transform.position+Vector3.right*xNorm*td.size.x+Vector3.forward*yNorm*td.size.z+
+				Vector3.up*height;
+			rock.localScale = new Vector3(Random.Range(_minRockScale.x,_maxRockScale.x),
+					Random.Range(_minRockScale.y,_maxRockScale.y),
+					Random.Range(_minRockScale.z,_maxRockScale.z));
+			rock.rotation = Random.rotation;
+		}
 	}
 }

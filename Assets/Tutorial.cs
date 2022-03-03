@@ -71,6 +71,8 @@ public class Tutorial : MonoBehaviour
 	}
 
 	public void HideTutorial(){
+		if(_can==null)
+			return;
 		_can.enabled=false;
 		_cg.alpha=0f;
 		enabled=false;

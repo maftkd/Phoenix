@@ -8,6 +8,7 @@ public class Planter : MonoBehaviour
 	public Transform _grassPrefab;
 	public int _terrainLayer;
 	public float _alphaThreshold;
+	public int _seed;
 	public float _plantChance;
 	public Vector3 _minSize;
 	public Vector3 _maxSize;
@@ -37,6 +38,7 @@ public class Planter : MonoBehaviour
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int grassCount=0;
+		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			for(int x=0;x<td.alphamapWidth; x++){
 				if(alphaMaps[x,y,_terrainLayer]>_alphaThreshold)

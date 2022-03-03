@@ -130,6 +130,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e9c701cb76303a4eab790eda833d83c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _powerOff: {fileID: 8300000, guid: 19719a538ace0064983fa1f868014019, type: 3}
+  _powerOff: {fileID: 8300000, guid: 7fe54617118fb994e8fed50187b84a12, type: 3}
   _deactivatedHeight: 0.52
   _deactivatedPhase: 0.3

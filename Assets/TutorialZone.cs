@@ -22,6 +22,10 @@ public class TutorialZone : MonoBehaviour
 		_bird.ShowTutorial(-1);
 	}
 
+	void OnDisable(){
+		HideTutorial();
+	}
+
 	void Update(){
 		if(_hideOnButtonDown&&Input.GetButtonDown(_buttonName))
 			HideTutorial();

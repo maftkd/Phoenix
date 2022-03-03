@@ -8,6 +8,7 @@ public class PuzzleBox : MonoBehaviour
 {
 	Transform _effects;
 	public UnityEvent _onSolved;
+	public UnityEvent _onActivatingNextPuzzle;
 	float _revealDur=1f;
 	MInput _mIn;
 	MCamera _mCam;
@@ -27,6 +28,9 @@ public class PuzzleBox : MonoBehaviour
 	public Cable _cable;
 	Bird _player;
 	Transform _box;
+	Transform _boxLp;
+	float _lodDist=10f;
+	bool _prevInZone;
 	Transform _key;
 	Material _keyMat;
 	public AudioClip _buzzClip;
@@ -39,6 +43,7 @@ public class PuzzleBox : MonoBehaviour
 		_mCam=GameManager._mCam;
 		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
 		_box=transform.Find("BoxDetailed");
+		_boxLp=transform.Find("BoxLowDet");
 		_player=GameManager._player;
 		_key=_box.Find("Key").transform;
 		_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
@@ -72,6 +77,14 @@ public class PuzzleBox : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
+		//lod check
+		float sqrDist=(_player.transform.position-transform.position).sqrMagnitude;
+		bool inZone=sqrDist<=_lodDist*_lodDist;
+		if(inZone!=_prevInZone||Time.frameCount==1){
+			_box.gameObject.SetActive(inZone);
+			_boxLp.gameObject.SetActive(!inZone);
+		}
+		_prevInZone=inZone;
     }
 
 	//#todo - there's some overlap between solve silent and puzzle solved
@@ -157,6 +170,8 @@ public class PuzzleBox : MonoBehaviour
 		//light up seed lines
 		Circuit seedLines = transform.Find("SeedLines").GetComponentInChildren<Circuit>();
 		seedLines.Power(true);
+
+		_onActivatingNextPuzzle.Invoke();
 
 		//activate next puzzle
 		if(_nextPuzzle!=null)

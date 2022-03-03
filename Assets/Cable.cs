@@ -20,6 +20,14 @@ public class Cable : MonoBehaviour
 	public Terrain _terrain;
 	public AudioClip _powerClip;
 	public float _powerVol;
+	public bool _hum;
+	public float _humFrequency;
+	public float _humNoise;
+	AudioSource _humAudio;
+	Transform _player;
+	public float _maxAudioDist;
+	public float _maxHumVolume;
+	int _fillIndex;
 
 	Dictionary<float,Vector3> _centers;
 
@@ -56,11 +64,37 @@ public class Cable : MonoBehaviour
 		foreach(Transform t in _controlPoints){
 			t.GetComponent<MeshRenderer>().enabled=false;
 		}
+
+		if(Application.isPlaying&&_hum){
+			AudioClip humClip = Synthesizer.GenerateSineWave(_humFrequency,1f,_humNoise);
+			_humAudio = gameObject.AddComponent<AudioSource>();
+			_humAudio.clip=humClip;
+			_humAudio.volume=0;
+			_humAudio.Play();
+			_humAudio.loop=true;
+			_player=GameManager._player.transform;
+		}
     }
 
     // Update is called once per frame
     void Update()
     {
+		if(Application.isPlaying&&_humAudio!=null){
+			//check distance for hum
+			float minSqrDst = _maxAudioDist*_maxAudioDist;
+			int i=0;
+			foreach(Vector3 p in _centers.Values){
+				float sqrDist=(p-_player.position).sqrMagnitude;
+				if(sqrDist<minSqrDst){
+					minSqrDst=sqrDist;
+				}
+				i++;
+				if(i>=_fillIndex)
+					break;
+			}
+			float lerp=Mathf.InverseLerp(_maxAudioDist*_maxAudioDist,0,minSqrDst);
+			_humAudio.volume=Mathf.Lerp(0,_maxHumVolume,lerp*lerp);
+		}
 		if(!_init)
 			Init();
 		//check to regen
@@ -224,6 +258,9 @@ public class Cable : MonoBehaviour
 		}
 		Debug.Log("min index: "+minIndex+" - "+name);
 		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
+		int centerIndex=minIndex/_vertsPerCenter;
+		_fillIndex=centerIndex;
+		Debug.Log(name+ " Filled to center index: "+centerIndex);
 		SetPower(fillAmount);
 	}
 
