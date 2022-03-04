@@ -43,7 +43,6 @@ public class PuzzleCam : Shot
 		//#todo - also do a vertical check for in zone. This stuff should kinda disable if the bird is flying or standing on top the box
 
 		if(_inZone!=_prevInZone){
-			Debug.Log("Zoning change");
 			if(_inZone)
 			{
 				//_mCam.Transition(_cam,MCamera.Transitions.FADE,0f,null,0.25f);

@@ -100,6 +100,8 @@ public class TerrainGenerator : MonoBehaviour
 	public float _rockPerlinCutoff;
 	public int _dirtLayer;
 	public int _puzzleSurfaceLayer;
+	public int _puzzleSurfaceLayerHigh;
+	public float _puzzleSurfaceLine;
 	public bool _resetTexture;
 	public bool _updateTexture;
 	public bool _autoUpdateTexture;
@@ -771,7 +773,11 @@ public class TerrainGenerator : MonoBehaviour
 						continue;
 					float sqrDist = (puzzle.position-worldPos).sqrMagnitude;
 					if(sqrDist<_puzzleRadius*_puzzleRadius)
+					{
 						layer=_puzzleSurfaceLayer;
+						if(height>=_puzzleSurfaceLine)
+							layer=_puzzleSurfaceLayerHigh;
+					}
 				}
 
 				for(int m=0;m<mapSize;m++){

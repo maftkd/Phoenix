@@ -147,11 +147,13 @@ public class Gate : MonoBehaviour
 			if(!inputPowered)
 				powered=false;
 			//color the input arrows
+			/*
 			Transform inT = transform.GetChild(i);
 			Renderer r = inT.GetComponent<Renderer>();
 			Material[] mats = r.materials;
 			mats[0]=inputPowered?_on :_off;
 			r.materials=mats;
+			*/
 		}
 		_inputsOn=powered;
 

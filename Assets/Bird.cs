@@ -398,7 +398,6 @@ public class Bird : MonoBehaviour
 		_state=3;
 		_anim.SetTrigger("fly");
 		//GameManager._mCam.Transition(_flyCam,MCamera.Transitions.LERP,0f,null,0.5f);
-		Debug.Log("Flying");
 		GameManager._mCam.Transition(_flyCam,MCamera.Transitions.CUT_BACK);
 	}
 	public void Land(){
@@ -769,6 +768,25 @@ public class Bird : MonoBehaviour
 			default://tbd 
 				break;
 		}
+	}
+
+	public void FlyAwayMates(){
+		foreach(Bird b in _birds)
+		{
+			if(b!=null&&b._mate==this){
+				b.FlyAway();
+			}
+		}
+	}
+
+	public void FlyAway(){
+		FlyTo(transform.position+new Vector3(1,1,1)*3f);
+		_mate=null;
+		_onDoneFlying+=DoneFlying;
+	}
+
+	public void DoneFlying(){
+		Destroy(gameObject);
 	}
 
 	void OnDrawGizmos(){

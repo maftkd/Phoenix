@@ -39,7 +39,6 @@ public class IdleCam : Shot
 	*/
 
 	void OnEnable(){
-		Debug.Log("Starting idle cam");
 		StartLerp(0);
 	}
 

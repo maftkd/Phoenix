@@ -77,6 +77,7 @@ public class Intro : MonoBehaviour
 			case Mode.DEFAULT:
 			case Mode.FAST:
 			default:
+				_coverArtIsland.SetActive(true);
 				_platePos=_introBird.transform.position;
 				_introBird.transform.position+=Vector3.up*_birdStartDistance;
 				_introBird.transform.position-=_introBird.transform.forward*_birdStartDistance;
@@ -87,6 +88,7 @@ public class Intro : MonoBehaviour
 				break;
 			case Mode.COVER_ART:
 				//PowerTitleSign(true);
+				_coverArtIsland.SetActive(true);
 				_startPrompt.gameObject.SetActive(false);
 				_mCam.SnapToCamera(_introCam);
 				_rock.SetActive(false);

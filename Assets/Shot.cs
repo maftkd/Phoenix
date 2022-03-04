@@ -50,7 +50,6 @@ public class Shot : MonoBehaviour
 		//we should rotate on mouse motion
 		Vector2 mouseMotion = _mIn.GetMouseMotion();
 		if(mouseMotion.x!=0){
-			Debug.Log("gotta rotate");
 			Vector3 diff=transform.position-_player.transform.position;
 			float r = diff.magnitude;
 			float phi=Mathf.Asin(diff.y/diff.magnitude);

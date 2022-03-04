@@ -123,6 +123,7 @@ public class PuzzleBox : MonoBehaviour
 			_effects.gameObject.SetActive(true);
 		StartCoroutine(OpenBox());
 		GameManager._instance.PuzzleSolved(this);
+		StartCoroutine(FlyAwayMate());
 	}
 
 	protected virtual IEnumerator OpenBox(){
@@ -211,6 +212,11 @@ public class PuzzleBox : MonoBehaviour
 
 	public void ResetCamera(){
 		_puzzleCam.ResetZone();
+	}
+
+	IEnumerator FlyAwayMate(){
+		yield return new WaitForSeconds(0.5f);
+		_player.FlyAwayMates();
 	}
 
 	void OnDrawGizmos(){
