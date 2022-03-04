@@ -130,6 +130,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}
+      propertyPath: _decayRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
       propertyPath: _maxVolume
       value: 0.01
       objectReference: {fileID: 0}
@@ -137,6 +142,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _toneNoise
       value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
+      propertyPath: _chargeRate
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}

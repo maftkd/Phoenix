@@ -12,6 +12,8 @@ public class Gate : MonoBehaviour
 	public Material _off, _on;
 
 	public float _chargeDur;
+	public float _chargeRate;
+	public float _decayRate;
 	float _chargeTimer;
 	int _chargeState;//0 = idle, 1 = chargeUp, 2 = chargeDown
 	bool _powered;
@@ -76,7 +78,7 @@ public class Gate : MonoBehaviour
 						break;
 					}
 					if(_chargeTimer<_chargeDur){
-						_chargeTimer+=Time.deltaTime;
+						_chargeTimer+=Time.deltaTime*_chargeRate;
 						_source.volume=Mathf.Lerp(0,_maxVolume,_chargeTimer/_chargeDur);
 						_source.pitch=Mathf.Lerp(_minPitch,_maxPitch,_chargeTimer/_chargeDur);
 						if(_chargeTimer>_chargeDur)
@@ -96,7 +98,7 @@ public class Gate : MonoBehaviour
 						break;
 					}
 					if(_chargeTimer>0){
-						_chargeTimer-=Time.deltaTime;
+						_chargeTimer-=Time.deltaTime*_decayRate;
 						_source.volume=Mathf.Lerp(0,_maxVolume*_decayVolMult,_chargeTimer/_chargeDur);
 						_source.pitch=Mathf.Lerp(_minPitch,_maxPitch,_chargeTimer/_chargeDur);
 						if(_chargeTimer<0)
@@ -114,28 +116,6 @@ public class Gate : MonoBehaviour
 					break;
 			}
 		}
-		/*
-		//charge up
-		if(_charging && _chargeTimer<_chargeDur){
-			_chargeTimer+=Time.deltaTime;
-			if(_chargeTimer>_chargeDur)
-			{
-				_chargeTimer=_chargeDur;
-			}
-			_mat.SetFloat("_FillAmount", _chargeTimer/_chargeDur);
-		}
-
-		//cool down
-		else if(!_charging && _chargeTimer>0){
-			_chargeTimer-=Time.deltaTime;
-			if(_chargeTimer<0)
-			{
-				_chargeTimer=0;
-				CheckGate();
-			}
-			_mat.SetFloat("_FillAmount", _chargeTimer/_chargeDur);
-		}
-		*/
     }
 
 	void CheckGate(){
@@ -146,14 +126,6 @@ public class Gate : MonoBehaviour
 				inputPowered=!inputPowered;
 			if(!inputPowered)
 				powered=false;
-			//color the input arrows
-			/*
-			Transform inT = transform.GetChild(i);
-			Renderer r = inT.GetComponent<Renderer>();
-			Material[] mats = r.materials;
-			mats[0]=inputPowered?_on :_off;
-			r.materials=mats;
-			*/
 		}
 		_inputsOn=powered;
 
