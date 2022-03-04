@@ -193,10 +193,10 @@ public class PuzzleBox : MonoBehaviour
 		if(!gameObject.activeSelf)
 			return;
 		_onActivated.Invoke();
-		_forceField.Deactivate();
+		_forceField.Deactivate(_activateOnAwake);
 		_latestPuzzle=this;
 
-		_cable.FillNearPosition(transform.position);
+		_cable.FillNearPosition(transform.position,_activateOnAwake);
 	}
 
 	public Transform GetPerch(){
@@ -215,7 +215,7 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	IEnumerator FlyAwayMate(){
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(3f);
 		_player.FlyAwayMates();
 	}
 

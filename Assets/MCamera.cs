@@ -220,6 +220,9 @@ public class MCamera : MonoBehaviour
 		float startHeight=transform.position.y;
 		float endHeight=cam.transform.position.y;
 
+		Vector3 startPos=transform.position;
+		Vector3 endPos=cam.transform.position;
+
 		transform.SetParent(null);
 		float timer=0;
 		float radius=0;
@@ -228,9 +231,11 @@ public class MCamera : MonoBehaviour
 			float frac=_orbitCurve.Evaluate(timer/dur);
 			radius=Mathf.Lerp(startR,targetR,frac);
 			transform.rotation=Quaternion.Slerp(startRot,endRot,frac);
-			Vector3 pos=target.position-transform.forward*radius;
-			pos.y=Mathf.Lerp(startHeight,endHeight,frac);
-			transform.position=pos;
+			//Vector3 pos=target.position-transform.forward*radius;
+			//pos.y=startHeight;
+			//pos.y=Mathf.Lerp(startHeight,endHeight,frac);
+			//transform.position=pos;
+			transform.position=Vector3.Lerp(startPos,endPos,frac);
 			_camera.fieldOfView=Mathf.Lerp(startFov,targetFov,frac);
 			_letterBox.SetFloat("_Amount",Mathf.Lerp(startLb,endLb,frac));
 			yield return null;

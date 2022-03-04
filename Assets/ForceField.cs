@@ -28,10 +28,13 @@ public class ForceField : MonoBehaviour
         
     }
 
-	public void Deactivate(){
+	public void Deactivate(bool supressAudio=false){
 		if(_mat==null)
 			_mat=GetComponent<MeshRenderer>().material;
-		Sfx.PlayOneShot3D(_powerOff,transform.position);
+		if(!supressAudio)
+		{
+			Sfx.PlayOneShot3D(_powerOff,transform.position);
+		}
 		_mat.SetFloat("_VCut",_deactivatedHeight);
 		_mat.SetFloat("_PhaseMult",_deactivatedPhase);
 		GetComponent<SphereCollider>().enabled=false;

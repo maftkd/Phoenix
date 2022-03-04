@@ -252,13 +252,19 @@ public class Cable : MonoBehaviour
 		Reset();
 	}
 
-	public void SetPower(float v){
+	public void SetPower(float v,bool supressAudio=false){
 		_meshR.material.SetFloat("_PowerFill",v);
-		if(v>0)
+		if(v>0&&!supressAudio)
 			Sfx.PlayOneShot2D(_powerClip,Random.Range(0.8f,1.2f),_powerVol);
 	}
 
-	public void FillNearPosition(Vector3 pos){
+	public void SetPower(float v){
+		_meshR.material.SetFloat("_PowerFill",v);
+			if(v>0)
+			Sfx.PlayOneShot2D(_powerClip,Random.Range(0.8f,1.2f),_powerVol);
+	}
+
+	public void FillNearPosition(Vector3 pos,bool supressAudio=false){
 		if(!gameObject.activeSelf)
 			return;
 		float minSqrDist=1000;
@@ -274,7 +280,7 @@ public class Cable : MonoBehaviour
 		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
 		int centerIndex=minIndex/_vertsPerCenter;
 		_fillIndex=centerIndex;
-		SetPower(fillAmount);
+		SetPower(fillAmount,supressAudio);
 	}
 
 	void OnDrawGizmos(){

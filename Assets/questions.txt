@@ -32,3 +32,10 @@
 - How is the flying experience changed by the incorperation of wind currents?
 - Can the game feel like a cohesive whole while including navigational and puzzle solving elements? How can the flying through rings be integrated? Is there maybe some kind of counter associated with those and data collection for the scientists?
 
+3/4/22
+- What is the right amount of vertical / horizontal spacing of objects to allow for smooth flight paths
+- What do folks enjoy most about the game / what do they dislike the most / what one thing would they change?
+- How much is the play experience improved with a better camera system?
+- What can be done to make the islands look more unique?
+- Does having additional empty islands help out with the demo? Just having more places to fly to?
+

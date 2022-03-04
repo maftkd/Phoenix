@@ -22,6 +22,7 @@ public class TerrainGenerator : MonoBehaviour
 	[Tooltip("Affects the steepness of the shore, I think. Plays closely with shore Noise Amplitude. Todo, make this more descriptive")]
 	public float _shoreSmooth;
 	public bool _autoGenBaseMap;
+	public bool _autoApplyBaseMap;
 	public bool _applyBaseMap;
 	public bool _hideBaseMap;
 
@@ -125,7 +126,7 @@ public class TerrainGenerator : MonoBehaviour
 		//base map
 		if(_autoGenBaseMap)
 			GenBaseMap();
-		if(_applyBaseMap)
+		if(_applyBaseMap||_autoApplyBaseMap)
 		{
 			ApplyBaseMap();
 			_applyBaseMap=false;
@@ -718,7 +719,7 @@ public class TerrainGenerator : MonoBehaviour
 
 	void UpdateTexture(){
 
-		Random.InitState(_seed);
+		Random.InitState(_textureSeed);
 		float offset=Random.value;
 		float offset2=Random.value;
 

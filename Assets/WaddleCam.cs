@@ -79,6 +79,8 @@ public class WaddleCam : Shot
 		{
 			//rotate as a function of distance from sweet spot
 			float rotationAmount=viewPoint.x-_panBounds.x;
+			if(Mathf.Abs(rotationAmount)>_maxPan)
+				Debug.Log("max reached");
 			rotationAmount=Mathf.Clamp(rotationAmount,-_maxPan,_maxPan)*_power;
 			_rotation=Quaternion.Euler(0,rotationAmount*Time.deltaTime*_panMult,0)*_rotation;
 			UpdateDolly();
@@ -86,6 +88,8 @@ public class WaddleCam : Shot
 		else if(viewPoint.x>_panBounds.y)
 		{
 			float rotationAmount=viewPoint.x-_panBounds.y;
+			if(Mathf.Abs(rotationAmount)>_maxPan)
+				Debug.Log("max reached");
 			rotationAmount=Mathf.Clamp(rotationAmount,-_maxPan,_maxPan)*_power;
 			_rotation=Quaternion.Euler(0,rotationAmount*Time.deltaTime*_panMult,0)*_rotation;
 			UpdateDolly();
