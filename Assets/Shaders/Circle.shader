@@ -60,7 +60,7 @@
 				fixed inCircle=step(dSqr,r*r);
 				fixed ot = 1-(_OutlineThickness*0.5+0.5);
 				fixed outline=step(ot*ot,dSqr);
-				fixed4 col = lerp(lerp(_ColorB,_Color,outline),_ColorB,1-_Powered);
+				fixed4 col = lerp(_Color,_ColorB,_Powered);
 				outline+=_Powered;
 				//fixed4 col = lerp(_Color,_ColorB,1-_Powered);
 				clip(inCircle*outline-0.5);
