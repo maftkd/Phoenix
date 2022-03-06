@@ -5,62 +5,53 @@ using UnityEngine.UI;
 
 public class WaddleCam : Shot
 {
-	Vector3 _dollyDir;
-	public float _yOffset;
-	public float _yLerp;
-	public float _lookLerp;
-	public RectTransform _sweetSpot;
-	public RectTransform _playerPos;
-	Vector2 _panBounds;
-	Vector2 _dollyBounds;
-	public float _panMult;
-	public float _maxPan;
-	public float _dollyMult;
-	public float _maxDolly;
+
 	Vector3 _position;
 	Quaternion _rotation;
-	[Header("Distance based constraints")]
-	public float _maxDistance;
-	public float _distanceMoveMult;
-	public float _maxDistanceMoveMult;
 	bool _debugLines;
-
-	[Header("Warm up period")]
-	[Range(0,1)]
-	[Tooltip("Power is a multiplier across all movement. It ramps up based on warm up speed")]
-	public float _power;
-	public float _warmUpSpeed;
+	float _radius;
+	float _phi;
+	float _theta;
+	float _yOffset=-1f;
+	float _targetR=-1f;
+	public Vector2 _phiRange;
+	public float _rLerp;
 
 	protected override void Awake(){
 		base.Awake();
-		_player=GameManager._player;
-		Vector2 refRes=new Vector2(1920,1080);
-		Vector2 midPoint=refRes*0.5f;
-		_panBounds=new Vector2(midPoint.x+_sweetSpot.offsetMin.x,midPoint.x+_sweetSpot.offsetMax.x)/refRes.x;
-		_dollyBounds=new Vector2(midPoint.y+_sweetSpot.offsetMin.y, midPoint.y+_sweetSpot.offsetMax.y)/refRes.y;
 		_position=transform.position;
 		_rotation=transform.rotation;
-		//_yOffset=transform.position.y-_player.transform.position.y;
-		SetDebugLines(_debugLines);
+		SetDebugLines(false);
 	}
 
 	void OnEnable(){
 		_position=transform.position;
 		_rotation=transform.rotation;
-		_power=0;
-		UpdateDolly();
+		//get initial phi radius and theta
+		if(_yOffset<0){
+			Vector3 dir = transform.forward;
+			Vector3 sphereCenter=Vector3.zero;
+			LineLineIntersection(out sphereCenter,transform.position,dir,
+					_player.transform.position,Vector3.up);
+			_yOffset=sphereCenter.y-_player.transform.position.y;
+		}
+		Vector3 diff=transform.position-(_player.transform.position+Vector3.up*_yOffset);
+		_radius = diff.magnitude;
+		if(_targetR<0)
+			_targetR=_radius;
+		_phi = Mathf.Asin(diff.y/diff.magnitude);
+
+		//calc theta
+		Vector3 camBack=-transform.forward;
+		camBack.y=0;
+		camBack.Normalize();
+		_theta=Mathf.Atan2(camBack.z,camBack.x);
 	}
 
-	//establish dolly direction
-	void UpdateDolly(){
-		_dollyDir=transform.forward;
-		_dollyDir.y=0;
-		_dollyDir.Normalize();
-	}
     // Start is called before the first frame update
     protected override void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -70,63 +61,36 @@ public class WaddleCam : Shot
 		transform.position=_position;
 		transform.rotation=_rotation;
 
-		//cast player to screen
-		Vector3 viewPoint = _cam.WorldToViewportPoint(_player.transform.position+_player._size.y*Vector3.up);
-		_playerPos.anchoredPosition=new Vector2(viewPoint.x*1920f,viewPoint.y*1080f);
+		//get radius
+		Vector3 diff=transform.position-(_player.transform.position+Vector3.up*_yOffset);
+		float radius=Mathf.Lerp(diff.magnitude,_targetR,_rLerp*Time.deltaTime);
 
-		//check if player within sweet spot
-		if(viewPoint.x<_panBounds.x)
-		{
-			//rotate as a function of distance from sweet spot
-			float rotationAmount=viewPoint.x-_panBounds.x;
-			if(Mathf.Abs(rotationAmount)>_maxPan)
-				Debug.Log("max reached");
-			rotationAmount=Mathf.Clamp(rotationAmount,-_maxPan,_maxPan)*_power;
-			_rotation=Quaternion.Euler(0,rotationAmount*Time.deltaTime*_panMult,0)*_rotation;
-			UpdateDolly();
-		}
-		else if(viewPoint.x>_panBounds.y)
-		{
-			float rotationAmount=viewPoint.x-_panBounds.y;
-			if(Mathf.Abs(rotationAmount)>_maxPan)
-				Debug.Log("max reached");
-			rotationAmount=Mathf.Clamp(rotationAmount,-_maxPan,_maxPan)*_power;
-			_rotation=Quaternion.Euler(0,rotationAmount*Time.deltaTime*_panMult,0)*_rotation;
-			UpdateDolly();
-		}
-		if(viewPoint.y<_dollyBounds.x){
-			float moveAmount=viewPoint.y-_dollyBounds.x;
-			moveAmount=Mathf.Clamp(moveAmount,-_maxDolly,_maxDolly)*_power;
-			_position+=_dollyDir*moveAmount*_dollyMult*Time.deltaTime;
-		}
-		else if(viewPoint.y>_dollyBounds.y){
-			float moveAmount=viewPoint.y-_dollyBounds.y;
-			moveAmount=Mathf.Clamp(moveAmount,-_maxDolly,_maxDolly)*_power;
-			_position+=_dollyDir*moveAmount*_dollyMult*Time.deltaTime;
-		}
+		//modify theta
+		Vector2 mouseMotion = _mIn.GetMouseMotion();
+		_theta-=mouseMotion.x;
+		_phi+=mouseMotion.y;
+		_phi=Mathf.Clamp(_phi,_phiRange.x,_phiRange.y);
+			//update position
+		float y = Mathf.Sin(_phi);
+		float xzRad = Mathf.Cos(_phi);
+		float x = xzRad*Mathf.Cos(_theta);
+		float z = xzRad*Mathf.Sin(_theta);
+		Vector3 offset = new Vector3(x,y,z)*radius;
+		
+		Vector3 targetPos=_player.transform.position+Vector3.up*_yOffset+offset;
 
-		//check if player exceeds max distance
-		float sqrDist=(transform.position-_player.transform.position).sqrMagnitude;
-		if(sqrDist>_maxDistance*_maxDistance){
-			float moveAmount=Mathf.Sqrt(sqrDist)-_maxDistance;
-			moveAmount=Mathf.Clamp(moveAmount,-_maxDistanceMoveMult,_maxDistanceMoveMult)*_power;
-			_position+=_dollyDir*moveAmount*_distanceMoveMult*Time.deltaTime;
-		}
-		//fix y offset
-		_position.y=Mathf.Lerp(_position.y,_player.transform.position.y+_yOffset,_yLerp*Time.deltaTime*_power);
+		//_position=Vector3.Lerp(_position,targetPos,_lerp*Time.deltaTime);
+		_position=targetPos;
 
-		//after all is said and done
-		if(HandleMouseMotion()){
-			_position=Vector3.Lerp(_position,transform.position,_lookLerp*Time.deltaTime);
-			_rotation=Quaternion.Slerp(_rotation,transform.rotation,_lookLerp*Time.deltaTime);
-		}
+		//float pitch=transform.eulerAngles.x;
+		Quaternion prevRot=transform.rotation;
+		transform.forward=-offset;
+		//_rotation=Quaternion.Slerp(prevRot,transform.rotation,_slerp*Time.deltaTime);
+		_rotation=transform.rotation;
 
-		//ramp up power
-		if(_power<1f){
-			_power+=Time.deltaTime*_warmUpSpeed;
-			if(_power>1f)
-				_power=1f;
-		}
+		transform.position=_position;
+		transform.rotation=_rotation;
+
     }
 
 	public void ToggleCamLines(){
@@ -140,10 +104,28 @@ public class WaddleCam : Shot
 			ri.enabled=on;
 	}
 
-	[ContextMenu("Check dist")]
-	public void CheckDist(){
-		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
-		float dst = (_player.transform.position-transform.position).magnitude;
-		Debug.Log(dst);
+	public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1,
+	Vector3 lineVec1, Vector3 linePoint2, Vector3 lineVec2){
+
+		Vector3 lineVec3 = linePoint2 - linePoint1;
+		Vector3 crossVec1and2 = Vector3.Cross(lineVec1, lineVec2);
+		Vector3 crossVec3and2 = Vector3.Cross(lineVec3, lineVec2);
+
+		float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
+
+		//is coplanar, and not parallel
+		if( Mathf.Abs(planarFactor) < 0.0001f 
+		&& crossVec1and2.sqrMagnitude > 0.0001f)
+		{
+			float s = Vector3.Dot(crossVec3and2, crossVec1and2) 
+				/ crossVec1and2.sqrMagnitude;
+			intersection = linePoint1 + (lineVec1 * s);
+			return true;
+		}
+		else
+		{
+			intersection = Vector3.zero;
+			return false;
+		}
 	}
 }

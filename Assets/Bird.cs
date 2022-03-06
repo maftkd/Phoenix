@@ -363,13 +363,13 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 		_anim.SetFloat("walkSpeed",0f);
 		_state=0;
-		GameManager._mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK);
+		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);
 	}
 
 	public void StopWaddling(){
 		_waddle.StopWaddling();
 		_state=0;
-		GameManager._mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK);
+		//GameManager._mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK);
 		//Debug.Log("We stop waddling yooo");
 	}
 
@@ -415,7 +415,7 @@ public class Bird : MonoBehaviour
 		_flyCam.GetComponent<FlyCam>().ResetPriority();
 
 		//which allows us to switch back to the idle cam
-		GameManager._mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK);
+		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);
 	}
 
 	public void Dive(float vel){
@@ -754,7 +754,7 @@ public class Bird : MonoBehaviour
 
 		switch(_state){
 			case 0://idle cam
-				_mCam.Transition(_idleCam,MCamera.Transitions.CUT_BACK,0,null,0f,true);
+				_mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK,0,null,0f,true);
 				break;
 			case 1://waddle cam
 			case 2://hop

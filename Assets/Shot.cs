@@ -50,6 +50,7 @@ public class Shot : MonoBehaviour
 		//we should rotate on mouse motion
 		Vector2 mouseMotion = _mIn.GetMouseMotion();
 		if(mouseMotion.x!=0){
+			/*
 			Vector3 diff=transform.position-_player.transform.position;
 			float r = diff.magnitude;
 			float phi=Mathf.Asin(diff.y/diff.magnitude);
@@ -79,6 +80,7 @@ public class Shot : MonoBehaviour
 			Vector3 eulers=transform.eulerAngles;
 			eulers.x=pitch;
 			transform.eulerAngles=eulers;
+			*/
 			return true;
 		}
 

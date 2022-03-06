@@ -39,7 +39,7 @@ public class IdleCam : Shot
 	*/
 
 	void OnEnable(){
-		StartLerp(0);
+		//StartLerp(0);
 	}
 
 	void OnDisable(){

@@ -98,7 +98,7 @@ public class Intro : MonoBehaviour
 				GameManager._instance.Play();
 				_coverArtIsland.SetActive(false);
 				enabled=false;
-				_mCam.SnapToCamera(_player._idleCam);
+				_mCam.SnapToCamera(_player._waddleCam);
 				break;
 		}
 	}
@@ -216,7 +216,7 @@ public class Intro : MonoBehaviour
 	IEnumerator GivePlayerControl(){
 		
 		//orbit to idle cam
-		_mCam.Transition(_player._idleCam,MCamera.Transitions.ORBIT,_letterBoxAmount,_player.transform,_orbitDur);
+		_mCam.Transition(_player._waddleCam,MCamera.Transitions.ORBIT,_letterBoxAmount,_player.transform,_orbitDur);
 		yield return new WaitForSeconds(_orbitDur);
 
 		//remove letterbox

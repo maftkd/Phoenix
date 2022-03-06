@@ -32,6 +32,8 @@ public class Circuit : MonoBehaviour
 
 	public void Power(bool on){
 		_powered=on;
+		if(_mat==null)
+			Debug.Log("Oops on aisle "+name);
 		_mat.SetFloat("_Lerp", on? 1f : 0f);
 		if(_powerChange!=null)
 		{

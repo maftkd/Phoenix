@@ -46,7 +46,7 @@ public class PuzzleCam : Shot
 			if(_inZone)
 			{
 				//_mCam.Transition(_cam,MCamera.Transitions.FADE,0f,null,0.25f);
-				_mCam.Transition(_cam,MCamera.Transitions.CUT_BACK);
+				//_mCam.Transition(_cam,MCamera.Transitions.CUT_BACK);
 			}
 			else
 				_player.TransitionToRelevantCamera();

@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 244681460047375567}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0.000343021, y: -0.01389, z: 0.252}
-  m_LocalScale: {x: 0.06496418, y: 0.06496418, z: 0.067629814}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 2963772378169117958}
   m_Father: {fileID: 0}
@@ -115,6 +115,8 @@ MonoBehaviour:
   _off: {fileID: 2100000, guid: 6a9998d53d788c74e8db8d37157aa81a, type: 2}
   _on: {fileID: 2100000, guid: 4b5194f048a7f404f896e3da1a6f451e, type: 2}
   _chargeDur: 0
+  _chargeRate: 0
+  _decayRate: 0
   _sparks: {fileID: 6793288934807558136, guid: 1d61f1b574e0d0a4e9734bb66e0f3ab6, type: 3}
   _sparkClip: {fileID: 8300000, guid: 5733488fbc57c834984e63d028ef820a, type: 3}
   _inverter: 0

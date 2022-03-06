@@ -19,6 +19,8 @@ public class CollisionHelper : MonoBehaviour
 	public float _volume;
 
 	bool _hasMeshCollider;
+	bool _hasBoxCollider;
+	BoxCollider _box;
 	public bool _supressHitFx;
 	public bool _supressNpcKnockback;
 
@@ -34,6 +36,9 @@ public class CollisionHelper : MonoBehaviour
 			_sources[i].spatialBlend=1f;
 		}
 		_hasMeshCollider=transform.GetComponent<MeshCollider>()!=null;
+		_hasBoxCollider=transform.GetComponent<BoxCollider>()!=null;
+		if(_hasBoxCollider)
+			_box=GetComponent<BoxCollider>();
 	}
 
     // Start is called before the first frame update
@@ -78,7 +83,29 @@ public class CollisionHelper : MonoBehaviour
 			}
 			else
 			{
-				other.GetComponent<Bird>().KnockBack(this,_hitNormal.normalized,_supressHitFx,_supressNpcKnockback);
+				bool closeEnough=false;
+				if(_hasBoxCollider){
+					float birdCenterY=other.transform.position.y+b._size.y*0.5f;
+					Debug.Log("bird y:" +birdCenterY);
+					float boxTopY=transform.position.y+_box.size.y*0.5f*transform.localScale.y;
+					Debug.Log("box y:" +boxTopY);
+					if(birdCenterY+0.01f>boxTopY){
+						/*
+						Vector3 newPos=_hitPoint;
+						newPos.y=boxTopY;
+						other.transform.position=newPos;
+						*/
+						b.StartHopping();
+						closeEnough=true;
+					}
+				}
+				//let's check to see if we are close enough to the edge
+				//if collider is box collider
+				//and if bird's center y > boxes top y
+				//	just snap birds pos to hit point
+				//	but set the y = box top
+				if(!closeEnough)
+					b.KnockBack(this,_hitNormal.normalized,_supressHitFx,_supressNpcKnockback);
 			}
 		}
 	}

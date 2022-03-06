@@ -61,7 +61,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EmissionMult: 1.2
+    - _EmissionMult: 1
     - _Frequency: 191.59
     - _GlossMapScale: 1
     - _Glossiness: 1
@@ -81,7 +81,7 @@ Material:
     - _WavePow: 0
     - _ZWrite: 1
     m_Colors:
-    - _BandColor: {r: 1, g: 0.5411765, b: 0, a: 1}
+    - _BandColor: {r: 1, g: 0.31151867, b: 0, a: 1}
     - _Color: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OffColor: {r: 1, g: 1, b: 1, a: 1}

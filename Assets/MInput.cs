@@ -108,9 +108,9 @@ public class MInput : MonoBehaviour
 		if(_inputLocked)
 			return Vector2.zero;
 		Vector2 mouseIn=Vector2.zero;
-		if(_mouseEnabled&&Input.GetMouseButton(1))
+		if(_mouseEnabled)//&&Input.GetMouseButton(1))
 		{
-			mouseIn=new Vector2(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y"));
+			mouseIn=new Vector2(Input.GetAxis("Mouse X"),-Input.GetAxis("Mouse Y"));
 		}
 		Vector2 joyIn=Vector2.zero;
 #if UNITY_STANDALONE_OSX
