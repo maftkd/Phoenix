@@ -17,9 +17,12 @@ public class TerrainGenerator : MonoBehaviour
 	[Tooltip("Perlin noise scale")]
 	public float _shoreScale;
 	[Tooltip("Multiplied by radius from center. Affects how much the shore is distorted")]
+	[Range(0,1)]
 	public float _shoreNoiseAmplitude;
+	[Range(0,1)]
 	public float _shoreCutoff;
 	[Tooltip("Affects the steepness of the shore, I think. Plays closely with shore Noise Amplitude. Todo, make this more descriptive")]
+	[Range(0,1)]
 	public float _shoreSmooth;
 	public bool _autoGenBaseMap;
 	public bool _autoApplyBaseMap;

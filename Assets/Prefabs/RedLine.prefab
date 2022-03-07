@@ -78,7 +78,7 @@ LineRenderer:
   - {x: -0.13, y: -0.08, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.008
+    widthMultiplier: 0.016
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -144,5 +144,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _onPowered:
+    m_PersistentCalls:
+      m_Calls: []
+  _onPoweredOff:
     m_PersistentCalls:
       m_Calls: []

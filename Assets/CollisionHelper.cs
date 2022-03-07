@@ -84,21 +84,18 @@ public class CollisionHelper : MonoBehaviour
 			else
 			{
 				bool closeEnough=false;
+				/*
 				if(_hasBoxCollider){
 					float birdCenterY=other.transform.position.y+b._size.y*0.5f;
 					Debug.Log("bird y:" +birdCenterY);
 					float boxTopY=transform.position.y+_box.size.y*0.5f*transform.localScale.y;
 					Debug.Log("box y:" +boxTopY);
 					if(birdCenterY+0.01f>boxTopY){
-						/*
-						Vector3 newPos=_hitPoint;
-						newPos.y=boxTopY;
-						other.transform.position=newPos;
-						*/
 						b.StartHopping();
 						closeEnough=true;
 					}
 				}
+			*/
 				//let's check to see if we are close enough to the edge
 				//if collider is box collider
 				//and if bird's center y > boxes top y

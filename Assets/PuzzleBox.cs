@@ -13,8 +13,6 @@ public class PuzzleBox : MonoBehaviour
 	MInput _mIn;
 	MCamera _mCam;
 	float _resetCamDelay=1f;
-	public float _shotDistance;
-	public float _shotHeight;
 	bool _shotTaken;
 	public UnityEvent _onRevealed;
 	public UnityEvent _onShot;
@@ -50,6 +48,8 @@ public class PuzzleBox : MonoBehaviour
 		_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
 
+		//init
+		_forceField.gameObject.SetActive(true);
 		if(_activateOnAwake)
 			Activate();
 		else

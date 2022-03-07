@@ -33,6 +33,8 @@ public class Dock : MonoBehaviour
 	public bool _autoRegen;
 
 	void OnValidate(){
+		if(!gameObject.activeSelf)
+			return;
 		if(_regen||_autoRegen){
 			Regen();
 			_regen=false;

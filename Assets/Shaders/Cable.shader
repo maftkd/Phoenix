@@ -62,11 +62,11 @@
 			//fixed4 c = _Color;
 			fixed xDiff=abs(IN.uv_MainTex.x-0.5);
 			fixed inBand=step(xDiff,_BandWidth*0.5);
-			//fixed wave = 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
+			fixed wave = 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
 			//fixed wave= 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
-			//wave=pow(wave*step(_WaveCutoff,wave),_WavePow);
+			wave=pow(wave*step(_WaveCutoff,wave),_WavePow);
 
-			fixed4 bandColor=_BandColor;//*wave;
+			fixed4 bandColor=lerp(_BandColor,fixed4(1,1,1,1),wave);
 			fixed powered = step(IN.uv_MainTex.y,_PowerFill);
 			bandColor=bandColor*powered+(1-powered)*_OffColor;
             o.Albedo = inBand*bandColor+(1-inBand)*_Color;

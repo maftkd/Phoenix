@@ -16,6 +16,7 @@ public class WaddleCam : Shot
 	float _targetR=-1f;
 	public Vector2 _phiRange;
 	public float _rLerp;
+	public float _thetaLerp;
 
 	protected override void Awake(){
 		base.Awake();
@@ -70,6 +71,21 @@ public class WaddleCam : Shot
 		_theta-=mouseMotion.x;
 		_phi+=mouseMotion.y;
 		_phi=Mathf.Clamp(_phi,_phiRange.x,_phiRange.y);
+
+		//theta help
+		Vector3 birdBack=-_player.transform.forward;
+		float pTheta=Mathf.Atan2(birdBack.z,birdBack.x);
+		//check for large diff
+		if(Mathf.Abs(pTheta-_theta)>Mathf.PI){
+			if(pTheta<_theta)
+				_theta=-(Mathf.PI*2f-_theta);
+			else
+				_theta+=Mathf.PI*2f;
+		}
+
+		float birdVel=_player.GetVel();
+		_theta=Mathf.Lerp(_theta,pTheta,_thetaLerp*Time.deltaTime*birdVel);
+
 			//update position
 		float y = Mathf.Sin(_phi);
 		float xzRad = Mathf.Cos(_phi);

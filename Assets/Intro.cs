@@ -215,6 +215,7 @@ public class Intro : MonoBehaviour
 
 	IEnumerator GivePlayerControl(){
 		
+		_coverArtIsland.SetActive(false);
 		//orbit to idle cam
 		_mCam.Transition(_player._waddleCam,MCamera.Transitions.ORBIT,_letterBoxAmount,_player.transform,_orbitDur);
 		yield return new WaitForSeconds(_orbitDur);
@@ -225,7 +226,6 @@ public class Intro : MonoBehaviour
 
 		//free input, etc.
 		GameManager._instance.Play();
-		_coverArtIsland.SetActive(false);
 		enabled=false;
 	}
 }

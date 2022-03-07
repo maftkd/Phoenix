@@ -17,6 +17,7 @@ public class PressurePlate : MonoBehaviour
 	public Vector4 _pitchRange;
 	Bird _player;
 	public AudioClip _buttonDown;
+	public Color _emissionColor;
 
 	bool _powered;
 
@@ -149,7 +150,7 @@ public class PressurePlate : MonoBehaviour
 	}
 
 	void UpdateWires(){
-		_mat.SetColor("_EmissionColor", _powered? Color.red : Color.black);
+		_mat.SetColor("_EmissionColor", _powered? _emissionColor : Color.black);
 		foreach(Circuit c in _circuits){
 			c.Power(_powered);
 		}
@@ -157,12 +158,23 @@ public class PressurePlate : MonoBehaviour
 			_cable.SetPower(_powered? 1f : 0f);
 	}
 
+	IEnumerator FillWires(float target){
+		yield return null;
+		float timer=0;
+		if(target==1f){
+		//fill cable
+		//wait for cable
+		}
+		else{
+			//unf
+		}
+	}
+
 	void OnDrawGizmos(){
 		if(_halfExtents!=null&&_box!=null)
 		{
 			Gizmos.color=Color.red;
 			Gizmos.DrawWireCube(_button.position+Vector3.up*_box.size.y,_halfExtents*2f);
-
 		}
 	}
 }
