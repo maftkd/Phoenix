@@ -149,3 +149,5 @@ MonoBehaviour:
   _onPoweredOff:
     m_PersistentCalls:
       m_Calls: []
+  _fillVar: _FillAmount
+  _next: {fileID: 0}

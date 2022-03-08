@@ -21,8 +21,7 @@ public class PressurePlate : MonoBehaviour
 
 	bool _powered;
 
-	public Circuit[] _circuits;
-	public Cable _cable;
+	public Circuit _next;
 
 	public bool _isToggle;
 
@@ -151,11 +150,18 @@ public class PressurePlate : MonoBehaviour
 
 	void UpdateWires(){
 		_mat.SetColor("_EmissionColor", _powered? _emissionColor : Color.black);
+		if(_powered)
+			_next.Power(_powered);
+		else
+		{
+			Circuit last = _next.GetLastInChain();
+			last.Power(_powered);
+		}
+		/*
 		foreach(Circuit c in _circuits){
 			c.Power(_powered);
 		}
-		if(_cable!=null)
-			_cable.SetPower(_powered? 1f : 0f);
+		*/
 	}
 
 	IEnumerator FillWires(float target){

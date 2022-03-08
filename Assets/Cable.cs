@@ -37,6 +37,8 @@ public class Cable : MonoBehaviour
 
 	void Awake(){
 		Init();
+		if(Application.isPlaying)
+			GenerateMesh();
 	}
 
 	[ContextMenu("Reset")]
@@ -119,117 +121,121 @@ public class Cable : MonoBehaviour
 			}
 		}
 		if(needsRegen){
-			UpdatePoints();
-			//Debug.Log("regenerating "+name);
-			if(_points.Count<=1){
-				Debug.Log("Need at least two points to regen");
-				return;
-			}
-
-			//cast points to ground points
-			_groundPoints.Clear();
-			foreach(Vector3 p in _points){
-				Vector3 pos=p;
-				if(!_freeFloating)
-					pos.y=_terrain.SampleHeight(pos);
-				_groundPoints.Add(pos);
-			}
-			_path = new CubicBezierPath(_groundPoints.ToArray());
-
-			//get raw points at very small increments
-			Dictionary<float,Vector3> pointsRaw = new Dictionary<float,Vector3>();
-			float inc=0.02f;
-			float last=0;
-			for(float i=0; i<_groundPoints.Count-1;i+=inc){
-				Vector3 pos = _path.GetPoint(i);
-				if(!_freeFloating)
-				{
-					float y = _terrain.SampleHeight(pos);
-					pos.y=y;
-				}
-				pointsRaw.Add(i,pos);
-				last=i;
-			}
-
-			//loop through raw points catching points at least a certain distance
-			_centers.Clear();
-			Vector3 prevPoint=pointsRaw[0];
-			_centers.Add(0,prevPoint);
-			float dist=0;
-			foreach(float t in pointsRaw.Keys){
-				Vector3 curPoint=pointsRaw[t];
-				float curDist=(curPoint-prevPoint).magnitude;
-				dist+=curDist;
-				if(dist>=_vertexSpacing)
-				{
-					_centers.Add(t,curPoint);
-					dist=0;
-				}
-				prevPoint=curPoint;
-			}
-			if(dist>0)
-			{
-				_centers.Add(last,pointsRaw[last]);
-			}
-
-			//make da mesh
-			Mesh m = new Mesh();
-			int numCenters=_centers.Count;
-			Vector3[] vertices = new Vector3[numCenters*_vertsPerCenter];
-			int[] tris = new int[(numCenters-1)*(_vertsPerCenter-1)*6];
-			Vector3[] norms = new Vector3[vertices.Length];
-			Vector2[] uvs = new Vector2[vertices.Length];
-			int vertexCounter=0;
-			
-			Transform temp = new GameObject("temp").transform;
-			//get vertex positions
-			foreach(float t in _centers.Keys){
-				Vector3 centerPos = _centers[t];
-				Vector3 tan = _path.GetTangent(t).normalized;
-				temp.forward=tan;
-				Vector3 right = temp.right;
-				Vector3 up = temp.up;
-				for(int i=0;i<_vertsPerCenter;i++){
-					float t01 = i/(float)(_vertsPerCenter-1);
-					float ang=t01*Mathf.PI;
-					Vector3 pos=centerPos;
-					pos+=right*_radius*Mathf.Cos(ang);
-					pos+=up*_radius*Mathf.Sin(ang);
-					vertices[vertexCounter]=transform.InverseTransformPoint(pos);
-					norms[vertexCounter]=pos-centerPos;
-					vertexCounter++;
-				}
-			}
-			DestroyImmediate(temp.gameObject);
-			int triCounter=0;
-			for(int i=0;i<numCenters-1;i++){
-				int baseV=_vertsPerCenter*i;
-				for(int j=0;j<_vertsPerCenter-1;j++){
-					//fist tri
-					tris[triCounter]=baseV;
-					tris[triCounter+1]=baseV+1;
-					tris[triCounter+2]=baseV+_vertsPerCenter;
-					//second tri
-					tris[triCounter+3]=baseV+_vertsPerCenter;
-					tris[triCounter+4]=baseV+1;
-					tris[triCounter+5]=baseV+_vertsPerCenter+1;
-					triCounter+=6;
-					baseV++;
-				}
-			}
-			for(int i=0; i<vertices.Length; i++){
-				int centerIndex=i/_vertsPerCenter;
-				uvs[i]=new Vector2(i%_vertsPerCenter/(float)(_vertsPerCenter-1),centerIndex/(float)numCenters);
-				//uvs[i]=Vector2.right;
-			}
-			m.vertices=vertices;
-			m.triangles=tris;
-			m.normals = norms;
-			m.uv=uvs;
-			m.RecalculateBounds();
-			_meshF.sharedMesh=m;
+			GenerateMesh();
 		}
     }
+
+	void GenerateMesh(){
+		UpdatePoints();
+		//Debug.Log("regenerating "+name);
+		if(_points.Count<=1){
+			Debug.Log("Need at least two points to regen");
+			return;
+		}
+
+		//cast points to ground points
+		_groundPoints.Clear();
+		foreach(Vector3 p in _points){
+			Vector3 pos=p;
+			if(!_freeFloating)
+				pos.y=_terrain.SampleHeight(pos);
+			_groundPoints.Add(pos);
+		}
+		_path = new CubicBezierPath(_groundPoints.ToArray());
+
+		//get raw points at very small increments
+		Dictionary<float,Vector3> pointsRaw = new Dictionary<float,Vector3>();
+		float inc=0.02f;
+		float last=0;
+		for(float i=0; i<_groundPoints.Count-1;i+=inc){
+			Vector3 pos = _path.GetPoint(i);
+			if(!_freeFloating)
+			{
+				float y = _terrain.SampleHeight(pos);
+				pos.y=y;
+			}
+			pointsRaw.Add(i,pos);
+			last=i;
+		}
+
+		//loop through raw points catching points at least a certain distance
+		_centers.Clear();
+		Vector3 prevPoint=pointsRaw[0];
+		_centers.Add(0,prevPoint);
+		float dist=0;
+		foreach(float t in pointsRaw.Keys){
+			Vector3 curPoint=pointsRaw[t];
+			float curDist=(curPoint-prevPoint).magnitude;
+			dist+=curDist;
+			if(dist>=_vertexSpacing)
+			{
+				_centers.Add(t,curPoint);
+				dist=0;
+			}
+			prevPoint=curPoint;
+		}
+		if(dist>0)
+		{
+			_centers.Add(last,pointsRaw[last]);
+		}
+
+		//make da mesh
+		Mesh m = new Mesh();
+		int numCenters=_centers.Count;
+		Vector3[] vertices = new Vector3[numCenters*_vertsPerCenter];
+		int[] tris = new int[(numCenters-1)*(_vertsPerCenter-1)*6];
+		Vector3[] norms = new Vector3[vertices.Length];
+		Vector2[] uvs = new Vector2[vertices.Length];
+		int vertexCounter=0;
+		
+		Transform temp = new GameObject("temp").transform;
+		//get vertex positions
+		foreach(float t in _centers.Keys){
+			Vector3 centerPos = _centers[t];
+			Vector3 tan = _path.GetTangent(t).normalized;
+			temp.forward=tan;
+			Vector3 right = temp.right;
+			Vector3 up = temp.up;
+			for(int i=0;i<_vertsPerCenter;i++){
+				float t01 = i/(float)(_vertsPerCenter-1);
+				float ang=t01*Mathf.PI;
+				Vector3 pos=centerPos;
+				pos+=right*_radius*Mathf.Cos(ang);
+				pos+=up*_radius*Mathf.Sin(ang);
+				vertices[vertexCounter]=transform.InverseTransformPoint(pos);
+				norms[vertexCounter]=pos-centerPos;
+				vertexCounter++;
+			}
+		}
+		DestroyImmediate(temp.gameObject);
+		int triCounter=0;
+		for(int i=0;i<numCenters-1;i++){
+			int baseV=_vertsPerCenter*i;
+			for(int j=0;j<_vertsPerCenter-1;j++){
+				//fist tri
+				tris[triCounter]=baseV;
+				tris[triCounter+1]=baseV+1;
+				tris[triCounter+2]=baseV+_vertsPerCenter;
+				//second tri
+				tris[triCounter+3]=baseV+_vertsPerCenter;
+				tris[triCounter+4]=baseV+1;
+				tris[triCounter+5]=baseV+_vertsPerCenter+1;
+				triCounter+=6;
+				baseV++;
+			}
+		}
+		for(int i=0; i<vertices.Length; i++){
+			int centerIndex=i/_vertsPerCenter;
+			uvs[i]=new Vector2(i%_vertsPerCenter/(float)(_vertsPerCenter-1),centerIndex/(float)numCenters);
+			//uvs[i]=Vector2.right;
+		}
+		m.vertices=vertices;
+		m.triangles=tris;
+		m.normals = norms;
+		m.uv=uvs;
+		m.RecalculateBounds();
+		_meshF.sharedMesh=m;
+	}
 
 	void UpdatePoints(){
 		_points.Clear();
@@ -281,6 +287,23 @@ public class Cable : MonoBehaviour
 		int centerIndex=minIndex/_vertsPerCenter;
 		_fillIndex=centerIndex;
 		SetPower(fillAmount,supressAudio);
+	}
+
+	public float GetLength(){
+		float dist=0;
+		Vector3 prevPos=Vector3.zero;
+		bool first=true;
+		foreach(Vector3 p in _centers.Values){
+			if(first)
+			{
+				prevPos=p;
+				first=false;
+			}
+			else
+				dist+=(p-prevPos).magnitude;
+			prevPos=p;
+		}
+		return dist;
 	}
 
 	void OnDrawGizmos(){
