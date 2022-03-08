@@ -13,11 +13,9 @@ public class Fly : MonoBehaviour
 	float _gravity;
 	public float _defaultGravity;
 	public float _soarGravity;
-	public float _minSoarVely;
-	public float _minDefaultVely;
-	float _minVely;
 	public Vector3 _maxVel;
 	public Vector3 _flapAccel;//z=forward,y=up
+	public float _airResistance;
 	Vector3 _curFlapAccel;
 	float _flapTimer;
 	public float _flapDur;
@@ -28,6 +26,7 @@ public class Fly : MonoBehaviour
 	Bird _bird;
 	Vector3 _groundPoint;
 	MInput _mIn;
+	[Header("Turning")]
 	public float _maxRoll;
 	public float _soarMaxRoll;
 	public float _defaultMaxRoll;
@@ -38,14 +37,27 @@ public class Fly : MonoBehaviour
 	public float _soarRollMult;
 	public float _defaultRollMult;
 	public float _pitchMult;
-	public Vector3 _airControl;
+	[Header("Pitch")]
+	public float _maxAoa;
+	public float _downPitchMult;
+	public float _angleChangeMult;
+	public float _angleFallMult;
+	float _aoa;
+	public float _thrustMult;
+	public float _dragMult;
+	public float _liftMult;
+	public float _maxLift;
+	public float _maxWeight;
+	float _lift;
 	Animator _anim;
 	[HideInInspector]
 	public float _forwardness;
 	bool _diving;
+	[Header("Audio")]
 	public Vector2 _flapPitchRange;
 	public float _flapVolume;
 	ParticleSystem _soarParticles;
+	public float _maxSoarPartsRate;
 	AudioSource _soarAudio;
 	public float _soarVolume;
 	public bool _soaring;
@@ -77,9 +89,9 @@ public class Fly : MonoBehaviour
 		_velocity=Vector3.zero;
 
 		//_curFlapAccel=_flapAccel;
-		_curFlapAccel=Vector3.zero;
-		Vector3 input=_mIn.GetControllerInput();
-		_curFlapAccel+=transform.forward*_flapAccel.z*input.magnitude+Vector3.up*_flapAccel.y;
+		//_curFlapAccel=Vector3.zero;
+		//_curFlapAccel+=transform.forward*_flapAccel.z+Vector3.up*_flapAccel.y;
+		_curFlapAccel=transform.forward*_flapAccel.z+Vector3.up*_flapAccel.y;
 
 		//initial velocity
 		_velocity=_curFlapAccel;
@@ -89,13 +101,16 @@ public class Fly : MonoBehaviour
 		_knockBackTimer=0;
 
 		//zero out horizontal component of flap after initial flap
-		_curFlapAccel=Vector3.up*_flapAccel.y;
+		//_curFlapAccel=Vector3.up*_flapAccel.y;
+
+		_aoa=0;
+		_lift=0;
 
 		_flapTimer=0;
 		_flapCounter=0;
 
 		_forwardness=0;
-		_diving=false;
+		//_diving=false;
 		_anim.ResetTrigger("soar");
 
 		Flap();
@@ -111,41 +126,72 @@ public class Fly : MonoBehaviour
     void Update()
     {
 		_flapTimer+=Time.deltaTime;
+		Vector3 flatForward=transform.forward;
+		flatForward.y=0;
 		//flap
 		if(_mIn.GetJumpDown()){
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
-				_velocity+=_curFlapAccel;
+				_curFlapAccel=flatForward*_flapAccel.z+Vector3.up*_flapAccel.y;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
 				Soar(false);
 				Flap();
-				_diving=false;
+				//_diving=false;
 			}
 		}
 
-		_anim.SetBool("soar",_mIn.GetJump());
+		_soaring=!_mIn.GetJump();
+		_anim.SetBool("soar",_soaring);
 		if(_flapTimer>_flapDur){
-			Soar(_mIn.GetJump());
-			_diving=!_mIn.GetJump();
+			Soar(_soaring);
+		}
+		else{
+			_velocity+=_curFlapAccel*Time.deltaTime;
+
 		}
 
 		//add air control
 		Vector3 input=_mIn.GetControllerInput();
+		Vector3 flatVel=_velocity;
+		float lift=0;
 
 		if(_knockBackTimer<=0)
 		{
-			//air control if not getting knocked back
-			//forward/backward air control
-			//_velocity+=transform.forward*input.y*_airControl.z*Time.deltaTime;
+			//pitch control
+			flatForward=transform.forward;
+			flatForward.y=0;
+			flatForward.Normalize();
+			_aoa+=input.y*Time.deltaTime*_angleChangeMult;
+			if(input.y==0)
+				_aoa=Mathf.Lerp(_aoa,0,_angleFallMult*Time.deltaTime);
+			_aoa = Mathf.Clamp(_aoa,-_maxAoa,_maxAoa);
 
-			Vector3 flatVel=_velocity;
+			if(_aoa>0)
+			{
+				_velocity+=transform.forward*Time.deltaTime*_aoa*_thrustMult;
+				_lift=Mathf.InverseLerp(0,_maxAoa,_aoa)*_maxWeight;
+			}
+			else
+			{
+				_velocity+=transform.forward*Time.deltaTime*_aoa*_dragMult;
+				_lift=Mathf.InverseLerp(0,_maxAoa,-_aoa)*_maxLift;
+			}
+			flatVel=_velocity;
 			flatVel.y=0;
+			
+			//cap velocity
+			if(flatVel.sqrMagnitude>_maxVel.z*_maxVel.z){
+				flatVel=flatVel.normalized*_maxVel.z;
+				_velocity.x=flatVel.x;
+				_velocity.z=flatVel.z;
+			}
+			_forwardness = Vector3.Dot(flatVel.normalized,transform.forward);
+
 
 			//turning mid-air
-			_rollMult=_mIn.GetJump() ? _soarRollMult : _defaultRollMult;
-			_maxRoll=_mIn.GetJump() ? _soarMaxRoll : _defaultMaxRoll;
-			_forwardness = Vector3.Dot(flatVel.normalized,transform.forward);
+			_rollMult=_soaring ? _soarRollMult : _defaultRollMult;
+			_maxRoll=_soaring ? _soarMaxRoll : _defaultMaxRoll;
 			float rollAngle=-_maxRoll*input.x;
 			_speedFrac=flatVel.magnitude/_maxVel.z;
 			if(_forwardness>0){
@@ -173,18 +219,13 @@ public class Fly : MonoBehaviour
 				rollAngle=0;
 			}
 
-
-			//cap velocity
-			if(flatVel.sqrMagnitude>_maxVel.z*_maxVel.z){
-				flatVel=flatVel.normalized*_maxVel.z;
-				_velocity.x=flatVel.x;
-				_velocity.z=flatVel.z;
-			}
-			
 			//adjust pitch
 			Vector3 eulerAngles=transform.eulerAngles;
 			eulerAngles.z=rollAngle;
-			float targetPitch=-_velocity.y*_pitchMult;
+			//float targetPitch=-_velocity.y*_pitchMult;
+			float targetPitch=_aoa;
+			if(_aoa>0)
+				targetPitch*=_downPitchMult;
 			eulerAngles.x=targetPitch;
 			transform.eulerAngles=eulerAngles;
 		}
@@ -193,16 +234,29 @@ public class Fly : MonoBehaviour
 		//apply physics
 		Vector3 prevPos=transform.position;
 		transform.position+=_velocity*Time.deltaTime;
-		_gravity=_mIn.GetJump()&&_velocity.y<0? _soarGravity : _defaultGravity;
+		float normVel=flatVel.magnitude/_maxVel.z;
+		float gLerp=1-normVel;
+		DebugScreen.Print(gLerp,0);
+		_gravity=Mathf.Lerp(_soarGravity,_defaultGravity,gLerp);
+		_velocity-=flatForward*_airResistance*Time.deltaTime;
 		_velocity+=Vector3.down*_gravity*Time.deltaTime;
+		_velocity+=Vector3.up*_lift*Time.deltaTime*normVel*_liftMult;
 
 		//cap vertical velocity
 		if(_velocity.y>_maxVel.y)
 			_velocity.y=_maxVel.y;
 
-		_minVely=_mIn.GetJump()?_minSoarVely : _minDefaultVely;
-		if(_velocity.y<_minVely)
-			_velocity.y=_minVely;
+		//prevent backwards flight
+		if(_forwardness<=0){
+			flatVel=Vector3.zero;
+			_velocity.x=0;
+			_velocity.z=0;
+		}
+
+		if(_soaring){
+			var emission = _soarParticles.emission;
+			emission.rateOverTime = normVel*_maxSoarPartsRate;
+		}
 		
 
 		Vector3 ray = transform.position-prevPos;
@@ -215,7 +269,8 @@ public class Fly : MonoBehaviour
 			transform.eulerAngles=eulers;
 			Soar(false);
 			Footstep footstep=hit.transform.GetComponent<Footstep>();
-			float vol = _diving? 1f : 0.1f;
+			//float vol = _diving? 1f : 0.1f;
+			float vol = 0.1f;
 			if(footstep!=null)
 				footstep.Sound(_groundPoint,vol);
 			_bird.Land();
