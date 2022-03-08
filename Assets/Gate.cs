@@ -9,7 +9,6 @@ public class Gate : MonoBehaviour
 	public Circuit [] _outputs;
 	public UnityEvent _onGateActivated;
 	Material _mat;
-	public Material _off, _on;
 
 	public float _chargeDur;
 	public float _chargeRate;
@@ -23,6 +22,8 @@ public class Gate : MonoBehaviour
 	public AudioClip _sparkClip;
 
 	public bool _inverter;
+	public bool _lock;
+	Transform _ring;
 
 	AudioSource _source;
 	[Header ("Charger audio settings")]
@@ -37,8 +38,11 @@ public class Gate : MonoBehaviour
 		foreach(Circuit c in _inputs){
 			c._powerChange+=CheckGate;
 		}
-		_mat=GetComponent<Renderer>().material;
-		_mat.SetFloat("_FillAmount",0);
+		if(!_lock)
+		{
+			_mat=GetComponent<Renderer>().material;
+			_mat.SetFloat("_FillAmount",0);
+		}
 
 		//setup charger
 		if(_chargeDur>0)
@@ -142,7 +146,7 @@ public class Gate : MonoBehaviour
 		//but the main gate output is stuck once it powers on
 		if(!enabled)
 			return;
-		if(_chargeDur==0)
+		if(_chargeDur==0&&_mat!=null)
 			_mat.SetFloat("_FillAmount",powered?1:0);
 		foreach(Circuit c in _outputs){
 			c.Power(powered);
@@ -154,6 +158,14 @@ public class Gate : MonoBehaviour
 			{
 				enabled=false;
 				MakeSparks();
+				if(_lock){
+					_ring=transform.Find("Ring");
+					Material ringMat=_ring.GetComponent<Renderer>().material;
+					Material lockMat=transform.Find("Quad").GetComponent<Renderer>().material;
+					ringMat.SetFloat("_Power",powered?1:0);
+					lockMat.SetFloat("_Lerp",powered?1:0);
+					_ring.position+=Vector3.up*0.01f;
+				}
 			}
 			_onGateActivated.Invoke();
 		}

@@ -137,7 +137,7 @@ public class Fly : MonoBehaviour
 		{
 			//air control if not getting knocked back
 			//forward/backward air control
-			_velocity+=transform.forward*input.y*_airControl.z*Time.deltaTime;
+			//_velocity+=transform.forward*input.y*_airControl.z*Time.deltaTime;
 
 			Vector3 flatVel=_velocity;
 			flatVel.y=0;

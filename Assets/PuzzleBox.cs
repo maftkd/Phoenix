@@ -30,8 +30,8 @@ public class PuzzleBox : MonoBehaviour
 	Transform _pistons;
 	float _lodDist=10f;
 	bool _prevInZone;
-	Transform _key;
-	Material _keyMat;
+	Gate _lock;
+	//Material _keyMat;
 	public AudioClip _buzzClip;
 	public PuzzleBox _nextPuzzle;
 	PuzzleCam _puzzleCam;
@@ -44,8 +44,9 @@ public class PuzzleBox : MonoBehaviour
 		_box=transform.Find("BoxDetailed");
 		_boxLp=transform.Find("BoxLowDet");
 		_player=GameManager._player;
-		_key=_box.Find("Key").transform;
-		_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
+		_lock=_box.Find("Lock").GetComponent<Gate>();
+		_lock._onGateActivated.AddListener(PuzzleSolved);
+		//_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
 
 		//init
@@ -100,7 +101,7 @@ public class PuzzleBox : MonoBehaviour
 	//#todo - there's some overlap between solve silent and puzzle solved
 	public virtual void SolveSilent(){
 		_onSolved.Invoke();
-		_keyMat.SetFloat("_Powered",1);
+		//_keyMat.SetFloat("_Powered",1);
 		_solved=true;
 		RemoveForceField();
 		GameManager._instance.PuzzleSolved(this);
@@ -117,7 +118,7 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		_solved=true;
 		RemoveForceField(true);
-		_keyMat.SetFloat("_Powered",1);
+		//_keyMat.SetFloat("_Powered",1);
 		//Destroy(_forceField.gameObject);
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);

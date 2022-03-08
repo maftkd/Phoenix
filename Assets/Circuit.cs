@@ -16,7 +16,8 @@ public class Circuit : MonoBehaviour
 
 	public string _fillVar;
 	float _length;
-	float _fillRate=2f;
+	float _fillRate=0.5f;
+	float _fallRate=2f;
 	public Circuit _next;
 	float _fill;
 	[HideInInspector]
@@ -61,6 +62,7 @@ public class Circuit : MonoBehaviour
 		else
 			_onPoweredOff.Invoke();
 			*/
+		StopAllCoroutines();
 		if(_powered){
 			StartCoroutine(PowerR());
 		}
@@ -74,8 +76,11 @@ public class Circuit : MonoBehaviour
 		float timer=0;
 		float rate = _fillRate;
 		float length = _length;
-		float dur =length/rate;
-		while(timer<dur){
+		float fullDur =length/rate;
+		length=(1-_fill)*length;
+		float dur=length/rate;
+		timer=fullDur-dur;
+		while(timer<fullDur){
 			timer+=Time.deltaTime;
 			_fill=timer/dur;
 			_mat.SetFloat(_fillVar,_fill);
@@ -87,16 +92,24 @@ public class Circuit : MonoBehaviour
 		if(_next!=null){
 			_next.Power(true);
 		}
+		if(_powerChange!=null)
+		{
+			_powerChange.Invoke();
+		}
 	}
 
 	IEnumerator PowerDownR(){
 		float timer=0;
-		float rate = _fillRate;
+		float rate = _fallRate;
 		float length = _length;
 		float fullDur = length/rate;
 		length*=_fill;
 		float dur = length/rate;
 		timer=dur;
+		if(_powerChange!=null)
+		{
+			_powerChange.Invoke();
+		}
 		while(timer>0){
 			timer-=Time.deltaTime;
 			_fill=timer/fullDur;
@@ -111,7 +124,7 @@ public class Circuit : MonoBehaviour
 	}
 
 	public bool Powered(){
-		return _powered;
+		return _fill>=1f;
 	}
 
 	float GetLengthFromLineRenderer(){
@@ -134,9 +147,9 @@ public class Circuit : MonoBehaviour
 		return dist;
 	}
 
-	public Circuit GetLastInChain(){
+	public Circuit GetLastInChainWithPower(){
 		Circuit next = this;
-		while(next._next!=null){
+		while(next._next!=null&&next._next._fill>0){
 			next=next._next;
 		}
 		return next;
