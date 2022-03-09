@@ -14,6 +14,7 @@ public class Fly : MonoBehaviour
 	public float _defaultGravity;
 	public float _soarGravity;
 	public Vector3 _maxVel;
+	public float _minVel;
 	public Vector3 _flapAccel;//z=forward,y=up
 	public float _airResistance;
 	Vector3 _curFlapAccel;
@@ -27,6 +28,7 @@ public class Fly : MonoBehaviour
 	Vector3 _groundPoint;
 	MInput _mIn;
 	[Header("Turning")]
+	[Tooltip("Set via script")]
 	public float _maxRoll;
 	public float _soarMaxRoll;
 	public float _defaultMaxRoll;
@@ -34,19 +36,27 @@ public class Fly : MonoBehaviour
 	float _turnRadius;
 	[Tooltip("Scales down the roll angle before computing turn radius")]//allows larger turn radii
 	public float _rollMult;
+	public float _rollChangeMult;
+	float _rollAngle;
 	public float _soarRollMult;
 	public float _defaultRollMult;
-	public float _pitchMult;
 	[Header("Pitch")]
 	public float _maxAoa;
+	[Tooltip("Multiply by maxAoa to get max pitch when inclined downward")]
 	public float _downPitchMult;
+	[Tooltip("How quickly pitch responds to vertical input")]
 	public float _angleChangeMult;
+	[Tooltip("How quickly pitch resets to zero when vertical input is low")]
 	public float _angleFallMult;
 	float _aoa;
+	[Tooltip("The speed boost given when angled downward")]
 	public float _thrustMult;
+	[Tooltip("The speed slow down when angled upward")]
 	public float _dragMult;
+	[Tooltip("The amount of vertical velocity gained while angled upward")]
 	public float _liftMult;
 	public float _maxLift;
+	[Tooltip("The amount of vertical velocity lost while angled downward")]
 	public float _maxWeight;
 	float _lift;
 	Animator _anim;
@@ -169,14 +179,15 @@ public class Fly : MonoBehaviour
 
 			if(_aoa>0)
 			{
-				_velocity+=transform.forward*Time.deltaTime*_aoa*_thrustMult;
+				_velocity+=flatForward*Time.deltaTime*_aoa*_thrustMult;
 				_lift=Mathf.InverseLerp(0,_maxAoa,_aoa)*_maxWeight;
 			}
 			else
 			{
-				_velocity+=transform.forward*Time.deltaTime*_aoa*_dragMult;
+				_velocity+=flatForward*Time.deltaTime*_aoa*_dragMult;
 				_lift=Mathf.InverseLerp(0,_maxAoa,-_aoa)*_maxLift;
 			}
+			DebugScreen.Print(_lift,0);
 			flatVel=_velocity;
 			flatVel.y=0;
 			
@@ -192,11 +203,12 @@ public class Fly : MonoBehaviour
 			//turning mid-air
 			_rollMult=_soaring ? _soarRollMult : _defaultRollMult;
 			_maxRoll=_soaring ? _soarMaxRoll : _defaultMaxRoll;
-			float rollAngle=-_maxRoll*input.x;
+			//float rollAngle=-_maxRoll*input.x;
+			_rollAngle=Mathf.Lerp(_rollAngle,-_maxRoll*input.x,_rollChangeMult*Time.deltaTime);
 			_speedFrac=flatVel.magnitude/_maxVel.z;
 			if(_forwardness>0){
 				//if flying forward
-				float tan = Mathf.Tan(rollAngle*_rollMult*Mathf.Deg2Rad);
+				float tan = Mathf.Tan(_rollAngle*_rollMult*Mathf.Deg2Rad);
 				if(tan!=0&&!float.IsNaN(tan)&&!float.IsInfinity(tan)&&!float.IsNegativeInfinity(tan)){
 					_turnRadius = -flatVel.sqrMagnitude/(11.26f*tan);
 					if(Mathf.Abs(_turnRadius)>_minTurnRadius){
@@ -216,13 +228,12 @@ public class Fly : MonoBehaviour
 				}
 			}
 			else{
-				rollAngle=0;
+				_rollAngle=0;
 			}
 
 			//adjust pitch
 			Vector3 eulerAngles=transform.eulerAngles;
-			eulerAngles.z=rollAngle;
-			//float targetPitch=-_velocity.y*_pitchMult;
+			eulerAngles.z=_rollAngle;
 			float targetPitch=_aoa;
 			if(_aoa>0)
 				targetPitch*=_downPitchMult;
@@ -236,7 +247,7 @@ public class Fly : MonoBehaviour
 		transform.position+=_velocity*Time.deltaTime;
 		float normVel=flatVel.magnitude/_maxVel.z;
 		float gLerp=1-normVel;
-		DebugScreen.Print(gLerp,0);
+		//DebugScreen.Print(gLerp,0);
 		_gravity=Mathf.Lerp(_soarGravity,_defaultGravity,gLerp);
 		_velocity-=flatForward*_airResistance*Time.deltaTime;
 		_velocity+=Vector3.down*_gravity*Time.deltaTime;

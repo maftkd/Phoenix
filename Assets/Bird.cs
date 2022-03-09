@@ -41,6 +41,7 @@ public class Bird : MonoBehaviour
 	public float _afterDiveDelay;
 	float _afterDiveTimer;
 	public Transform _explodeParts;
+	public Transform _landParts;
 	public float _divePartsDelay;
 	[Header("Collisions")]
 	public float _shakeDelay;
@@ -413,6 +414,8 @@ public class Bird : MonoBehaviour
 
 		//reset flight priority to 0
 		_flyCam.GetComponent<FlyCam>().ResetPriority();
+
+		Instantiate(_landParts,transform.position,Quaternion.identity);
 
 		//which allows us to switch back to the idle cam
 		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);

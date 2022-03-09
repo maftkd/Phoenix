@@ -697,33 +697,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _flapSound: {fileID: 8300000, guid: 589db3261b2539f4fb9066ebd1fda464, type: 3}
   _velocity: {x: 0, y: 0, z: 0}
-  _defaultGravity: 2
-  _soarGravity: 0.5
-  _maxVel: {x: 2, y: 1, z: 2}
-  _flapAccel: {x: 0, y: 1, z: 0.25}
-  _flapDur: 1
-  _numFlaps: 100
+  _defaultGravity: 1
+  _soarGravity: 0.75
+  _maxVel: {x: 2, y: 0.5, z: 1.5}
+  _minVel: 0.5
+  _flapAccel: {x: 0, y: 2.5, z: 0}
+  _airResistance: 0.2
+  _flapDur: 0.25
+  _numFlaps: 10000
   _flapHoldBoost: 2
   _maxRoll: 35
-  _soarMaxRoll: 50
+  _soarMaxRoll: 45
   _defaultMaxRoll: 10
   _minTurnRadius: 0.1
   _rollMult: 0.2
-  _soarRollMult: 0.2
-  _defaultRollMult: 0.05
-  _pitchMult: 15
-  _maxAoa: 35
-  _angleChangeMult: 100
-  _angleFallMult: 2
+  _rollChangeMult: 12.5
+  _soarRollMult: 0.4
+  _defaultRollMult: 0.1
+  _maxAoa: 45
+  _downPitchMult: 0.5
+  _angleChangeMult: 200
+  _angleFallMult: 5
   _thrustMult: 0.025
-  _dragMult: 0.01
-  _liftMult: 10
-  _maxLift: 1
-  _maxWeight: 0
+  _dragMult: 0.025
+  _liftMult: 50
+  _maxLift: 0.002
+  _maxWeight: -0.001
   _forwardness: 0
   _flapPitchRange: {x: 0.8, y: 1.2}
   _flapVolume: 0.2
-  _maxSoarPartsRate: 0
+  _maxSoarPartsRate: 20
   _soarVolume: 0.15
   _soaring: 0
   _diveVolume: 0.3
@@ -788,6 +791,8 @@ MonoBehaviour:
   _footprintOffset: {x: 0.015, y: 0.0025, z: 0}
   _afterDiveDelay: 0.5
   _explodeParts: {fileID: 8364014487585317613, guid: fd0ecdfcdd5274549961c35f858d4412,
+    type: 3}
+  _landParts: {fileID: 2100396265161079208, guid: bb1393404929c2b45b44eab9c3eb06e6,
     type: 3}
   _divePartsDelay: 0.1
   _shakeDelay: 0.1

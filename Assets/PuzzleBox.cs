@@ -133,7 +133,7 @@ public class PuzzleBox : MonoBehaviour
 		bottomPanel.SetParent(transform);
 
 		Vector3 startPos=_box.position;
-		Vector3 endPos=startPos+Vector3.up*0.3f;
+		Vector3 endPos=startPos+Vector3.up*0.45f;
 		float timer=0;
 		Sfx.PlayOneShot3D(_buzzClip,startPos,1f+(Random.value*2-1)*0.2f);
 		float dur=2f;

@@ -14,9 +14,11 @@ public class WaddleCam : Shot
 	float _theta;
 	float _yOffset=-1f;
 	float _targetR=-1f;
+	float _targetPhi;
 	public Vector2 _phiRange;
 	public float _rLerp;
 	public float _thetaLerp;
+	public float _phiLerp;
 	public bool _camControl;
 
 	protected override void Awake(){
@@ -42,6 +44,8 @@ public class WaddleCam : Shot
 		if(_targetR<0)
 			_targetR=_radius;
 		_phi = Mathf.Asin(diff.y/diff.magnitude);
+		if(_targetPhi==0)
+			_targetPhi=_phi;
 
 		//calc theta
 		Vector3 camBack=-transform.forward;
@@ -66,6 +70,8 @@ public class WaddleCam : Shot
 		//get radius
 		Vector3 diff=transform.position-(_player.transform.position+Vector3.up*_yOffset);
 		float radius=Mathf.Lerp(diff.magnitude,_targetR,_rLerp*Time.deltaTime);
+
+		_phi = Mathf.Lerp(_phi,_targetPhi,_phiLerp*Time.deltaTime);
 
 		//modify theta
 		if(_camControl){
