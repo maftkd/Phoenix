@@ -28,6 +28,15 @@ public class ForceField : MonoBehaviour
         
     }
 
+	public void SetColor(Color c){
+		if(_mat==null)
+			_mat=GetComponent<MeshRenderer>().material;
+		float alpha = _mat.GetColor("_BackColor").a;
+		c.a=alpha;
+		_mat.SetColor("_BackColor",c);
+
+	}
+
 	public void Deactivate(bool supressAudio=false){
 		if(_mat==null)
 			_mat=GetComponent<MeshRenderer>().material;
@@ -46,9 +55,5 @@ public class ForceField : MonoBehaviour
 			_mat=GetComponent<MeshRenderer>().material;
 		_mat.SetFloat("_VCut",1f);
 		GetComponent<SphereCollider>().enabled=true;
-	}
-
-	public void SetColor(Color c){
-		_mat.SetColor("_Color",c);
 	}
 }

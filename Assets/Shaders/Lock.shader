@@ -97,7 +97,10 @@
 				fixed outlineRing = 1-step(_OutlineThickness*0.5,r-d);
 				outlineRing+=1-step(_OutlineThickness*0.5,d-(r-_RingThickness*0.5));
 				outlineRing=saturate(outlineRing);
+				fixed isRight=1-isLeft;
+				fixed rightOutline=isRight*step(i.uv.y-_OutlineThickness*0.5,_RingCenter.y);
 				fixed4 colAboveCenter=outlineRing*fixed4(0,0,0,1)+(1-outlineRing)*col;
+				colAboveCenter=colAboveCenter*(1-rightOutline)+rightOutline*fixed4(0,0,0,1);
 
 				//final color
 				col = belowCenter*colBelowCenter+(1-belowCenter)*colAboveCenter;

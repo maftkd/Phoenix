@@ -21,12 +21,14 @@ public class PuzzleBox : MonoBehaviour
 	ForceField _forceField;
 	public string _puzzleId;
 	public float _liftDelay;
+	public float _liftAmount;
 	public static PuzzleBox _latestPuzzle;
 	bool _solved;
 	public Cable _cable;
 	Bird _player;
 	Transform _box;
 	Transform _boxLp;
+	Transform _bottomPanel;
 	Transform _pistons;
 	float _lodDist=10f;
 	bool _prevInZone;
@@ -62,13 +64,15 @@ public class PuzzleBox : MonoBehaviour
 		label.GetComponent<Text>().text=_puzzleId;
 
 		//set piston colors
-		_pistons=transform.Find("Pistons");
+		_bottomPanel=_box.Find("Bottom");
+		_pistons=_bottomPanel.Find("Pistons");
 		Material mat = _boxLp.GetComponent<MeshRenderer>().sharedMaterial;
-		Transform bottomPanel=_box.Find("Bottom");
+		Color c = mat.color;
 		foreach(Transform p in _pistons){
 			Transform b = p.GetChild(0);
 			b.GetComponent<MeshRenderer>().material=mat;
 		}
+		_forceField.SetColor(c);
 	}
 
 	protected virtual void OnEnable(){
@@ -133,7 +137,7 @@ public class PuzzleBox : MonoBehaviour
 		bottomPanel.SetParent(transform);
 
 		Vector3 startPos=_box.position;
-		Vector3 endPos=startPos+Vector3.up*0.45f;
+		Vector3 endPos=startPos+Vector3.up*_liftAmount;
 		float timer=0;
 		Sfx.PlayOneShot3D(_buzzClip,startPos,1f+(Random.value*2-1)*0.2f);
 		float dur=2f;
@@ -145,8 +149,8 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	void SnapOpen(){
-		Transform bottomPanel=_box.Find("Bottom");
-		bottomPanel.SetParent(transform);
+		_bottomPanel=_box.Find("Bottom");
+		_bottomPanel.SetParent(transform);
 		Vector3 startPos=_box.position;
 		Vector3 endPos=startPos+Vector3.up*0.3f;
 		_box.position=endPos;
@@ -180,7 +184,7 @@ public class PuzzleBox : MonoBehaviour
 
 	public void ActivateNextPuzzle(){
 		//light up seed lines
-		Circuit seedLines = transform.Find("SeedLines").GetComponentInChildren<Circuit>();
+		Circuit seedLines = _bottomPanel.Find("SeedLines").GetComponentInChildren<Circuit>();
 		seedLines.Power(true);
 
 		_onActivatingNextPuzzle.Invoke();

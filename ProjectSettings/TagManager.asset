@@ -8,6 +8,7 @@ TagManager:
   - lb_bird
   - Mate
   - Sun
+  - Float
   layers:
   - Default
   - TransparentFX
