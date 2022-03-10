@@ -35,6 +35,7 @@ public class PuzzleBox : MonoBehaviour
 	//Material _keyMat;
 	public AudioClip _buzzClip;
 	public PuzzleBox _nextPuzzle;
+	[HideInInspector]
 	public string _puzzleId;
 	PuzzleCam _puzzleCam;
 

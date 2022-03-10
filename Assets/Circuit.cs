@@ -31,7 +31,8 @@ public class Circuit : MonoBehaviour
 	public float _volLerp;
 	public bool _playAudio;
 	public Vector2 _pitchRange;
-	float _targetVolume;
+	[HideInInspector]
+	public float _targetVolume;
 	int _chainLength;
 	int _indexInChain;
 
@@ -110,7 +111,8 @@ public class Circuit : MonoBehaviour
 		{
 			if(!IsLastInChainWithPower()){
 				foreach(Circuit n in _next){
-					n.Power(false);
+					if(n._fill>0)//circuits in the middle of routines have some volume
+						n.Power(false);
 				}
 				return;
 			}
@@ -182,9 +184,8 @@ public class Circuit : MonoBehaviour
 		_targetVolume=0;
 		_fill=0;
 		_mat.SetFloat(_fillVar,_fill);
-		if(_prev!=null){
+		if(_prev!=null)
 			_prev.Power(false);
-		}
 	}
 
 	public bool Powered(){
