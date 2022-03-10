@@ -23,6 +23,18 @@ public class Circuit : MonoBehaviour
 	[HideInInspector]
 	public Circuit _prev;
 
+	AudioSource _source;
+	[Header("Audio")]
+	public float _toneFrequency;
+	public float _toneNoise;
+	public float _maxVolume;
+	public float _volLerp;
+	public bool _playAudio;
+	public Vector2 _pitchRange;
+	float _targetVolume;
+	int _chainLength;
+	int _indexInChain;
+
 	void Awake(){
 		_mat=GetComponent<Renderer>().material;
 		if(GetComponent<Cable>()!=null)
@@ -35,40 +47,66 @@ public class Circuit : MonoBehaviour
 		}
 		if(_next!=null)
 			_next._prev=this;
+		if(_playAudio){
+			_source=gameObject.AddComponent<AudioSource>();
+			//_source.clip=Synthesizer.GenerateSineWave(880,1f,0.05f);
+			_source.clip=Synthesizer.GenerateSquareWave(_toneFrequency,1f,_toneNoise);
+			_source.spatialBlend=1f;
+			_source.loop=true;
+			_source.volume=0;
+		}
 	}
 
     // Start is called before the first frame update
     void Start()
     {
+		int prevCircuits=0;
+		int nextCircuits=0;
+		Circuit c = this;
+		while(c._prev!=null){
+			prevCircuits++;
+			c=c._prev;
+		}
+		c=this;
+		while(c._next!=null){
+			nextCircuits++;
+			c=c._next;
+		}
+		_indexInChain=prevCircuits;
+		_chainLength=prevCircuits+nextCircuits+1;
+
+		float minPitch01 = _indexInChain/(float)_chainLength;
+		float maxPitch01 = (_indexInChain+1)/(float)_chainLength;
+		float minPitch = Mathf.Lerp(_pitchRange.x,_pitchRange.y,minPitch01);
+		float maxPitch = Mathf.Lerp(_pitchRange.x,_pitchRange.y,maxPitch01);
+		_pitchRange = new Vector2(minPitch,maxPitch);
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+		if(_source==null)
+			return;
+		if(Mathf.Abs(_targetVolume-_source.volume)>0.001f){
+			_source.volume=Mathf.Lerp(_source.volume,_targetVolume,_volLerp*Time.deltaTime);
+			if(Mathf.Abs(_targetVolume-_source.volume)<=0.001f)
+				_source.volume=_targetVolume;
+			if(_source.volume==0)
+				_source.Stop();
+			else if(!_source.isPlaying)
+				_source.Play();
+		}
     }
 
 	public void Power(bool on){
 		_powered=on;
-		//_mat.SetFloat("_Lerp", on? 1f : 0f);
-		/*
-		if(_powerChange!=null)
-		{
-			_powerChange.Invoke();
-		}
-		if(_powered)
-			_onPowered.Invoke();
-		else
-			_onPoweredOff.Invoke();
-			*/
 		StopAllCoroutines();
 		if(_powered){
 			StartCoroutine(PowerR());
 		}
 		else{
 			StartCoroutine(PowerDownR());
-
 		}
 	}
 
@@ -80,13 +118,17 @@ public class Circuit : MonoBehaviour
 		length=(1-_fill)*length;
 		float dur=length/rate;
 		timer=fullDur-dur;
+		_targetVolume=_maxVolume;
 		while(timer<fullDur){
 			timer+=Time.deltaTime;
 			_fill=timer/dur;
 			_mat.SetFloat(_fillVar,_fill);
+			if(_source!=null)
+				_source.pitch=Mathf.Lerp(_pitchRange.x,_pitchRange.y,_fill);
 			yield return null;
 		}
 		_fill=1f;
+		_targetVolume=0;
 		_mat.SetFloat(_fillVar,_fill);
 		//continue power
 		if(_next!=null){
@@ -106,6 +148,7 @@ public class Circuit : MonoBehaviour
 		length*=_fill;
 		float dur = length/rate;
 		timer=dur;
+		_targetVolume=_maxVolume;
 		if(_powerChange!=null)
 		{
 			_powerChange.Invoke();
@@ -114,8 +157,11 @@ public class Circuit : MonoBehaviour
 			timer-=Time.deltaTime;
 			_fill=timer/fullDur;
 			_mat.SetFloat(_fillVar,_fill);
+			if(_source!=null)
+				_source.pitch=Mathf.Lerp(_pitchRange.x,_pitchRange.y,_fill);
 			yield return null;
 		}
+		_targetVolume=0;
 		_fill=0;
 		_mat.SetFloat(_fillVar,_fill);
 		if(_prev!=null){

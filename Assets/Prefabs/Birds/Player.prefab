@@ -711,9 +711,9 @@ MonoBehaviour:
   _defaultMaxRoll: 10
   _minTurnRadius: 0.1
   _rollMult: 0.2
-  _rollChangeMult: 12.5
-  _soarRollMult: 0.4
-  _defaultRollMult: 0.1
+  _rollChangeMult: 5
+  _soarRollMult: 0.2
+  _defaultRollMult: 0.05
   _maxAoa: 45
   _downPitchMult: 0.5
   _angleChangeMult: 200

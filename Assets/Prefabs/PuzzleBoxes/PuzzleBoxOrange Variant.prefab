@@ -29,7 +29,7 @@ MonoBehaviour:
       m_Calls: []
   _activateOnAwake: 1
   _puzzleId: 1.1
-  _liftDelay: 0
+  _liftDelay: 1
   _liftAmount: 0.25
   _cable: {fileID: 0}
   _buzzClip: {fileID: 8300000, guid: 89762456f8d88b741a8736f263f11712, type: 3}

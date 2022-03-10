@@ -253,6 +253,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CircuitLine (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7221908019610744334, guid: c98973663f7f5f24ba0f5ea8a9a5874d,
+        type: 3}
+      propertyPath: _playAudio
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c98973663f7f5f24ba0f5ea8a9a5874d, type: 3}
 --- !u!4 &1423331247516747213 stripped

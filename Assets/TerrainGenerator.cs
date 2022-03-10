@@ -516,7 +516,7 @@ public class TerrainGenerator : MonoBehaviour
 					worldPos.y=heights[z,x]*maxHeight;
 					//check each puzzle against each terrain point
 					foreach(Transform puzzle in puzzleParent){
-						if(!puzzle.gameObject.activeSelf)
+						if(!puzzle.gameObject.activeInHierarchy||puzzle.tag=="Float")
 							continue;
 						float sqrDst=(worldPos-puzzle.position).sqrMagnitude;
 						if(sqrDst<_puzzleRadius*_puzzleRadius)
@@ -773,7 +773,7 @@ public class TerrainGenerator : MonoBehaviour
 				Vector3 worldPos=transform.position+xNorm*td.size.x*Vector3.forward+Vector3.right*yNorm*td.size.z;
 				worldPos.y=height;
 				foreach(Transform puzzle in puzzleParent){
-					if(!puzzle.gameObject.activeSelf)
+					if(!puzzle.gameObject.activeSelf||puzzle.tag=="Float")
 						continue;
 					float sqrDist = (puzzle.position-worldPos).sqrMagnitude;
 					if(sqrDist<_puzzleRadius*_puzzleRadius)

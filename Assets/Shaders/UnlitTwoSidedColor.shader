@@ -4,6 +4,7 @@
     {
 		_Color ("Color", Color) = (1,1,1,1)
 		_ColorB ("ColorB", Color) = (1,1,1,1)
+		_OutlineColor ("Outline color", Color) = (0,0,0,1)
 		_Lerp ("Lerp", Range(0,1)) = 0
 		_OutlineThickness ("Outline Thickness", Range(0,0.5)) = 0
     }
@@ -38,6 +39,7 @@
 
             fixed4 _Color;
             fixed4 _ColorB;
+            fixed4 _OutlineColor;
 			fixed _Lerp;
 			fixed _OutlineThickness;
 
@@ -57,7 +59,7 @@
 				fixed outline = step(0.5-_OutlineThickness,abs(i.uv.y-0.5));
 				outline += step(0.5-_OutlineThickness,abs(i.uv.x-0.5));
 				outline = saturate(outline);
-				col =col*(1-outline)+outline*fixed4(0,0,0,1);
+				col =col*(1-outline)+outline*_OutlineColor
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
