@@ -282,6 +282,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
         type: 3}
+      propertyPath: _disableOnPower
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878164376192934728, guid: 9e9dc51d5cfef5e45b32df00a992eb2c,
+        type: 3}
       propertyPath: _inputs.Array.size
       value: 0
       objectReference: {fileID: 0}

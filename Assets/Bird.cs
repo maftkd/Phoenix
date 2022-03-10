@@ -792,6 +792,13 @@ public class Bird : MonoBehaviour
 		Destroy(gameObject);
 	}
 
+	public void AlertMates(){
+		if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
+			Bird b = _cols[0].GetComponent<Bird>();
+			b.Call();
+		}
+	}
+
 	void OnDrawGizmos(){
 		Gizmos.color=Color.magenta;
 		Gizmos.DrawWireSphere(transform.position,_triggerRadius);

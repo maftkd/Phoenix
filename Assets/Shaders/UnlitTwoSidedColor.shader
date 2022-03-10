@@ -59,7 +59,7 @@
 				fixed outline = step(0.5-_OutlineThickness,abs(i.uv.y-0.5));
 				outline += step(0.5-_OutlineThickness,abs(i.uv.x-0.5));
 				outline = saturate(outline);
-				col =col*(1-outline)+outline*_OutlineColor
+				col =col*(1-outline)+outline*_OutlineColor;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

@@ -47,6 +47,8 @@ public class PuzzleCam : Shot
 			{
 				//_mCam.Transition(_cam,MCamera.Transitions.FADE,0f,null,0.25f);
 				_mCam.Transition(_cam,MCamera.Transitions.CUT_BACK);
+				//if there are any birds other than player, call
+				_player.AlertMates();
 			}
 			else
 				_player.TransitionToRelevantCamera();

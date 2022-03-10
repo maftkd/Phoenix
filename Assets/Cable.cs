@@ -75,7 +75,8 @@ public class Cable : MonoBehaviour
 		}
 
 		if(Application.isPlaying&&_hum){
-			AudioClip humClip = Synthesizer.GenerateSineWave(_humFrequency,1f,_humNoise);
+			//AudioClip humClip = Synthesizer.GenerateSineWave(_humFrequency,1f,_humNoise);
+			AudioClip humClip = Synthesizer.GenerateSquareWave(_humFrequency,1f,_humNoise);
 			_humAudio = gameObject.AddComponent<AudioSource>();
 			_humAudio.clip=humClip;
 			_humAudio.volume=0;

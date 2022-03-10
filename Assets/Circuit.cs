@@ -52,7 +52,7 @@ public class Circuit : MonoBehaviour
 			_source=gameObject.AddComponent<AudioSource>();
 			//_source.clip=Synthesizer.GenerateSineWave(880,1f,0.05f);
 			_source.clip=Synthesizer.GenerateSquareWave(_toneFrequency,1f,_toneNoise);
-			_source.spatialBlend=1f;
+			_source.spatialBlend=0f;
 			_source.loop=true;
 			_source.volume=0;
 		}

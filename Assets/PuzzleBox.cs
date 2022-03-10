@@ -61,9 +61,9 @@ public class PuzzleBox : MonoBehaviour
 		_bottomPanel=_box.Find("Bottom");
 		_pistons=_bottomPanel.Find("Pistons");
 		_effects=_bottomPanel.Find("Effects");
-		_boxLp=_bottomPanel.Find("BoxLowDet");
-		_boxLp.SetParent(transform);
-		Material mat = _boxLp.GetComponent<MeshRenderer>().sharedMaterial;
+		_boxLp=_box.Find("BoxLowDet");
+		Material mat = _box.GetComponent<MeshRenderer>().sharedMaterial;
+		_boxLp.GetComponent<MeshRenderer>().sharedMaterial=mat;
 		Color c = mat.color;
 		foreach(Transform p in _pistons){
 			Transform b = p.GetChild(0);
