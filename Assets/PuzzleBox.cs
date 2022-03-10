@@ -19,7 +19,6 @@ public class PuzzleBox : MonoBehaviour
 	public UnityEvent _onActivated;
 	public bool _activateOnAwake;
 	ForceField _forceField;
-	public string _puzzleId;
 	public float _liftDelay;
 	public float _liftAmount;
 	public static PuzzleBox _latestPuzzle;
@@ -36,6 +35,7 @@ public class PuzzleBox : MonoBehaviour
 	//Material _keyMat;
 	public AudioClip _buzzClip;
 	public PuzzleBox _nextPuzzle;
+	public string _puzzleId;
 	PuzzleCam _puzzleCam;
 
 	protected virtual void Awake(){
@@ -50,6 +50,10 @@ public class PuzzleBox : MonoBehaviour
 
 
 		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
+		Island i = transform.GetComponentInParent<Island>();
+		int islandIndex = i.transform.GetSiblingIndex();
+		int puzzleIndex = transform.GetSiblingIndex();
+		_puzzleId=(islandIndex+1)+"."+(puzzleIndex+1);
 		label.GetComponent<Text>().text=_puzzleId;
 
 		//set piston colors
@@ -57,6 +61,7 @@ public class PuzzleBox : MonoBehaviour
 		_pistons=_bottomPanel.Find("Pistons");
 		_effects=_bottomPanel.Find("Effects");
 		_boxLp=_bottomPanel.Find("BoxLowDet");
+		_boxLp.SetParent(transform);
 		Material mat = _boxLp.GetComponent<MeshRenderer>().sharedMaterial;
 		Color c = mat.color;
 		foreach(Transform p in _pistons){

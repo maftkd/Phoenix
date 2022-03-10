@@ -150,8 +150,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _fillVar: _FillAmount
-  _next: {fileID: 0}
+  _fillRate: 0.3
+  _fallRate: 1.5
+  _next: []
+  _fill: 0
   _prev: {fileID: 0}
+  _fillRateOverride: 0
   _toneFrequency: 125
   _toneNoise: 0
   _maxVolume: 0.025

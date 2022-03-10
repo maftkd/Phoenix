@@ -10,16 +10,15 @@ public class Circuit : MonoBehaviour
 	public delegate void CircuitEvent();
 	public event CircuitEvent _powerChange;
 
-	bool _powered;
 	public UnityEvent _onPowered;
 	public UnityEvent _onPoweredOff;
 
 	public string _fillVar;
 	float _length;
-	float _fillRate=0.5f;
-	float _fallRate=2f;
-	public Circuit _next;
-	float _fill;
+	public float _fillRate;
+	public float _fallRate;
+	public Circuit [] _next;
+	public float _fill;
 	[HideInInspector]
 	public Circuit _prev;
 	public float _fillRateOverride;
@@ -46,8 +45,8 @@ public class Circuit : MonoBehaviour
 		{
 			_length=GetLengthFromLineRenderer();
 		}
-		if(_next!=null)
-			_next._prev=this;
+		foreach(Circuit n in _next)
+			n._prev=this;
 		if(_playAudio){
 			_source=gameObject.AddComponent<AudioSource>();
 			//_source.clip=Synthesizer.GenerateSineWave(880,1f,0.05f);
@@ -75,9 +74,9 @@ public class Circuit : MonoBehaviour
 			c=c._prev;
 		}
 		c=this;
-		while(c._next!=null){
+		while(c._next.Length==1){
 			nextCircuits++;
-			c=c._next;
+			c=c._next[0];
 		}
 		_indexInChain=prevCircuits;
 		_chainLength=prevCircuits+nextCircuits+1;
@@ -107,9 +106,19 @@ public class Circuit : MonoBehaviour
     }
 
 	public void Power(bool on){
-		_powered=on;
+		if(!on)
+		{
+			if(!IsLastInChainWithPower()){
+				foreach(Circuit n in _next){
+					n.Power(false);
+				}
+				return;
+			}
+		}
+
+
 		StopAllCoroutines();
-		if(_powered){
+		if(on){
 			StartCoroutine(PowerR());
 		}
 		else{
@@ -138,8 +147,8 @@ public class Circuit : MonoBehaviour
 		_targetVolume=0;
 		_mat.SetFloat(_fillVar,_fill);
 		//continue power
-		if(_next!=null){
-			_next.Power(true);
+		foreach(Circuit n in _next){
+			n.Power(true);
 		}
 		if(_powerChange!=null)
 		{
@@ -202,11 +211,11 @@ public class Circuit : MonoBehaviour
 		return dist;
 	}
 
-	public Circuit GetLastInChainWithPower(){
-		Circuit next = this;
-		while(next._next!=null&&next._next._fill>0){
-			next=next._next;
+	public bool IsLastInChainWithPower(){
+		foreach(Circuit n in _next){
+			if(n._fill>0)
+				return false;
 		}
-		return next;
+		return true;
 	}
 }

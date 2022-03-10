@@ -167,7 +167,6 @@ public class Fly : MonoBehaviour
 		//add air control
 		Vector3 input=_mIn.GetControllerInput();
 		Vector3 flatVel=_velocity;
-		float lift=0;
 
 		if(_knockBackTimer<=0)
 		{

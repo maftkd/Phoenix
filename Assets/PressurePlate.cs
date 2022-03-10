@@ -157,30 +157,7 @@ public class PressurePlate : MonoBehaviour
 		_mat.SetColor("_EmissionColor", _powered? _emissionColor : Color.black);
 		if(_quad!=null)
 			_quad.SetFloat("_Lerp",_powered?1:0);
-		if(_powered)
-			_next.Power(_powered);
-		else
-		{
-			Circuit last = _next.GetLastInChainWithPower();
-			last.Power(_powered);
-		}
-		/*
-		foreach(Circuit c in _circuits){
-			c.Power(_powered);
-		}
-		*/
-	}
-
-	IEnumerator FillWires(float target){
-		yield return null;
-		float timer=0;
-		if(target==1f){
-		//fill cable
-		//wait for cable
-		}
-		else{
-			//unf
-		}
+		_next.Power(_powered);
 	}
 
 	void OnDrawGizmos(){

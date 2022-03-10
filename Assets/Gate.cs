@@ -24,6 +24,8 @@ public class Gate : MonoBehaviour
 	public bool _inverter;
 	public bool _lock;
 	Transform _ring;
+	public bool _disableOnPower;
+	public bool _node;
 
 	AudioSource _source;
 	[Header ("Charger audio settings")]
@@ -156,7 +158,8 @@ public class Gate : MonoBehaviour
 			//default gate goes to sleep after power
 			if(_chargeDur==0&&!_inverter)
 			{
-				enabled=false;
+				if(_disableOnPower)
+					enabled=false;
 				MakeSparks();
 				if(_lock){
 					_ring=transform.Find("Ring");
@@ -166,12 +169,16 @@ public class Gate : MonoBehaviour
 					lockMat.SetFloat("_Lerp",powered?1:0);
 					_ring.position+=Vector3.up*0.01f;
 				}
+				if(_mat!=null)
+					_mat.SetFloat("_Lerp",powered?1:0);
 			}
 			_onGateActivated.Invoke();
 		}
 	}
 
 	void MakeSparks(){
+		if(_sparks==null)
+			return;
 		Transform sparks = Instantiate(_sparks,transform);
 		sparks.SetParent(null);
 		Vector3 eulers=sparks.eulerAngles;
