@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1872416692107663976}
   - component: {fileID: 6857290109601055755}
-  - component: {fileID: 7221908019610744334}
+  - component: {fileID: 5088333580386787155}
   m_Layer: 0
   m_Name: RedLine
   m_TagString: Untagged
@@ -131,7 +131,7 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 0
   m_Loop: 0
---- !u!114 &7221908019610744334
+--- !u!114 &5088333580386787155
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -162,3 +162,4 @@ MonoBehaviour:
   _volLerp: 5
   _playAudio: 1
   _pitchRange: {x: 0.8, y: 1.2}
+  _targetVolume: 0
