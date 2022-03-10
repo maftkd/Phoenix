@@ -210,9 +210,9 @@ MonoBehaviour:
   _pressSpeed: 0.2
   _pitchRange: {x: 0.8, y: 1, z: 1, w: 1.2}
   _buttonDown: {fileID: 8300000, guid: e9fb18130df37d646865b16754958941, type: 3}
-  _emissionColor: {r: 0, g: 1, b: 0.28235295, a: 1}
   _next: {fileID: 0}
   _isToggle: 0
+  _icon: {fileID: 0}
 --- !u!114 &6434090556959303584
 MonoBehaviour:
   m_ObjectHideFlags: 0

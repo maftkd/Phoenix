@@ -89,11 +89,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  _onTriggerStay:
+    m_PersistentCalls:
+      m_Calls: []
   _onCollisionEnter:
     m_PersistentCalls:
       m_Calls: []
   _ignoreMesh: 1
   _ignoreCol: 1
+  _clip: {fileID: 0}
+  _vol: 0
+  _particles: {fileID: 0}
 --- !u!114 &4984915728807272375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +112,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 382bbe437ed481e4ca78cf8512246f07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hideOnButtonDown: 0
+  _hideOnButtonHold: 0
+  _buttonName: 
 --- !u!33 &6450829962537063952
 MeshFilter:
   m_ObjectHideFlags: 0
