@@ -24,6 +24,7 @@ public class MCamera : MonoBehaviour
 	public bool _cutBackEnabled;
 	Camera _targetCam;
 	public float _lerp;
+	Shot _curShot;
 
 	void Awake(){
 		_cutBackEnabled=true;
@@ -130,6 +131,7 @@ public class MCamera : MonoBehaviour
 		Shot shot = newCam.GetComponent<Shot>();
 		if(shot!=null){
 			shot.StartTracking(t);
+			_curShot=shot;
 		}
 
 		//old camera stops tracking after some duration
@@ -300,6 +302,11 @@ public class MCamera : MonoBehaviour
 		}
 
 		SnapToCamera(target,false);
+	}
+
+	public void EnableCurrentShot(bool en){
+		if(_curShot!=null)
+			_curShot.enabled=en;
 	}
 
 	void OnDrawGizmos(){

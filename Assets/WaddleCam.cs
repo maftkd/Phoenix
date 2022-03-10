@@ -104,13 +104,11 @@ public class WaddleCam : Shot
 		
 		Vector3 targetPos=_player.transform.position+Vector3.up*_yOffset+offset;
 
-		//_position=Vector3.Lerp(_position,targetPos,_lerp*Time.deltaTime);
 		_position=targetPos;
 
 		//float pitch=transform.eulerAngles.x;
 		Quaternion prevRot=transform.rotation;
 		transform.forward=-offset;
-		//_rotation=Quaternion.Slerp(prevRot,transform.rotation,_slerp*Time.deltaTime);
 		_rotation=transform.rotation;
 
 		transform.position=_position;

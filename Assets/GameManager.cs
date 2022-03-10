@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
 	public static Bird _player;
 	public static MInput _mIn;
 	public static MCamera _mCam;
+	public static ColorPalette _color;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
@@ -21,6 +22,7 @@ public class GameManager : MonoBehaviour
 		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
 		_mIn=FindObjectOfType<MInput>();
 		_mCam=FindObjectOfType<MCamera>();
+		_color = FindObjectOfType<ColorPalette>();
 	}
 
     // Start is called before the first frame update
@@ -50,16 +52,18 @@ public class GameManager : MonoBehaviour
     }
 
 	public void Pause(){
+		_mCam.EnableCurrentShot(false);
 		Time.timeScale=0;
 		_sfx.Pause();
 		_pauseScreen.SetActive(true);
 		_mIn.LockInput(true);
-		SaveSlot [] slots = transform.GetComponentsInChildren<SaveSlot>();
-		slots[0].SelectSaveButton();
+		//SaveSlot [] slots = transform.GetComponentsInChildren<SaveSlot>();
+		//slots[0].SelectSaveButton();
 	}
 
 	public void Play(){
 		Time.timeScale=1f;
+		_mCam.EnableCurrentShot(true);
 		_sfx.Play();
 		_pauseScreen.SetActive(false);
 		_mIn.LockInput(false);

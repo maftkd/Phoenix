@@ -39,17 +39,33 @@ public class PuzzleBox : MonoBehaviour
 	PuzzleCam _puzzleCam;
 
 	protected virtual void Awake(){
-		_effects=transform.Find("Effects");
 		_mIn=GameManager._mIn;
 		_mCam=GameManager._mCam;
-		_forceField=transform.Find("ForceField").GetComponent<ForceField>();
 		_box=transform.Find("BoxDetailed");
-		_boxLp=transform.Find("BoxLowDet");
 		_player=GameManager._player;
 		_lock=_box.Find("Lock").GetComponent<Gate>();
 		_lock._onGateActivated.AddListener(PuzzleSolved);
 		//_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
+
+
+		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
+		label.GetComponent<Text>().text=_puzzleId;
+
+		//set piston colors
+		_bottomPanel=_box.Find("Bottom");
+		_pistons=_bottomPanel.Find("Pistons");
+		_effects=_bottomPanel.Find("Effects");
+		_boxLp=_bottomPanel.Find("BoxLowDet");
+		Material mat = _boxLp.GetComponent<MeshRenderer>().sharedMaterial;
+		Color c = mat.color;
+		foreach(Transform p in _pistons){
+			Transform b = p.GetChild(0);
+			b.GetComponent<MeshRenderer>().material=mat;
+		}
+
+		_forceField=_bottomPanel.Find("ForceField").GetComponent<ForceField>();
+		_forceField.SetColor(c);
 
 		//init
 		_forceField.gameObject.SetActive(true);
@@ -59,20 +75,6 @@ public class PuzzleBox : MonoBehaviour
 		{
 			_forceField.Activate();
 		}
-
-		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
-		label.GetComponent<Text>().text=_puzzleId;
-
-		//set piston colors
-		_bottomPanel=_box.Find("Bottom");
-		_pistons=_bottomPanel.Find("Pistons");
-		Material mat = _boxLp.GetComponent<MeshRenderer>().sharedMaterial;
-		Color c = mat.color;
-		foreach(Transform p in _pistons){
-			Transform b = p.GetChild(0);
-			b.GetComponent<MeshRenderer>().material=mat;
-		}
-		_forceField.SetColor(c);
 	}
 
 	protected virtual void OnEnable(){

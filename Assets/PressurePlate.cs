@@ -17,7 +17,7 @@ public class PressurePlate : MonoBehaviour
 	public Vector4 _pitchRange;
 	Bird _player;
 	public AudioClip _buttonDown;
-	public Color _emissionColor;
+	Color _emissionColor;
 
 	bool _powered;
 
@@ -39,6 +39,7 @@ public class PressurePlate : MonoBehaviour
 		_player = GameManager._player;
 		_mat=_button.GetComponent<MeshRenderer>().material;
 		_quad=_icon.GetComponent<Renderer>().material;
+		_emissionColor=GameManager._color._powerOn;
 	}
 
     // Start is called before the first frame update

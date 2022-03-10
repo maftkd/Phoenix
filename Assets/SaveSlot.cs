@@ -13,12 +13,14 @@ public class SaveSlot : MonoBehaviour
 	static string _divider = "---";
 
 	void Awake(){
+		/*
 		Button saveButt=transform.Find("SaveButton").GetComponent<Button>();
 		saveButt.onClick.AddListener(delegate {SaveGame();});
 		Button loadButt=transform.Find("LoadButton").GetComponent<Button>();
 		loadButt.onClick.AddListener(delegate {LoadGame();});
 		Button deleteButt=transform.Find("DeleteButton").GetComponent<Button>();
 		deleteButt.onClick.AddListener(delegate {DeleteGame();});
+		*/
 		_saveFile=Application.streamingAssetsPath+"/saveSlot"+_slotNumber+".txt";
 	}
     // Start is called before the first frame update

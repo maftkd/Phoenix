@@ -285,6 +285,7 @@ public class Fly : MonoBehaviour
 			if(footstep!=null)
 				footstep.Sound(_groundPoint,vol);
 			_bird.Land();
+			_flyShadow.gameObject.SetActive(false);
 		}
 
 		//update kb timer

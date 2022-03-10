@@ -153,7 +153,7 @@ MonoBehaviour:
   _next: {fileID: 0}
   _prev: {fileID: 0}
   _toneFrequency: 125
-  _toneNoise: 0.1
+  _toneNoise: 0
   _maxVolume: 0.05
   _volLerp: 10
   _playAudio: 1

@@ -933,6 +933,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6176544675426735636}
   - component: {fileID: 6726878934042802101}
+  - component: {fileID: 7160310347758516763}
   m_Layer: 0
   m_Name: SimplePanel
   m_TagString: Untagged
@@ -990,6 +991,19 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &7160310347758516763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4030202750041372590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7746a75be0b4bf74a95caa7cecaea28e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _slotNumber: 0
 --- !u!1001 &469056966308657280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1156,7 +1170,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 7012999666767816362}
+      objectReference: {fileID: 7160310347758516763}
     - target: {fileID: 4084915715071032380, guid: 9dbaac1b60cfa6944a6710e6d1e09fa2,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -1402,18 +1416,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1186486109353053610}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7012999666767816362 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8152659774828997376, guid: 6d6ceae0b2b312b45aaccd845dce1ba2,
-    type: 3}
-  m_PrefabInstance: {fileID: 1186486109353053610}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7746a75be0b4bf74a95caa7cecaea28e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1196719773932095249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2304,7 +2306,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 7012999666767816362}
+      objectReference: {fileID: 7160310347758516763}
     - target: {fileID: 4084915715071032380, guid: 9dbaac1b60cfa6944a6710e6d1e09fa2,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
