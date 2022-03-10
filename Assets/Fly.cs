@@ -40,6 +40,7 @@ public class Fly : MonoBehaviour
 	float _rollAngle;
 	public float _soarRollMult;
 	public float _defaultRollMult;
+	public float _turnSpeed;
 	[Header("Pitch")]
 	public float _maxAoa;
 	[Tooltip("Multiply by maxAoa to get max pitch when inclined downward")]
@@ -105,6 +106,8 @@ public class Fly : MonoBehaviour
 
 		//initial velocity
 		_velocity=_curFlapAccel;
+		_velocity+=transform.forward*_bird.GetVel();
+
 
 		_speedFrac=0;
 
@@ -206,29 +209,20 @@ public class Fly : MonoBehaviour
 			//float rollAngle=-_maxRoll*input.x;
 			_rollAngle=Mathf.Lerp(_rollAngle,-_maxRoll*input.x,_rollChangeMult*Time.deltaTime);
 			_speedFrac=flatVel.magnitude/_maxVel.z;
-			if(_forwardness>0){
-				//if flying forward
-				float tan = Mathf.Tan(_rollAngle*_rollMult*Mathf.Deg2Rad);
-				if(tan!=0&&!float.IsNaN(tan)&&!float.IsInfinity(tan)&&!float.IsNegativeInfinity(tan)){
-					_turnRadius = -flatVel.sqrMagnitude/(11.26f*tan);
-					if(Mathf.Abs(_turnRadius)>_minTurnRadius){
-						//make sure turn radius isn't too small or else we get the dizzys
-						float rawMag=flatVel.magnitude;
-						float frameDistance = rawMag*Time.deltaTime;
-						//calculate rotation arc
-						float circumference = _turnRadius*2f*Mathf.PI;
-						float arc = frameDistance/(circumference);
-						//rotate velocity
-						flatVel = Quaternion.Euler(0f,arc*360f,0)*flatVel;
-						_velocity.x=flatVel.x;
-						_velocity.z=flatVel.z;
-						//rotate transform
-						transform.forward = flatVel.normalized;
-					}
-				}
+
+			//rotate velocity
+			//flatVel.Rotate(Vector3.up*input.x*Time.deltaTime);
+			if(flatVel.sqrMagnitude>0.01f){
+				flatVel = Quaternion.Euler(0f,input.x*Time.deltaTime*_turnSpeed,0)*flatVel;
+				_velocity.x=flatVel.x;
+				_velocity.z=flatVel.z;
+				//rotate transform
+				transform.forward = flatVel.normalized;
 			}
 			else{
-				_rollAngle=0;
+				flatForward = Quaternion.Euler(0f,input.x*Time.deltaTime*_turnSpeed,0)*flatForward;
+				//rotate transform
+				transform.forward = flatForward;
 			}
 
 			//adjust pitch
