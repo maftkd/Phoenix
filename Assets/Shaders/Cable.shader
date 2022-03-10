@@ -7,12 +7,11 @@
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
 		_BandWidth ("Band Width", Range(0,1)) = 0.5
-		_BandColor ("Band Color", Color) = (1,1,1,1)
-		_PowerColor ("Power Color", Color) = (1,0,0,1)
+		_ColorOn ("Color On", Color) = (1,1,1,1)
 		_Frequency ("Frequency", Float) = 1
 		_PhaseMult ("Phase multiplier", Float) = 1
 		_PowerFill ("Power Fill", Range(0,1)) = 0
-		_OffColor ("Off color", Color) = (0.5,0.5,0.5,1)
+		_ColorOff ("Color Off", Color) = (0.5,0.5,0.5,1)
 		_EmissionMult ("Emission", Float) = 1
 		_WavePow ("wave Power", Float) = 40
 		_WaveCutoff ("Wave cutoff", Range(0,1)) = 0.8
@@ -38,12 +37,11 @@
         half _Metallic;
         fixed4 _Color;
 		fixed _BandWidth;
-		fixed4 _BandColor;
-		fixed4 _PowerColor;
+		fixed4 _ColorOn;
 		fixed _Frequency;
 		fixed _PhaseMult;
 		fixed _PowerFill;
-		fixed4 _OffColor;
+		fixed4 _ColorOff;
 		fixed _EmissionMult;
 		fixed _WavePow;
 		fixed _WaveCutoff;
@@ -65,11 +63,11 @@
 			//fixed wave= 0.5*(sin(IN.uv_MainTex.y*_Frequency-_Time.w*_PhaseMult)+1);
 			wave=pow(wave*step(_WaveCutoff,wave),_WavePow);
 
-			fixed4 bandColor=lerp(_BandColor,fixed4(1,1,1,1),wave);
+			fixed4 bandColor=lerp(_ColorOn,fixed4(1,1,1,1),wave);
 			fixed powered = step(IN.uv_MainTex.y,_PowerFill);
-			bandColor=bandColor*powered+(1-powered)*_OffColor;
+			bandColor=bandColor*powered+(1-powered)*_ColorOff;
             o.Albedo = inBand*bandColor+(1-inBand)*_Color;
-			o.Emission=inBand*_PowerColor.rgb*powered*_EmissionMult;//*wave;
+			o.Emission=inBand*_ColorOn.rgb*powered*_EmissionMult;//*wave;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

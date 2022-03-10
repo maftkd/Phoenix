@@ -38,8 +38,9 @@ public class PressurePlate : MonoBehaviour
 		_halfExtents.y=_hitBoxY;
 		_player = GameManager._player;
 		_mat=_button.GetComponent<MeshRenderer>().material;
-		_quad=_icon.GetComponent<Renderer>().material;
-		_emissionColor=GameManager._color._powerOn;
+		if(_icon!=null)
+			_quad=_icon.GetComponent<Renderer>().material;
+		_emissionColor=GameManager._color.GetButtonEmissionColor(transform);
 	}
 
     // Start is called before the first frame update
@@ -154,7 +155,8 @@ public class PressurePlate : MonoBehaviour
 
 	void UpdateWires(){
 		_mat.SetColor("_EmissionColor", _powered? _emissionColor : Color.black);
-		_quad.SetFloat("_Lerp",_powered?1:0);
+		if(_quad!=null)
+			_quad.SetFloat("_Lerp",_powered?1:0);
 		if(_powered)
 			_next.Power(_powered);
 		else

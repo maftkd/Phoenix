@@ -2,8 +2,8 @@
 {
     Properties
     {
-		_Color ("Color", Color) = (1,1,1,1)
-		_ColorB ("ColorB", Color) = (1,1,1,1)
+		_ColorOn ("Color On", Color) = (1,1,1,1)
+		_ColorOff ("Color Off", Color) = (1,1,1,1)
 		_OutlineColor ("Outline color", Color) = (0,0,0,1)
 		_Lerp ("Lerp", Range(0,1)) = 0
 		_OutlineThickness ("Outline Thickness", Range(0,0.5)) = 0
@@ -37,8 +37,8 @@
                 float4 vertex : SV_POSITION;
             };
 
-            fixed4 _Color;
-            fixed4 _ColorB;
+            fixed4 _ColorOn;
+            fixed4 _ColorOff;
             fixed4 _OutlineColor;
 			fixed _Lerp;
 			fixed _OutlineThickness;
@@ -55,7 +55,7 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
-                fixed4 col = lerp(_Color,_ColorB,_Lerp);
+                fixed4 col = lerp(_ColorOff,_ColorOn,_Lerp);
 				fixed outline = step(0.5-_OutlineThickness,abs(i.uv.y-0.5));
 				outline += step(0.5-_OutlineThickness,abs(i.uv.x-0.5));
 				outline = saturate(outline);

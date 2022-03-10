@@ -2,7 +2,7 @@
 {
     Properties
     {
-        _Color ("Color", Color) = (1,1,1,1)
+        _ColorOn ("Color On", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
@@ -32,7 +32,7 @@
 
         half _Glossiness;
         half _Metallic;
-        fixed4 _Color;
+        fixed4 _ColorOn;
 		fixed _Power;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -53,7 +53,7 @@
 
 			//read led map
 			fixed led = tex2D (_LedMap, IN.uv_LedMap).r*_Power;
-			o.Albedo=lerp(fixed3(1,1,1),_Color.rgb,pow(dSqr,0.1))*led*c.a;
+			o.Albedo=lerp(fixed3(1,1,1),_ColorOn.rgb,pow(dSqr,0.1))*led*c.a;
 			o.Emission=o.Albedo;
 
             // Metallic and smoothness come from slider variables

@@ -38,7 +38,10 @@ public class Cable : MonoBehaviour
 	void Awake(){
 		Init();
 		if(Application.isPlaying)
+		{
 			GenerateMesh();
+			SetPower(0);
+		}
 	}
 
 	[ContextMenu("Reset")]

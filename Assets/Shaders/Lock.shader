@@ -2,7 +2,7 @@
 {
     Properties
     {
-		_Color ("Color", Color) = (1,1,1,1)
+		_ColorOff ("Color", Color) = (1,1,1,1)
 		_ColorOn ("ColorOn", Color) = (1,1,1,1)
 		_Power ("Power", Range(0,1)) = 0
 		_RingThickness ("Ring Thicknesss", Range(0,1)) = 0.1
@@ -38,7 +38,7 @@
                 float4 vertex : SV_POSITION;
             };
 
-            fixed4 _Color;
+            fixed4 _ColorOff;
             fixed4 _ColorOn;
 			fixed _Power;
 			fixed _Radius;
@@ -83,7 +83,7 @@
 				clip(ring-0.5);
 
 				//coloring
-				fixed4 col = lerp(_Color,_ColorOn,_Power);
+				fixed4 col = lerp(_ColorOff,_ColorOn,_Power);
 
 				//get outline for bar
 				//left bar outline

@@ -4,40 +4,58 @@ using UnityEngine;
 
 public class ColorPalette : MonoBehaviour
 {
-	[Header("Circuits")]
-	public Color _powerOff;
-	public Color _powerOn;
-	public Material _lockMat;
-	public Material _lockBase;
-	public Material _circuitMat;
-	public Material _buttonIcon;
+	[System.Serializable]
+	public struct Palette {
+		public string _name;
+		[Header("Puzzle box")]
+		public Color _puzzleBox;
+		public Color _puzzleBoxOutline;
+		[Header("Circuitry")]
+		public Color _powerOff;
+		public Color _powerOn;
+		[Header("Cable")]
+		public Color _cableOff;
+		public Color _cableOn;
+		public Material _cable;
+		public Material [] _circuitMats;
+		public Material _puzzleBoxMat;
 
+		public void UpdateMaterials(){
+			foreach(Material m in _circuitMats){
+				m.SetColor("_ColorOn",_powerOn);
+				m.SetColor("_ColorOff",_powerOff);
+			}
+			_cable.SetColor("_ColorOn",_cableOn);
+			_cable.SetColor("_ColorOff",_cableOff);
+			_puzzleBoxMat.SetColor("_Color",_puzzleBox);
+			_puzzleBoxMat.SetColor("_OutlineColor",_puzzleBoxOutline);
+		}
+	}
+
+	public Palette [] _palettes;
+
+	[Header("Buttons")]
 	public bool _updateColors;
 	public bool _autoUpdateColors;
 
+
 	void OnValidate(){
 		if(_updateColors||_autoUpdateColors){
-			_lockMat.SetColor("_Color",_powerOff);
-			_lockMat.SetColor("_ColorOn",_powerOn);
-			_lockBase.SetColor("_Color",_powerOff);
-			_lockBase.SetColor("_ColorB",_powerOn);
-			_circuitMat.SetColor("_ColorOff",_powerOff);
-			_circuitMat.SetColor("_ColorOn",_powerOn);
-			_buttonIcon.SetColor("_Color",_powerOff);
-			_buttonIcon.SetColor("_ColorB",_powerOn);
+			foreach(Palette p in _palettes)
+				p.UpdateMaterials();
 			_updateColors=false;
 		}
 	}
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	public Color GetButtonEmissionColor(Transform t){
+		Island i = t.GetComponentInParent<Island>();
+		if(i==null)
+			return Color.magenta;
+		foreach(Palette p in _palettes){
+			if(i.name==p._name){
+				return p._powerOn;
+			}
+		}
+		return Color.black;
+	}
 }

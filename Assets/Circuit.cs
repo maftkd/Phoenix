@@ -22,6 +22,7 @@ public class Circuit : MonoBehaviour
 	float _fill;
 	[HideInInspector]
 	public Circuit _prev;
+	public float _fillRateOverride;
 
 	AudioSource _source;
 	[Header("Audio")]
@@ -55,11 +56,17 @@ public class Circuit : MonoBehaviour
 			_source.loop=true;
 			_source.volume=0;
 		}
+		if(_fillRateOverride!=0)
+			_fillRate=_fillRateOverride;
+
+		_mat.SetFloat(_fillVar,_fill);
 	}
 
     // Start is called before the first frame update
     void Start()
     {
+
+		//get pitch range when circuit is chained with others
 		int prevCircuits=0;
 		int nextCircuits=0;
 		Circuit c = this;
@@ -138,6 +145,7 @@ public class Circuit : MonoBehaviour
 		{
 			_powerChange.Invoke();
 		}
+		_onPowered.Invoke();
 	}
 
 	IEnumerator PowerDownR(){
@@ -153,6 +161,7 @@ public class Circuit : MonoBehaviour
 		{
 			_powerChange.Invoke();
 		}
+		_onPoweredOff.Invoke();
 		while(timer>0){
 			timer-=Time.deltaTime;
 			_fill=timer/fullDur;

@@ -3,10 +3,12 @@
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
+        _OutlineColor ("Outline Color", Color) = (0,0,0,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
 		_Outline ("Outline thickness", Range(0,1)) = 0.1
+		_TexScale ("Texture Scale", Float) = 2
     }
     SubShader
     {
@@ -31,6 +33,8 @@
         half _Metallic;
         fixed4 _Color;
 		fixed _Outline;
+		fixed4 _OutlineColor;
+		fixed _TexScale;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -42,15 +46,15 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
-            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+            fixed4 c = tex2D (_MainTex, IN.uv_MainTex*_TexScale) * _Color;
 			fixed outlineX=1-step(_Outline,1-abs(IN.uv_MainTex.x-0.5)*2);
 			fixed outlineY=1-step(_Outline,1-abs(IN.uv_MainTex.y-0.5)*2);
 			fixed ol=saturate(outlineX+outlineY);
-            o.Albedo = ol*fixed3(0,0,0)+(1-ol)*c.rgb;
+            o.Albedo = ol*_OutlineColor.rgb+(1-ol)*c.rgb;
             // Metallic and smoothness come from slider variables
-            o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
-            o.Alpha = c.a;
+            o.Metallic = _Metallic*c.a;
+            o.Smoothness = _Glossiness*c.a;
+            o.Alpha = 1;
         }
         ENDCG
     }
