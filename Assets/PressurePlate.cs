@@ -21,7 +21,7 @@ public class PressurePlate : MonoBehaviour
 
 	bool _powered;
 
-	public Circuit _next;
+	public Circuit [] _next;
 
 	public bool _isToggle;
 
@@ -157,7 +157,8 @@ public class PressurePlate : MonoBehaviour
 		_mat.SetColor("_EmissionColor", _powered? _emissionColor : Color.black);
 		if(_quad!=null)
 			_quad.SetFloat("_Lerp",_powered?1:0);
-		_next.Power(_powered);
+		foreach(Circuit n in _next)
+			n.Power(_powered);
 	}
 
 	void OnDrawGizmos(){

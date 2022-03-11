@@ -42,9 +42,9 @@ public class PuzzleBox : MonoBehaviour
 	protected virtual void Awake(){
 		_mIn=GameManager._mIn;
 		_mCam=GameManager._mCam;
-		_box=transform.Find("BoxDetailed");
+		_box=transform.Find("BoxMesh");
 		_player=GameManager._player;
-		_lock=_box.Find("Lock").GetComponent<Gate>();
+		_lock=_box.Find("Lock Variant").GetComponent<Gate>();
 		_lock._onGateActivated.AddListener(PuzzleSolved);
 		//_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
@@ -62,6 +62,7 @@ public class PuzzleBox : MonoBehaviour
 		_pistons=_bottomPanel.Find("Pistons");
 		_effects=_bottomPanel.Find("Effects");
 		_boxLp=_box.Find("BoxLowDet");
+		_boxLp.SetParent(transform);
 		Material mat = _box.GetComponent<MeshRenderer>().sharedMaterial;
 		_boxLp.GetComponent<MeshRenderer>().sharedMaterial=mat;
 		Color c = mat.color;
