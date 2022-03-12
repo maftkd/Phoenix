@@ -2,13 +2,13 @@
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
 		_ColorBot ("Color Bottom", Color) = (1,1,1,1)
 		_ColorTop ("Color Top", Color) = (0,0,0,0)
+		_Center ("Center", Range(0,1)) = 0
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent""Queue"="Geometry" }
+        Tags { "RenderType"="Transparent""Queue"="Transparent" }
         LOD 100
 		Blend SrcAlpha OneMinusSrcAlpha
 		Cull Off
@@ -37,6 +37,7 @@
 
 			fixed4 _ColorBot;
 			fixed4 _ColorTop;
+			fixed _Center;
 
             v2f vert (appdata v)
             {
@@ -50,7 +51,9 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
-                fixed4 col = lerp(_ColorBot,_ColorTop,i.uv.y);
+				fixed top=saturate(abs(i.uv.y-_Center)*2);
+				top=i.uv.x;
+                fixed4 col = lerp(_ColorBot,_ColorTop,top);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

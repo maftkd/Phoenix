@@ -12,20 +12,24 @@ public class Seed : MonoBehaviour
 	public float _riseTime;
 	public float _riseDelay;
 	public float _scaleDown;
+	Rigidbody _rb;
 
 	void Awake(){
 		_player=GameManager._player.transform;
-		StartEffects();
+		//StartEffects();
 	}
     // Start is called before the first frame update
     void Start()
     {
+		_rb=GetComponent<Rigidbody>();
+		_rb.freezeRotation=true;
         
     }
 
     // Update is called once per frame
     void Update()
     {
+
     }
 
 	void StartEffects(){
@@ -42,8 +46,8 @@ public class Seed : MonoBehaviour
 		if(other.GetComponent<Bird>()==null)
 			return;
 		//activate next puzzle
-		PuzzleBox puzzle = transform.GetComponentInParent<PuzzleBox>();
-		puzzle.ActivateNextPuzzle();
+		//PuzzleBox puzzle = transform.GetComponentInParent<PuzzleBox>();
+		//puzzle.ActivateNextPuzzle();
 
 		//collect seed
 		CollectSeed(other.GetComponent<Bird>());

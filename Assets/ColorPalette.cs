@@ -10,6 +10,7 @@ public class ColorPalette : MonoBehaviour
 		[Header("Puzzle box")]
 		public Color _puzzleBox;
 		public Color _puzzleBoxOutline;
+		public float _secondaryMult;
 		[Header("Circuitry")]
 		public Color _powerOff;
 		public Color _powerOn;
@@ -19,6 +20,8 @@ public class ColorPalette : MonoBehaviour
 		public Material _cable;
 		public Material [] _circuitMats;
 		public Material _puzzleBoxMat;
+		public Material _puzzleBoxSecondary;
+		public Material _beaconMat;
 
 		public void UpdateMaterials(){
 			foreach(Material m in _circuitMats){
@@ -29,6 +32,18 @@ public class ColorPalette : MonoBehaviour
 			_cable.SetColor("_ColorOff",_cableOff);
 			_puzzleBoxMat.SetColor("_Color",_puzzleBox);
 			_puzzleBoxMat.SetColor("_OutlineColor",_puzzleBoxOutline);
+			if(_puzzleBoxSecondary!=null)
+			{
+				_puzzleBoxSecondary.SetColor("_Color",_puzzleBox*_secondaryMult);
+				_puzzleBoxSecondary.SetColor("_OutlineColor",_puzzleBoxOutline);
+			}
+			if(_beaconMat!=null)
+			{
+				_beaconMat.SetColor("_ColorBot",_puzzleBox);
+				Color foo=_puzzleBox;
+				foo.a=0;
+				_beaconMat.SetColor("_ColorTop",foo);
+			}
 		}
 	}
 

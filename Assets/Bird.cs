@@ -729,7 +729,10 @@ public class Bird : MonoBehaviour
 		_state=7;
 		_anim.SetFloat("walkSpeed",0f);
 		if(_fly.enabled)
+		{
+			_fly.Soar(false);
 			_anim.SetTrigger("land");
+		}
 		_waddle.enabled=false;
 		_hop.enabled=false;
 		_fly.enabled=false;

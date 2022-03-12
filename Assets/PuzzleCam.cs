@@ -7,6 +7,7 @@ public class PuzzleCam : Shot
 	public Transform _center;
 	public Transform _forceField;
 	float _forceFieldRadius;
+	public float _forceFieldRadiusOverride;
 	bool _inZone;
 	bool _prevInZone;
 	MCamera _mCam;
@@ -22,6 +23,8 @@ public class PuzzleCam : Shot
 		base.Awake();
 		_player=GameManager._player;
 		_forceFieldRadius=_forceField.localScale.x*0.5f;
+		if(_forceFieldRadiusOverride!=0)
+			_forceFieldRadius=_forceFieldRadiusOverride;
 		_mCam=GameManager._mCam;
 	}
 

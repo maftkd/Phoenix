@@ -12,11 +12,14 @@ public class Clouds : MonoBehaviour
 	public Vector3 _minScale;
 	public Vector3 _maxScale;
 	public bool _onlyCloudOne;
+	public int _seed;
+	public float _thetaOffset;
 
 	void Awake(){
+		Random.InitState(_seed);
 		int numClouds = Random.Range(_minClouds,_maxClouds+1);
 		float thetaSlice=Mathf.PI*2f/numClouds;
-		for(float theta=0;theta<Mathf.PI*2;theta+=thetaSlice){
+		for(float theta=_thetaOffset;theta<Mathf.PI*2+_thetaOffset;theta+=thetaSlice){
 			float radius = Random.Range(_distanceRange.x,_distanceRange.y);
 			float x = Mathf.Cos(theta)*radius;
 			float z = Mathf.Sin(theta)*radius;

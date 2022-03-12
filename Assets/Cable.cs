@@ -262,16 +262,23 @@ public class Cable : MonoBehaviour
 		Reset();
 	}
 
-	public void SetPower(float v,bool supressAudio=false){
-		_meshR.material.SetFloat("_PowerFill",v);
+	public IEnumerator SetPower(float v,bool supressAudio=false){
+		float power=_meshR.material.GetFloat("_PowerFill");
+		float next=v-power;
+		_meshR.material.SetFloat("_NextFill",next);
 		if(v>0&&!supressAudio)
+		{
+			Debug.Log("Playing powerclip "+_powerVol);
 			Sfx.PlayOneShot2D(_powerClip,Random.Range(0.8f,1.2f),_powerVol);
+		}
+		yield return new WaitForSeconds(0.5f);
+		_meshR.material.SetFloat("_PowerFill",v);
+		_meshR.material.SetFloat("_NextFill",0);
 	}
 
 	public void SetPower(float v){
 		_meshR.material.SetFloat("_PowerFill",v);
-			if(v>0)
-			Sfx.PlayOneShot2D(_powerClip,Random.Range(0.8f,1.2f),_powerVol);
+		_meshR.material.SetFloat("_NextFill",0);
 	}
 
 	public void FillNearPosition(Vector3 pos,bool supressAudio=false){
@@ -290,7 +297,7 @@ public class Cable : MonoBehaviour
 		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
 		int centerIndex=minIndex/_vertsPerCenter;
 		_fillIndex=centerIndex;
-		SetPower(fillAmount,supressAudio);
+		StartCoroutine(SetPower(fillAmount,supressAudio));
 	}
 
 	public float GetLength(){

@@ -94,37 +94,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdab5e81994c6e6469f80b166d0f955f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputs:
-  - {fileID: 0}
-  - {fileID: 0}
+  _inputs: []
   _outputs: []
   _onGateActivated:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PuzzleSolved
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   _chargeDur: 0
   _chargeRate: 0
   _decayRate: 0
   _sparks: {fileID: 6793288934807558136, guid: 1d61f1b574e0d0a4e9734bb66e0f3ab6, type: 3}
   _sparkClip: {fileID: 8300000, guid: 5733488fbc57c834984e63d028ef820a, type: 3}
   _inverter: 0
-  _lock: 0
+  _window: 0
+  _disableOnPower: 0
+  _node: 0
   _maxVolume: 0.4
   _minPitch: 0
   _maxPitch: 0
   _toneFrequency: 0
   _toneNoise: 0
   _decayVolMult: 0
+  _doorOpenDelay: 0
+  _doorOpenTime: 0
+  _doorOpenAngle: 0
+  _doorOpenSound: {fileID: 0}
+  _doorCloseSound: {fileID: 0}
+  _seedCount: 0
+  _seedPrefab: {fileID: 0}
+  _dispenseSound: {fileID: 0}
+  _ejectForceRange: {x: 0, y: 0}
+  _ejectForce: {x: 0, y: 0, z: 0}
 --- !u!1001 &5984157424938634984
 PrefabInstance:
   m_ObjectHideFlags: 0

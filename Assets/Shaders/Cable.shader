@@ -11,6 +11,7 @@
 		_Frequency ("Frequency", Float) = 1
 		_PhaseMult ("Phase multiplier", Float) = 1
 		_PowerFill ("Power Fill", Range(0,1)) = 0
+		_NextFill ("Next Fill", Range(0,1)) = 0
 		_ColorOff ("Color Off", Color) = (0.5,0.5,0.5,1)
 		_EmissionMult ("Emission", Float) = 1
 		_WavePow ("wave Power", Float) = 40
@@ -41,6 +42,7 @@
 		fixed _Frequency;
 		fixed _PhaseMult;
 		fixed _PowerFill;
+		fixed _NextFill;
 		fixed4 _ColorOff;
 		fixed _EmissionMult;
 		fixed _WavePow;
@@ -64,7 +66,10 @@
 			wave=pow(wave*step(_WaveCutoff,wave),_WavePow);
 
 			fixed4 bandColor=lerp(_ColorOn,fixed4(1,1,1,1),wave);
+			fixed blink = step(0,sin(_Time.w*6.28*4));
+			fixed nextPowered = step(IN.uv_MainTex.y,_PowerFill+_NextFill)*blink;
 			fixed powered = step(IN.uv_MainTex.y,_PowerFill);
+			powered=saturate(powered+nextPowered);
 			bandColor=bandColor*powered+(1-powered)*_ColorOff;
             o.Albedo = inBand*bandColor+(1-inBand)*_Color;
 			o.Emission=inBand*_ColorOn.rgb*powered*_EmissionMult;//*wave;

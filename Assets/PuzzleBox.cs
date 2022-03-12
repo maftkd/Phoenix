@@ -21,17 +21,18 @@ public class PuzzleBox : MonoBehaviour
 	ForceField _forceField;
 	public float _liftDelay;
 	public float _liftAmount;
+	public float _labelOpacity;
+	public GameObject _beacon;
 	public static PuzzleBox _latestPuzzle;
 	bool _solved;
 	public Cable _cable;
 	Bird _player;
 	Transform _box;
 	Transform _boxLp;
-	Transform _bottomPanel;
 	Transform _pistons;
 	float _lodDist=10f;
 	bool _prevInZone;
-	Gate _lock;
+	Gate _window;
 	//Material _keyMat;
 	public AudioClip _buzzClip;
 	public PuzzleBox _nextPuzzle;
@@ -44,35 +45,41 @@ public class PuzzleBox : MonoBehaviour
 		_mCam=GameManager._mCam;
 		_box=transform.Find("BoxMesh");
 		_player=GameManager._player;
-		_lock=_box.Find("Lock Variant").GetComponent<Gate>();
-		_lock._onGateActivated.AddListener(PuzzleSolved);
+		_window=_box.Find("Window Variant").GetComponent<Gate>();
+		_window._onGateActivated.AddListener(PuzzleSolved);
 		//_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
 
 
 		Transform label = MUtility.FindRecursive(transform,"PuzzleLabel");
+		Transform researchLogo=MUtility.FindRecursive(transform,"ResearchLogo");
 		Island i = transform.GetComponentInParent<Island>();
 		int islandIndex = i.transform.GetSiblingIndex();
 		int puzzleIndex = transform.GetSiblingIndex();
 		_puzzleId=(islandIndex+1)+"."+(puzzleIndex+1);
 		label.GetComponent<Text>().text=_puzzleId;
 
-		//set piston colors
-		_bottomPanel=_box.Find("Bottom");
-		_pistons=_bottomPanel.Find("Pistons");
-		_effects=_bottomPanel.Find("Effects");
+		//setup lod
 		_boxLp=_box.Find("BoxLowDet");
 		_boxLp.SetParent(transform);
 		Material mat = _box.GetComponent<MeshRenderer>().sharedMaterial;
 		_boxLp.GetComponent<MeshRenderer>().sharedMaterial=mat;
-		Color c = mat.color;
-		foreach(Transform p in _pistons){
-			Transform b = p.GetChild(0);
-			b.GetComponent<MeshRenderer>().material=mat;
-		}
 
-		_forceField=_bottomPanel.Find("ForceField").GetComponent<ForceField>();
+		//set force field color
+		Color c = mat.color;
+		_forceField=_box.Find("ForceField").GetComponent<ForceField>();
 		_forceField.SetColor(c);
+		Color labelC=c;
+		/*
+		labelC.r*=_labelOpacity;
+		labelC.g*=_labelOpacity;
+		labelC.b*=_labelOpacity;
+		*/
+		labelC.a*=_labelOpacity;
+
+		label.GetComponent<Text>().color=labelC;
+		researchLogo.GetComponent<RawImage>().color=labelC;
+
 
 		//init
 		_forceField.gameObject.SetActive(true);
@@ -81,6 +88,7 @@ public class PuzzleBox : MonoBehaviour
 		else
 		{
 			_forceField.Activate();
+			ActivateBeacon(false);
 		}
 	}
 
@@ -118,10 +126,6 @@ public class PuzzleBox : MonoBehaviour
 		_solved=true;
 		RemoveForceField();
 		GameManager._instance.PuzzleSolved(this);
-		SnapOpen();
-		//destroy seed
-		GameObject seed = transform.GetComponentInChildren<Seed>().gameObject;
-		Destroy(seed);
 		ActivateNextPuzzle();
 	}
 
@@ -131,15 +135,18 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		_solved=true;
 		RemoveForceField(true);
+		ActivateBeacon(false);
 		//_keyMat.SetFloat("_Powered",1);
 		//Destroy(_forceField.gameObject);
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
-		StartCoroutine(OpenBox());
+		//StartCoroutine(OpenBox());
 		GameManager._instance.PuzzleSolved(this);
 		StartCoroutine(FlyAwayMate());
+		ActivateNextPuzzle();
 	}
 
+	/*
 	protected virtual IEnumerator OpenBox(){
 		yield return new WaitForSeconds(_liftDelay);
 		Transform bottomPanel=_box.Find("Bottom");
@@ -156,7 +163,9 @@ public class PuzzleBox : MonoBehaviour
 			yield return null;
 		}
 	}
+	*/
 
+	/*
 	void SnapOpen(){
 		_bottomPanel=_box.Find("Bottom");
 		_bottomPanel.SetParent(transform);
@@ -164,6 +173,7 @@ public class PuzzleBox : MonoBehaviour
 		Vector3 endPos=startPos+Vector3.up*0.3f;
 		_box.position=endPos;
 	}
+	*/
 
 	public virtual void Reveal(){
 		if(transform.parent!=null){
@@ -192,15 +202,9 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	public void ActivateNextPuzzle(){
-		//light up seed lines
-		Circuit seedLines = _bottomPanel.Find("SeedLines").GetComponentInChildren<Circuit>();
-		seedLines.Power(true);
-
-		_onActivatingNextPuzzle.Invoke();
-
-		//activate next puzzle
 		if(_nextPuzzle!=null)
 			_nextPuzzle.Activate();
+		_onActivatingNextPuzzle.Invoke();
 	}
 
 	public virtual void Activate(){
@@ -211,6 +215,7 @@ public class PuzzleBox : MonoBehaviour
 		_latestPuzzle=this;
 
 		_cable.FillNearPosition(transform.position,_activateOnAwake);
+		ActivateBeacon(true);
 	}
 
 	public Transform GetPerch(){
@@ -231,6 +236,11 @@ public class PuzzleBox : MonoBehaviour
 	IEnumerator FlyAwayMate(){
 		yield return new WaitForSeconds(3f);
 		_player.FlyAwayMates();
+	}
+
+	void ActivateBeacon(bool active){
+		if(_beacon!=null)
+			_beacon.SetActive(active);
 	}
 
 	void OnDrawGizmos(){

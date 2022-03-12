@@ -22,7 +22,8 @@ public class Gate : MonoBehaviour
 	public AudioClip _sparkClip;
 
 	public bool _inverter;
-	public bool _lock;
+	public bool _window;
+	bool _windowOpen;
 	Transform _ring;
 	public bool _disableOnPower;
 	public bool _node;
@@ -36,11 +37,25 @@ public class Gate : MonoBehaviour
 	public float _toneNoise;
 	public float _decayVolMult;
 
+	[Header ("Window stuff")]
+	public float _doorOpenDelay;
+	public float _doorOpenTime;
+	public float _doorOpenAngle;
+	public AudioClip _doorOpenSound;
+	public AudioClip _doorCloseSound;
+	public int _seedCount;
+	int _seedCounter;
+	public Transform _seedPrefab;
+	public AudioClip _dispenseSound;
+	public Vector2 _ejectForceRange;
+	public Vector3 _ejectForce;
+	public AnimationCurve _windowOpenCurve;
+
 	void Awake(){
 		foreach(Circuit c in _inputs){
 			c._powerChange+=CheckGate;
 		}
-		if(!_lock)
+		if(!_window)
 		{
 			_mat=GetComponent<Renderer>().material;
 			_mat.SetFloat("_FillAmount",0);
@@ -161,18 +176,18 @@ public class Gate : MonoBehaviour
 				if(_disableOnPower)
 					enabled=false;
 				MakeSparks();
-				if(_lock){
-					_ring=transform.Find("Ring");
-					Material ringMat=_ring.GetComponent<Renderer>().material;
-					Material lockMat=transform.Find("Quad").GetComponent<Renderer>().material;
-					ringMat.SetFloat("_Power",powered?1:0);
-					lockMat.SetFloat("_Lerp",powered?1:0);
-					_ring.position+=Vector3.up*0.01f;
+				if(_window&&!_windowOpen){
+					StartCoroutine(OpenDoors(1f));
 				}
 				if(_mat!=null)
 					_mat.SetFloat("_Lerp",powered?1:0);
 			}
 			_onGateActivated.Invoke();
+		}
+		else{
+			if(_window&&_windowOpen){
+				StartCoroutine(OpenDoors(-1f));
+			}
 		}
 	}
 
@@ -186,5 +201,61 @@ public class Gate : MonoBehaviour
 		sparks.eulerAngles=eulers;
 		sparks.localScale=Vector3.one;
 		Sfx.PlayOneShot3D(_sparkClip,transform.position);
+	}
+
+	IEnumerator OpenDoors(float dir){
+		_windowOpen=dir>0;
+		Transform right=transform.Find("WindowRight");
+		Transform left=transform.Find("WindowLeft");
+		Material doorRight=right.GetComponent<Renderer>().material;
+		Material doorLeft=left.GetComponent<Renderer>().material;
+		doorRight.SetFloat("_Lerp",dir>0?1:0);
+		doorLeft.SetFloat("_Lerp",dir>0?1:0);
+
+		if(dir>0)
+			Sfx.PlayOneShot3D(_doorOpenSound,left.position);
+		else
+			Sfx.PlayOneShot3D(_doorCloseSound,left.position);
+
+		yield return new WaitForSeconds(_doorOpenDelay);
+		float timer=0;
+		float dur=_doorOpenTime;
+		//float rotateRate=_doorOpenAngle/dur;
+		
+		Quaternion leftStartRot=left.rotation;
+		left.Rotate(Vector3.up*_doorOpenAngle*dir);
+		Quaternion leftEndRot=left.rotation;
+		Quaternion rightStartRot=right.rotation;
+		right.Rotate(-Vector3.up*_doorOpenAngle*dir);
+		Quaternion rightEndRot=right.rotation;
+
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			float frac=_windowOpenCurve.Evaluate(timer/dur);
+			//left.Rotate(Vector3.up*Time.deltaTime*rotateRate*dir);
+			//right.Rotate(-Vector3.up*Time.deltaTime*rotateRate*dir);
+			left.rotation=Quaternion.Slerp(leftStartRot,leftEndRot,frac);
+			right.rotation=Quaternion.Slerp(rightStartRot,rightEndRot,frac);
+			yield return null;
+		}
+		if(dir>0)
+		{
+			Debug.Log("time to drop a seed");
+			if(_seedCounter<_seedCount){
+				DropSeed();
+			}
+		}
+	}
+
+	void DropSeed(){
+		Transform hole = transform.Find("WindowHole");
+		_seedCounter++;
+		Transform seed = Instantiate(_seedPrefab,hole.position,Quaternion.identity);
+		Sfx.PlayOneShot3D(_dispenseSound,seed.position,Random.Range(0.9f,1.1f));
+		Rigidbody rb = seed.gameObject.AddComponent<Rigidbody>();
+		Vector3 forceVector=hole.forward*Random.Range(_ejectForceRange.x,_ejectForceRange.y);
+		forceVector+=hole.right*MRandom.RandSign()*Random.value*_ejectForce.x;
+		forceVector+=Vector3.up*Random.value*_ejectForce.y;
+		rb.AddForce(forceVector);
 	}
 }

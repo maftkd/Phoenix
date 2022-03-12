@@ -160,6 +160,14 @@ public class Circuit : MonoBehaviour
 	}
 
 	IEnumerator PowerDownR(){
+		_targetVolume=_maxVolume;
+		if(_powerChange!=null)
+		{
+			//this initial fill is taken out, so the line registers as unpowered
+			_fill-=0.01f;
+			_powerChange.Invoke();
+		}
+		_onPoweredOff.Invoke();
 		float timer=0;
 		float rate = _fallRate;
 		float length = _length;
@@ -167,12 +175,6 @@ public class Circuit : MonoBehaviour
 		length*=_fill;
 		float dur = length/rate;
 		timer=dur;
-		_targetVolume=_maxVolume;
-		if(_powerChange!=null)
-		{
-			_powerChange.Invoke();
-		}
-		_onPoweredOff.Invoke();
 		while(timer>0){
 			timer-=Time.deltaTime;
 			_fill=timer/fullDur;

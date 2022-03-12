@@ -61,7 +61,7 @@ public class Ocean : MonoBehaviour
 		yield return new WaitForSeconds(_drownDur);
 		b.Respawn();
 		float dur = b.Ruffle();
-		yield return new WaitForSeconds(dur);
+		//yield return new WaitForSeconds(dur);
 		b.ResetState();
 		_mIn.LockInput(false);
 		_wet=false;

@@ -12,7 +12,6 @@ public class MInput : MonoBehaviour
 	public bool _mouseEnabled;
 	
 	void Awake(){
-
 	}
 
     // Start is called before the first frame update
@@ -127,5 +126,10 @@ public class MInput : MonoBehaviour
 
 	public bool InputLocked(){
 		return _inputLocked;
+	}
+
+	public void EnableCursor(bool en){
+		Cursor.visible=en;
+		Cursor.lockState=en?CursorLockMode.None : CursorLockMode.Locked;
 	}
 }

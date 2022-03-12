@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
 		_sfx.Pause();
 		_pauseScreen.SetActive(true);
 		_mIn.LockInput(true);
+		_mIn.EnableCursor(true);
 		//SaveSlot [] slots = transform.GetComponentsInChildren<SaveSlot>();
 		//slots[0].SelectSaveButton();
 	}
@@ -67,6 +68,7 @@ public class GameManager : MonoBehaviour
 		_sfx.Play();
 		_pauseScreen.SetActive(false);
 		_mIn.LockInput(false);
+		_mIn.EnableCursor(false);
 	}
 
 	public void PuzzleSolved(PuzzleBox pb){
