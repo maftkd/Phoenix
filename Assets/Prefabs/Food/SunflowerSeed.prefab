@@ -102,6 +102,8 @@ MonoBehaviour:
   _riseTime: 0.25
   _riseDelay: 0.1
   _scaleDown: 0.4
+  _minVel: 0.01
+  _minEffectTime: 0.1
 --- !u!114 &26759882990436597
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -129,6 +129,11 @@ public class Fly : MonoBehaviour
 		Flap();
 	}
 
+	void OnDisable(){
+		//Soar(false);
+
+	}
+
     // Start is called before the first frame update
     void Start()
     {

@@ -13,6 +13,10 @@ public class Seed : MonoBehaviour
 	public float _riseDelay;
 	public float _scaleDown;
 	Rigidbody _rb;
+	bool _effectsStarted;
+	public float _minVel;
+	public float _minEffectTime;
+	float _timer;
 
 	void Awake(){
 		_player=GameManager._player.transform;
@@ -29,6 +33,10 @@ public class Seed : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		_timer+=Time.deltaTime;
+		if(!_effectsStarted&&_timer>_minEffectTime&&_rb.velocity.sqrMagnitude<_minVel*_minVel){
+			StartEffects();
+		}
 
     }
 
@@ -40,6 +48,7 @@ public class Seed : MonoBehaviour
 		}
 		else
 			_groundEffects = Instantiate(_groundEffectsPrefab,transform.position,Quaternion.identity);
+		_effectsStarted=true;
 	}
 
 	void OnTriggerEnter(Collider other){

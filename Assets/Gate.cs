@@ -50,6 +50,10 @@ public class Gate : MonoBehaviour
 	public Vector2 _ejectForceRange;
 	public Vector3 _ejectForce;
 	public AnimationCurve _windowOpenCurve;
+	Quaternion _doorLeftClosed;
+	Quaternion _doorRightClosed;
+	Quaternion _doorLeftOpened;
+	Quaternion _doorRightOpened;
 
 	void Awake(){
 		foreach(Circuit c in _inputs){
@@ -59,6 +63,18 @@ public class Gate : MonoBehaviour
 		{
 			_mat=GetComponent<Renderer>().material;
 			_mat.SetFloat("_FillAmount",0);
+		}
+		else{
+			Transform right=transform.Find("WindowRight");
+			Transform left=transform.Find("WindowLeft");
+			_doorLeftClosed=left.rotation;
+			_doorRightClosed=right.rotation;
+			left.Rotate(Vector3.up*_doorOpenAngle);
+			_doorLeftOpened=left.rotation;
+			right.Rotate(-Vector3.up*_doorOpenAngle);
+			_doorRightOpened=right.rotation;
+			left.rotation=_doorLeftClosed;
+			right.rotation=_doorRightClosed;
 		}
 
 		//setup charger
@@ -71,6 +87,7 @@ public class Gate : MonoBehaviour
 			_source.loop=true;
 			_source.volume=0;
 		}
+
 	}
     // Start is called before the first frame update
     void Start()
@@ -148,6 +165,10 @@ public class Gate : MonoBehaviour
 			if(!inputPowered)
 				powered=false;
 		}
+		Power(powered);
+	}
+
+	public void Power(bool powered){
 		_inputsOn=powered;
 
 		if(_inverter){
@@ -177,6 +198,7 @@ public class Gate : MonoBehaviour
 					enabled=false;
 				MakeSparks();
 				if(_window&&!_windowOpen){
+					StopAllCoroutines();
 					StartCoroutine(OpenDoors(1f));
 				}
 				if(_mat!=null)
@@ -186,6 +208,7 @@ public class Gate : MonoBehaviour
 		}
 		else{
 			if(_window&&_windowOpen){
+				StopAllCoroutines();
 				StartCoroutine(OpenDoors(-1f));
 			}
 		}
@@ -223,11 +246,9 @@ public class Gate : MonoBehaviour
 		//float rotateRate=_doorOpenAngle/dur;
 		
 		Quaternion leftStartRot=left.rotation;
-		left.Rotate(Vector3.up*_doorOpenAngle*dir);
-		Quaternion leftEndRot=left.rotation;
+		Quaternion leftEndRot=_windowOpen? _doorLeftOpened : _doorLeftClosed;
 		Quaternion rightStartRot=right.rotation;
-		right.Rotate(-Vector3.up*_doorOpenAngle*dir);
-		Quaternion rightEndRot=right.rotation;
+		Quaternion rightEndRot=_windowOpen? _doorRightOpened : _doorRightClosed;
 
 		while(timer<dur){
 			timer+=Time.deltaTime;

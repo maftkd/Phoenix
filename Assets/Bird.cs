@@ -227,6 +227,8 @@ public class Bird : MonoBehaviour
 					break;
 				case 6://using tool
 					break;
+				case 7://entering house
+					break;
 			}
 			if(Input.GetKeyDown(KeyCode.F1)){
 				_waddle.ToggleCamLines();
@@ -800,6 +802,54 @@ public class Bird : MonoBehaviour
 			Bird b = _cols[0].GetComponent<Bird>();
 			b.Call();
 		}
+	}
+
+	public void WalkTowardsCenter(Transform t){
+		if(_fly.enabled)
+		{
+			_fly.Soar(false);
+			Land();
+		}
+		//disable walk, fly, and hop
+		_waddle.enabled=false;
+		_hop.enabled=false;
+		_fly.enabled=false;
+		//set state to something special?
+		_state=7;
+		//start coroutine
+		Vector3 dir = -t.forward;
+		Vector3 pos=transform.position;
+		Vector3 newPos=t.position+t.forward*0.25f;
+		newPos.y=pos.y;
+		transform.position=newPos;
+		StartCoroutine(WalkThroughDoorR(dir));
+	}
+
+	IEnumerator WalkThroughDoorR(Vector3 dir){
+		float timer=0;
+		transform.forward=dir;
+		_anim.SetFloat("walkSpeed",0.1f);
+		float dur = 0.4f;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.5f;
+			yield return null;
+		}
+		_anim.SetFloat("walkSpeed",0f);
+
+		//transition to nest box
+		//nestBox = getNestBox <- maybe as param passed from PuzzleBox
+		//dur = transitionDur
+		//mCam.TransitionTo(nestBox.nestCAm, fade, dur)
+		//wait for dur/2
+		//bird.position = nestBox.entrance
+		//world.visible=false;
+		//nestBox.visible=true;
+		//
+		//bird.resetState
+		//let cam transition complete
+		//wait for dur/2
+		//
 	}
 
 	void OnDrawGizmos(){

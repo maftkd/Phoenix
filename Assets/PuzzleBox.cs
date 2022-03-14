@@ -36,6 +36,7 @@ public class PuzzleBox : MonoBehaviour
 	//Material _keyMat;
 	public AudioClip _buzzClip;
 	public PuzzleBox _nextPuzzle;
+	public bool _nestBox;
 	[HideInInspector]
 	public string _puzzleId;
 	PuzzleCam _puzzleCam;
@@ -46,7 +47,8 @@ public class PuzzleBox : MonoBehaviour
 		_box=transform.Find("BoxMesh");
 		_player=GameManager._player;
 		_window=_box.Find("Window Variant").GetComponent<Gate>();
-		_window._onGateActivated.AddListener(PuzzleSolved);
+		if(!_nestBox)
+			_window._onGateActivated.AddListener(PuzzleSolved);
 		//_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
 
@@ -126,7 +128,7 @@ public class PuzzleBox : MonoBehaviour
 		_solved=true;
 		RemoveForceField();
 		GameManager._instance.PuzzleSolved(this);
-		ActivateNextPuzzle();
+		ActivateNextPuzzle(true);
 	}
 
 	public virtual void PuzzleSolved(){
@@ -146,34 +148,6 @@ public class PuzzleBox : MonoBehaviour
 		ActivateNextPuzzle();
 	}
 
-	/*
-	protected virtual IEnumerator OpenBox(){
-		yield return new WaitForSeconds(_liftDelay);
-		Transform bottomPanel=_box.Find("Bottom");
-		bottomPanel.SetParent(transform);
-
-		Vector3 startPos=_box.position;
-		Vector3 endPos=startPos+Vector3.up*_liftAmount;
-		float timer=0;
-		Sfx.PlayOneShot3D(_buzzClip,startPos,1f+(Random.value*2-1)*0.2f);
-		float dur=2f;
-		while(timer<dur){
-			timer+=Time.deltaTime;
-			_box.position=Vector3.Lerp(startPos,endPos,timer/dur);
-			yield return null;
-		}
-	}
-	*/
-
-	/*
-	void SnapOpen(){
-		_bottomPanel=_box.Find("Bottom");
-		_bottomPanel.SetParent(transform);
-		Vector3 startPos=_box.position;
-		Vector3 endPos=startPos+Vector3.up*0.3f;
-		_box.position=endPos;
-	}
-	*/
 
 	public virtual void Reveal(){
 		if(transform.parent!=null){
@@ -201,20 +175,21 @@ public class PuzzleBox : MonoBehaviour
 		_onRevealed.Invoke();
 	}
 
-	public void ActivateNextPuzzle(){
+	public void ActivateNextPuzzle(bool silent=false){
 		if(_nextPuzzle!=null)
-			_nextPuzzle.Activate();
+			_nextPuzzle.Activate(silent);
 		_onActivatingNextPuzzle.Invoke();
 	}
 
-	public virtual void Activate(){
+	public virtual void Activate(bool silent=false){
 		if(!gameObject.activeSelf)
 			return;
 		_onActivated.Invoke();
-		_forceField.Deactivate(_activateOnAwake);
+		if(_forceField!=null)
+			_forceField.Deactivate(_activateOnAwake||silent);
 		_latestPuzzle=this;
 
-		_cable.FillNearPosition(transform.position,_activateOnAwake);
+		_cable.FillNearPosition(transform.position,_activateOnAwake||silent);
 		ActivateBeacon(true);
 	}
 
@@ -223,7 +198,8 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	void RemoveForceField(bool transition=false){
-		Destroy(_forceField.gameObject);
+		if(_forceField!=null)
+			Destroy(_forceField.gameObject);
 		_puzzleCam.enabled=false;
 		if(transition)
 			_player.TransitionToRelevantCamera();
@@ -241,6 +217,11 @@ public class PuzzleBox : MonoBehaviour
 	void ActivateBeacon(bool active){
 		if(_beacon!=null)
 			_beacon.SetActive(active);
+	}
+
+	public void EnterNestBox(){
+		Debug.Log("Entering nest box");
+		_player.WalkTowardsCenter(transform);
 	}
 
 	void OnDrawGizmos(){
