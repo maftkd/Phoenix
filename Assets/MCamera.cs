@@ -68,6 +68,9 @@ public class MCamera : MonoBehaviour
 		transform.position=camT.position;
 		transform.rotation=camT.rotation;
 		_camera.fieldOfView=cam.fieldOfView;
+		_camera.orthographic=cam.orthographic;
+		if(_camera.orthographic)
+			_camera.orthographicSize=cam.orthographicSize;
 		//if(_cutBackEnabled)
 			//transform.SetParent(camT);
 		if(_cutBackEnabled)
@@ -88,13 +91,14 @@ public class MCamera : MonoBehaviour
 			return;
 
 		//check priority
-		if(!overridePriority&&_prevCam!=null&&_prevCam.GetComponent<Shot>()!=null){
+		if(!overridePriority&&_prevCam!=null){
 			if(cam.GetComponent<Shot>()!=null){
 				Shot prevShot = _prevCam.GetComponent<Shot>();
+				int prevPriority = prevShot==null? 10 : prevShot._priority;
 				Shot nextShot = cam.GetComponent<Shot>();
 
 				//ignore transition of newer camera is lower priority
-				if(nextShot._priority<prevShot._priority){
+				if(nextShot._priority<prevPriority){
 					return;
 				}
 			}
@@ -324,5 +328,9 @@ public class MCamera : MonoBehaviour
 				}
 			}
 		}
+	}
+
+	public Camera GetCurTargetCam(){
+		return _targetCam;
 	}
 }

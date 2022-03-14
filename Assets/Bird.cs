@@ -57,8 +57,6 @@ public class Bird : MonoBehaviour
 	public int _seeds;
 	public Transform _ruffleEffects;
 	public float _summonDist;
-	[HideInInspector]
-	public Transform _puzzleZone;
 	SkinnedMeshRenderer _smr;
 	Vector3 _lastSpot;
 
@@ -771,7 +769,6 @@ public class Bird : MonoBehaviour
 				break;
 			case 3://flying
 				_mCam.Transition(_flyCam,MCamera.Transitions.CUT_BACK,0,null,0f,true);
-				Debug.Log("Going to fly cam");
 				break;
 			default://tbd 
 				break;
@@ -804,7 +801,13 @@ public class Bird : MonoBehaviour
 		}
 	}
 
-	public void WalkTowardsCenter(Transform t){
+	Vector3 _posBeforeNestBox;
+	Camera _camBeforeNestBox;
+	public void WalkInNestBox(Transform t,GameObject nb){
+		if(_state==7)
+		{
+			return;
+		}
 		if(_fly.enabled)
 		{
 			_fly.Soar(false);
@@ -822,10 +825,10 @@ public class Bird : MonoBehaviour
 		Vector3 newPos=t.position+t.forward*0.25f;
 		newPos.y=pos.y;
 		transform.position=newPos;
-		StartCoroutine(WalkThroughDoorR(dir));
+		StartCoroutine(WalkThroughDoorR(dir,nb));
 	}
 
-	IEnumerator WalkThroughDoorR(Vector3 dir){
+	IEnumerator WalkThroughDoorR(Vector3 dir,GameObject nb){
 		float timer=0;
 		transform.forward=dir;
 		_anim.SetFloat("walkSpeed",0.1f);
@@ -835,21 +838,81 @@ public class Bird : MonoBehaviour
 			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.5f;
 			yield return null;
 		}
+		_posBeforeNestBox=transform.position;
 		_anim.SetFloat("walkSpeed",0f);
 
 		//transition to nest box
+		dur = 3f;
+		float halfDur=dur*0.5f;
+		Camera nestCam = nb.GetComponentInChildren<Camera>();
+		_camBeforeNestBox=GameManager._mCam.GetCurTargetCam();
+		GameManager._mCam.Transition(nestCam,MCamera.Transitions.FADE,0,null,dur);
+
+		//wait for dur/2
+		yield return new WaitForSeconds(halfDur);
+		//nestBox.visible=true;
+		nb.SetActive(true);
+		//bird.position = nestBox.entrance
+		Transform startT = MUtility.FindRecursive(nb.transform,"PlayerStart");
+		transform.position=startT.position;
+		transform.rotation=startT.rotation;
+		Ground();
+		//world.visible=false;
+		GameManager._islands.SetActive(false);
+		//bird.resetState
+		_state=0;
+	}
+
+	public void WalkOutNestBox(Transform t,GameObject nb){
+		if(_fly.enabled)
+		{
+			_fly.Soar(false);
+			Land();
+		}
+		//start coroutine
+		Vector3 dir = t.forward;
+		StartCoroutine(WalkOutDoorR(dir,nb));
+	}
+
+	IEnumerator WalkOutDoorR(Vector3 dir,GameObject nb){
+		//transition out of nest box
 		//nestBox = getNestBox <- maybe as param passed from PuzzleBox
 		//dur = transitionDur
-		//mCam.TransitionTo(nestBox.nestCAm, fade, dur)
+		float dur = 3f;
+		float halfDur=dur*0.5f;
+		//mCam.Transitionto prev cam
+		GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
+
 		//wait for dur/2
-		//bird.position = nestBox.entrance
-		//world.visible=false;
+		yield return new WaitForSeconds(halfDur);
 		//nestBox.visible=true;
-		//
+		nb.SetActive(false);
+		//islands active
+		GameManager._islands.SetActive(true);
+		//disable walk, fly, and hop
+		_waddle.enabled=false;
+		_hop.enabled=false;
+		_fly.enabled=false;
+		//set state to something special?
+		_state=7;
+		//bird.position = nestBox.entrance
+		yield return null;//maybe wait a frame because disabling waddle/hop/fly might affect player pos
+		transform.position=_posBeforeNestBox;
+		transform.forward=dir;
+
+		float timer=0;
+		_anim.SetFloat("walkSpeed",0.1f);
+		dur = 0.8f;
+		while(timer<dur){
+			timer+=Time.deltaTime;
+			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.5f;
+			yield return null;
+		}
+		_anim.SetFloat("walkSpeed",0f);
+
+		Ground();
 		//bird.resetState
-		//let cam transition complete
-		//wait for dur/2
-		//
+		_state=0;
 	}
 
 	void OnDrawGizmos(){

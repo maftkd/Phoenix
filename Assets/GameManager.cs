@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 	public static MInput _mIn;
 	public static MCamera _mCam;
 	public static ColorPalette _color;
+	public static GameObject _islands;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
 		_mIn=FindObjectOfType<MInput>();
 		_mCam=FindObjectOfType<MCamera>();
 		_color = FindObjectOfType<ColorPalette>();
+		_islands=GameObject.Find("Islands");
 	}
 
     // Start is called before the first frame update

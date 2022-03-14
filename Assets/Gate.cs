@@ -261,7 +261,6 @@ public class Gate : MonoBehaviour
 		}
 		if(dir>0)
 		{
-			Debug.Log("time to drop a seed");
 			if(_seedCounter<_seedCount){
 				DropSeed();
 			}

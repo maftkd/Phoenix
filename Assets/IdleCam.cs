@@ -133,12 +133,14 @@ public class IdleCam : Shot
     {
 		//after all is said and done
 		if(HandleMouseMotion()){
-			StopAllCoroutines();
-			_lerpState=-1;
+			//StopAllCoroutines();
+			//_lerpState=-1;
 		}
+		/*
 		else if(_lerpState==-1){
 			StartLerp(0);
 		}
+		*/
 	}
 
 }

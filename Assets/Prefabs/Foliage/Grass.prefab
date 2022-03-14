@@ -150,6 +150,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _clip: {fileID: 8300000, guid: b0ee3ff22fb9101438ded1eaf83bcb75, type: 3}
-  _vol: 0.005
+  _vol: 0.0025
   _minAudioPeriod: 0.24
   _pitchRange: {x: 0.7, y: 1.3}

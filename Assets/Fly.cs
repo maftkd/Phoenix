@@ -351,8 +351,12 @@ public class Fly : MonoBehaviour
 	public void KnockBack(Vector3 dir){
 		Debug.Log("Fly getting knocked back");
 		_knockBackTimer+=Time.deltaTime;
+		/*
 		_velocity.x*=-_knockBackMult;
 		_velocity.z*=-_knockBackMult;
+		_velocity.y*=-
+		*/
+		_velocity*=-_knockBackMult;
 		Vector2 kb =new Vector2(_velocity.x,_velocity.z);
 		float mag = kb.magnitude;
 		if(mag<_minKnockBackMag){

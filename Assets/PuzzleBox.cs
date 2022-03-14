@@ -36,7 +36,7 @@ public class PuzzleBox : MonoBehaviour
 	//Material _keyMat;
 	public AudioClip _buzzClip;
 	public PuzzleBox _nextPuzzle;
-	public bool _nestBox;
+	public GameObject _nestBox;
 	[HideInInspector]
 	public string _puzzleId;
 	PuzzleCam _puzzleCam;
@@ -47,8 +47,10 @@ public class PuzzleBox : MonoBehaviour
 		_box=transform.Find("BoxMesh");
 		_player=GameManager._player;
 		_window=_box.Find("Window Variant").GetComponent<Gate>();
-		if(!_nestBox)
+		if(_nestBox==null)
 			_window._onGateActivated.AddListener(PuzzleSolved);
+		else
+			_nestBox.SetActive(false);
 		//_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
 
@@ -127,6 +129,7 @@ public class PuzzleBox : MonoBehaviour
 		//_keyMat.SetFloat("_Powered",1);
 		_solved=true;
 		RemoveForceField();
+		ActivateBeacon(false);
 		GameManager._instance.PuzzleSolved(this);
 		ActivateNextPuzzle(true);
 	}
@@ -220,8 +223,21 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	public void EnterNestBox(){
-		Debug.Log("Entering nest box");
-		_player.WalkTowardsCenter(transform);
+		if(_nestBox==null){
+			Debug.Log("Error cannot enter nest box, nest box is null");
+			return;
+		}
+		Debug.Log("entering nest box");
+		_player.WalkInNestBox(transform,_nestBox);
+	}
+
+	public void ExitNestBox(){
+		if(_nestBox==null){
+			Debug.Log("Error cannot exit nest box, nest box is null");
+			return;
+		}
+		Debug.Log("Exit nest box");
+		_player.WalkOutNestBox(transform,_nestBox);
 	}
 
 	void OnDrawGizmos(){
