@@ -804,7 +804,6 @@ MonoBehaviour:
   _ruffleEffects: {fileID: 3804091942241321643, guid: 68db3c5ff28b4c94fb2b6827ba07c304,
     type: 3}
   _summonDist: 0.1
-  _puzzleZone: {fileID: 0}
   _peckCheckTime: 0
   _peckChance: 0
   _flySpeed: 1
@@ -12353,33 +12352,33 @@ MonoBehaviour:
   _textColors:
   - {r: 0.114, g: 0.125, b: 0.133, a: 1}
   - {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  - {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  - {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  - {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
   _colors:
   - {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
   - {r: 0.9716981, g: 0.9262721, b: 0, a: 1}
   - {r: 0.020914912, g: 0.8867924, b: 0.04323679, a: 1}
   - {r: 0.020914912, g: 0.8867924, b: 0.04323679, a: 1}
-  - {r: 0.020914912, g: 0.8867924, b: 0.04323679, a: 1}
+  - {r: 0.8862745, g: 0.11605929, b: 0.019607825, a: 1}
   _buttons:
   - L
   - Y
   - A
   - A
-  - A
+  - B
   _inputs:
   - 'Move '
   - 'Press '
   - 'Press & Hold '
   - 'Repeatedly Tap '
-  - 'Hold '
+  - 'Press '
   _responses:
   - ' To Walk'
   - ' To Call'
   - ' To Jump'
   - ' To Fly'
-  - ' To Soar'
+  - ' To Feed'
 --- !u!223 &3201810637086528797
 Canvas:
   m_ObjectHideFlags: 0

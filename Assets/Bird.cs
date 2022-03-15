@@ -817,14 +817,15 @@ public class Bird : MonoBehaviour
 		_waddle.enabled=false;
 		_hop.enabled=false;
 		_fly.enabled=false;
-		//set state to something special?
-		_state=7;
 		//start coroutine
 		Vector3 dir = -t.forward;
 		Vector3 pos=transform.position;
 		Vector3 newPos=t.position+t.forward*0.25f;
 		newPos.y=pos.y;
 		transform.position=newPos;
+		//Ground();
+		//set state to something special?
+		_state=7;
 		StartCoroutine(WalkThroughDoorR(dir,nb));
 	}
 

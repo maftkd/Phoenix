@@ -51,7 +51,6 @@ public class PuzzleBox : MonoBehaviour
 			_window._onGateActivated.AddListener(PuzzleSolved);
 		else
 			_nestBox.SetActive(false);
-		//_keyMat=_key.GetChild(0).GetComponent<Renderer>().material;
 		_puzzleCam = transform.GetComponentInChildren<PuzzleCam>();
 
 

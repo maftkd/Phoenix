@@ -465,8 +465,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1334038795083483307, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
-      propertyPath: _shotRadius
-      value: 2
+      propertyPath: _zoneHeight
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 2104064729596946700, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
