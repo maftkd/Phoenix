@@ -75,7 +75,13 @@ public class Bird : MonoBehaviour
 	public Color _bandColor;
 	Bird _player;
 
+	[Header("Feed")]
+	public float _feedRange;
+	public float _feedOffset;
+	public float _minFeedHeight;
+
 	//cameras
+	[Header("Cameras")]
 	public Camera _waddleCam;
 	public Camera _idleCam;
 	public Camera _hopCam;
@@ -150,6 +156,9 @@ public class Bird : MonoBehaviour
 					if(_mIn.GetSingDown()){
 						Call();
 					}
+					if(_mIn.GetFeed()){
+						Feed();
+					}
 					/*
 					if(Input.GetButtonDown("Jump")){
 						//Debug.Log("Jump time");
@@ -175,6 +184,9 @@ public class Bird : MonoBehaviour
 					}
 					if(_mIn.GetSingDown()){
 						Call();
+					}
+					if(_mIn.GetFeed()){
+						Feed();
 					}
 					/*
 					if(Input.GetButtonDown("Jump")){
@@ -226,6 +238,8 @@ public class Bird : MonoBehaviour
 				case 6://using tool
 					break;
 				case 7://entering house
+					break;
+				case 8://feeding
 					break;
 			}
 			if(Input.GetKeyDown(KeyCode.F1)){
@@ -805,9 +819,7 @@ public class Bird : MonoBehaviour
 	Camera _camBeforeNestBox;
 	public void WalkInNestBox(Transform t,GameObject nb){
 		if(_state==7)
-		{
 			return;
-		}
 		if(_fly.enabled)
 		{
 			_fly.Soar(false);
@@ -823,8 +835,7 @@ public class Bird : MonoBehaviour
 		Vector3 newPos=t.position+t.forward*0.25f;
 		newPos.y=pos.y;
 		transform.position=newPos;
-		//Ground();
-		//set state to something special?
+		//set state to something special
 		_state=7;
 		StartCoroutine(WalkThroughDoorR(dir,nb));
 	}
@@ -849,18 +860,13 @@ public class Bird : MonoBehaviour
 		_camBeforeNestBox=GameManager._mCam.GetCurTargetCam();
 		GameManager._mCam.Transition(nestCam,MCamera.Transitions.FADE,0,null,dur);
 
-		//wait for dur/2
 		yield return new WaitForSeconds(halfDur);
-		//nestBox.visible=true;
 		nb.SetActive(true);
-		//bird.position = nestBox.entrance
 		Transform startT = MUtility.FindRecursive(nb.transform,"PlayerStart");
 		transform.position=startT.position;
 		transform.rotation=startT.rotation;
 		Ground();
-		//world.visible=false;
 		GameManager._islands.SetActive(false);
-		//bird.resetState
 		_state=0;
 	}
 
@@ -876,27 +882,17 @@ public class Bird : MonoBehaviour
 	}
 
 	IEnumerator WalkOutDoorR(Vector3 dir,GameObject nb){
-		//transition out of nest box
-		//nestBox = getNestBox <- maybe as param passed from PuzzleBox
-		//dur = transitionDur
 		float dur = 3f;
 		float halfDur=dur*0.5f;
-		//mCam.Transitionto prev cam
 		GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
 
-		//wait for dur/2
 		yield return new WaitForSeconds(halfDur);
-		//nestBox.visible=true;
 		nb.SetActive(false);
-		//islands active
 		GameManager._islands.SetActive(true);
-		//disable walk, fly, and hop
 		_waddle.enabled=false;
 		_hop.enabled=false;
 		_fly.enabled=false;
-		//set state to something special?
 		_state=7;
-		//bird.position = nestBox.entrance
 		yield return null;//maybe wait a frame because disabling waddle/hop/fly might affect player pos
 		transform.position=_posBeforeNestBox;
 		transform.forward=dir;
@@ -912,7 +908,51 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 
 		Ground();
-		//bird.resetState
+		_state=0;
+	}
+
+	public void Feed(){
+		if(_seeds<=0){
+			Debug.Log("Cannot feed - no seeds");
+			return;
+		}
+
+		if(_waddle.enabled){
+			_waddle.enabled=false;
+		}
+		int hits = Physics.OverlapSphereNonAlloc(transform.position,_feedRange,_cols,_birdLayer);
+		for(int i=0; i<hits; i++){
+			BabyBird bb = _cols[i].GetComponent<BabyBird>();
+			if(bb!=null&&bb.CanEat()&&transform.position.y>bb.transform.position.y+_minFeedHeight){
+				_state=8;
+				//position and rotate
+				Vector3 pos=transform.position;
+				Vector3 diff=(pos-bb.transform.position);
+				diff.y=0;
+				diff.Normalize();
+				pos.x=bb.transform.position.x;
+				pos.z=bb.transform.position.z;
+				pos+=diff*_feedOffset;
+				transform.position=pos;
+				transform.forward=-diff;
+				_anim.SetTrigger("feed");
+				StartCoroutine(ResetAfterDelay(1f));
+				bb.GetFed();
+				_seeds--;
+				Debug.Log("Seeds: "+_seeds);
+				return;
+			}
+		}
+		_state=0;
+		//check for baby bird near by
+		//if so
+		//	feed
+		//else
+		//	ignore
+	}
+
+	IEnumerator ResetAfterDelay(float dur){
+		yield return new WaitForSeconds(dur);
 		_state=0;
 	}
 

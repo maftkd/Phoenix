@@ -59,6 +59,12 @@ public class MInput : MonoBehaviour
 		return _controllerInput;
 	}
 
+	public bool GetFeed(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonDown("Feed");
+	}
+
 	public bool GetJump(){
 		if(_inputLocked)
 			return false;

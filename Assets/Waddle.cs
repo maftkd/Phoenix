@@ -54,6 +54,7 @@ public class Waddle : MonoBehaviour
 				TakeStep(hit.transform);
 		}
 		_stepTimer=0;
+		_knockBackTimer=0;
 		_input=_mIn.GetInputDir();
 		if(!_npc)
 		{

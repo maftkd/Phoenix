@@ -268,7 +268,6 @@ public class Cable : MonoBehaviour
 		_meshR.material.SetFloat("_NextFill",next);
 		if(v>0&&!supressAudio)
 		{
-			Debug.Log("Playing powerclip "+_powerVol);
 			Sfx.PlayOneShot2D(_powerClip,Random.Range(0.8f,1.2f),_powerVol);
 		}
 		yield return new WaitForSeconds(0.5f);
