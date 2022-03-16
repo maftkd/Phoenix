@@ -8,9 +8,8 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue"="Transparent" }
+        Tags { "RenderType"="Opaque" "Queue"="Geometry" }
         LOD 100
-		Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -54,6 +53,7 @@
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv)*_Color;
 				col.a*=_Alpha;
+				clip(col.a-0.1);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

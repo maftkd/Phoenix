@@ -741,6 +741,26 @@ public class TerrainGenerator : MonoBehaviour
 			float yNorm=y/(float)(td.alphamapHeight-1);
 			for(int x=0;x<td.alphamapWidth;x++){
 				float xNorm=x/(float)(td.alphamapWidth-1);
+				
+				//get height
+				float height = 0;
+				if(yNorm <1 && xNorm<1)
+					height=heights[Mathf.FloorToInt(xNorm*res),Mathf.FloorToInt(yNorm*res)]*maxHeight;
+
+				Vector3 worldPos=transform.position+xNorm*td.size.x*Vector3.forward+Vector3.right*yNorm*td.size.z;
+				worldPos.y=height;
+
+				bool puzzleZone=false;
+				foreach(Transform puzzle in puzzleParent){
+					if(!puzzle.gameObject.activeSelf||puzzle.tag=="Float")
+						continue;
+					float sqrDist = (puzzle.position-worldPos).sqrMagnitude;
+					if(sqrDist<_puzzleRadius*_puzzleRadius)
+					{
+						puzzleZone=true;
+						break;
+					}
+				}
 
 				//get random
 				float perlin = Mathf.PerlinNoise((xNorm+offset)*_textureNoiseScale,(yNorm+offset)*_textureNoiseScale);
@@ -749,11 +769,6 @@ public class TerrainGenerator : MonoBehaviour
 				//get dot and world normal
 				Vector3 worldNormal = td.GetInterpolatedNormal(yNorm,xNorm);
 				float upness = Vector3.Dot(worldNormal,Vector3.up);
-
-				//get height
-				float height = 0;
-				if(yNorm <1 && xNorm<1)
-					height=heights[Mathf.FloorToInt(xNorm*res),Mathf.FloorToInt(yNorm*res)]*maxHeight;
 
 				int layer=_sandLayer;
 				if(upness>_grassDot&&height>_seaLevel&&height<_mountainHeight)
@@ -767,21 +782,8 @@ public class TerrainGenerator : MonoBehaviour
 						layer=_pebbleLayer;
 				}
 				if(layer==_grassLayer){
-					if(perlin2<1-_grassPerlinCutoff)
+					if(perlin2<1-_grassPerlinCutoff||puzzleZone)
 						layer=_sandLayer;
-				}
-				Vector3 worldPos=transform.position+xNorm*td.size.x*Vector3.forward+Vector3.right*yNorm*td.size.z;
-				worldPos.y=height;
-				foreach(Transform puzzle in puzzleParent){
-					if(!puzzle.gameObject.activeSelf||puzzle.tag=="Float")
-						continue;
-					float sqrDist = (puzzle.position-worldPos).sqrMagnitude;
-					if(sqrDist<_puzzleRadius*_puzzleRadius)
-					{
-						layer=_puzzleSurfaceLayer;
-						if(height>=_puzzleSurfaceLine)
-							layer=_puzzleSurfaceLayerHigh;
-					}
 				}
 
 				for(int m=0;m<mapSize;m++){

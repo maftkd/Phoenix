@@ -235,34 +235,37 @@ public class Gate : MonoBehaviour
 		doorRight.SetFloat("_Lerp",dir>0?1:0);
 		doorLeft.SetFloat("_Lerp",dir>0?1:0);
 
-		if(dir>0)
-			Sfx.PlayOneShot3D(_doorOpenSound,left.position);
-		else
-			Sfx.PlayOneShot3D(_doorCloseSound,left.position);
+		yield return null;
+		if(_seedCounter<_seedCount){
+			if(dir>0)
+				Sfx.PlayOneShot3D(_doorOpenSound,left.position);
+			else
+				Sfx.PlayOneShot3D(_doorCloseSound,left.position);
 
-		yield return new WaitForSeconds(_doorOpenDelay);
-		float timer=0;
-		float dur=_doorOpenTime;
-		//float rotateRate=_doorOpenAngle/dur;
-		
-		Quaternion leftStartRot=left.rotation;
-		Quaternion leftEndRot=_windowOpen? _doorLeftOpened : _doorLeftClosed;
-		Quaternion rightStartRot=right.rotation;
-		Quaternion rightEndRot=_windowOpen? _doorRightOpened : _doorRightClosed;
+			yield return new WaitForSeconds(_doorOpenDelay);
+			float timer=0;
+			float dur=_doorOpenTime;
+			//float rotateRate=_doorOpenAngle/dur;
+			
+			Quaternion leftStartRot=left.rotation;
+			Quaternion leftEndRot=_windowOpen? _doorLeftOpened : _doorLeftClosed;
+			Quaternion rightStartRot=right.rotation;
+			Quaternion rightEndRot=_windowOpen? _doorRightOpened : _doorRightClosed;
 
-		while(timer<dur){
-			timer+=Time.deltaTime;
-			float frac=_windowOpenCurve.Evaluate(timer/dur);
-			//left.Rotate(Vector3.up*Time.deltaTime*rotateRate*dir);
-			//right.Rotate(-Vector3.up*Time.deltaTime*rotateRate*dir);
-			left.rotation=Quaternion.Slerp(leftStartRot,leftEndRot,frac);
-			right.rotation=Quaternion.Slerp(rightStartRot,rightEndRot,frac);
-			yield return null;
-		}
-		if(dir>0)
-		{
-			if(_seedCounter<_seedCount){
-				DropSeed();
+			while(timer<dur){
+				timer+=Time.deltaTime;
+				float frac=_windowOpenCurve.Evaluate(timer/dur);
+				//left.Rotate(Vector3.up*Time.deltaTime*rotateRate*dir);
+				//right.Rotate(-Vector3.up*Time.deltaTime*rotateRate*dir);
+				left.rotation=Quaternion.Slerp(leftStartRot,leftEndRot,frac);
+				right.rotation=Quaternion.Slerp(rightStartRot,rightEndRot,frac);
+				yield return null;
+			}
+			if(dir>0)
+			{
+				if(_seedCounter<_seedCount){
+					DropSeed();
+				}
 			}
 		}
 	}

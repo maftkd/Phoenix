@@ -453,6 +453,8 @@ public class Bird : MonoBehaviour
 	}
 
 	public void MakeFootprint(Transform surface, float offset=0){
+		return ;
+		/*
 		Transform fp = Instantiate(_footprint,transform.position,Quaternion.identity,surface);
 		//orientate
 		fp.forward=transform.forward;
@@ -461,6 +463,7 @@ public class Bird : MonoBehaviour
 		fp.position+=Vector3.up*_footprintOffset.y+transform.right*_footprintOffset.x*_leftRightPrint;
 		fp.position+=offset*transform.forward;
 		_leftRightPrint*=-1;
+		*/
 	}
 
 	public void EquipFeather(Transform t){
