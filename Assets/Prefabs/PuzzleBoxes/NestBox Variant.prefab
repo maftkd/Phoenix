@@ -508,6 +508,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: NestBox Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4994821727326126329, guid: 08532e3f51afd0b4f8defe82a22f5085,
+        type: 3}
+      propertyPath: m_TagString
+      value: Float
+      objectReference: {fileID: 0}
     - target: {fileID: 6274911931863643907, guid: 08532e3f51afd0b4f8defe82a22f5085,
         type: 3}
       propertyPath: m_RootOrder
