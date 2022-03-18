@@ -227,7 +227,7 @@ public class PuzzleBox : MonoBehaviour
 			return;
 		}
 		Debug.Log("entering nest box");
-		_player.WalkInNestBox(transform,_nestBox);
+		_player.WalkInNestBox(_box,_nestBox);
 	}
 
 	public void ExitNestBox(){
@@ -236,7 +236,7 @@ public class PuzzleBox : MonoBehaviour
 			return;
 		}
 		Debug.Log("Exit nest box");
-		_player.WalkOutNestBox(transform,_nestBox);
+		_player.WalkOutNestBox(_box,_nestBox);
 	}
 
 	void OnDrawGizmos(){

@@ -73,4 +73,9 @@ public class ColorPalette : MonoBehaviour
 		}
 		return Color.black;
 	}
+
+	void Awake(){
+		foreach(Palette p in _palettes)
+			p.UpdateMaterials();
+	}
 }

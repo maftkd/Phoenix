@@ -4,26 +4,21 @@ using UnityEngine;
 
 public class BabyBird : MonoBehaviour
 {
-	Animator _anim;
-	public float _cryZone;
 	int _state;
 	Bird _player;
-	ParticleSystem _tears;
-	AudioSource _squeak;
-	[Header("Animation")]
-	public float _receiveTime;
-	public float _eatTime;
-	[Header("Audio")]
-	public AudioClip _nomNom;
-	public float _nomNomVol;
-	public AudioClip _gulp;
-	public float _gulpVol;
+	public Fireplace _fireplace;
+	Transform _egg;
+	Material _eggMat;
+	float _heat;
+	public GameObject _hatchling;
+	Transform _explosion;
+	public float _flyAwayDelay;
 
 	void Awake(){
-		_anim=GetComponent<Animator>();
 		_player=GameManager._player;
-		_tears = MUtility.FindRecursive(transform,"Tears").GetComponent<ParticleSystem>();
-		_squeak = transform.Find("Squeak").GetComponent<AudioSource>();
+		_egg=transform.Find("Egg");
+		_eggMat=_egg.GetComponent<Renderer>().material;
+		_explosion=transform.Find("Explosion");
 	}
 
 	void OnEnable(){
@@ -38,50 +33,31 @@ public class BabyBird : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		switch(_state){
-			case 0://sleep
-				if((_player.transform.position-transform.position).sqrMagnitude<_cryZone*_cryZone){
-					Cry();
-				}
-				break;
-			case 1://cry
-				break;
-			case 2://eat food
-				break;
-			default:
-				break;
-		}
     }
 
-	public bool CanEat(){
-		return _state==1;
+	public void GetWarm(){
+		if(_state!=0)
+			return;
+		float h = _fireplace._fill;
+		//if(h>_heat){
+			_heat=h;
+			_eggMat.SetFloat("_Crack",_heat);
+			if(_heat>=1f)
+				Hatch();
+		//}
 	}
 
-	public void GetFed(){
-		_tears.Stop();
-		_squeak.Stop();
-		StartCoroutine(Eat());
-	}
-
-	IEnumerator Eat(){
-		_anim.SetTrigger("receive");
-		Sfx.PlayOneShot2D(_nomNom,Random.Range(0.8f,1.2f),_nomNomVol);
-		yield return new WaitForSeconds(_receiveTime);
-		_anim.SetTrigger("eat");
-		Sfx.PlayOneShot2D(_gulp,Random.Range(0.8f,1.2f),_gulpVol);
-		yield return new WaitForSeconds(_eatTime);
-		Cry();
-	}
-
-	void Cry(){
-		_anim.SetTrigger("cry");
-		_tears.Play();
-		_squeak.Play();
+	public void Hatch(){
 		_state=1;
+		_egg.gameObject.SetActive(false);
+		_explosion.gameObject.SetActive(true);
+		_hatchling.SetActive(true);
+		StartCoroutine(FlyAwayAfter(_flyAwayDelay));
 	}
 
-	void OnDrawGizmos(){
-		Gizmos.color=Color.green;
-		Gizmos.DrawWireSphere(transform.position,_cryZone);
+	IEnumerator FlyAwayAfter(float del){
+		yield return new WaitForSeconds(del);
+		_hatchling.GetComponent<BirdSimple>().FlyAway();
 	}
+
 }

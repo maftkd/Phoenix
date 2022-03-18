@@ -8,6 +8,7 @@ public class Gate : MonoBehaviour
 	public Circuit [] _inputs;
 	public Circuit [] _outputs;
 	public UnityEvent _onGateActivated;
+	public UnityEvent _onGateDeactivated;
 	Material _mat;
 
 	public float _chargeDur;
@@ -24,6 +25,7 @@ public class Gate : MonoBehaviour
 	public bool _inverter;
 	public bool _window;
 	bool _windowOpen;
+	public bool _windowIsDoor;
 	Transform _ring;
 	public bool _disableOnPower;
 	public bool _node;
@@ -211,6 +213,7 @@ public class Gate : MonoBehaviour
 				StopAllCoroutines();
 				StartCoroutine(OpenDoors(-1f));
 			}
+			_onGateDeactivated.Invoke();
 		}
 	}
 
@@ -236,7 +239,7 @@ public class Gate : MonoBehaviour
 		doorLeft.SetFloat("_Lerp",dir>0?1:0);
 
 		yield return null;
-		if(_seedCounter<_seedCount){
+		if(_seedCounter<_seedCount||_windowIsDoor){
 			if(dir>0)
 				Sfx.PlayOneShot3D(_doorOpenSound,left.position);
 			else

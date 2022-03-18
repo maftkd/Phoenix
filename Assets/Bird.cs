@@ -36,7 +36,7 @@ public class Bird : MonoBehaviour
 	public Transform _footprint;
 	public Transform _wallprint;
 	public Vector3 _footprintOffset;
-	int _leftRightPrint=1;
+	//int _leftRightPrint=1;
 	[Header("Explosion")]
 	public float _afterDiveDelay;
 	float _afterDiveTimer;
@@ -74,11 +74,6 @@ public class Bird : MonoBehaviour
 	public Transform _band;
 	public Color _bandColor;
 	Bird _player;
-
-	[Header("Feed")]
-	public float _feedRange;
-	public float _feedOffset;
-	public float _minFeedHeight;
 
 	//cameras
 	[Header("Cameras")]
@@ -129,8 +124,11 @@ public class Bird : MonoBehaviour
 
 		_player=GameManager._player;
 
-		_state=0;
-		Ground();
+		if(_state==0)
+			Ground();
+		else if(!_playerControlled){
+			_anim.SetTrigger("flyLoop");
+		}
 		_prevPos=transform.position;
 	}
 
@@ -155,9 +153,6 @@ public class Bird : MonoBehaviour
 						StartWaddling();
 					if(_mIn.GetSingDown()){
 						Call();
-					}
-					if(_mIn.GetFeed()){
-						Feed();
 					}
 					/*
 					if(Input.GetButtonDown("Jump")){
@@ -184,9 +179,6 @@ public class Bird : MonoBehaviour
 					}
 					if(_mIn.GetSingDown()){
 						Call();
-					}
-					if(_mIn.GetFeed()){
-						Feed();
 					}
 					/*
 					if(Input.GetButtonDown("Jump")){
@@ -874,6 +866,7 @@ public class Bird : MonoBehaviour
 	}
 
 	public void WalkOutNestBox(Transform t,GameObject nb){
+		Debug.Log("Walking out nest box");
 		if(_fly.enabled)
 		{
 			_fly.Soar(false);
@@ -898,6 +891,7 @@ public class Bird : MonoBehaviour
 		_state=7;
 		yield return null;//maybe wait a frame because disabling waddle/hop/fly might affect player pos
 		transform.position=_posBeforeNestBox;
+		Debug.Log("Resetting pos: "+_posBeforeNestBox);
 		transform.forward=dir;
 
 		float timer=0;
@@ -912,46 +906,6 @@ public class Bird : MonoBehaviour
 
 		Ground();
 		_state=0;
-	}
-
-	public void Feed(){
-		if(_seeds<=0){
-			Debug.Log("Cannot feed - no seeds");
-			return;
-		}
-
-		if(_waddle.enabled){
-			_waddle.enabled=false;
-		}
-		int hits = Physics.OverlapSphereNonAlloc(transform.position,_feedRange,_cols,_birdLayer);
-		for(int i=0; i<hits; i++){
-			BabyBird bb = _cols[i].GetComponent<BabyBird>();
-			if(bb!=null&&bb.CanEat()&&transform.position.y>bb.transform.position.y+_minFeedHeight){
-				_state=8;
-				//position and rotate
-				Vector3 pos=transform.position;
-				Vector3 diff=(pos-bb.transform.position);
-				diff.y=0;
-				diff.Normalize();
-				pos.x=bb.transform.position.x;
-				pos.z=bb.transform.position.z;
-				pos+=diff*_feedOffset;
-				transform.position=pos;
-				transform.forward=-diff;
-				_anim.SetTrigger("feed");
-				StartCoroutine(ResetAfterDelay(1f));
-				bb.GetFed();
-				_seeds--;
-				Debug.Log("Seeds: "+_seeds);
-				return;
-			}
-		}
-		_state=0;
-		//check for baby bird near by
-		//if so
-		//	feed
-		//else
-		//	ignore
 	}
 
 	IEnumerator ResetAfterDelay(float dur){

@@ -112,6 +112,15 @@ public class BirdSimple : MonoBehaviour
 		_state=0;
 	}
 
+	public void FlyAway(){
+		if(_state==2)
+			return;
+		_state=2;
+		StopAllCoroutines();
+		Vector3 dir = Camera.main.transform.position-transform.position;
+		StartCoroutine(FlyDir(dir.normalized));
+	}
+
 	public void FlyAway(Vector3 dir){
 		if(_state==2)
 			return;
