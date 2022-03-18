@@ -13,7 +13,6 @@ public class Bird : MonoBehaviour
 	Fly _fly;
 	Waddle _waddle;
 	Tool _tool;
-	Hunger _hunger;
 	Follow _follow;
 	Tutorial _tutorial;
 	Animator _anim;
@@ -92,7 +91,6 @@ public class Bird : MonoBehaviour
 		_fly=GetComponent<Fly>();
 		_waddle=GetComponent<Waddle>();
 		_tool=GetComponent<Tool>();
-		_hunger=GetComponent<Hunger>();
 		_follow=GetComponent<Follow>();
 		_tutorial=GetComponentInChildren<Tutorial>();
 		_anim=GetComponent<Animator>();
@@ -633,7 +631,7 @@ public class Bird : MonoBehaviour
 	}
 
 	public void RuffleToMate(){
-		if(_hunger.enabled||_mate==null)
+		if(_mate==null)
 			return;
 		//Debug.Log(name + " got walked into by: "+b.name);
 		Vector3 diff = _mate.transform.position-transform.position;
@@ -724,12 +722,7 @@ public class Bird : MonoBehaviour
 	public void PartySnacks(){
 		if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
 			Bird b = _cols[0].GetComponent<Bird>();
-			b.GetSomeSeeds();
 		}
-	}
-
-	public void GetSomeSeeds(){
-		_hunger.enabled=true;
 	}
 
 	public void FlyToNextPuzzle(){

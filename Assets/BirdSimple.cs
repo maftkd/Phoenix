@@ -156,6 +156,6 @@ public class BirdSimple : MonoBehaviour
 			transform.position+=dir*Time.deltaTime*_flySpeed;
 			yield return null;
 		}
-		gameObject.SetActive(false);
+		Destroy(gameObject);
 	}
 }

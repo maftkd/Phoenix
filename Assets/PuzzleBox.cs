@@ -40,6 +40,7 @@ public class PuzzleBox : MonoBehaviour
 	[HideInInspector]
 	public string _puzzleId;
 	PuzzleCam _puzzleCam;
+	IEnumerator _flyRoutine;
 
 	protected virtual void Awake(){
 		_mIn=GameManager._mIn;
@@ -96,7 +97,8 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	protected virtual void OnEnable(){
-
+		if(_flyRoutine!=null)
+			StartCoroutine(_flyRoutine);
 	}
 
 	protected virtual void OnDisable(){
@@ -138,7 +140,7 @@ public class PuzzleBox : MonoBehaviour
 			return;
 		_onSolved.Invoke();
 		_solved=true;
-		RemoveForceField(true);
+		RemoveForceField(_nestBox==null);
 		ActivateBeacon(false);
 		//_keyMat.SetFloat("_Powered",1);
 		//Destroy(_forceField.gameObject);
@@ -146,7 +148,9 @@ public class PuzzleBox : MonoBehaviour
 			_effects.gameObject.SetActive(true);
 		//StartCoroutine(OpenBox());
 		GameManager._instance.PuzzleSolved(this);
-		StartCoroutine(FlyAwayMate());
+		_flyRoutine = FlyAwayMate();
+		if(gameObject.activeInHierarchy)
+			StartCoroutine(_flyRoutine);
 		ActivateNextPuzzle();
 	}
 
@@ -214,6 +218,7 @@ public class PuzzleBox : MonoBehaviour
 	IEnumerator FlyAwayMate(){
 		yield return new WaitForSeconds(3f);
 		_player.FlyAwayMates();
+		_flyRoutine=null;
 	}
 
 	void ActivateBeacon(bool active){

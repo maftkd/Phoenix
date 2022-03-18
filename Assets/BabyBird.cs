@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class BabyBird : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class BabyBird : MonoBehaviour
 	public GameObject _hatchling;
 	Transform _explosion;
 	public float _flyAwayDelay;
+	public UnityEvent _onHatch;
 
 	void Awake(){
 		_player=GameManager._player;
@@ -53,6 +55,7 @@ public class BabyBird : MonoBehaviour
 		_explosion.gameObject.SetActive(true);
 		_hatchling.SetActive(true);
 		StartCoroutine(FlyAwayAfter(_flyAwayDelay));
+		_onHatch.Invoke();
 	}
 
 	IEnumerator FlyAwayAfter(float del){

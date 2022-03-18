@@ -32,6 +32,7 @@ public class Cable : MonoBehaviour
 
 	public bool _showHandles;
 	public bool _hideHandles;
+	IEnumerator _powerRoutine;
 
 	Dictionary<float,Vector3> _centers;
 
@@ -65,6 +66,12 @@ public class Cable : MonoBehaviour
 		_controlPoints=transform.Find("ControlPoints");
 		_centers = new Dictionary<float,Vector3>();
 		_init=true;
+	}
+
+	void OnEnable(){
+		if(_powerRoutine!=null)
+			StartCoroutine(_powerRoutine);
+
 	}
 
     // Start is called before the first frame update
@@ -273,6 +280,7 @@ public class Cable : MonoBehaviour
 		yield return new WaitForSeconds(0.5f);
 		_meshR.material.SetFloat("_PowerFill",v);
 		_meshR.material.SetFloat("_NextFill",0);
+		_powerRoutine=null;
 	}
 
 	public void SetPower(float v){
@@ -296,7 +304,9 @@ public class Cable : MonoBehaviour
 		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
 		int centerIndex=minIndex/_vertsPerCenter;
 		_fillIndex=centerIndex;
-		StartCoroutine(SetPower(fillAmount,supressAudio));
+		_powerRoutine=SetPower(fillAmount,supressAudio);
+		if(enabled&&gameObject.activeInHierarchy)
+			StartCoroutine(_powerRoutine);
 	}
 
 	public float GetLength(){
