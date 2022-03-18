@@ -145,7 +145,6 @@ public class Bird : MonoBehaviour
 			//player update
 			switch(_state){
 				case 0://chilling
-				default:
 					Ground();
 					if(_mIn.GetJump())
 						StartHopping();
@@ -232,6 +231,8 @@ public class Bird : MonoBehaviour
 				case 7://entering house
 					break;
 				case 8://feeding
+					break;
+				default:
 					break;
 			}
 			if(Input.GetKeyDown(KeyCode.F1)){
@@ -486,7 +487,6 @@ public class Bird : MonoBehaviour
 
 		switch(_state){
 			case 0:
-			default:
 			case 1://waddling
 				ch.Sound(_waddleKnockVolume);
 				_waddle.KnockBack(dir);
@@ -498,6 +498,8 @@ public class Bird : MonoBehaviour
 			case 3://flying
 				ch.Sound(_hopKnockVolume);
 				_fly.KnockBack(dir);
+				break;
+			default:
 				break;
 		}
 	}
@@ -513,6 +515,8 @@ public class Bird : MonoBehaviour
 
 	public void RevertToPreviousPosition(){
 		//move back to previous frame, to prevent collider from getting stuck overlapping
+		if(_state==7)
+			return;
 		transform.position=_prevPos;
 	}
 
@@ -830,6 +834,7 @@ public class Bird : MonoBehaviour
 		Vector3 newPos=t.position+t.forward*0.25f;
 		newPos.y=pos.y;
 		transform.position=newPos;
+		Debug.Log("Setting pos on enter box");
 		//set state to something special
 		_state=7;
 		StartCoroutine(WalkThroughDoorR(dir,nb));
@@ -866,7 +871,6 @@ public class Bird : MonoBehaviour
 	}
 
 	public void WalkOutNestBox(Transform t,GameObject nb){
-		Debug.Log("Walking out nest box");
 		if(_fly.enabled)
 		{
 			_fly.Soar(false);
@@ -888,11 +892,14 @@ public class Bird : MonoBehaviour
 		_waddle.enabled=false;
 		_hop.enabled=false;
 		_fly.enabled=false;
+		//enabled=false;
 		_state=7;
-		yield return null;//maybe wait a frame because disabling waddle/hop/fly might affect player pos
 		transform.position=_posBeforeNestBox;
-		Debug.Log("Resetting pos: "+_posBeforeNestBox);
 		transform.forward=dir;
+		yield return null;
+		if(transform.position!=_posBeforeNestBox){
+			Debug.Log("Error! position is wack!: "+transform.position);
+		}
 
 		float timer=0;
 		_anim.SetFloat("walkSpeed",0.1f);

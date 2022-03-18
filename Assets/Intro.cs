@@ -97,6 +97,7 @@ public class Intro : MonoBehaviour
 			case Mode.SKIP:
 				GameManager._instance.Play();
 				_coverArtIsland.SetActive(false);
+				_overheadBird.gameObject.SetActive(false);
 				enabled=false;
 				_mCam.SnapToCamera(_player._waddleCam);
 				break;

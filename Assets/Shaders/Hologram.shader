@@ -70,12 +70,12 @@
 				//color
 				fixed4 col = fixed4(1,1,1,1);
 				fixed face = (facing+1)*0.5;
-				col.rgb=lerp(_Color*_BackColor.a,_Color,face);
+				//col.rgb=lerp(_Color*_BackColor.a,_Color,face);
+				col.rgb=lerp(_BackColor.rgb,_Color.rgb,face);
+
 				fixed dt = 1-abs(dot(i.viewDir,i.normal));
-				//fixed dt=facing;
-				//col.rgb*=lerp(dt,1,_Color.a);
 				dt = lerp(dt,1,_Color.a);
-				//col.rgb=lerp(fixed3(1,1,1)-_Color.rgb,col.rgb,dt);
+				//lerp towards white on edge
 				col.rgb=lerp(_BackColor.rgb,col.rgb,dt);
 
 				//noise

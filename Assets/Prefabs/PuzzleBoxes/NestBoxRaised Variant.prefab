@@ -20,11 +20,21 @@ PrefabInstance:
     - target: {fileID: 811323447274348515, guid: 5d983ad5b72527f4a84536ce07dc5c6e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 934966339747500452, guid: 5d983ad5b72527f4a84536ce07dc5c6e,
         type: 3}
       propertyPath: _windowIsDoor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2720564845113894462, guid: 5d983ad5b72527f4a84536ce07dc5c6e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.102
+      objectReference: {fileID: 0}
+    - target: {fileID: 4067104041773827118, guid: 5d983ad5b72527f4a84536ce07dc5c6e,
+        type: 3}
+      propertyPath: m_Size.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7644258338557062900, guid: 5d983ad5b72527f4a84536ce07dc5c6e,

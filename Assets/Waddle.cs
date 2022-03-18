@@ -135,7 +135,10 @@ public class Waddle : MonoBehaviour
 					}
 				}
 				else
+				{
+					Debug.Log("setting pos");
 					transform.position=hit.point;
+				}
 			}
 			//always ground?
 			_bird.Ground(false);
