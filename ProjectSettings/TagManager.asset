@@ -9,6 +9,7 @@ TagManager:
   - Mate
   - Sun
   - Float
+  - Flatten
   layers:
   - Default
   - TransparentFX

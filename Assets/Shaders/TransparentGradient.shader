@@ -5,6 +5,7 @@
 		_ColorBot ("Color Bottom", Color) = (1,1,1,1)
 		_ColorTop ("Color Top", Color) = (0,0,0,0)
 		_Center ("Center", Range(0,1)) = 0
+        _MainTex ("Texture", 2D) = "white" {}
     }
     SubShader
     {
@@ -38,6 +39,8 @@
 			fixed4 _ColorBot;
 			fixed4 _ColorTop;
 			fixed _Center;
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
 
             v2f vert (appdata v)
             {
@@ -51,9 +54,11 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
+                fixed n = tex2D(_MainTex, fixed2(i.uv.x*_MainTex_ST.x,i.uv.y*_MainTex_ST.y)+fixed2(1,1)*_Time.x).r;
 				fixed top=saturate(abs(i.uv.y-_Center)*2);
 				top=i.uv.x;
                 fixed4 col = lerp(_ColorBot,_ColorTop,top);
+				col.a*=n;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

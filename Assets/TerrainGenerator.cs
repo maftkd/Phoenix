@@ -490,7 +490,7 @@ public class TerrainGenerator : MonoBehaviour
 		//handle snapping of puzzles to base terrain
 		Transform puzzleParent = transform.parent.Find("Puzzles");
 		foreach(Transform puzzle in puzzleParent){
-			if(!puzzle.gameObject.activeSelf)
+			if(!puzzle.gameObject.activeSelf||puzzle.gameObject.tag!="Flatten")
 				continue;
 			if(puzzle.hasChanged){
 				Vector3 worldSpace=puzzle.position;
@@ -507,6 +507,7 @@ public class TerrainGenerator : MonoBehaviour
 		}
 
 		if(!ignorePuzzles){
+
 			//flatten puzzle regions
 			for(int z=0;z<res;z++){
 				float zNorm = z/(float)(res-1);
@@ -516,7 +517,7 @@ public class TerrainGenerator : MonoBehaviour
 					worldPos.y=heights[z,x]*maxHeight;
 					//check each puzzle against each terrain point
 					foreach(Transform puzzle in puzzleParent){
-						if(!puzzle.gameObject.activeInHierarchy||puzzle.tag=="Float")
+						if(!puzzle.gameObject.activeInHierarchy||puzzle.tag!="Flatten")
 							continue;
 						float sqrDst=(worldPos-puzzle.position).sqrMagnitude;
 						if(sqrDst<_puzzleRadius*_puzzleRadius)
@@ -751,6 +752,7 @@ public class TerrainGenerator : MonoBehaviour
 				worldPos.y=height;
 
 				bool puzzleZone=false;
+				/*
 				foreach(Transform puzzle in puzzleParent){
 					if(!puzzle.gameObject.activeSelf||puzzle.tag=="Float")
 						continue;
@@ -761,6 +763,7 @@ public class TerrainGenerator : MonoBehaviour
 						break;
 					}
 				}
+				*/
 
 				//get random
 				float perlin = Mathf.PerlinNoise((xNorm+offset)*_textureNoiseScale,(yNorm+offset)*_textureNoiseScale);
