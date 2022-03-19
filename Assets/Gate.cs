@@ -276,6 +276,7 @@ public class Gate : MonoBehaviour
 	void DropSeed(){
 		Transform hole = transform.Find("WindowHole");
 		_seedCounter++;
+		/*
 		Transform seed = Instantiate(_seedPrefab,hole.position,Quaternion.identity);
 		Sfx.PlayOneShot3D(_dispenseSound,seed.position,Random.Range(0.9f,1.1f));
 		Rigidbody rb = seed.gameObject.AddComponent<Rigidbody>();
@@ -283,5 +284,6 @@ public class Gate : MonoBehaviour
 		forceVector+=hole.right*MRandom.RandSign()*Random.value*_ejectForce.x;
 		forceVector+=Vector3.up*Random.value*_ejectForce.y;
 		rb.AddForce(forceVector);
+		*/
 	}
 }
