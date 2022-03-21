@@ -8,6 +8,7 @@ public class CollisionHelper : MonoBehaviour
 	[HideInInspector]
 	public Vector3 _hitPoint;
 	Vector3 _hitNormal;
+	Vector3 _newPoint;
 	Collider _col;
 	public float _maxDotToKnock;
 
@@ -23,6 +24,8 @@ public class CollisionHelper : MonoBehaviour
 	BoxCollider _box;
 	public bool _supressHitFx;
 	public bool _supressNpcKnockback;
+
+	//float _fudge = 1.1f;
 
 	public UnityEvent _onBirdEnter;
 
@@ -54,6 +57,15 @@ public class CollisionHelper : MonoBehaviour
     }
 
 	void OnTriggerEnter(Collider other){
+		HandleCollision(other);
+	}
+	void OnTriggerStay(Collider other){
+		Bird b = other.GetComponent<Bird>();
+		if(b!=null&&b._state==1)
+			HandleCollision(other);
+	}
+
+	void HandleCollision(Collider other){
 		if(!enabled)
 			return;
 		if(other.GetComponent<Bird>()!=null&&other.gameObject.tag=="Player")
@@ -72,8 +84,9 @@ public class CollisionHelper : MonoBehaviour
 				_hitNormal=-other.transform.forward;
 			Bird b = other.GetComponent<Bird>();
 			Vector3 curPos=other.transform.position;
-			b.RevertToPreviousPosition();
-			//#why what does this do, why is it here?
+			_newPoint=_hitPoint+_hitNormal.normalized*b._hitRadius;
+			if(b._state==1)
+				b.SnapToPos(_newPoint);
 			Vector3 flatNormal=_hitNormal;
 			flatNormal.y=0;
 			flatNormal.Normalize();
@@ -84,27 +97,11 @@ public class CollisionHelper : MonoBehaviour
 			else
 			{
 				bool closeEnough=false;
-				/*
-				if(_hasBoxCollider){
-					float birdCenterY=other.transform.position.y+b._size.y*0.5f;
-					Debug.Log("bird y:" +birdCenterY);
-					float boxTopY=transform.position.y+_box.size.y*0.5f*transform.localScale.y;
-					Debug.Log("box y:" +boxTopY);
-					if(birdCenterY+0.01f>boxTopY){
-						b.StartHopping();
-						closeEnough=true;
-					}
-				}
-			*/
-				//let's check to see if we are close enough to the edge
-				//if collider is box collider
-				//and if bird's center y > boxes top y
-				//	just snap birds pos to hit point
-				//	but set the y = box top
 				if(!closeEnough)
 					b.KnockBack(this,_hitNormal.normalized,_supressHitFx,_supressNpcKnockback);
 			}
 		}
+
 	}
 
 	public void Sound(float vol){
@@ -131,6 +128,11 @@ public class CollisionHelper : MonoBehaviour
 				Gizmos.color=Color.red;
 				Gizmos.DrawRay(_hitPoint,_hitNormal);
 			}
+		}
+		if(_newPoint!=null){
+			Gizmos.color=Color.blue;
+			Gizmos.DrawWireSphere(_newPoint,0.05f);
+
 		}
 	}
 }

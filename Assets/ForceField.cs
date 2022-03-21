@@ -53,7 +53,7 @@ public class ForceField : MonoBehaviour
 		gameObject.SetActive(true);
 		if(_mat==null)
 			_mat=GetComponent<MeshRenderer>().material;
-		_mat.SetFloat("_VCut",1f);
+		_mat.SetFloat("_VCut",0f);
 		GetComponent<SphereCollider>().enabled=true;
 	}
 }

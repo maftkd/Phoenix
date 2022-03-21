@@ -18,6 +18,7 @@ public class PuzzleCam : Shot
 	Vector3 _targetPos;
 	Quaternion _targetRot;
 	public float _lerp;
+	PuzzleBox _puzzle;
 
 	protected override void Awake(){
 		base.Awake();
@@ -26,6 +27,7 @@ public class PuzzleCam : Shot
 		if(_forceFieldRadiusOverride!=0)
 			_forceFieldRadius=_forceFieldRadiusOverride;
 		_mCam=GameManager._mCam;
+		_puzzle=transform.GetComponentInParent<PuzzleBox>();
 	}
 
     // Start is called before the first frame update
@@ -41,7 +43,8 @@ public class PuzzleCam : Shot
 		
 		//zone check
 		float sqrDist = (_player.transform.position-_center.position).sqrMagnitude;
-		_inZone=sqrDist<_forceFieldRadius*_forceFieldRadius
+		_inZone=PuzzleBox._latestPuzzle==_puzzle&&
+			sqrDist<_forceFieldRadius*_forceFieldRadius
 			&&_player.transform.position.y<_center.position.y+_zoneHeight;
 		//#todo - also do a vertical check for in zone. This stuff should kinda disable if the bird is flying or standing on top the box
 

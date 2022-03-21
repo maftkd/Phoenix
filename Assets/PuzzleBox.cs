@@ -86,13 +86,14 @@ public class PuzzleBox : MonoBehaviour
 
 
 		//init
-		_forceField.gameObject.SetActive(true);
+		//_forceField.gameObject.SetActive(true);
 		if(_activateOnAwake)
 			Activate();
 		else
 		{
-			_forceField.Activate();
+			//_forceField.Activate();
 			ActivateBeacon(false);
+			ActivateElements(false);
 		}
 	}
 
@@ -191,12 +192,44 @@ public class PuzzleBox : MonoBehaviour
 		if(!gameObject.activeSelf)
 			return;
 		_onActivated.Invoke();
+		/*
 		if(_forceField!=null)
 			_forceField.Deactivate(_activateOnAwake||silent);
+			*/
 		_latestPuzzle=this;
 
 		_cable.FillNearPosition(transform.position,_activateOnAwake||silent);
 		ActivateBeacon(true);
+
+		ActivateElements(true);
+		//activate lines
+		//
+		//
+	}
+
+	public void ActivateElements(bool active){
+		Circuit [] circuits = transform.GetComponentsInChildren<Circuit>();
+		PressurePlate [] plates = transform.GetComponentsInChildren<PressurePlate>();
+		Gate [] gates = transform.GetComponentsInChildren<Gate>();
+		/*
+		LineRenderer [] lines = transform.GetComponentsInChildren<LineRenderer>();
+
+		foreach(LineRenderer l in lines)
+			l.gameObject.SetActive(active);
+		foreach(PressurePlate p in plates)
+			p.gameObject.SetActive(active);
+		foreach(Gate g in gates)
+			g.gameObject.SetActive(active);
+			*/
+		foreach(Circuit c in circuits){
+			c.Activate(active);
+		}
+		foreach(PressurePlate pp in plates){
+			pp.Activate(active);
+		}
+		foreach(Gate g in gates){
+			g.Activate(active);
+		}
 	}
 
 	public Transform GetPerch(){
@@ -204,8 +237,10 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	void RemoveForceField(bool transition=false){
+		/*
 		if(_forceField!=null)
 			Destroy(_forceField.gameObject);
+			*/
 		_puzzleCam.enabled=false;
 		if(transition)
 			_player.TransitionToRelevantCamera();

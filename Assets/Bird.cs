@@ -50,6 +50,7 @@ public class Bird : MonoBehaviour
 	public float _hopKnockVolume;
 	Vector3 _prevPos;
 	Vector3 _vel;
+	public float _hitRadius;
 	public Transform _mandible;
 	Transform _curKey;
 	Transform _curSeed;
@@ -128,6 +129,9 @@ public class Bird : MonoBehaviour
 			_anim.SetTrigger("flyLoop");
 		}
 		_prevPos=transform.position;
+
+		_hitRadius=GetComponent<SphereCollider>().radius*transform.localScale.x;
+		Debug.Log("bird: "+name+" radius: "+_hitRadius);
 	}
 
     // Start is called before the first frame update
@@ -480,7 +484,8 @@ public class Bird : MonoBehaviour
 			float vertMult = _state==3?0.4f : 0.9f;
 			fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*vertMult;
 
-			_starParts.Play();
+			if(_state>1)
+				_starParts.Play();
 		}
 
 		switch(_state){
@@ -516,6 +521,10 @@ public class Bird : MonoBehaviour
 		if(_state==7)
 			return;
 		transform.position=_prevPos;
+	}
+
+	public void SnapToPos(Vector3 pos){
+		transform.position=pos;
 	}
 
 	public bool GoingUp(){

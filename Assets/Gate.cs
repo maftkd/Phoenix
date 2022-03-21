@@ -57,7 +57,14 @@ public class Gate : MonoBehaviour
 	Quaternion _doorLeftOpened;
 	Quaternion _doorRightOpened;
 
+	bool _init;
+
 	void Awake(){
+		if(!_init)
+			Init();
+	}
+
+	void Init(){
 		foreach(Circuit c in _inputs){
 			c._powerChange+=CheckGate;
 		}
@@ -276,14 +283,18 @@ public class Gate : MonoBehaviour
 	void DropSeed(){
 		Transform hole = transform.Find("WindowHole");
 		_seedCounter++;
-		/*
-		Transform seed = Instantiate(_seedPrefab,hole.position,Quaternion.identity);
-		Sfx.PlayOneShot3D(_dispenseSound,seed.position,Random.Range(0.9f,1.1f));
-		Rigidbody rb = seed.gameObject.AddComponent<Rigidbody>();
-		Vector3 forceVector=hole.forward*Random.Range(_ejectForceRange.x,_ejectForceRange.y);
-		forceVector+=hole.right*MRandom.RandSign()*Random.value*_ejectForce.x;
-		forceVector+=Vector3.up*Random.value*_ejectForce.y;
-		rb.AddForce(forceVector);
-		*/
+	}
+
+	public void Activate(bool active){
+		if(!_init)
+			Init();
+		if(_window){
+			Transform right=transform.Find("WindowRight");
+			Transform left=transform.Find("WindowLeft");
+			Material doorRight=right.GetComponent<Renderer>().material;
+			Material doorLeft=left.GetComponent<Renderer>().material;
+			doorRight.SetFloat("_OutlineThickness",active?0.044f : 0.5f);
+			doorLeft.SetFloat("_OutlineThickness",active?0.044f : 0.5f);
+		}
 	}
 }

@@ -648,7 +648,7 @@ MonoBehaviour:
   _slerp: 10
   _minInput: 0.1
   _minSlopeToCheckSpeed: 0.1
-  _knockBackTime: 0.25
+  _knockBackTime: 0.2
   _knockBackSpeedMult: 0.3
   _npc: 0
 --- !u!114 &1820936649275779887
@@ -811,8 +811,6 @@ MonoBehaviour:
   _flapDur: 0.4
   _band: {fileID: 2837362357988309745}
   _bandColor: {r: 1, g: 1, b: 1, a: 0}
-  _feedRange: 0.2
-  _feedOffset: 0.06
   _waddleCam: {fileID: 0}
   _idleCam: {fileID: 0}
   _hopCam: {fileID: 0}

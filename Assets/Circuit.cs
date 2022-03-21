@@ -221,4 +221,9 @@ public class Circuit : MonoBehaviour
 		}
 		return true;
 	}
+
+	public void Activate(bool active){
+		_mat=GetComponent<Renderer>().material;
+		_mat.SetFloat("_Outline",active? 0.2f : 0.5f);
+	}
 }

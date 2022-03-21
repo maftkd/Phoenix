@@ -89,7 +89,7 @@ public class Waddle : MonoBehaviour
 		else{
 			_knockBackTimer-=Time.deltaTime;
 			if(_knockBackTimer<=0){
-				_bird.ShakeItOff();
+				//_bird.ShakeItOff();
 				return;
 			}
 		}
@@ -151,8 +151,12 @@ public class Waddle : MonoBehaviour
 				StopWaddling();
 		}
 		else{
+			/*
 			_anim.SetFloat("walkSpeed",0f);
 			_bird.StartHopping();
+			//cant find good spot to walk
+			Debug.Log("huh what?");
+			*/
 		}
     }
 
@@ -181,10 +185,23 @@ public class Waddle : MonoBehaviour
 
 	public void KnockBack(Vector3 dir){
 		//_knockBackDir=dir;
-		_knockBackTimer=_knockBackTime;
+		//_knockBackTimer=_knockBackTime;
 		float mag = _input.magnitude;
-		_input=dir*mag*_knockBackSpeedMult;
-		//transform.forward=-dir;
+		Vector3 normIn = _input.normalized;
+		Vector3 optionA = Vector3.Cross(dir,Vector3.up);
+		Vector3 optionB = Vector3.Cross(dir,Vector3.down);
+		float dotA=Vector3.Dot(optionA,normIn);
+		float dotB=Vector3.Dot(optionB,normIn);
+		if(dotA>dotB){
+			_input=optionA*mag;
+		}
+		else
+			_input=optionB*mag;
+		//_input=dir*mag*_knockBackSpeedMult;
+		/*
+		if(mag>0)
+			transform.forward=_input;
+			*/
 	}
 
 	public void WaddleTo(Vector3 target,float speed){

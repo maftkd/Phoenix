@@ -18,8 +18,10 @@ public class PressurePlate : MonoBehaviour
 	Bird _player;
 	public AudioClip _buttonDown;
 	Color _emissionColor;
+	Color _defaultColor;
 
 	bool _powered;
+	bool _active;
 
 	public Circuit [] _next;
 
@@ -28,8 +30,14 @@ public class PressurePlate : MonoBehaviour
 	Material _mat;
 	public Transform _icon;
 	Material _quad;
+	bool _init;
 
 	void Awake(){
+		if(!_init)
+			Init();
+	}
+
+	void Init(){
 		_cols=new Collider[3];
 		_button=transform.GetChild(0);
 		_defaultPos=_button.localPosition;
@@ -41,6 +49,8 @@ public class PressurePlate : MonoBehaviour
 		if(_icon!=null)
 			_quad=_icon.GetComponent<Renderer>().material;
 		_emissionColor=GameManager._color.GetButtonEmissionColor(transform);
+		_defaultColor=_mat.GetColor("_Color");
+		_init=true;
 	}
 
     // Start is called before the first frame update
@@ -154,11 +164,22 @@ public class PressurePlate : MonoBehaviour
 	}
 
 	void UpdateWires(){
+		if(!_active)
+			return;
 		_mat.SetColor("_EmissionColor", _powered? _emissionColor : Color.black);
 		if(_quad!=null)
 			_quad.SetFloat("_Lerp",_powered?1:0);
 		foreach(Circuit n in _next)
 			n.Power(_powered);
+	}
+
+	public void Activate(bool active){
+		if(!_init)
+			Init();
+		_mat.SetColor("_EmissionColor", Color.black);
+		_mat.SetColor("_Color", active? _defaultColor : Color.black);
+		_quad.SetFloat("_OutlineThickness",active?0.1f:0.5f);
+		_active=active;
 	}
 
 	void OnDrawGizmos(){
