@@ -50,6 +50,7 @@ public class Bird : MonoBehaviour
 	public float _hopKnockVolume;
 	Vector3 _prevPos;
 	Vector3 _vel;
+	public float _hitYOffset;
 	public float _hitRadius;
 	public Transform _mandible;
 	Transform _curKey;
@@ -130,7 +131,10 @@ public class Bird : MonoBehaviour
 		}
 		_prevPos=transform.position;
 
-		_hitRadius=GetComponent<SphereCollider>().radius*transform.localScale.x;
+		SphereCollider col = GetComponent<SphereCollider>();
+		_hitRadius=col.radius*transform.localScale.x;
+		_hitYOffset=col.center.y*transform.localScale.x;
+
 		Debug.Log("bird: "+name+" radius: "+_hitRadius);
 	}
 
@@ -525,6 +529,7 @@ public class Bird : MonoBehaviour
 
 	public void SnapToPos(Vector3 pos){
 		transform.position=pos;
+		Ground(false);
 	}
 
 	public bool GoingUp(){
@@ -920,6 +925,22 @@ public class Bird : MonoBehaviour
 	IEnumerator ResetAfterDelay(float dur){
 		yield return new WaitForSeconds(dur);
 		_state=0;
+	}
+
+	public bool IsGrounded(){
+		/*
+		if(Physics.OverlapSphereNonAlloc(pos+Vector3.up*_hitYOffset,
+					_hitRadius,_cols,_collisionLayer)>0){
+			return true;
+		}
+		return false;
+		*/
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position+Vector3.up*_hitYOffset, Vector3.down, out hit, 
+					_hitRadius*1.01f,_collisionLayer)){
+			return true;
+		}
+		return false;
 	}
 
 	void OnDrawGizmos(){

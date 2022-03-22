@@ -114,15 +114,19 @@ public class Waddle : MonoBehaviour
 		Vector3 targetPos = transform.position+move;
 
 		RaycastHit hit;
-		if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y*1.1f,_bird._collisionLayer)){
+		if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, 
+					_bird._size.y*2f,_bird._collisionLayer)){
 			//raycast to ground
 			targetPos.y=hit.point.y;
 			float dy = (targetPos.y-transform.position.y);
 			float dx = move.magnitude;
 			float slope = dy/dx;
 			if(slope<-_maxWalkSlope*0.5f){
+				//check for very negative slope
 				if(dx>0){
-					_bird.Ground();
+					//_bird.Ground();
+					_anim.SetFloat("walkSpeed",0f);
+					_bird.StartHopping();
 				}
 			}
 			else if(slope<_maxWalkSlope)
@@ -132,15 +136,16 @@ public class Waddle : MonoBehaviour
 					targetPos=transform.position+dir.normalized*_walkSpeed*Time.deltaTime;
 					if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y*1.5f,_bird._collisionLayer)){
 						transform.position=hit.point;
+						_bird.Ground(false);
 					}
 				}
 				else
 				{
 					transform.position=hit.point;
+					_bird.Ground(false);
 				}
 			}
 			//always ground?
-			_bird.Ground(false);
 			if(_stepTimer>=0.5f/animSpeed){
 				TakeStep(hit.transform);
 				_stepTimer=0;
@@ -151,12 +156,10 @@ public class Waddle : MonoBehaviour
 				StopWaddling();
 		}
 		else{
-			/*
-			_anim.SetFloat("walkSpeed",0f);
-			_bird.StartHopping();
-			//cant find good spot to walk
-			Debug.Log("huh what?");
-			*/
+			if(!_bird.IsGrounded()){
+				_anim.SetFloat("walkSpeed",0f);
+				_bird.StartHopping();
+			}
 		}
     }
 

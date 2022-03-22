@@ -86,7 +86,9 @@ public class CollisionHelper : MonoBehaviour
 			Vector3 curPos=other.transform.position;
 			_newPoint=_hitPoint+_hitNormal.normalized*b._hitRadius;
 			if(b._state==1)
+			{
 				b.SnapToPos(_newPoint);
+			}
 			Vector3 flatNormal=_hitNormal;
 			flatNormal.y=0;
 			flatNormal.Normalize();
