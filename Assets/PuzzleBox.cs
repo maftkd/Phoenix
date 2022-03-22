@@ -40,7 +40,6 @@ public class PuzzleBox : MonoBehaviour
 	[HideInInspector]
 	public string _puzzleId;
 	PuzzleCam _puzzleCam;
-	IEnumerator _flyRoutine;
 	public Transform _sparrow;
 
 	protected virtual void Awake(){
@@ -93,8 +92,6 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	protected virtual void OnEnable(){
-		if(_flyRoutine!=null)
-			StartCoroutine(_flyRoutine);
 	}
 
 	protected virtual void OnDisable(){
@@ -144,9 +141,6 @@ public class PuzzleBox : MonoBehaviour
 		//StartCoroutine(OpenBox());
 		_player.TransitionToRelevantCamera();
 		GameManager._instance.PuzzleSolved(this);
-		_flyRoutine = FlyAwayMate();
-		if(gameObject.activeInHierarchy)
-			StartCoroutine(_flyRoutine);
 		ActivateNextPuzzle();
 		SpawnSparrow();
 	}
@@ -233,11 +227,6 @@ public class PuzzleBox : MonoBehaviour
 		_puzzleCam.ResetZone();
 	}
 
-	IEnumerator FlyAwayMate(){
-		yield return new WaitForSeconds(3f);
-		_player.FlyAwayMates();
-		_flyRoutine=null;
-	}
 
 	void ActivateBeacon(bool active){
 		if(_beacon!=null)

@@ -72,11 +72,7 @@ public class Hop : MonoBehaviour
 		_input=Vector3.zero;
 		_soarAudio=transform.Find("SoarParticles").GetComponent<AudioSource>();
 		_hopAudio=transform.Find("JumpSound").GetComponent<AudioSource>();
-		_defaultScale=transform.localScale;
-		_squashScale=_defaultScale;
-		_squashScale.y*=_squashMult;
-		_stretchScale=_defaultScale;
-		_stretchScale.y*=_stretchMult;
+		ResetScale();
 		_mesh=transform.GetChild(0);
 		_defaultAngle=_mesh.localEulerAngles.y;
 	}
@@ -329,6 +325,14 @@ public class Hop : MonoBehaviour
 		_hopAudio.Play();
 	}
 
+	public void ResetScale(){
+		_defaultScale=transform.localScale;
+		_squashScale=_defaultScale;
+		_squashScale.y*=_squashMult;
+		_stretchScale=_defaultScale;
+		_stretchScale.y*=_stretchMult;
+
+	}
 
 	void OnDrawGizmos(){
 		Gizmos.color=Color.green;

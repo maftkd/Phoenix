@@ -52,6 +52,7 @@ public class Bird : MonoBehaviour
 	Vector3 _vel;
 	public float _hitYOffset;
 	public float _hitRadius;
+	SphereCollider _sphereCol;
 	public Transform _mandible;
 	Transform _curKey;
 	Transform _curSeed;
@@ -70,8 +71,6 @@ public class Bird : MonoBehaviour
 	public float _maxSpeed;
 	public float _flapDur;
 
-	Bird[] _birds;
-
 	public Transform _band;
 	public Color _bandColor;
 	Bird _player;
@@ -82,6 +81,24 @@ public class Bird : MonoBehaviour
 	public Camera _idleCam;
 	public Camera _hopCam;
 	public Camera _flyCam;
+
+	[System.Serializable]
+	public struct BirdData{
+		public string _name;
+		public float _scale;
+		public Material _mat;
+		public Mesh _mesh;
+		public float _walkSpeed;
+		//public float _colRad;
+		//other stuff may include
+		//walk speed
+		//camera distance
+	}
+	[Header("Bird Transformations")]
+	public BirdData [] _birds;
+	public Transform _transformationEffects;
+	IEnumerator _transformRoutine;
+	public float _transformDelay;
 
 	void Awake(){
 		//calculations
@@ -101,7 +118,6 @@ public class Bird : MonoBehaviour
 		_mIn = GameManager._mIn;
 		_mCam = GameManager._mCam;
 		_cols = new Collider[3];
-		_birds = FindObjectsOfType<Bird>();
 		if(_playerControlled)
 		{
 			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
@@ -131,9 +147,9 @@ public class Bird : MonoBehaviour
 		}
 		_prevPos=transform.position;
 
-		SphereCollider col = GetComponent<SphereCollider>();
-		_hitRadius=col.radius*transform.localScale.x;
-		_hitYOffset=col.center.y*transform.localScale.x;
+		_sphereCol = GetComponent<SphereCollider>();
+		_hitRadius=_sphereCol.radius*transform.localScale.x;
+		_hitYOffset=_sphereCol.center.y*transform.localScale.x;
 	}
 
     // Start is called before the first frame update
@@ -242,6 +258,13 @@ public class Bird : MonoBehaviour
 			if(Input.GetKeyDown(KeyCode.F1)){
 				_waddle.ToggleCamLines();
 			}
+			if(Input.GetKeyDown(KeyCode.T)){
+				//switch to cardinal
+				TransformBird("Cardinal");
+			}
+			if(Input.GetKeyDown(KeyCode.Y)){
+				TransformBird("Crow");
+			}
 		}
 		else{
 			switch(_state){
@@ -302,16 +325,6 @@ public class Bird : MonoBehaviour
 			//the logic for finding an existing mate, should verify that the target location is within puzzle sphere
 			//basically we just need a quick check, what puzzle sphere is a bird in?
 			//find existing mate
-			foreach(Bird b in _birds)
-			{
-				if(b!=null&&b._mate==this){
-					//only fly to a spot if it is within current puzzle bounds
-					Vector3 diff=b.transform.position-transform.position;
-					diff.y=0;
-					b.FlyTo(transform.position+diff.normalized*_summonDist);
-					return;
-				}
-			}
 			//find new mate
 			if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
 				Bird b = _cols[0].GetComponent<Bird>();
@@ -794,15 +807,6 @@ public class Bird : MonoBehaviour
 		}
 	}
 
-	public void FlyAwayMates(){
-		foreach(Bird b in _birds)
-		{
-			if(b!=null&&b._mate==this){
-				b.FlyAway();
-			}
-		}
-	}
-
 	public void FlyAway(){
 		FlyTo(transform.position+new Vector3(1,1,1)*3f);
 		_mate=null;
@@ -927,19 +931,47 @@ public class Bird : MonoBehaviour
 	}
 
 	public bool IsGrounded(){
-		/*
-		if(Physics.OverlapSphereNonAlloc(pos+Vector3.up*_hitYOffset,
-					_hitRadius,_cols,_collisionLayer)>0){
-			return true;
-		}
-		return false;
-		*/
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position+Vector3.up*_hitYOffset, Vector3.down, out hit, 
 					_hitRadius*1.1f,_collisionLayer)){
 			return true;
 		}
 		return false;
+	}
+
+	public void TransformBird(string birdName){
+		int birdIndex=-1;
+		for(int i=0; i<_birds.Length; i++){
+			if(_birds[i]._name==birdName)
+				birdIndex=i;
+		}
+		if(birdIndex==-1){
+			Debug.Log("Could not transform into bird. Name not found: "+birdName);
+			return;
+		}
+		if(_transformRoutine!=null){
+			Debug.Log("Cannot transform while already transforming");
+			return;
+		}
+		_transformRoutine = TransformRoutine(birdIndex);
+		StartCoroutine(_transformRoutine);
+	}
+
+	IEnumerator TransformRoutine(int birdIndex){
+		//start effects
+		Transform effects = Instantiate(_transformationEffects,transform);
+		effects.localPosition=Vector3.zero;
+		effects.localEulerAngles=Vector3.zero;
+		yield return new WaitForSeconds(_transformDelay);
+		BirdData bird = _birds[birdIndex];
+		transform.localScale=bird._scale*Vector3.one;
+		effects.localScale/=bird._scale;
+		_smr.sharedMesh=bird._mesh;
+		_smr.material=bird._mat;
+		_waddle._walkSpeed=bird._walkSpeed;
+		_hop.ResetScale();
+		_waddleCam.GetComponent<WaddleCam>().ResetCamera();
+		_transformRoutine=null;
 	}
 
 	void OnDrawGizmos(){

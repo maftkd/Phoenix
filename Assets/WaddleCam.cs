@@ -13,6 +13,8 @@ public class WaddleCam : Shot
 	float _phi;
 	float _theta;
 	float _yOffset=-1f;
+	float _originalYOffset;
+	float _originalTargetR;
 	float _targetR=-1f;
 	float _targetPhi;
 	public Vector2 _phiRange;
@@ -38,11 +40,19 @@ public class WaddleCam : Shot
 			LineLineIntersection(out sphereCenter,transform.position,dir,
 					_player.transform.position,Vector3.up);
 			_yOffset=sphereCenter.y-_player.transform.position.y;
+			_originalYOffset=_yOffset;
 		}
+		else
+			_yOffset=_originalYOffset*_player.transform.localScale.x;
 		Vector3 diff=transform.position-(_player.transform.position+Vector3.up*_yOffset);
 		_radius = diff.magnitude;
 		if(_targetR<0)
+		{
 			_targetR=_radius;
+			_originalTargetR=_targetR;
+		}
+		else
+			_targetR=_originalTargetR*_player.transform.localScale.x;
 		_phi = Mathf.Asin(diff.y/diff.magnitude);
 		if(_targetPhi==0)
 			_targetPhi=_phi;
@@ -68,8 +78,10 @@ public class WaddleCam : Shot
 		transform.rotation=_rotation;
 
 		//get radius
-		Vector3 diff=transform.position-(_player.transform.position+Vector3.up*_yOffset);
-		float radius=Mathf.Lerp(diff.magnitude,_targetR,_rLerp*Time.deltaTime);
+		Vector3 diff=transform.position-(_player.transform.position+
+				Vector3.up*_yOffset);
+		float radius=Mathf.Lerp(diff.magnitude,_targetR,
+				_rLerp*Time.deltaTime);
 
 		_phi = Mathf.Lerp(_phi,_targetPhi,_phiLerp*Time.deltaTime);
 
@@ -151,4 +163,13 @@ public class WaddleCam : Shot
 			return false;
 		}
 	}
+
+	public void ResetCamera(){
+		OnEnable();
+	}
+	/*
+	public void ScaleTargetRadius(float mult){
+		//_targetR=_originalTargetR*mult;
+	}
+	*/
 }

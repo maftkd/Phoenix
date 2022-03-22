@@ -567,7 +567,7 @@ Transform:
   m_GameObject: {fileID: 1550414671924663931}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 4.998, z: 3.87}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6637608683351804625}
   - {fileID: 6705976841946081080}
@@ -579,7 +579,7 @@ Transform:
   - {fileID: 529982510723579744}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 39.268, z: 0}
 --- !u!95 &5201606536296797883
 Animator:
   serializedVersion: 3
@@ -799,6 +799,8 @@ MonoBehaviour:
   _shakeDelay: 0.1
   _waddleKnockVolume: 0.025
   _hopKnockVolume: 0.1
+  _hitYOffset: 0
+  _hitRadius: 0
   _mandible: {fileID: 4928122866667590429}
   _seeds: 0
   _ruffleEffects: {fileID: 3804091942241321643, guid: 68db3c5ff28b4c94fb2b6827ba07c304,
