@@ -11,9 +11,8 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue"="AlphaTest" }
+        Tags { "RenderType"="Opaque" "Queue"="Geometry" }
         LOD 200
-			Cull Off
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
@@ -27,6 +26,7 @@
         struct Input
         {
             float2 uv_MainTex;
+			float3 worldNormal;
         };
 
         half _Glossiness;
@@ -53,13 +53,52 @@
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			clip(c.a-_Cutoff);
-            o.Albedo = c.rgb;
+			fixed upness = dot(IN.worldNormal,fixed3(0,1,0));
+			upness=step(0,upness);
+            o.Albedo = c.rgb;//*IN.facing;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
         }
         ENDCG
+		Pass{
+			Cull Front
+			CGPROGRAM
+
+			#include "UnityCG.cginc"
+			#pragma vertex vert
+			#pragma fragment frag
+
+			struct appdata{
+				float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+			};
+
+			struct v2f{
+				float4 position : SV_POSITION;
+                float2 uv : TEXCOORD0;
+			};
+
+			sampler2D _MainTex;
+			fixed _Cutoff;
+
+
+			v2f vert(appdata v){
+				v2f o;
+				o.position = UnityObjectToClipPos(v.vertex);
+                o.uv = v.uv;
+				return o;
+			}
+			fixed4 frag(v2f i) : SV_TARGET{
+				fixed4 c = tex2D (_MainTex, i.uv);
+				clip(c.a-_Cutoff);
+				c.rgb*=0.5;
+				return c;
+			}
+
+			ENDCG
+		}
     }
     FallBack "Diffuse"
 }
