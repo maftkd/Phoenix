@@ -123,7 +123,7 @@ public class Waddle : MonoBehaviour
 			float slope = dy/dx;
 			if(slope<-_maxWalkSlope*0.5f){
 				//check for very negative slope
-				if(_input.magnitude>0.5f){
+				if(_input.magnitude>0.9f){
 					//_bird.Ground();
 					_anim.SetFloat("walkSpeed",0f);
 					_bird.StartHopping();
@@ -137,15 +137,16 @@ public class Waddle : MonoBehaviour
 					targetPos=transform.position+dir.normalized*_walkSpeed*Time.deltaTime;
 					if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y*1.5f,_bird._collisionLayer)){
 						transform.position=hit.point;
-						_bird.Ground(false);
+						//_bird.Ground(false);
 					}
 				}
 				else
 				{
 					transform.position=hit.point;
-					_bird.Ground(false);
+					//_bird.Ground(false);
 				}
 			}
+			_bird.Ground(false);
 			//always ground?
 			if(_stepTimer>=0.5f/animSpeed){
 				TakeStep(hit.transform);

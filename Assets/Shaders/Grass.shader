@@ -11,10 +11,9 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent" "LightMode" = "ForwardBase"}
+        Tags { "RenderType"="Opaque" "Queue"="Geometry" "LightMode" = "ForwardBase"}
         LOD 100
 		Cull Off
-		Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -67,7 +66,7 @@
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
-				col.a*=i.dist;
+				//col.a*=i.dist;
 				clip(col.a-_Cutoff);
 				float attenuation = LIGHT_ATTENUATION(i);
 				col.rgb*=lerp(_ColorDark,_Color,attenuation);
