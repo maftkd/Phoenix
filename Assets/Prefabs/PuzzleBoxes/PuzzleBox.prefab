@@ -534,11 +534,9 @@ GameObject:
   - component: {fileID: 3036244963733330104}
   - component: {fileID: 2225386363261567669}
   - component: {fileID: 7777276232115931995}
-  - component: {fileID: 8106073998249118218}
-  - component: {fileID: 2063096432247801498}
-  - component: {fileID: 4107804232267344927}
+  - component: {fileID: 5207449776554043988}
   m_Layer: 0
-  m_Name: ForceField
+  m_Name: Boundary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -574,8 +572,8 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3910053781822162452}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -605,20 +603,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &8106073998249118218
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3910053781822162452}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2063096432247801498
+--- !u!114 &5207449776554043988
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -627,35 +612,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3910053781822162452}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05d79d743a93f1546bc55d38515425c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 2e83d8898fbdf4abf9865f0a8af4e23b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hitPoint: {x: 0, y: 0, z: 0}
-  _maxDotToKnock: 0.2
-  _clips:
-  - {fileID: 8300000, guid: 49bd1bb8d9046a7418a04fc4fafad800, type: 3}
-  _numSources: 3
-  _volume: 0.1
-  _supressHitFx: 0
-  _supressNpcKnockback: 0
-  _onBirdEnter:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &4107804232267344927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3910053781822162452}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e9c701cb76303a4eab790eda833d83c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _powerOff: {fileID: 8300000, guid: 7fe54617118fb994e8fed50187b84a12, type: 3}
-  _deactivatedHeight: 0
-  _deactivatedPhase: 0.3
 --- !u!1 &4558345612547352741
 GameObject:
   m_ObjectHideFlags: 0
@@ -1162,9 +1121,9 @@ MonoBehaviour:
   _target: {fileID: 0}
   _alwaysEnabled: 1
   _center: {fileID: 212877143769311733}
-  _forceField: {fileID: 3036244963733330104}
-  _forceFieldRadiusOverride: 0
-  _shotRadius: 1.25
+  _boundary: {fileID: 3036244963733330104}
+  _boundaryRadiusOverride: 0
+  _shotRadius: 1.5
   _shotHeight: 0.5
   _zoneHeight: 0.4
   _lerp: 3

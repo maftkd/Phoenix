@@ -7,6 +7,7 @@
 		_Frequency ("Frequency", Float) = 1
 		_PhaseMult ("Phase multiplier", Float) = 1
 		_VCut ("V cutoff", Range(0,1)) = 0.75
+		_VWidth ("V Width", Range(0,1)) = 0.1
 		_MainTex ("Main Tex", 2D) = "white" {}
 		_NoiseMult ("Noise Mult", Float) = 0.1
 		_AlphaCutoff ("Alpha Cut", Range(0,1)) = 0.5
@@ -47,6 +48,7 @@
 			fixed _Frequency;
 			fixed _PhaseMult;
 			fixed _VCut;
+			fixed _VWidth;
             sampler2D _MainTex;
             float4 _MainTex_ST;
 			fixed _NoiseMult;
@@ -66,6 +68,7 @@
             fixed4 frag (v2f i,fixed facing : VFACE) : SV_Target
             {
 				clip(_VCut-i.uv.y);
+				clip(i.uv.y+_VWidth-_VCut);
 
 				//color
 				fixed4 col = fixed4(1,1,1,1);

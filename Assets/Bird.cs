@@ -134,8 +134,6 @@ public class Bird : MonoBehaviour
 		SphereCollider col = GetComponent<SphereCollider>();
 		_hitRadius=col.radius*transform.localScale.x;
 		_hitYOffset=col.center.y*transform.localScale.x;
-
-		Debug.Log("bird: "+name+" radius: "+_hitRadius);
 	}
 
     // Start is called before the first frame update

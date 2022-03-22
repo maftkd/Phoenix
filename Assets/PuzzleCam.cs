@@ -5,9 +5,9 @@ using UnityEngine;
 public class PuzzleCam : Shot
 {
 	public Transform _center;
-	public Transform _forceField;
-	float _forceFieldRadius;
-	public float _forceFieldRadiusOverride;
+	public Transform _boundary;
+	float _boundaryRadius;
+	public float _boundaryRadiusOverride;
 	bool _inZone;
 	bool _prevInZone;
 	MCamera _mCam;
@@ -23,9 +23,9 @@ public class PuzzleCam : Shot
 	protected override void Awake(){
 		base.Awake();
 		_player=GameManager._player;
-		_forceFieldRadius=_forceField.localScale.x*0.5f;
-		if(_forceFieldRadiusOverride!=0)
-			_forceFieldRadius=_forceFieldRadiusOverride;
+		_boundaryRadius=_boundary.localScale.x*0.5f;
+		if(_boundaryRadiusOverride!=0)
+			_boundaryRadius=_boundaryRadiusOverride;
 		_mCam=GameManager._mCam;
 		_puzzle=transform.GetComponentInParent<PuzzleBox>();
 	}
@@ -40,11 +40,12 @@ public class PuzzleCam : Shot
     protected override void Update()
     {
 		base.Update();
+		if(PuzzleBox._latestPuzzle!=_puzzle)
+			return;
 		
 		//zone check
 		float sqrDist = (_player.transform.position-_center.position).sqrMagnitude;
-		_inZone=PuzzleBox._latestPuzzle==_puzzle&&
-			sqrDist<_forceFieldRadius*_forceFieldRadius
+		_inZone=sqrDist<_boundaryRadius*_boundaryRadius
 			&&_player.transform.position.y<_center.position.y+_zoneHeight;
 		//#todo - also do a vertical check for in zone. This stuff should kinda disable if the bird is flying or standing on top the box
 

@@ -18,7 +18,7 @@ public class PuzzleBox : MonoBehaviour
 	public UnityEvent _onShot;
 	public UnityEvent _onActivated;
 	public bool _activateOnAwake;
-	ForceField _forceField;
+	Boundary _boundary;
 	public float _liftDelay;
 	public float _liftAmount;
 	public float _labelOpacity;
@@ -71,14 +71,9 @@ public class PuzzleBox : MonoBehaviour
 
 		//set force field color
 		Color c = mat.color;
-		_forceField=_box.Find("ForceField").GetComponent<ForceField>();
-		_forceField.SetColor(c);
+		_boundary=_box.Find("Boundary").GetComponent<Boundary>();
+		_boundary.SetColor(c);
 		Color labelC=c;
-		/*
-		labelC.r*=_labelOpacity;
-		labelC.g*=_labelOpacity;
-		labelC.b*=_labelOpacity;
-		*/
 		labelC.a*=_labelOpacity;
 
 		label.GetComponent<Text>().color=labelC;
@@ -86,12 +81,11 @@ public class PuzzleBox : MonoBehaviour
 
 
 		//init
-		//_forceField.gameObject.SetActive(true);
+		_boundary.gameObject.SetActive(false);
 		if(_activateOnAwake)
 			Activate();
 		else
 		{
-			//_forceField.Activate();
 			ActivateBeacon(false);
 			ActivateElements(false);
 		}
@@ -130,7 +124,7 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		//_keyMat.SetFloat("_Powered",1);
 		_solved=true;
-		RemoveForceField();
+		Destroy(_boundary.gameObject);
 		ActivateBeacon(false);
 		GameManager._instance.PuzzleSolved(this);
 		ActivateNextPuzzle(true);
@@ -141,10 +135,9 @@ public class PuzzleBox : MonoBehaviour
 			return;
 		_onSolved.Invoke();
 		_solved=true;
-		RemoveForceField(_nestBox==null);
+		Destroy(_boundary.gameObject);
 		ActivateBeacon(false);
 		//_keyMat.SetFloat("_Powered",1);
-		//Destroy(_forceField.gameObject);
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
 		//StartCoroutine(OpenBox());
@@ -192,10 +185,7 @@ public class PuzzleBox : MonoBehaviour
 		if(!gameObject.activeSelf)
 			return;
 		_onActivated.Invoke();
-		/*
-		if(_forceField!=null)
-			_forceField.Deactivate(_activateOnAwake||silent);
-			*/
+		_boundary.gameObject.SetActive(true);
 		_latestPuzzle=this;
 
 		_cable.FillNearPosition(transform.position,_activateOnAwake||silent);
@@ -234,16 +224,6 @@ public class PuzzleBox : MonoBehaviour
 
 	public Transform GetPerch(){
 		return transform.Find("Perch");
-	}
-
-	void RemoveForceField(bool transition=false){
-		/*
-		if(_forceField!=null)
-			Destroy(_forceField.gameObject);
-			*/
-		_puzzleCam.enabled=false;
-		if(transition)
-			_player.TransitionToRelevantCamera();
 	}
 
 	public void ResetCamera(){
