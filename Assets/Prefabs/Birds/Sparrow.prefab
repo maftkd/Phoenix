@@ -884,7 +884,7 @@ GameObject:
   - component: {fileID: 3979123256341653752}
   - component: {fileID: 3979123256332093254}
   - component: {fileID: 3979123256337009734}
-  - component: {fileID: -8877421883505080354}
+  - component: {fileID: 1984093779938817088}
   m_Layer: 0
   m_Name: Sparrow
   m_TagString: Untagged
@@ -936,11 +936,11 @@ SphereCollider:
   m_GameObject: {fileID: 3979123256341492952}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.08
   m_Center: {x: 0, y: 0.04, z: 0}
---- !u!114 &-8877421883505080354
+--- !u!114 &1984093779938817088
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -949,24 +949,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3979123256341492952}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c82a1b69952cad64b8fe80ece015cdbe, type: 3}
+  m_Script: {fileID: 11500000, guid: 063148d47c955462b99e3703c0e44997, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _peckChance: 0.25
-  _moveChance: 0
-  _stopChance: 0
-  _updateTime: 0.5
-  _maxTurn: 80
-  _degPerSec: 360
-  _walkChance: 0.05
-  _walkSpeed: 0.4
-  _flyAwayDur: 2
-  _flySpeed: 2
-  _flapSound: {fileID: 8300000, guid: a21a3dbdf5339e345acd866a94992651, type: 3}
-  _flapPeriod: 0.2
-  _flapVol: 1
-  _flapParts: {fileID: 8014797984524022723, guid: edc6a0550ab36cb4eb9b56c5af76b3de,
-    type: 3}
+  _flyInDist: 1
+  _flySpeed: 1
 --- !u!1 &3979123256341492954
 GameObject:
   m_ObjectHideFlags: 0

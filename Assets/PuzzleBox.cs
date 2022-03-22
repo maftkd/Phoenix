@@ -41,6 +41,7 @@ public class PuzzleBox : MonoBehaviour
 	public string _puzzleId;
 	PuzzleCam _puzzleCam;
 	IEnumerator _flyRoutine;
+	public Transform _sparrow;
 
 	protected virtual void Awake(){
 		_mIn=GameManager._mIn;
@@ -141,11 +142,13 @@ public class PuzzleBox : MonoBehaviour
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
 		//StartCoroutine(OpenBox());
+		_player.TransitionToRelevantCamera();
 		GameManager._instance.PuzzleSolved(this);
 		_flyRoutine = FlyAwayMate();
 		if(gameObject.activeInHierarchy)
 			StartCoroutine(_flyRoutine);
 		ActivateNextPuzzle();
+		SpawnSparrow();
 	}
 
 
@@ -257,6 +260,14 @@ public class PuzzleBox : MonoBehaviour
 		}
 		Debug.Log("Exit nest box");
 		_player.WalkOutNestBox(_box,_nestBox);
+	}
+
+	public void SpawnSparrow(){
+		Transform sparrow=Instantiate(_sparrow,transform);
+		Transform perch = _window.transform.Find("Perch");
+		perch.gameObject.SetActive(true);
+		sparrow.position=perch.position;
+		sparrow.forward=-_window.transform.forward;
 	}
 
 	void OnDrawGizmos(){

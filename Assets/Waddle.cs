@@ -123,10 +123,11 @@ public class Waddle : MonoBehaviour
 			float slope = dy/dx;
 			if(slope<-_maxWalkSlope*0.5f){
 				//check for very negative slope
-				if(dx>0){
+				if(_input.magnitude>0.1f){
 					//_bird.Ground();
 					_anim.SetFloat("walkSpeed",0f);
 					_bird.StartHopping();
+					Debug.Log("bop");
 				}
 			}
 			else if(slope<_maxWalkSlope)
@@ -159,6 +160,7 @@ public class Waddle : MonoBehaviour
 			if(!_bird.IsGrounded()){
 				_anim.SetFloat("walkSpeed",0f);
 				_bird.StartHopping();
+				Debug.Log("boop");
 			}
 		}
     }

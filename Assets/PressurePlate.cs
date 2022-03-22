@@ -70,6 +70,7 @@ public class PressurePlate : MonoBehaviour
 			case 0://idle
 				if(hits>0&&HitsAbove(hits)){
 					StartCoroutine(ButtonDown());
+					//_cols[0].GetComponent<Bird>().Ground();
 				}
 				break;
 			case 1://going down

@@ -407,6 +407,7 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 		//enable flight
 		_fly.enabled=true;
+		_flyCam.GetComponent<FlyCam>().SetPriority();
 		_state=3;
 		_anim.SetTrigger("fly");
 		//GameManager._mCam.Transition(_flyCam,MCamera.Transitions.LERP,0f,null,0.5f);
@@ -935,7 +936,7 @@ public class Bird : MonoBehaviour
 		*/
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position+Vector3.up*_hitYOffset, Vector3.down, out hit, 
-					_hitRadius*1.01f,_collisionLayer)){
+					_hitRadius*1.1f,_collisionLayer)){
 			return true;
 		}
 		return false;

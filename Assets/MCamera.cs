@@ -96,9 +96,10 @@ public class MCamera : MonoBehaviour
 				Shot prevShot = _prevCam.GetComponent<Shot>();
 				int prevPriority = prevShot==null? 10 : prevShot._priority;
 				Shot nextShot = cam.GetComponent<Shot>();
+				int nextPriority = nextShot._priority;
 
 				//ignore transition of newer camera is lower priority
-				if(nextShot._priority<prevPriority){
+				if(nextPriority<prevPriority){
 					return;
 				}
 			}

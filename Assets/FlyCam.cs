@@ -37,12 +37,12 @@ public class FlyCam : Shot
 
 	public override void StartTracking(Transform t){
 		base.StartTracking(t);
-		SetPriority();
+		//SetPriority();
 	}
 
 	public override void StopTracking(){
 		base.StopTracking();
-		ResetPriority();
+		//ResetPriority();
 	}
 
 	public void SetPriority(){
