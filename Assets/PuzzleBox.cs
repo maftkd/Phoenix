@@ -29,7 +29,7 @@ public class PuzzleBox : MonoBehaviour
 	Bird _player;
 	Transform _box;
 	Transform _boxLp;
-	Transform _pistons;
+	bool _checkLod;
 	float _lodDist=10f;
 	bool _prevInZone;
 	Gate _window;
@@ -45,7 +45,7 @@ public class PuzzleBox : MonoBehaviour
 	protected virtual void Awake(){
 		_mIn=GameManager._mIn;
 		_mCam=GameManager._mCam;
-		_box=transform.Find("BoxMesh");
+		_box=transform.Find("Birdhouse");
 		_player=GameManager._player;
 		_window=_box.Find("Window Variant").GetComponent<Gate>();
 		if(_nestBox==null)
@@ -66,8 +66,10 @@ public class PuzzleBox : MonoBehaviour
 		//setup lod
 		_boxLp=_box.Find("BoxLowDet");
 		_boxLp.SetParent(transform);
-		Material mat = _box.GetComponent<MeshRenderer>().sharedMaterial;
+		Material mat =GameManager._color.GetPuzzleMat(transform);
+		//Material mat = _box.GetComponent<MeshRenderer>().sharedMaterial;
 		_boxLp.GetComponent<MeshRenderer>().sharedMaterial=mat;
+		_checkLod=true;
 
 		//set force field color
 		Color c = mat.color;
@@ -110,9 +112,10 @@ public class PuzzleBox : MonoBehaviour
 		//lod check
 		float sqrDist=(_player.transform.position-transform.position).sqrMagnitude;
 		bool inZone=sqrDist<=_lodDist*_lodDist;
-		if(inZone!=_prevInZone||Time.frameCount==1){
+		if(inZone!=_prevInZone||_checkLod){
 			_box.gameObject.SetActive(inZone);
 			_boxLp.gameObject.SetActive(!inZone);
+			_checkLod=false;
 		}
 		_prevInZone=inZone;
     }
@@ -195,6 +198,9 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	public void ActivateElements(bool active){
+		//Debug.Log("Activating elements for: "+name+", active: "+active);
+		_box.gameObject.SetActive(true);
+		_checkLod=true;
 		Circuit [] circuits = transform.GetComponentsInChildren<Circuit>();
 		PressurePlate [] plates = transform.GetComponentsInChildren<PressurePlate>();
 		Gate [] gates = transform.GetComponentsInChildren<Gate>();

@@ -74,6 +74,19 @@ public class ColorPalette : MonoBehaviour
 		return Color.black;
 	}
 
+	public Material GetPuzzleMat(Transform t){
+		Island i = t.GetComponentInParent<Island>();
+		if(i==null)
+			return null;
+		foreach(Palette p in _palettes){
+			if(i.name==p._name){
+				return p._puzzleBoxMat;
+			}
+		}
+		return null;
+		
+	}
+
 	void Awake(){
 		foreach(Palette p in _palettes)
 			p.UpdateMaterials();
