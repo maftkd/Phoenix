@@ -125,7 +125,8 @@ public class PuzzleBox : MonoBehaviour
 		_onSolved.Invoke();
 		//_keyMat.SetFloat("_Powered",1);
 		_solved=true;
-		Destroy(_boundary.gameObject);
+		if(_boundary!=null)
+			Destroy(_boundary.gameObject);
 		ActivateBeacon(false);
 		GameManager._instance.PuzzleSolved(this);
 		ActivateNextPuzzle(true);

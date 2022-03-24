@@ -107,6 +107,8 @@ public class Circuit : MonoBehaviour
     }
 
 	public void Power(bool on){
+		if(!gameObject.activeSelf)
+			return;
 		if(!on)
 		{
 			if(!IsLastInChainWithPower()){

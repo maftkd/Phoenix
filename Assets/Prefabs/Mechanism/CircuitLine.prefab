@@ -155,9 +155,9 @@ MonoBehaviour:
   _prev: {fileID: 0}
   _fillRateOverride: 0
   _toneFrequency: 125
-  _toneNoise: 0
+  _toneNoise: 0.05
   _maxVolume: 0.0125
-  _volLerp: 5
+  _volLerp: 20
   _playAudio: 1
-  _pitchRange: {x: 0.8, y: 1.2}
+  _pitchRange: {x: 0.6, y: 1.4}
   _targetVolume: 0

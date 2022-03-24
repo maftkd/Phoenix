@@ -6,6 +6,7 @@
 		_ColorTop ("Color Top", Color) = (0,0,0,0)
 		_Center ("Center", Range(0,1)) = 0
         _MainTex ("Texture", 2D) = "white" {}
+		_NoiseLerp ("Noise Lerp", Range(0,1)) = 0.5
     }
     SubShader
     {
@@ -41,6 +42,7 @@
 			fixed _Center;
             sampler2D _MainTex;
             float4 _MainTex_ST;
+			fixed _NoiseLerp;
 
             v2f vert (appdata v)
             {
@@ -56,8 +58,9 @@
                 // sample the texture
                 fixed n = tex2D(_MainTex, fixed2(i.uv.x*_MainTex_ST.x,i.uv.y*_MainTex_ST.y)+fixed2(1,1)*_Time.x).r;
 				fixed top=saturate(abs(i.uv.y-_Center)*2);
-				top=i.uv.x;
+				top=abs(i.uv.y-0.5)*2;
                 fixed4 col = lerp(_ColorBot,_ColorTop,top);
+				n=lerp(n,1,_NoiseLerp);
 				col.a*=n;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);

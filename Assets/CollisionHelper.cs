@@ -71,19 +71,10 @@ public class CollisionHelper : MonoBehaviour
 		if(other.GetComponent<Bird>()!=null&&other.gameObject.tag=="Player")
 		{
 			_onBirdEnter.Invoke();
-			if(_hasMeshCollider)
-			{
-				_hitPoint=other.transform.position;
-			}
-			else
-			{
-				_hitPoint=_col.ClosestPoint(other.transform.position);
-			}
-			_hitNormal=other.transform.position-_hitPoint;
-			if(_hitNormal.sqrMagnitude==0)
-				_hitNormal=-other.transform.forward;
 			Bird b = other.GetComponent<Bird>();
 			Vector3 curPos=other.transform.position;
+			_hitPoint=_col.ClosestPoint(other.transform.position);
+			_hitNormal=other.transform.position-_hitPoint;
 			_newPoint=_hitPoint+_hitNormal.normalized*b._hitRadius;
 			if(b._state==1)
 			{

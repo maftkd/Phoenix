@@ -39,3 +39,10 @@
 - What can be done to make the islands look more unique?
 - Does having additional empty islands help out with the demo? Just having more places to fly to?
 
+3/24/22
+- How does a secondary goal of spotting species fit in with the primary goal of solving puzzles?
+- How does the rocker switch compare to the pressure plate in gamefeel for solving puzzles?
+- What is the effect of a puzzle counter that tracks the number of solved puzzles? The number is always displayed?
+- What information is needed to get a steam page started?
+- What architectural style is a good one to explore next for the cardinal?
+
