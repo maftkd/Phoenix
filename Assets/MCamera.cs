@@ -107,6 +107,8 @@ public class MCamera : MonoBehaviour
 		//#unsafe - stopping all coroutines could interupt things we care about. Needs further testing
 		StopAllCoroutines();
 
+		Debug.Log("priority checked");
+
 		switch(transition){
 			case Transitions.WIPE:
 				StartCoroutine(WipeTo(cam));
@@ -189,6 +191,7 @@ public class MCamera : MonoBehaviour
 
 	//fade
 	IEnumerator FadeTo(Camera cam,float letterBox,float dur){
+		Debug.Log("Starting fade");
 		float timer=0;
 		dur*=0.333f;
 		while(timer<dur){

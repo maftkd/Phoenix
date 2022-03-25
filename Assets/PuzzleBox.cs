@@ -41,6 +41,7 @@ public class PuzzleBox : MonoBehaviour
 	public string _puzzleId;
 	PuzzleCam _puzzleCam;
 	public Transform _sparrow;
+	public bool _ignoreCounter;
 
 	protected virtual void Awake(){
 		_mIn=GameManager._mIn;
@@ -110,14 +111,16 @@ public class PuzzleBox : MonoBehaviour
     protected virtual void Update()
     {
 		//lod check
-		float sqrDist=(_player.transform.position-transform.position).sqrMagnitude;
-		bool inZone=sqrDist<=_lodDist*_lodDist;
-		if(inZone!=_prevInZone||_checkLod){
-			_box.gameObject.SetActive(inZone);
-			_boxLp.gameObject.SetActive(!inZone);
-			_checkLod=false;
+		if(!_ignoreCounter){
+			float sqrDist=(_player.transform.position-transform.position).sqrMagnitude;
+			bool inZone=sqrDist<=_lodDist*_lodDist;
+			if(inZone!=_prevInZone||_checkLod){
+				_box.gameObject.SetActive(inZone);
+				_boxLp.gameObject.SetActive(!inZone);
+				_checkLod=false;
+			}
+			_prevInZone=inZone;
 		}
-		_prevInZone=inZone;
     }
 
 	//#todo - there's some overlap between solve silent and puzzle solved
@@ -128,8 +131,11 @@ public class PuzzleBox : MonoBehaviour
 		if(_boundary!=null)
 			Destroy(_boundary.gameObject);
 		ActivateBeacon(false);
-		GameManager._instance.PuzzleSolved(this);
-		ActivateNextPuzzle(true);
+		if(!_ignoreCounter)
+		{
+			GameManager._instance.PuzzleSolved(this);
+			ActivateNextPuzzle(true);
+		}
 	}
 
 	public virtual void PuzzleSolved(){
@@ -143,9 +149,13 @@ public class PuzzleBox : MonoBehaviour
 		if(_effects!=null)
 			_effects.gameObject.SetActive(true);
 		//StartCoroutine(OpenBox());
-		_player.TransitionToRelevantCamera();
-		GameManager._instance.PuzzleSolved(this);
-		ActivateNextPuzzle();
+		if(!_ignoreCounter)
+		{
+			_player.TransitionToRelevantCamera();
+			GameManager._instance.PuzzleSolved(this);
+			ActivateNextPuzzle();
+			//ActivateNextPuzzle(true);
+		}
 		SpawnSparrow();
 	}
 
@@ -186,11 +196,12 @@ public class PuzzleBox : MonoBehaviour
 		if(!gameObject.activeSelf)
 			return;
 		_onActivated.Invoke();
-		if(_boundary!=null)
+		if(_boundary!=null&&!_ignoreCounter)
 			_boundary.gameObject.SetActive(true);
 		_latestPuzzle=this;
 
-		_cable.FillNearPosition(transform.position,_activateOnAwake||silent);
+		if(_cable!=null)
+			_cable.FillNearPosition(transform.position,_activateOnAwake||silent);
 		ActivateBeacon(true);
 
 		ActivateElements(true);

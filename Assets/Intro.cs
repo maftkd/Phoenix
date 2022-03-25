@@ -174,7 +174,7 @@ public class Intro : MonoBehaviour
 
 	public void BirdBehindCam(){
 		//transition to dolly cam
-		_mCam.Transition(_overheadCam,MCamera.Transitions.FADE,_letterBoxAmount,_overheadBird.transform,_fadeDur);
+		_mCam.Transition(_overheadCam,MCamera.Transitions.FADE,_letterBoxAmount,_overheadBird.transform,_fadeDur,true);
 
 		//overhead bird starts flight
 		Vector3 start=_overheadBird.transform.position;
