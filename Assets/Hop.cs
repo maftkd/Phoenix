@@ -180,18 +180,13 @@ public class Hop : MonoBehaviour
 			transform.position+=_velocity*Vector3.up*Time.deltaTime;
 			_velocity-=_gravity*Time.deltaTime;
 			_camTarget=transform.position;
-			/*
 			if(_camTarget.y>_hopStartPos.y)
 				_camTarget.y=_hopStartY;
-				*/
 
 			//squash and stretch
 			float lerpy = Mathf.Abs(_velocity/(_hopAccel*2));
 			lerpy = Mathf.Clamp01(lerpy);
 			transform.localScale=Vector3.Lerp(_squashScale,_stretchScale,lerpy);
-			//Vector3 eulers=_mesh.localEulerAngles;
-			//eulers.y=Mathf.Lerp(_leanAngle,_defaultAngle,lerpy);
-			//_mesh.localEulerAngles=eulers;
 
 			//hit detection
 			Vector3 posDelta=transform.position-startPos;
@@ -256,12 +251,16 @@ public class Hop : MonoBehaviour
 		_anim.SetFloat("hopTime",-1f/_hopTime);
 		_knockBack=true;
 		Vector3 reflected = Vector3.Reflect(_input,dir)*_knockBackMult;
-		//make sure reflected is more than 90 degrees away from original
 		float dot = Vector3.Dot(_input.normalized,reflected.normalized);
+		//make sure reflected is more than 90 degrees away from original
+		//but why?
+		/*
 		if(dot>0)
 			_input=-_input*_knockBackMult;
 		else
 			_input=reflected;
+			*/
+		_input=reflected;
 		dot = Vector3.Dot(dir,Vector3.down);
 		if(dot>=_dotToKillVert){
 			_velocity=0;
@@ -331,7 +330,10 @@ public class Hop : MonoBehaviour
 		_squashScale.y*=_squashMult;
 		_stretchScale=_defaultScale;
 		_stretchScale.y*=_stretchMult;
-
+	}
+	
+	public void LimitHopTimer(){
+		_hopTimer=_hopBoostWindow;
 	}
 
 	void OnDrawGizmos(){

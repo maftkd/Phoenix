@@ -60,7 +60,7 @@ Material:
     - _Bend: 0.05
     - _BumpScale: 1
     - _CutOff: 0.634
-    - _Cutoff: 0.52
+    - _Cutoff: 0.34
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1

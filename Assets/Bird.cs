@@ -166,7 +166,7 @@ public class Bird : MonoBehaviour
 			switch(_state){
 				case 0://chilling
 					Ground();
-					if(_mIn.GetJump())
+					if(_mIn.GetJumpDown())
 						StartHopping();
 					else if(_mIn.GetControllerInput().sqrMagnitude>_controllerZero*_controllerZero)
 						StartWaddling();
@@ -193,7 +193,7 @@ public class Bird : MonoBehaviour
 					else if(_waddle.IsKnockBack()){
 						//just wait
 					}
-					else if(_mIn.GetJump()){
+					else if(_mIn.GetJumpDown()){
 						StartHopping();
 					}
 					if(_mIn.GetSingDown()){
@@ -226,14 +226,13 @@ public class Bird : MonoBehaviour
 							Fly();
 						}
 					}
-					if(_mIn.GetSingDown()){
-						Call();
-					}
 					break;
 				case 3://flying
+					/*
 					if(_mIn.GetSingDown()){
 						Call();
 					}
+					*/
 					break;
 				case 4://after dive
 					_afterDiveTimer+=Time.deltaTime;
@@ -364,10 +363,12 @@ public class Bird : MonoBehaviour
 		_state=1;
 	}
 
-	public void StartHopping(){
+	public void StartHopping(bool smallHop=false){
 		_state=2;
 		_hop.enabled=true;
 		_waddle.enabled=false;
+		if(smallHop)
+			_hop.LimitHopTimer();
 		//GameManager._mCam.Transition(_hopCam,MCamera.Transitions.CUT_BACK);
 		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);
 	}

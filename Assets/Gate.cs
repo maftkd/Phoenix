@@ -252,6 +252,13 @@ public class Gate : MonoBehaviour
 			else
 				Sfx.PlayOneShot3D(_doorCloseSound,left.position);
 
+			if(dir>0)
+			{
+				if(_seedCounter<_seedCount){
+					DropSeed();
+				}
+			}
+
 			yield return new WaitForSeconds(_doorOpenDelay);
 			float timer=0;
 			float dur=_doorOpenTime;
@@ -270,12 +277,6 @@ public class Gate : MonoBehaviour
 				left.rotation=Quaternion.Slerp(leftStartRot,leftEndRot,frac);
 				right.rotation=Quaternion.Slerp(rightStartRot,rightEndRot,frac);
 				yield return null;
-			}
-			if(dir>0)
-			{
-				if(_seedCounter<_seedCount){
-					DropSeed();
-				}
 			}
 		}
 	}

@@ -48,8 +48,11 @@ public class PressurePlate : MonoBehaviour
 		_mat=_button.GetComponent<MeshRenderer>().material;
 		if(_icon!=null)
 			_quad=_icon.GetComponent<Renderer>().material;
-		_emissionColor=GameManager._color.GetButtonEmissionColor(transform);
+		//_emissionColor=GameManager._color.GetButtonEmissionColor(transform);
 		_defaultColor=_mat.GetColor("_Color");
+		float h=0;float s=0;float v=0;
+		Color.RGBToHSV(_defaultColor,out h,out s,out v);
+		_emissionColor=Color.HSVToRGB(h,1,1);
 		_init=true;
 	}
 
@@ -188,6 +191,13 @@ public class PressurePlate : MonoBehaviour
 		{
 			Gizmos.color=Color.red;
 			Gizmos.DrawWireCube(_button.position+Vector3.up*_box.size.y,_halfExtents*2f);
+		}
+	}
+
+	void OnDrawGizmosSelected(){
+		if(_icon!=null){
+			Gizmos.color=Color.red;
+			Gizmos.DrawWireCube(_icon.position,Vector3.one*_icon.localScale.x);
 		}
 	}
 }

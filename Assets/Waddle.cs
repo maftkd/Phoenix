@@ -126,7 +126,7 @@ public class Waddle : MonoBehaviour
 				if(_input.magnitude>0.9f){
 					//_bird.Ground();
 					_anim.SetFloat("walkSpeed",0f);
-					_bird.StartHopping();
+					_bird.StartHopping(true);
 					Debug.Log("bop");
 				}
 			}
@@ -160,7 +160,7 @@ public class Waddle : MonoBehaviour
 		else{
 			if(!_bird.IsGrounded()){
 				_anim.SetFloat("walkSpeed",0f);
-				_bird.StartHopping();
+				_bird.StartHopping(true);
 				Debug.Log("boop");
 			}
 		}

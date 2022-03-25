@@ -88,7 +88,9 @@ public class ColorPalette : MonoBehaviour
 	}
 
 	void Awake(){
+		/*
 		foreach(Palette p in _palettes)
 			p.UpdateMaterials();
+			*/
 	}
 }
