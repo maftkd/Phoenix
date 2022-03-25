@@ -1122,7 +1122,7 @@ MonoBehaviour:
   _center: {fileID: 1548845183866259001}
   _boundary: {fileID: 3036244963733330104}
   _boundaryRadiusOverride: 0
-  _shotRadius: 1.5
+  _shotRadius: 1.7
   _shotHeight: 0.5
   _zoneHeight: 0.4
   _lerp: 3
