@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 	public static MCamera _mCam;
 	public static ColorPalette _color;
 	public static GameObject _islands;
+	public static PuzzleCounter _counter;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
 		_mIn=FindObjectOfType<MInput>();
 		_mCam=FindObjectOfType<MCamera>();
 		_color = FindObjectOfType<ColorPalette>();
+		_counter = FindObjectOfType<PuzzleCounter>();
 		_islands=GameObject.Find("Islands");
 	}
 
@@ -50,6 +52,12 @@ public class GameManager : MonoBehaviour
 #endif
 */
 		}
+		if(_mIn.GetTabDown()&&Time.timeScale>0){
+			_counter.Show();
+		}
+		else if(_mIn.GetTabUp()){
+			_counter.Show(false);
+		}
         
     }
 
@@ -74,10 +82,18 @@ public class GameManager : MonoBehaviour
 	}
 
 	public void PuzzleSolved(PuzzleBox pb){
-		_solvedPuzzles.Add(pb._puzzleId);
+		if(!_solvedPuzzles.Contains(pb._puzzleId))
+		{
+			_solvedPuzzles.Add(pb._puzzleId);
+			_counter.Increment(_solvedPuzzles.Count);
+		}
 	}
 
 	public List<string> GetSolvedPuzzles(){
 		return _solvedPuzzles;
+	}
+
+	public void ResetPuzzleCounter(){
+		_counter.Reset();
 	}
 }

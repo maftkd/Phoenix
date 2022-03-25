@@ -10,6 +10,9 @@ public class MInput : MonoBehaviour
 	public float _mouseSens;
 	public bool _inputLocked;
 	public bool _mouseEnabled;
+
+	float _triggerR;
+	int _triggerRState;
 	
 	void Awake(){
 	}
@@ -24,6 +27,29 @@ public class MInput : MonoBehaviour
     void Update()
     {
 		CalcInputVector();
+		_triggerR=Input.GetAxis("Right Trigger");
+		switch(_triggerRState){
+			case 0:
+				if(_triggerR>0.5f)
+					_triggerRState=1;
+				break;
+			case 1:
+				if(_triggerR>0.5f)
+					_triggerRState=2;
+				else
+					_triggerRState=3;
+				break;
+			case 2:
+				if(_triggerR<0.5f)
+					_triggerRState=3;
+				break;
+			case 3:
+				if(_triggerR>0.5f)
+					_triggerRState=1;
+				else
+					_triggerRState=0;
+				break;
+		}
     }
 
 	void CalcInputVector(){
@@ -89,6 +115,7 @@ public class MInput : MonoBehaviour
 		return Input.GetButtonDown("Sing");
 	}
 
+
 	void RemapInputFromSquareToCircle(){
 		float theta = Mathf.Atan2(_controllerInput.y,_controllerInput.x)*Mathf.Rad2Deg;
 		float maxX=0;
@@ -137,5 +164,17 @@ public class MInput : MonoBehaviour
 	public void EnableCursor(bool en){
 		Cursor.visible=en;
 		Cursor.lockState=en?CursorLockMode.None : CursorLockMode.Locked;
+	}
+
+	public bool GetTabDown(){
+		if(_inputLocked)
+			return false;
+		return (Input.GetKeyDown(KeyCode.Tab)||_triggerRState==1);
+	}
+
+	public bool GetTabUp(){
+		if(_inputLocked)
+			return false;
+		return (Input.GetKeyUp(KeyCode.Tab)||_triggerRState==3);
 	}
 }

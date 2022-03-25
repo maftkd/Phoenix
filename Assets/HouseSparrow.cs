@@ -69,7 +69,7 @@ public class HouseSparrow : MonoBehaviour
 		timer=0;
 		float dur=_turnDur;
 		Quaternion startRot=transform.rotation;
-		transform.Rotate(Vector3.up*180f);
+		transform.Rotate(Vector3.up*179f*MRandom.RandSign());
 		Quaternion endRot=transform.rotation;
 		startPos=transform.position;
 		Vector3 jumpPos=startPos+Vector3.up*_jumpHeight;

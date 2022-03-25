@@ -67,6 +67,7 @@ public class SaveSlot : MonoBehaviour
 		int seeds=0;
 		Bird[] birds = FindObjectsOfType<Bird>();
 		PuzzleBox [] puzzles = FindObjectsOfType<PuzzleBox>();
+		GameManager._instance.ResetPuzzleCounter();
 		foreach(string l in lines){
 			if(l==_divider)
 			{

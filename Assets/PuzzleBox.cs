@@ -186,7 +186,8 @@ public class PuzzleBox : MonoBehaviour
 		if(!gameObject.activeSelf)
 			return;
 		_onActivated.Invoke();
-		_boundary.gameObject.SetActive(true);
+		if(_boundary!=null)
+			_boundary.gameObject.SetActive(true);
 		_latestPuzzle=this;
 
 		_cable.FillNearPosition(transform.position,_activateOnAwake||silent);
