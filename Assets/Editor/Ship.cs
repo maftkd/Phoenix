@@ -16,7 +16,7 @@ public class Ship : EditorWindow
 			Directory.CreateDirectory(buildPath);
 		}
 		BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPath,BuildTarget.WebGL, BuildOptions.None);
-		string bat = "cd Butler\nbutler push "+buildPath+" rithmgaming/ab-launchpad:HTML5";
+		string bat = "cd Butler\nbutler push "+buildPath+" rithmgaming/bh-launchpad:HTML5";
 
         string batPath = Directory.GetParent(Application.dataPath).FullName.Replace('\\','/')+"/Butler/ship.bat";
         File.WriteAllText(batPath, bat);
