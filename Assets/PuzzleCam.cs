@@ -68,7 +68,8 @@ public class PuzzleCam : Shot
 			Vector3 centerPos=_center.position;//+Vector3.up*_targetYOffset;
 			centerPos.y=_player.transform.position.y;
 			Vector3 diff=(centerPos-_player.transform.position).normalized;
-			_targetPos=_center.position-diff*_shotRadius;
+			//_targetPos=_center.position-diff*_shotRadius;
+			_targetPos=_player.transform.position-diff*_shotRadius;
 			_targetPos.y=centerPos.y+_shotHeight;
 			Quaternion curRot=transform.rotation;
 			Vector3 curPos=transform.position;

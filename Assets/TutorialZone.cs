@@ -9,10 +9,12 @@ public class TutorialZone : MonoBehaviour
 	public bool _hideOnButtonHold;
 	float _holdTimer;
 	public string _buttonName;
+	public bool _dontHideMesh;
 
 	void Awake(){
 		_bird=GameManager._player;
-		GetComponent<MeshRenderer>().enabled=false;
+		if(!_dontHideMesh)
+			GetComponent<MeshRenderer>().enabled=false;
 	}
 
 	public void ShowTutorial(int index){
@@ -23,7 +25,7 @@ public class TutorialZone : MonoBehaviour
 	}
 
 	void OnDisable(){
-		HideTutorial();
+		//HideTutorial();
 	}
 
 	void Update(){

@@ -177,4 +177,11 @@ public class MInput : MonoBehaviour
 			return false;
 		return (Input.GetKeyUp(KeyCode.Tab)||_triggerRState==3);
 	}
+
+	public bool GetInteractDown(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonDown("Interact");
+
+	}
 }

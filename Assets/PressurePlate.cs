@@ -182,7 +182,8 @@ public class PressurePlate : MonoBehaviour
 			Init();
 		_mat.SetColor("_EmissionColor", Color.black);
 		_mat.SetColor("_Color", active? _defaultColor : Color.black);
-		_quad.SetFloat("_OutlineThickness",active?0.1f:0.5f);
+		if(_quad!=null)
+			_quad.SetFloat("_OutlineThickness",active?0.1f:0.5f);
 		_active=active;
 	}
 

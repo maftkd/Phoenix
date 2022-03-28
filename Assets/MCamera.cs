@@ -63,6 +63,11 @@ public class MCamera : MonoBehaviour
 		}
     }
 
+	public void Snap(){
+		transform.rotation=_targetCam.transform.rotation;
+		transform.position=_targetCam.transform.position;
+	}
+
 	public void SnapToCamera(Camera cam,bool handleTracking=true){
 		Transform camT = cam.transform;
 		transform.position=camT.position;

@@ -15,7 +15,8 @@ public class Bird : MonoBehaviour
 	Tool _tool;
 	Follow _follow;
 	Tutorial _tutorial;
-	Animator _anim;
+	[HideInInspector]
+	public Animator _anim;
 	AudioSource _ruffleAudio;
 	public bool _playerControlled;
 	MInput _mIn;
@@ -61,12 +62,12 @@ public class Bird : MonoBehaviour
 	public float _summonDist;
 	SkinnedMeshRenderer _smr;
 	Vector3 _lastSpot;
+	Collider[] _cols;
 
 	[Header("NPC - peck")]
 	public float _peckCheckTime;
 	public float _peckChance;
 	float _peckTimer;
-	Collider[] _cols;
 	public float _flySpeed;
 	public float _maxSpeed;
 	public float _flapDur;
@@ -99,6 +100,9 @@ public class Bird : MonoBehaviour
 	public Transform _transformationEffects;
 	IEnumerator _transformRoutine;
 	public float _transformDelay;
+
+	//[Header("Interactions")]
+	LightSwitch _nearSwitch;
 
 	void Awake(){
 		//calculations
@@ -170,25 +174,15 @@ public class Bird : MonoBehaviour
 						StartHopping();
 					else if(_mIn.GetControllerInput().sqrMagnitude>_controllerZero*_controllerZero)
 						StartWaddling();
+					if(_mIn.GetInteractDown())
+						Interact();
 					if(_mIn.GetSingDown()){
 						Call();
 					}
-					/*
-					if(Input.GetButtonDown("Jump")){
-						//Debug.Log("Jump time");
-						Fly();
-					}
-					*/
-
 					break;
 				case 1://waddling
 					if(!_waddle.IsWaddling()){
 						StopWaddling();
-						/*
-						_state=0;
-						_waddle.enabled=false;
-						_anim.SetFloat("walkSpeed",0f);
-						*/
 					}
 					else if(_waddle.IsKnockBack()){
 						//just wait
@@ -196,15 +190,11 @@ public class Bird : MonoBehaviour
 					else if(_mIn.GetJumpDown()){
 						StartHopping();
 					}
+					if(_mIn.GetInteractDown())
+						Interact();
 					if(_mIn.GetSingDown()){
 						Call();
 					}
-					/*
-					if(Input.GetButtonDown("Jump")){
-						//Debug.Log("Jump time");
-						Fly();
-					}
-					*/
 					break;
 				case 2://hopping
 					if(!_hop.IsHopping()){
@@ -250,6 +240,8 @@ public class Bird : MonoBehaviour
 				case 7://entering house
 					break;
 				case 8://feeding
+					break;
+				case 9://interacting
 					break;
 				default:
 					break;
@@ -466,16 +458,6 @@ public class Bird : MonoBehaviour
 
 	public void MakeFootprint(Transform surface, float offset=0){
 		return ;
-		/*
-		Transform fp = Instantiate(_footprint,transform.position,Quaternion.identity,surface);
-		//orientate
-		fp.forward=transform.forward;
-		//fp.up=transform.forward;
-		//offset footprint
-		fp.position+=Vector3.up*_footprintOffset.y+transform.right*_footprintOffset.x*_leftRightPrint;
-		fp.position+=offset*transform.forward;
-		_leftRightPrint*=-1;
-		*/
 	}
 
 	public void EquipFeather(Transform t){
@@ -493,6 +475,7 @@ public class Bird : MonoBehaviour
 		if(ignoreNpc&&!_playerControlled)
 			return;
 		if(!supress){
+			/*
 			//add particel to collision
 			Transform fp = Instantiate(_wallprint,ch._hitPoint,Quaternion.identity);
 			//orientate
@@ -500,6 +483,7 @@ public class Bird : MonoBehaviour
 			//offset footprint
 			float vertMult = _state==3?0.4f : 0.9f;
 			fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*vertMult;
+			*/
 
 			if(_state>1)
 				_starParts.Play();
@@ -508,7 +492,7 @@ public class Bird : MonoBehaviour
 		switch(_state){
 			case 0:
 			case 1://waddling
-				ch.Sound(_waddleKnockVolume);
+				//ch.Sound(_waddleKnockVolume);
 				_waddle.KnockBack(dir);
 				break;
 			case 2://hopping
@@ -554,6 +538,8 @@ public class Bird : MonoBehaviour
 	}
 
 	public float GetVel(){
+		if(_state==9)
+			return 0f;
 		return _vel.magnitude/Time.deltaTime;
 	}
 
@@ -973,6 +959,21 @@ public class Bird : MonoBehaviour
 		_hop.ResetScale();
 		_waddleCam.GetComponent<WaddleCam>().ResetCamera();
 		_transformRoutine=null;
+	}
+
+	public void NearLightSwitch(LightSwitch ls){
+		_nearSwitch=ls;
+	}
+
+	void Interact(){
+		if(_nearSwitch!=null){
+			_state=9;
+			_nearSwitch.Toggle();
+			_waddle.enabled=false;
+			_hop.enabled=false;
+			_fly.enabled=false;
+			//_anim.SetFloat("walkSpeed",0f);
+		}
 	}
 
 	void OnDrawGizmos(){

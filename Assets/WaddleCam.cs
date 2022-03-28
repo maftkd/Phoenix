@@ -133,6 +133,10 @@ public class WaddleCam : Shot
 		SetDebugLines(_debugLines);
 	}
 
+	public void AdjustTheta(float amount){
+		_theta+=amount;
+	}
+
 	void SetDebugLines(bool on){
 		RawImage [] images = transform.GetComponentsInChildren<RawImage>();
 		foreach(RawImage ri in images)
@@ -165,6 +169,7 @@ public class WaddleCam : Shot
 	}
 
 	public void ResetCamera(){
+		Debug.Log("resetting waddle cam");
 		OnEnable();
 	}
 	/*

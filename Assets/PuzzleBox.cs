@@ -219,16 +219,7 @@ public class PuzzleBox : MonoBehaviour
 		Circuit [] circuits = transform.GetComponentsInChildren<Circuit>();
 		PressurePlate [] plates = transform.GetComponentsInChildren<PressurePlate>();
 		Gate [] gates = transform.GetComponentsInChildren<Gate>();
-		/*
-		LineRenderer [] lines = transform.GetComponentsInChildren<LineRenderer>();
-
-		foreach(LineRenderer l in lines)
-			l.gameObject.SetActive(active);
-		foreach(PressurePlate p in plates)
-			p.gameObject.SetActive(active);
-		foreach(Gate g in gates)
-			g.gameObject.SetActive(active);
-			*/
+		LightSwitch [] switches = transform.GetComponentsInChildren<LightSwitch>();
 		foreach(Circuit c in circuits){
 			c.Activate(active);
 		}
@@ -237,6 +228,9 @@ public class PuzzleBox : MonoBehaviour
 		}
 		foreach(Gate g in gates){
 			g.Activate(active);
+		}
+		foreach(LightSwitch ls in switches){
+			ls.Activate(active);
 		}
 	}
 
