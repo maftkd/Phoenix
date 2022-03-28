@@ -197,8 +197,10 @@ public class PuzzleBox : MonoBehaviour
 			return;
 		_onActivated.Invoke();
 		if(_boundary!=null&&!_ignoreCounter)
+		{
 			_boundary.gameObject.SetActive(true);
-		_latestPuzzle=this;
+			_latestPuzzle=this;
+		}
 
 		if(_cable!=null)
 			_cable.FillNearPosition(transform.position,_activateOnAwake||silent);
@@ -243,7 +245,8 @@ public class PuzzleBox : MonoBehaviour
 	}
 
 	public void ResetCamera(){
-		_puzzleCam.ResetZone();
+		if(_puzzleCam!=null)
+			_puzzleCam.ResetZone();
 	}
 
 

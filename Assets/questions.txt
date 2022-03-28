@@ -46,3 +46,11 @@
 - What information is needed to get a steam page started?
 - What architectural style is a good one to explore next for the cardinal?
 
+3/28/22
+- How does the game feel as a primarily flight based puzzles?
+- Can wind directions be easily read if they are made as particle systems?
+- Do wall-mountain buttons work as well / better than floor mounted?
+- How does the game feel improve with more science / story elements in play
+- Can rain and wind be feasible simultaneously, both visually / mechanically?
+- How large does an island need to be to accomidate the flight puzzles?
+

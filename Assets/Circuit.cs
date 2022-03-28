@@ -15,13 +15,15 @@ public class Circuit : MonoBehaviour
 
 	public string _fillVar;
 	float _length;
-	public float _fillRate;
-	public float _fallRate;
+	public float _fillDur;
+	public float _fallDur;
 	public Circuit [] _next;
 	public float _fill;
 	[HideInInspector]
 	public Circuit _prev;
 	public float _fillRateOverride;
+	[HideInInspector]
+	public bool _isCable;
 
 	AudioSource _source;
 	[Header("Audio")]
@@ -41,6 +43,7 @@ public class Circuit : MonoBehaviour
 		if(GetComponent<Cable>()!=null)
 		{
 			_length=GetComponent<Cable>().GetLength();
+			_isCable=true;
 		}
 		else if(GetComponent<LineRenderer>()!=null)
 		{
@@ -56,8 +59,6 @@ public class Circuit : MonoBehaviour
 			_source.loop=true;
 			_source.volume=0;
 		}
-		if(_fillRateOverride!=0)
-			_fillRate=_fillRateOverride;
 
 		_mat.SetFloat(_fillVar,_fill);
 	}
@@ -69,15 +70,28 @@ public class Circuit : MonoBehaviour
 		//get pitch range when circuit is chained with others
 		int prevCircuits=0;
 		int nextCircuits=0;
+		float totalLength=_length;//start with my length, and add others
 		Circuit c = this;
 		while(c._prev!=null){
 			prevCircuits++;
 			c=c._prev;
+			if(c._isCable){
+				totalLength+=c.GetComponent<Cable>().GetLength();
+			}
+			else{
+				totalLength+=c.GetLengthFromLineRenderer();
+			}
 		}
 		c=this;
 		while(c._next.Length==1){
 			nextCircuits++;
 			c=c._next[0];
+			if(c._isCable){
+				totalLength+=c.GetComponent<Cable>().GetLength();
+			}
+			else{
+				totalLength+=c.GetLengthFromLineRenderer();
+			}
 		}
 		_indexInChain=prevCircuits;
 		_chainLength=prevCircuits+nextCircuits+1;
@@ -87,7 +101,11 @@ public class Circuit : MonoBehaviour
 		float minPitch = Mathf.Lerp(_pitchRange.x,_pitchRange.y,minPitch01);
 		float maxPitch = Mathf.Lerp(_pitchRange.x,_pitchRange.y,maxPitch01);
 		_pitchRange = new Vector2(minPitch,maxPitch);
-        
+
+		//scale back fill / fall dur to fit the percentage of overall chain
+		float lengthFrac=_length/totalLength;
+		_fillDur*=lengthFrac;
+		_fallDur*=lengthFrac;
     }
 
     // Update is called once per frame
@@ -132,9 +150,9 @@ public class Circuit : MonoBehaviour
 
 	IEnumerator PowerR(){
 		float timer=0;
-		float rate = _fillRate;
 		float length = _length;
-		float fullDur =length/rate;
+		float fullDur =_fillDur;
+		float rate = length/fullDur;
 		length=(1-_fill)*length;
 		float dur=length/rate;
 		timer=fullDur-dur;
@@ -171,9 +189,9 @@ public class Circuit : MonoBehaviour
 		}
 		_onPoweredOff.Invoke();
 		float timer=0;
-		float rate = _fallRate;
 		float length = _length;
-		float fullDur = length/rate;
+		float fullDur =_fallDur;
+		float rate = length/fullDur;
 		length*=_fill;
 		float dur = length/rate;
 		timer=dur;
@@ -196,7 +214,7 @@ public class Circuit : MonoBehaviour
 		return _fill>=1f;
 	}
 
-	float GetLengthFromLineRenderer(){
+	public float GetLengthFromLineRenderer(){
 		LineRenderer lr = GetComponent<LineRenderer>();
 		Vector3 [] points = new Vector3[lr.positionCount];
 		lr.GetPositions(points);

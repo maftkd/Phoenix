@@ -41,7 +41,9 @@ public class PuzzleCam : Shot
     {
 		base.Update();
 		if(PuzzleBox._latestPuzzle!=_puzzle)
+		{
 			return;
+		}
 		
 		//zone check
 		float sqrDist = (_player.transform.position-_center.position).sqrMagnitude;

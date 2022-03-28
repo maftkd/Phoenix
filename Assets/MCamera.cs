@@ -90,6 +90,7 @@ public class MCamera : MonoBehaviour
 		if(_prevCam!=null&&cam==_prevCam)
 			return;
 
+
 		//check priority
 		if(!overridePriority&&_prevCam!=null){
 			if(cam.GetComponent<Shot>()!=null){

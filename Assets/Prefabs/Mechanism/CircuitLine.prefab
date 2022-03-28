@@ -148,8 +148,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _fillVar: _FillAmount
-  _fillRate: 0.3
-  _fallRate: 1.5
+  _fillDur: 1
+  _fallDur: 0.1
   _next: []
   _fill: 0
   _prev: {fileID: 0}

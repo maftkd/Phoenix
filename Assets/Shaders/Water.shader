@@ -82,6 +82,7 @@
 
 			fixed foamNoise=tex2D(_NoiseTex,(baseUV*_FoamFreq)+scrollOffset);
 			fixed foam = step(depth,_FoamDist+foamNoise-0.5);
+			foam*=step(IN.screenPos.w,20);
 
 			fixed wavePow=pow(noiseDif,_WavePower);
 			col.rgb=lerp(col.rgb,_FoamColor,wavePow);
