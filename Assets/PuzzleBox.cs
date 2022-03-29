@@ -28,9 +28,9 @@ public class PuzzleBox : MonoBehaviour
 	public Cable _cable;
 	Bird _player;
 	Transform _box;
+	Transform _house;
 	Transform _boxLp;
 	bool _checkLod;
-	float _lodDist=10f;
 	bool _prevInZone;
 	Gate _window;
 	//Material _keyMat;
@@ -47,8 +47,9 @@ public class PuzzleBox : MonoBehaviour
 		_mIn=GameManager._mIn;
 		_mCam=GameManager._mCam;
 		_box=transform.Find("Birdhouse");
+		_house=_box.Find("boxSmall");
 		_player=GameManager._player;
-		_window=_box.Find("Window Variant").GetComponent<Gate>();
+		_window=_house.Find("Window Variant").GetComponent<Gate>();
 		if(_nestBox==null)
 			_window._onGateActivated.AddListener(PuzzleSolved);
 		else
@@ -65,16 +66,15 @@ public class PuzzleBox : MonoBehaviour
 		label.GetComponent<Text>().text=_puzzleId;
 
 		//setup lod
-		_boxLp=_box.Find("BoxLowDet");
-		_boxLp.SetParent(transform);
+		//_boxLp=_box.Find("BoxLowDet");
+		//_boxLp.SetParent(transform);
 		Material mat =GameManager._color.GetPuzzleMat(transform);
 		//Material mat = _box.GetComponent<MeshRenderer>().sharedMaterial;
-		_boxLp.GetComponent<MeshRenderer>().sharedMaterial=mat;
-		_checkLod=true;
+		//_boxLp.GetComponent<MeshRenderer>().sharedMaterial=mat;
 
 		//set force field color
 		Color c = mat.color;
-		_boundary=_box.Find("Boundary").GetComponent<Boundary>();
+		_boundary=transform.Find("Boundary").GetComponent<Boundary>();
 		_boundary.SetColor(c);
 		Color labelC=c;
 		labelC.a*=_labelOpacity;
@@ -111,6 +111,7 @@ public class PuzzleBox : MonoBehaviour
     protected virtual void Update()
     {
 		//lod check
+		/*
 		if(!_ignoreCounter){
 			float sqrDist=(_player.transform.position-transform.position).sqrMagnitude;
 			bool inZone=sqrDist<=_lodDist*_lodDist;
@@ -121,6 +122,7 @@ public class PuzzleBox : MonoBehaviour
 			}
 			_prevInZone=inZone;
 		}
+		*/
     }
 
 	//#todo - there's some overlap between solve silent and puzzle solved
@@ -207,15 +209,13 @@ public class PuzzleBox : MonoBehaviour
 		ActivateBeacon(true);
 
 		ActivateElements(true);
-		//activate lines
-		//
+
 		//
 	}
 
 	public void ActivateElements(bool active){
 		//Debug.Log("Activating elements for: "+name+", active: "+active);
-		_box.gameObject.SetActive(true);
-		_checkLod=true;
+		//_box.gameObject.SetActive(true);
 		Circuit [] circuits = transform.GetComponentsInChildren<Circuit>();
 		PressurePlate [] plates = transform.GetComponentsInChildren<PressurePlate>();
 		Gate [] gates = transform.GetComponentsInChildren<Gate>();
