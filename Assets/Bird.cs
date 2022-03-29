@@ -460,11 +460,13 @@ public class Bird : MonoBehaviour
 		return ;
 	}
 
+	/*
 	public void EquipFeather(Transform t){
 		Material[] mats = _smr.materials;
 		mats[1]=t.GetComponent<MeshRenderer>().materials[1];
 		_smr.materials=mats;
 	}
+	*/
 
 	IEnumerator PlayExplodeParticlesR(float vel){
 		Instantiate(_explodeParts,transform.position,Quaternion.identity);
@@ -485,7 +487,7 @@ public class Bird : MonoBehaviour
 			fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*vertMult;
 			*/
 
-			if(_state>1)
+			if(_state>2)
 				_starParts.Play();
 		}
 
@@ -974,6 +976,10 @@ public class Bird : MonoBehaviour
 			_fly.enabled=false;
 			//_anim.SetFloat("walkSpeed",0f);
 		}
+	}
+
+	public Material GetMaterial(){
+		return _smr.material;
 	}
 
 	void OnDrawGizmos(){

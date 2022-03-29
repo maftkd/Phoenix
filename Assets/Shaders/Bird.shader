@@ -67,13 +67,11 @@
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
 			fixed dt = dot(IN.viewDir,_WorldSpaceLightPos0.xyz);
 
-			//fixed4 col = dt<0
-			//fixed4 col = lerp(lerp(_Color,_ColorB,smoothstep(-1,-0.333,dt)),_ColorC,smoothstep(0.333,1,dt));
 			fixed4 col = lerp(lerp(_Color,_ColorB,smoothstep(_ColorParams.x,_ColorParams.y,dt)),
 					_ColorC,smoothstep(_ColorParams.y,1,dt));
 			fixed shiney = smoothstep(_Shiney.x,_Shiney.y,dot(IN.viewDir,IN.worldNormal));
-			o.Albedo=lerp(c.rgb,col.rgb,shiney);
-			//o.Albedo=col.rgb;
+			col.rgb=lerp(c.rgb,col.rgb,shiney);
+			o.Albedo=col;
 
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
@@ -98,10 +96,12 @@
 				struct appdata{
 					float4 vertex : POSITION;
 					float3 normal : NORMAL;
+					float2 uv : TEXCOORD0;
 				};
 
 				struct v2f{
 					float4 position : SV_POSITION;
+					float2 uv : TEXCOORD0;
 				};
 
 				fixed _OutlineThickness;
@@ -113,6 +113,7 @@
 					float3 outlineOffset = normal*_OutlineThickness;
 					float3 position = v.vertex+outlineOffset;
 					o.position = UnityObjectToClipPos(position);
+					o.uv=v.uv;
 					return o;
 				}
 				fixed4 frag(v2f i) : SV_TARGET{

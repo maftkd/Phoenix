@@ -70,7 +70,7 @@ public class LightSwitch : MonoBehaviour
     {
 		if(!_active)
 			return;
-		_inZone=(_player.transform.position-transform.position).sqrMagnitude<_radius*_radius;
+		_inZone=(_player.transform.position-(transform.position+transform.forward*_cover.localPosition.z*2)).sqrMagnitude<_radius*_radius;
 		if(_inZone!=_prevInZone){
 			if(_inZone)
 			{

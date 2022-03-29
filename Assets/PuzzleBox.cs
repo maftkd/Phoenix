@@ -34,7 +34,7 @@ public class PuzzleBox : MonoBehaviour
 	bool _prevInZone;
 	Gate _window;
 	//Material _keyMat;
-	public AudioClip _buzzClip;
+	public AudioClip _gearClip;
 	public PuzzleBox _nextPuzzle;
 	public GameObject _nestBox;
 	[HideInInspector]
@@ -82,6 +82,7 @@ public class PuzzleBox : MonoBehaviour
 		label.GetComponent<Text>().color=labelC;
 		researchLogo.GetComponent<RawImage>().color=labelC;
 
+		_box.transform.localScale=Vector3.zero;
 
 		//init
 		_boundary.gameObject.SetActive(false);
@@ -210,7 +211,21 @@ public class PuzzleBox : MonoBehaviour
 
 		ActivateElements(true);
 
-		//
+		if(!_ignoreCounter)
+			StartCoroutine(AnimateBox());
+		else
+			_box.transform.localScale=Vector3.one;
+	}
+
+	IEnumerator AnimateBox(){
+		Sfx.PlayOneShot3D(_gearClip,transform.position);
+		float timer=0;
+		while(timer<1f){
+			timer+=Time.deltaTime;
+			_box.transform.localScale=Vector3.one*timer;
+			yield return null;
+		}
+		_box.transform.localScale=Vector3.one;
 	}
 
 	public void ActivateElements(bool active){

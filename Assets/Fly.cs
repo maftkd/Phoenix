@@ -87,6 +87,11 @@ public class Fly : MonoBehaviour
 	Transform _sun;
 	bool _prevShowShadow;
 
+	//stamina outline
+	public Color _fullColor;
+	public Color _emptyColor;
+	Material _mat;
+
 	void Awake(){
 		_mIn=GameManager._mIn;
 		_cols=new Collider[4];
@@ -126,12 +131,15 @@ public class Fly : MonoBehaviour
 		//_diving=false;
 		_anim.ResetTrigger("soar");
 
-		Flap();
+		Flap(false);
+
+		_mat = _bird.GetMaterial();
+		_mat.SetColor("_RimColor",_fullColor);
 	}
 
 	void OnDisable(){
 		//Soar(false);
-
+		_mat.SetColor("_RimColor",Color.black);
 	}
 
     // Start is called before the first frame update
@@ -159,15 +167,14 @@ public class Fly : MonoBehaviour
 			}
 		}
 
-		_soaring=!_mIn.GetJump();
-		_anim.SetBool("soar",_soaring);
-		if(_flapTimer>_flapDur){
+		_soaring=_flapTimer>_flapDur;
+		if(_soaring){
 			Soar(_soaring);
 		}
 		else{
 			_velocity+=_curFlapAccel*Time.deltaTime;
-
 		}
+		_anim.SetBool("soar",_soaring);
 
 		//add air control
 		Vector3 input=_mIn.GetControllerInput();
@@ -194,7 +201,7 @@ public class Fly : MonoBehaviour
 				_velocity+=flatForward*Time.deltaTime*_aoa*_dragMult;
 				_lift=Mathf.InverseLerp(0,_maxAoa,-_aoa)*_maxLift;
 			}
-			DebugScreen.Print(_lift,0);
+			//DebugScreen.Print(_lift,0);
 			flatVel=_velocity;
 			flatVel.y=0;
 			
@@ -311,9 +318,23 @@ public class Fly : MonoBehaviour
 		}
     }
 
-	void Flap(){
+	void Flap(bool countFlap=true){
 		FlapEffects();
-		_flapCounter++;
+		if(countFlap)
+		{
+			_flapCounter++;
+			float hFull;
+			float sFull;
+			float vFull;
+			float hEmpty;
+			float sEmpty;
+			float vEmpty;
+			Color.RGBToHSV(_fullColor,out hFull, out sFull, out vFull);
+			Color.RGBToHSV(_emptyColor,out hEmpty, out sEmpty, out vEmpty);
+			float frac=_flapCounter/(float)_numFlaps;
+			Color newCol = Color.HSVToRGB(Mathf.Lerp(hFull,hEmpty,frac),Mathf.Lerp(sFull,sEmpty,frac),Mathf.Lerp(vFull,vEmpty,frac));
+			_mat.SetColor("_RimColor",newCol);
+		}
 	}
 
 	public void FlapEffects(){
@@ -349,8 +370,8 @@ public class Fly : MonoBehaviour
 	}
 
 	public void KnockBack(Vector3 dir){
-		Debug.Log("Fly getting knocked back");
-		_knockBackTimer+=Time.deltaTime;
+		//Debug.Log("Fly getting knocked back");
+		//_knockBackTimer+=Time.deltaTime;
 		/*
 		_velocity.x*=-_knockBackMult;
 		_velocity.z*=-_knockBackMult;

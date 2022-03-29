@@ -148,12 +148,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _fillVar: _FillAmount
-  _fillDur: 1
+  _fillDur: 0.5
   _fallDur: 0.1
   _next: []
   _fill: 0
   _prev: {fileID: 0}
   _fillRateOverride: 0
+  _isCable: 0
   _toneFrequency: 125
   _toneNoise: 0.05
   _maxVolume: 0.0125
