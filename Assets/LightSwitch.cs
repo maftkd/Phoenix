@@ -28,6 +28,7 @@ public class LightSwitch : MonoBehaviour
 	public float _coverAnimDur;
 	public AudioClip _openClip;
 	public AudioClip _closeClip;
+	public AnimationCurve _clipCurve;
 
 	void Awake(){
 		if(!_init)
@@ -43,7 +44,7 @@ public class LightSwitch : MonoBehaviour
 		_onRot=_handle.rotation;
 		_handle.rotation=_offRot;
 
-		_mat=_handle.GetComponent<MeshRenderer>().material;
+		_mat=_handle.GetComponent<MeshRenderer>().materials[1];
 		_defaultColor=_mat.GetColor("_Color");
 		float h=0;float s=0;float v=0;
 		Color.RGBToHSV(_defaultColor,out h,out s,out v);
@@ -152,7 +153,7 @@ public class LightSwitch : MonoBehaviour
 		while(timer<dur){
 			timer+=Time.deltaTime;
 			frac=timer/dur;
-			_cover.rotation=Quaternion.Slerp(_closeRot,_openRot,frac);
+			_cover.rotation=Quaternion.Slerp(_closeRot,_openRot,_clipCurve.Evaluate(frac));
 			yield return null;
 		}
 		_cover.rotation=_openRot;
@@ -167,7 +168,7 @@ public class LightSwitch : MonoBehaviour
 		while(timer<dur){
 			timer+=Time.deltaTime;
 			frac=timer/dur;
-			_cover.rotation=Quaternion.Slerp(_openRot,_closeRot,frac);
+			_cover.rotation=Quaternion.Slerp(_closeRot,_openRot,_clipCurve.Evaluate(1-frac));
 			yield return null;
 		}
 		_cover.rotation=_closeRot;

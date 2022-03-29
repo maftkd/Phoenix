@@ -58,8 +58,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef3375ba4bf6e984cb7803983a3142c1, type: 2}
   - {fileID: 2100000, guid: bce21ac53ae341e4f9151a63798ff64f, type: 2}
+  - {fileID: 2100000, guid: ef3375ba4bf6e984cb7803983a3142c1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -186,6 +186,30 @@ MonoBehaviour:
   _coverAnimDur: 0.25
   _openClip: {fileID: 8300000, guid: 2f1e03775c829d44b86998feede54b3f, type: 3}
   _closeClip: {fileID: 8300000, guid: 45fbe98a1e307854cad5dc06089caf8b, type: 3}
+  _clipCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.4826091
+      outSlope: -0.4826091
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.06853145
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &5283123490216331878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,8 +237,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.15, y: 0.24, z: 0.12}
-  m_Center: {x: 0, y: 0, z: -0.05}
+  m_Size: {x: 0.08869888, y: 0.24, z: 0.09616777}
+  m_Center: {x: 0, y: 0, z: -0.053858504}
 --- !u!114 &8350863985001371139
 MonoBehaviour:
   m_ObjectHideFlags: 0
