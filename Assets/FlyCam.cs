@@ -93,12 +93,7 @@ public class FlyCam : Shot
 		camBack.y=0;
 		camBack.Normalize();
 		float theta=Mathf.Atan2(camBack.z,camBack.x);
-		/*
-		if(theta>Mathf.PI)
-			theta=-(Mathf.PI*2f-theta);
-		else if(theta<-Mathf.PI)
-			theta=(Mathf.PI*2f+theta);
-			*/
+
 		Vector3 playerBack=-_player.transform.forward;
 		playerBack.y=0;
 		playerBack.Normalize();

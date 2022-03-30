@@ -61,7 +61,7 @@ public class CollisionHelper : MonoBehaviour
 	}
 	void OnTriggerStay(Collider other){
 		Bird b = other.GetComponent<Bird>();
-		if(b!=null&&b._state==1)
+		if(b!=null&&b._state<3)
 			HandleCollision(other);
 	}
 

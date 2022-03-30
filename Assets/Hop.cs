@@ -260,7 +260,7 @@ public class Hop : MonoBehaviour
 		else
 			_input=reflected;
 			*/
-		//_input=reflected;
+		_input=reflected;
 		float dot = Vector3.Dot(dir,Vector3.down);
 		if(dot>=_dotToKillVert){
 			_velocity=0;

@@ -9,6 +9,7 @@ public class Wind : MonoBehaviour
 	Vector3 _windDir;
 	Bird _player;
 	public float _windStrength;
+	ParticleSystem _parts;
 
 	void Awake(){
 		BoxCollider box=GetComponent<BoxCollider>();
@@ -22,6 +23,21 @@ public class Wind : MonoBehaviour
 			Destroy(gameObject,0.1f);
 		}
 		_windDir=_windDirT.forward;
+		_parts=GetComponent<ParticleSystem>();
+		var sh = _parts.shape;
+		sh.scale=_extents;
+		var vol = _parts.velocityOverLifetime;
+		Vector3 vel=_windDir*_windStrength;
+		vol.xMultiplier=vel.x;
+		vol.yMultiplier=vel.y;
+		vol.zMultiplier=vel.z;
+		var main = _parts.main;
+		Vector3 forward = _windDirT.forward;
+		float r = (forward.x+1)*0.5f;
+		float g = (forward.y+1)*0.5f;
+		float b = (forward.z+1)*0.5f;
+		Color arrowColor=new Color(r,g,b);
+		main.startColor=arrowColor;
 	}
 
     // Start is called before the first frame update

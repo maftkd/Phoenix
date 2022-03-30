@@ -47,16 +47,12 @@ public class Ocean : MonoBehaviour
 		_wet=true;
 		_mIn.LockInput(true);
 		b.Drown();
-		Debug.Log("Let's do a splash sound");
 		Sfx.PlayOneShot3D(_splash,b.transform.position);
-		Debug.Log("Let's do some bubbles");
 		Sfx.PlayOneShot3D(_bubbles,b.transform.position);
-		Debug.Log("And some rings");
 		Vector3 pos=b.transform.position;
 		pos.y=transform.position.y+0.01f;
 		Transform rings = Instantiate(_waterRings);
 		rings.position=pos;
-		Debug.Log("And some bubbly sounds");
 		Instantiate(_bubbleParts,pos,Quaternion.identity);
 		yield return new WaitForSeconds(_drownDur);
 		b.Respawn();

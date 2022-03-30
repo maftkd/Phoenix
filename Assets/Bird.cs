@@ -435,7 +435,7 @@ public class Bird : MonoBehaviour
 		_hop.PlayStepParticles();
 		//reset puzzle box cam - puzzle box needs to re-check if player is in zone after landing
 		//because typically flight takes priority
-		PuzzleBox._latestPuzzle.ResetCamera();
+		//PuzzleBox._latestPuzzle.ResetCamera();
 
 		//reset flight priority to 0
 		_flyCam.GetComponent<FlyCam>().ResetPriority();

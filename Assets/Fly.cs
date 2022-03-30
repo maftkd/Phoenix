@@ -155,12 +155,12 @@ public class Fly : MonoBehaviour
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
 				//forwardness depends on aoa
-				_curFlapAccel=flatForward*_flapAccel.z*(_aoa/_maxAoa);
+				float aoa01=((_aoa/_maxAoa)+1)*0.5f;
+				_curFlapAccel=flatForward*_flapAccel.z*aoa01;
 				//upness is uniform
 				_curFlapAccel+=Vector3.up*_flapAccel.y;
 				//if going forward, add proportionate vel boost
-				if(_aoa>0)
-					_velocity.y+=_flapAccel.y*(_aoa/_maxAoa);
+				_velocity.y+=_flapAccel.y*aoa01;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
 				Soar(false);
@@ -229,7 +229,9 @@ public class Fly : MonoBehaviour
 				_velocity.x=flatVel.x;
 				_velocity.z=flatVel.z;
 				//rotate transform
-				transform.forward = flatVel.normalized;
+				float dt = Vector3.Dot(flatVel.normalized,transform.forward);
+				if(dt>0.5f)
+					transform.forward = flatVel.normalized;
 			}
 			else{
 				flatForward = Quaternion.Euler(0f,input.x*Time.deltaTime*_turnSpeed,0)*flatForward;
@@ -379,12 +381,9 @@ public class Fly : MonoBehaviour
 	public void KnockBack(Vector3 dir){
 		//Debug.Log("Fly getting knocked back");
 		_knockBackTimer+=Time.deltaTime;
-		/*
-		_velocity.x*=-_knockBackMult;
-		_velocity.z*=-_knockBackMult;
-		_velocity.y*=-
-		*/
+		float vely = _velocity.y;
 		_velocity*=-_knockBackMult;
+		_velocity.y=vely;
 		Vector2 kb =new Vector2(_velocity.x,_velocity.z);
 		float mag = kb.magnitude;
 		if(mag<_minKnockBackMag){
