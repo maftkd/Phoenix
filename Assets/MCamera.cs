@@ -113,8 +113,6 @@ public class MCamera : MonoBehaviour
 		//#unsafe - stopping all coroutines could interupt things we care about. Needs further testing
 		StopAllCoroutines();
 
-		Debug.Log("priority checked");
-
 		switch(transition){
 			case Transitions.WIPE:
 				StartCoroutine(WipeTo(cam));

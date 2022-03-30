@@ -74,7 +74,6 @@ public class LightSwitch : MonoBehaviour
 		if(_inZone!=_prevInZone){
 			if(_inZone)
 			{
-				Debug.Log("In light switch zone");
 				if(_tutorialIndex>0)
 					_tz.ShowTutorial(_tutorialIndex);
 				_player.NearLightSwitch(this);
@@ -82,7 +81,6 @@ public class LightSwitch : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log("Out of light switch zone");
 				if(_tutorialIndex>0)
 					_tz.HideTutorial();
 				_player.NearLightSwitch(null);

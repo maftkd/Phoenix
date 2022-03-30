@@ -139,6 +139,7 @@ public class PuzzleBox : MonoBehaviour
 			GameManager._instance.PuzzleSolved(this);
 			ActivateNextPuzzle(true);
 		}
+		_player.SetCheckPoint();
 	}
 
 	public virtual void PuzzleSolved(){
@@ -160,6 +161,7 @@ public class PuzzleBox : MonoBehaviour
 			//ActivateNextPuzzle(true);
 		}
 		SpawnSparrow();
+		_player.SetCheckPoint();
 	}
 
 
@@ -211,7 +213,7 @@ public class PuzzleBox : MonoBehaviour
 
 		ActivateElements(true);
 
-		if(!_ignoreCounter)
+		if(!_ignoreCounter&&!silent)
 			StartCoroutine(AnimateBox());
 		else
 			_box.transform.localScale=Vector3.one;

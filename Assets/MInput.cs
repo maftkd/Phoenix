@@ -13,6 +13,8 @@ public class MInput : MonoBehaviour
 
 	float _triggerR;
 	int _triggerRState;
+	float _triggerL;
+	int _triggerLState;
 	
 	void Awake(){
 	}
@@ -28,6 +30,7 @@ public class MInput : MonoBehaviour
     {
 		CalcInputVector();
 		_triggerR=Input.GetAxis("Right Trigger");
+		_triggerL=Input.GetAxis("Left Trigger");
 		switch(_triggerRState){
 			case 0:
 				if(_triggerR>0.5f)
@@ -48,6 +51,28 @@ public class MInput : MonoBehaviour
 					_triggerRState=1;
 				else
 					_triggerRState=0;
+				break;
+		}
+		switch(_triggerLState){
+			case 0:
+				if(_triggerL>0.5f)
+					_triggerLState=1;
+				break;
+			case 1:
+				if(_triggerL>0.5f)
+					_triggerLState=2;
+				else
+					_triggerLState=3;
+				break;
+			case 2:
+				if(_triggerL<0.5f)
+					_triggerLState=3;
+				break;
+			case 3:
+				if(_triggerL>0.5f)
+					_triggerLState=1;
+				else
+					_triggerLState=0;
 				break;
 		}
     }
@@ -178,10 +203,22 @@ public class MInput : MonoBehaviour
 		return (Input.GetKeyUp(KeyCode.Tab)||_triggerRState==3);
 	}
 
+	public bool GetTriggerLDown(){
+		if(_inputLocked)
+			return false;
+		return (Input.GetKeyUp(KeyCode.Tab)||_triggerLState==1);
+	}
+
+	public bool GetResetDown(){
+		if(_inputLocked)
+			return false;
+		return (GetTriggerLDown()||Input.GetKeyDown(KeyCode.R));
+
+	}
+
 	public bool GetInteractDown(){
 		if(_inputLocked)
 			return false;
 		return Input.GetButtonDown("Interact");
-
 	}
 }

@@ -103,6 +103,8 @@ public class Bird : MonoBehaviour
 
 	//[Header("Interactions")]
 	LightSwitch _nearSwitch;
+	//checkpoint
+	Vector3 _checkPoint;
 
 	void Awake(){
 		//calculations
@@ -154,6 +156,7 @@ public class Bird : MonoBehaviour
 		_sphereCol = GetComponent<SphereCollider>();
 		_hitRadius=_sphereCol.radius*transform.localScale.x;
 		_hitYOffset=_sphereCol.center.y*transform.localScale.x;
+		SetCheckPoint();
 	}
 
     // Start is called before the first frame update
@@ -245,6 +248,10 @@ public class Bird : MonoBehaviour
 					break;
 				default:
 					break;
+			}
+			if(_mIn.GetResetDown()){
+				LoadCheckPoint();
+				Ground();
 			}
 			if(Input.GetKeyDown(KeyCode.F1)){
 				_waddle.ToggleCamLines();
@@ -613,11 +620,12 @@ public class Bird : MonoBehaviour
 			_anim.SetFloat("walkSpeed",0f);
 			_state=0;
 		}
+		//remove roll
+		Vector3 eulerAngles=transform.eulerAngles;
+		eulerAngles.z=0;
+		transform.eulerAngles=eulerAngles;
+
 		RaycastHit hit;
-		/*
-		if(Physics.SphereCast(transform.position+_size.y*Vector3.up,0.05f,Vector3.down, out hit, 1f, _collisionLayer))
-			transform.position=hit.point;
-			*/
 		if(Physics.Raycast(transform.position+_size.y*Vector3.up,Vector3.down, out hit,1f,_collisionLayer)){
 			if(Mathf.Abs(hit.point.y-transform.position.y)>0.25f)
 			{
@@ -980,6 +988,22 @@ public class Bird : MonoBehaviour
 
 	public Material GetMaterial(){
 		return _smr.material;
+	}
+
+	public void SetCheckPoint(){
+		_checkPoint=transform.position;
+	}
+
+	void LoadCheckPoint(){
+		transform.position=_checkPoint;
+		Ground();
+		ResetState();
+	}
+
+	public void AddForce(Vector3 v){
+		if(_fly.enabled){
+			_fly.AddForce(v);
+		}
 	}
 
 	void OnDrawGizmos(){
