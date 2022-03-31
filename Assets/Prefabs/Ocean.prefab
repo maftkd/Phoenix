@@ -114,3 +114,4 @@ MonoBehaviour:
   _bubbleParts: {fileID: 2934985145734684180, guid: 6df66a997c26fcc46915b86799661dd2,
     type: 3}
   _drownDur: 3
+  _drown: 1

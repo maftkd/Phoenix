@@ -14,7 +14,6 @@ public class CollisionHelper : MonoBehaviour
 
 	[Header("audio")]
 	public AudioClip [] _clips;
-	AudioSource [] _sources;
 	public int _numSources;
 	[Range(0,1)]
 	public float _volume;
@@ -31,13 +30,6 @@ public class CollisionHelper : MonoBehaviour
 
 	void Awake(){
 		_col=GetComponent<Collider>();
-		_sources = new AudioSource[_numSources];
-		for(int i=0; i<_numSources; i++){
-			GameObject foo = new GameObject("AudioSource");
-			foo.transform.SetParent(transform);
-			_sources[i]=foo.AddComponent<AudioSource>();
-			_sources[i].spatialBlend=1f;
-		}
 		_hasMeshCollider=transform.GetComponent<MeshCollider>()!=null;
 		_hasBoxCollider=transform.GetComponent<BoxCollider>()!=null;
 		if(_hasBoxCollider)
@@ -98,17 +90,9 @@ public class CollisionHelper : MonoBehaviour
 	}
 
 	public void Sound(float vol){
-		if(_sources==null||_clips.Length==0)
+		if(_clips.Length==0)
 			return;
-		foreach(AudioSource s in _sources){
-			if(!s.isPlaying){
-				s.volume=vol;
-				s.transform.position=_hitPoint;
-				s.clip=_clips[Random.Range(0,_clips.Length)];
-				s.Play();
-				return;
-			}
-		}
+		Sfx.PlayOneShot3DVol(_clips[Random.Range(0,_clips.Length)],_hitPoint,vol);
 	}
 
 	void OnDrawGizmos(){

@@ -12,9 +12,12 @@ public class Ocean : MonoBehaviour
 	public Transform _waterRings;
 	public Transform _bubbleParts;
 	public float _drownDur;
+	public bool _drown;
+	Bird _player;
 
 	void Awake(){
 		_mIn=GameManager._mIn;
+		_player=GameManager._player;
 	}
 
     // Start is called before the first frame update
@@ -33,9 +36,22 @@ public class Ocean : MonoBehaviour
 		if(_wet)
 			return;
 		if(other.GetComponent<Bird>()!=null){
-			Debug.Log("Bird in the water!");
-			StartCoroutine(Drown(other.GetComponent<Bird>()));
+			if(_drown)
+				StartCoroutine(Drown(other.GetComponent<Bird>()));
+			else{
+				Sfx.PlayOneShot3D(_splash,_player.transform.position);
+				Vector3 pos=_player.transform.position;
+				pos.y=transform.position.y+0.01f;
+				Transform rings = Instantiate(_waterRings);
+				rings.position=pos;
+				_player.InWater(true);
+			}
 		}
+	}
+
+	void OnTriggerExit(Collider other){
+		if(!_drown)
+			_player.InWater(false);
 	}
 
 	[ContextMenu("Test")]

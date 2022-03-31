@@ -11,6 +11,7 @@ public class Waddle : MonoBehaviour
 	public float _maxWalkSlope;
 	public float _animSpeedMult;
 	public float _stepVolume;
+	public Vector2 _wadePitchRange;
 	float _stepTimer;
 	Vector3 _input;
 	Vector3 _rawInput;
@@ -169,7 +170,14 @@ public class Waddle : MonoBehaviour
 	void TakeStep(Transform t){
 		Footstep f = t.GetComponent<Footstep>();
 		if(f!=null)
-			f.Sound(transform.position,_stepVolume);
+		{
+			if(_bird._inWater)
+			{
+				f.Sound(transform.position,-1f,Random.Range(_wadePitchRange.x,_wadePitchRange.y));
+			}
+			else
+				f.Sound(transform.position,_stepVolume);
+		}
 		_bird.MakeFootprint(t);
 		if(_npc){
 			//recalibrate

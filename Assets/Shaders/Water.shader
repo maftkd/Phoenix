@@ -81,7 +81,8 @@
 			fixed noiseDif=1-noise*noiseB;
 
 			fixed foamNoise=tex2D(_NoiseTex,(baseUV*_FoamFreq)+scrollOffset);
-			fixed foam = step(depth,_FoamDist+foamNoise-0.5);
+			fixed foam = step(depth,_FoamDist+(foamNoise-0.5)*_FoamDist*2);
+			//fixed foam = step(depth,_FoamDist);
 			foam*=step(IN.screenPos.w,20);
 
 			fixed wavePow=pow(noiseDif,_WavePower);

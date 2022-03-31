@@ -107,6 +107,11 @@ public class Bird : MonoBehaviour
 	//checkpoint
 	Vector3 _checkPoint;
 
+	[Header("Bath time")]
+	public bool _inWater;
+	public AudioClip _waterShake;
+	public Transform _splash;
+
 	void Awake(){
 		//calculations
 		_smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -984,6 +989,12 @@ public class Bird : MonoBehaviour
 			_nearPlate=null;
 	}
 
+	public void InWater(bool b){
+		_inWater=b;
+		if(_inWater)
+			Instantiate(_splash,transform.position,Quaternion.identity);
+	}
+
 	void Interact(){
 		if(_nearSwitch!=null){
 			_state=9;
@@ -1000,6 +1011,9 @@ public class Bird : MonoBehaviour
 			_hop.enabled=false;
 			_fly.enabled=false;
 			*/
+		}
+		else if(_inWater){
+			StartCoroutine(Bathe());
 		}
 	}
 
@@ -1021,6 +1035,21 @@ public class Bird : MonoBehaviour
 		if(_fly.enabled){
 			_fly.AddForce(v);
 		}
+	}
+
+	IEnumerator Bathe(){
+		Ground();
+		_state=9;
+		_waddle.enabled=false;
+		_hop.enabled=false;
+		_fly.enabled=false;
+		_anim.SetFloat("walkSpeed",0f);
+		Sfx.PlayOneShot3DVol(_waterShake,transform.position,0.3f);
+
+		//ruffle
+		float ruffleDur=Ruffle()*0.5f;
+		yield return new WaitForSeconds(ruffleDur);
+		_state=0;
 	}
 
 	void OnDrawGizmos(){
