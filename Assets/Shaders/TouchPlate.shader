@@ -61,12 +61,6 @@
 			fixed n = tex2D (_MainTex, IN.uv_MainTex).r;
 			n=1-step(_On,n);
 			o.Emission=_Color.rgb*n*(1-border);
-			/*
-			fixed3 emissionColor=lerp(_Color.rgb,fixed3(1,1,1),1);
-			fixed stepOn=step(0.99,_On);
-			emissionColor=stepOn*emissionColor+(1-stepOn)*_Color.rgb;
-			o.Emission = _Color.rgb*_On*(1-border)*2+border*emissionColor.rgb;
-			*/
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

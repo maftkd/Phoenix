@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Seed : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class Seed : MonoBehaviour
 	public float _minVel;
 	public float _minEffectTime;
 	float _timer;
+	public UnityEvent _onEat;
 
 	void Awake(){
 		_player=GameManager._player.transform;
@@ -47,7 +49,7 @@ public class Seed : MonoBehaviour
 			return;
 		CollectSeed(other.GetComponent<Bird>());
 		GetComponent<Rotator>().enabled=false;
-
+		_onEat.Invoke();
 	}
 
 	public void CollectSeed(Bird other){

@@ -279,11 +279,6 @@ public class Fly : MonoBehaviour
 		{
 			_velocity.y=_maxVel.y;
 		}
-		/*
-		if(_velocity.y<_minVel.y)
-			_velocity.y=_minVel.y;
-			*/
-		DebugScreen.Print(_aoa,0);
 
 		//prevent backwards flight
 		if(_forwardness<=0){

@@ -22,6 +22,7 @@ public class TutorialZone : MonoBehaviour
 	}
 	public void HideTutorial(){
 		_bird.ShowTutorial(-1);
+		gameObject.SetActive(false);
 	}
 
 	void OnDisable(){

@@ -269,15 +269,16 @@ public class Cable : MonoBehaviour
 		Reset();
 	}
 
-	public IEnumerator SetPower(float v,bool supressAudio=false){
+	public IEnumerator SetPower(float v,Vector3 pos,bool supressAudio=false){
 		float power=_meshR.material.GetFloat("_PowerFill");
 		float next=v-power;
 		_meshR.material.SetFloat("_NextFill",next);
+		yield return new WaitForSeconds(0.25f);
 		if(v>0&&!supressAudio)
 		{
-			Sfx.PlayOneShot2D(_powerClip,Random.Range(0.8f,1.2f),_powerVol);
+			Sfx.PlayOneShot3D(_powerClip,pos,Random.Range(0.8f,1.2f),_powerVol);
 		}
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.25f);
 		_meshR.material.SetFloat("_PowerFill",v);
 		_meshR.material.SetFloat("_NextFill",0);
 		_powerRoutine=null;
@@ -286,6 +287,33 @@ public class Cable : MonoBehaviour
 	public void SetPower(float v){
 		_meshR.material.SetFloat("_PowerFill",v);
 		_meshR.material.SetFloat("_NextFill",0);
+	}
+
+	public void FillNearTransform(Transform t){
+		if(!gameObject.activeSelf)
+			return;
+		float minSqrDist=1000;
+		int minIndex=-1;
+		Vector3[] verts = _meshF.sharedMesh.vertices;
+		Vector3 pos=t.position;
+		for(int i=0; i<verts.Length; i++){
+			float sqrDist = (verts[i]-pos).sqrMagnitude;
+			if(sqrDist<minSqrDist){
+				minSqrDist=sqrDist;
+				minIndex=i;
+			}
+		}
+		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
+		if(fillAmount<=_meshR.material.GetFloat("_PowerFill"))
+		{
+			Debug.Log("Oops, tried to fill cable to a point less than current fill");
+			return;
+		}
+		int centerIndex=minIndex/_vertsPerCenter;
+		_fillIndex=centerIndex;
+		_powerRoutine=SetPower(fillAmount,pos,false);
+		if(enabled&&gameObject.activeInHierarchy)
+			StartCoroutine(_powerRoutine);
 	}
 
 	public void FillNearPosition(Vector3 pos,bool supressAudio=false){
@@ -304,7 +332,7 @@ public class Cable : MonoBehaviour
 		float fillAmount = _meshF.sharedMesh.uv[minIndex].y;
 		int centerIndex=minIndex/_vertsPerCenter;
 		_fillIndex=centerIndex;
-		_powerRoutine=SetPower(fillAmount,supressAudio);
+		_powerRoutine=SetPower(fillAmount,pos,supressAudio);
 		if(enabled&&gameObject.activeInHierarchy)
 			StartCoroutine(_powerRoutine);
 	}

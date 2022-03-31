@@ -300,7 +300,6 @@ public class MCamera : MonoBehaviour
 		cam.fieldOfView=_camera.fieldOfView;
 		//parent
 		SnapToCamera(cam,false);
-		Debug.Log("Cutback cam");
 	}
 
 	IEnumerator LerpTo(Camera target, float dur){

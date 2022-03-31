@@ -54,12 +54,14 @@ public class GameManager : MonoBehaviour
 #endif
 */
 		}
+		/*
 		if(_mIn.GetTabDown()&&Time.timeScale>0){
 			_counter.Show();
 		}
 		else if(_mIn.GetTabUp()){
 			_counter.Show(false);
 		}
+		*/
         
     }
 

@@ -511,7 +511,7 @@ public class Bird : MonoBehaviour
 				_waddle.KnockBack(dir);
 				break;
 			case 2://hopping
-				ch.Sound(_hopKnockVolume);
+				//ch.Sound(_hopKnockVolume);
 				_hop.KnockBack(dir);
 				break;
 			case 3://flying
@@ -847,7 +847,6 @@ public class Bird : MonoBehaviour
 		Vector3 newPos=t.position+t.forward*0.25f;
 		newPos.y=pos.y;
 		transform.position=newPos;
-		Debug.Log("Setting pos on enter box");
 		//set state to something special
 		_state=7;
 		StartCoroutine(WalkThroughDoorR(dir,interior));

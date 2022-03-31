@@ -208,11 +208,16 @@ public class MInput : MonoBehaviour
 			return false;
 		return (Input.GetKeyUp(KeyCode.Tab)||_triggerLState==1);
 	}
+	public bool GetTriggerRDown(){
+		if(_inputLocked)
+			return false;
+		return _triggerRState==1;
+	}
 
 	public bool GetResetDown(){
 		if(_inputLocked)
 			return false;
-		return (GetTriggerLDown()||Input.GetKeyDown(KeyCode.R));
+		return (GetTriggerLDown()||Input.GetKeyDown(KeyCode.R)||GetTriggerRDown());
 
 	}
 

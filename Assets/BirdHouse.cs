@@ -25,11 +25,9 @@ public class BirdHouse : MonoBehaviour
     }
 
 	public void Enter(){
-		Debug.Log("Entering birdhouse");
 		_player.WalkInNestBox(transform,_interior);
 	}
 	public void Exit(){
-		Debug.Log("Exiting birdhouse");
 		_player.WalkOutNestBox(transform,_interior);
 	}
 }

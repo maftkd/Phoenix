@@ -35,13 +35,11 @@ public class TouchPlate : MonoBehaviour
     }
 
 	void OnTriggerEnter(Collider other){
-		Debug.Log("Bird in");
 		_player.NearTouchPlate(this);
 		_mat.SetFloat("_Interactable",1);
 	}
 
 	void OnTriggerExit(Collider other){
-		Debug.Log("Bird out");
 		_player.LeaveTouchPlate(this);
 		_mat.SetFloat("_Interactable",0);
 	}
@@ -50,6 +48,7 @@ public class TouchPlate : MonoBehaviour
 		_player._anim.SetTrigger("peck");
 		_isOn=!_isOn;
 		StartCoroutine(ToggleR());
+		_player.SetCheckPoint();
 		//mat set emission: 
 		//_mat.SetColor("_EmissionColor",_isOn?_emissionColor:Color.black);
 	}
