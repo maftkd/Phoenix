@@ -219,6 +219,6 @@ public class MInput : MonoBehaviour
 	public bool GetInteractDown(){
 		if(_inputLocked)
 			return false;
-		return Input.GetButtonDown("Interact");
+		return (Input.GetButtonDown("Interact")||Input.GetMouseButtonDown(1));
 	}
 }

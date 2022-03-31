@@ -87,6 +87,11 @@ public class Fly : MonoBehaviour
 	Transform _sun;
 	bool _prevShowShadow;
 
+	//land target
+	Transform _landTarget;
+	Material _landMat;
+	float _maxDist = 0.75f;
+
 	//stamina outline
 	public Color _fullColor;
 	public Color _emptyColor;
@@ -99,6 +104,12 @@ public class Fly : MonoBehaviour
 		_anim=GetComponent<Animator>();
 		_soarParticles=transform.Find("SoarParticles").GetComponent<ParticleSystem>();
 		_soarAudio=_soarParticles.GetComponent<AudioSource>();
+		_landTarget=transform.Find("LandTarget");
+		if(_landTarget!=null)
+		{
+			_landTarget.gameObject.SetActive(false);
+			_landMat=_landTarget.GetComponent<Renderer>().material;
+		}
 	}
 
 	void OnEnable(){
@@ -129,6 +140,7 @@ public class Fly : MonoBehaviour
 
 		_mat = _bird.GetMaterial();
 		_mat.SetColor("_RimColor",_fullColor);
+		_landTarget.gameObject.SetActive(true);
 	}
 
 	void OnDisable(){
@@ -136,6 +148,7 @@ public class Fly : MonoBehaviour
 		_mat.SetColor("_RimColor",Color.black);
 		Soar(false);
 		_anim.SetTrigger("land");
+		_landTarget.gameObject.SetActive(false);
 	}
 
     // Start is called before the first frame update
@@ -324,6 +337,22 @@ public class Fly : MonoBehaviour
 				_flyShadow.gameObject.SetActive(showShadow);
 			}
 			_prevShowShadow=showShadow;
+
+			//check for land target
+			if(Physics.Raycast(transform.position,Vector3.down, out hit, 50f, _bird._collisionLayer)){
+				float sqrDst = (transform.position-hit.point).sqrMagnitude;
+				_landTarget.position=hit.point;
+				Vector3 eulers = _landTarget.eulerAngles;
+				eulers.x=0;
+				eulers.z=0;
+				_landTarget.eulerAngles=eulers;
+				float frac=sqrDst/(_maxDist*_maxDist);
+				frac=Mathf.Clamp(frac,0.15f,1f);
+				_landMat.SetFloat("_Radius",frac);
+			}
+			else{
+				//_landTarget.gameObject.
+			}
 		}
     }
 

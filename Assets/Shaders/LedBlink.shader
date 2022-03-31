@@ -3,6 +3,7 @@
     Properties
     {
 		_Color ("Color", Color) = (1,0,0,1)
+		_Blink ("Blink", Range(0,1)) = 1
     }
     SubShader
     {
@@ -31,6 +32,7 @@
             };
 
 			fixed4 _Color;
+			fixed _Blink;
 
             v2f vert (appdata v)
             {
@@ -44,6 +46,7 @@
             {
 				fixed4 col = _Color;
 				col*=step(0,sin(_Time.y*4));
+				col*=_Blink;
                 return col;
             }
             ENDCG

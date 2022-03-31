@@ -103,6 +103,7 @@ public class Bird : MonoBehaviour
 
 	//[Header("Interactions")]
 	LightSwitch _nearSwitch;
+	TouchPlate _nearPlate;
 	//checkpoint
 	Vector3 _checkPoint;
 
@@ -975,6 +976,14 @@ public class Bird : MonoBehaviour
 		_nearSwitch=ls;
 	}
 
+	public void NearTouchPlate(TouchPlate tp){
+		_nearPlate=tp;
+	}
+	public void LeaveTouchPlate(TouchPlate tp){
+		if(_nearPlate==tp)
+			_nearPlate=null;
+	}
+
 	void Interact(){
 		if(_nearSwitch!=null){
 			_state=9;
@@ -983,6 +992,14 @@ public class Bird : MonoBehaviour
 			_hop.enabled=false;
 			_fly.enabled=false;
 			//_anim.SetFloat("walkSpeed",0f);
+		}
+		else if(_nearPlate!=null){
+			_nearPlate.Toggle();
+			/*
+			_waddle.enabled=false;
+			_hop.enabled=false;
+			_fly.enabled=false;
+			*/
 		}
 	}
 
