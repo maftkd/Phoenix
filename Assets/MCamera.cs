@@ -25,6 +25,7 @@ public class MCamera : MonoBehaviour
 	Camera _targetCam;
 	public float _lerp;
 	Shot _curShot;
+	bool _transitioning;
 
 	void Awake(){
 		_cutBackEnabled=true;
@@ -88,14 +89,16 @@ public class MCamera : MonoBehaviour
 			_prevCam=cam;
 		}
 	}
-
 	public void Transition(Camera cam, Transitions transition,float letterBox=0,Transform target=null,float dur=0f,
-			bool overridePriority=false){
-		//check for same cam transition
-		if(_prevCam!=null&&cam==_prevCam)
+			bool overridePriority=false,bool stopImmediate=false){
+
+		//random ass logic used when going into birdhouse, cam is same, and fading
+		//Any other time the cams are the same, we ignore this operation
+		//Cams are sometimes same when switching from hopping to waddling in Bird
+		//Not ideal, but may work
+		bool sameCam=_prevCam!=null&&cam==_prevCam;
+		if(sameCam&&transition!=Transitions.FADE)
 			return;
-
-
 		//check priority
 		if(!overridePriority&&_prevCam!=null){
 			if(cam.GetComponent<Shot>()!=null){
@@ -110,8 +113,15 @@ public class MCamera : MonoBehaviour
 				}
 			}
 		}
-		//#unsafe - stopping all coroutines could interupt things we care about. Needs further testing
-		StopAllCoroutines();
+		StartCoroutine(TransitionR(cam,transition,letterBox,target,dur,overridePriority,stopImmediate));
+	}
+
+	IEnumerator TransitionR(Camera cam, Transitions transition,float letterBox=0,Transform target=null,float dur=0f,
+			bool overridePriority=false,bool stopImmediate=false){
+
+		//wait for any existing transition to finish first
+		while(_transitioning)
+			yield return null;
 
 		switch(transition){
 			case Transitions.WIPE:
@@ -134,10 +144,13 @@ public class MCamera : MonoBehaviour
 		}
 
 		//stop tracking old, start tracking new
-		HandleTracking(cam,target, dur);
+		//check for same cam transition
+		bool sameCam=_prevCam!=null&&cam==_prevCam;
+		if(!sameCam)
+			HandleTracking(cam,target, dur,stopImmediate);
 	}
 
-	void HandleTracking(Camera newCam,Transform t,float dur){
+	void HandleTracking(Camera newCam,Transform t,float dur, bool stopImmediate=false){
 		//new camera starts tracking
 		Shot shot = newCam.GetComponent<Shot>();
 		if(shot!=null){
@@ -150,7 +163,7 @@ public class MCamera : MonoBehaviour
 			shot = _prevCam.GetComponent<Shot>();
 			if(shot!=null)
 			{
-				if(dur==0)
+				if(dur==0||stopImmediate)
 					shot.StopTracking();
 				else
 					StartCoroutine(StopTrackingShot(shot,dur));
@@ -169,6 +182,7 @@ public class MCamera : MonoBehaviour
 
 	//wipe
 	IEnumerator WipeTo(Camera cam){
+		_transitioning=true;
 		float timer=0;
 		float dur=_wipeDur*0.333f;
 		while(timer<dur){
@@ -191,11 +205,12 @@ public class MCamera : MonoBehaviour
 			yield return null;
 		}
 		_wipe.SetFloat("_Amount",0f);
+		_transitioning=false;
 	}
 
 	//fade
 	IEnumerator FadeTo(Camera cam,float letterBox,float dur){
-		Debug.Log("Starting fade");
+		_transitioning=true;
 		float timer=0;
 		dur*=0.333f;
 		while(timer<dur){
@@ -219,10 +234,12 @@ public class MCamera : MonoBehaviour
 			yield return null;
 		}
 		_fade.SetFloat("_Amount",0f);
+		_transitioning=false;
 	}
 
 	//orbit
 	IEnumerator OrbitTo(Camera cam, Transform target, float dur, float letterBox){
+		_transitioning=true;
 		float startR=(target.position-transform.position).magnitude;
 		float targetR=(target.position-cam.transform.position).magnitude;
 		float startLb=_letterBox.GetFloat("_Amount");
@@ -254,20 +271,9 @@ public class MCamera : MonoBehaviour
 			_letterBox.SetFloat("_Amount",Mathf.Lerp(startLb,endLb,frac));
 			yield return null;
 		}
-		/*
-		radius=targetR;
-		Vector3 pos=target.position-transform.forward*radius;
-		pos.y=Mathf.Lerp(startHeight,endHeight,frac);
-		*/
 		_letterBox.SetFloat("_Amount",endLb);
 		SnapToCamera(cam,false);
-		/*
-		transform.rotation=endRot;
-		transform.position=cam.transform.position;
-		_camera.fieldOfView=targetFov;
-
-		transform.SetParent(cam.transform);
-		*/
+		_transitioning=false;
 	}
 
 	public void LerpLetterBox(float target, float dur){
@@ -294,9 +300,11 @@ public class MCamera : MonoBehaviour
 		cam.fieldOfView=_camera.fieldOfView;
 		//parent
 		SnapToCamera(cam,false);
+		Debug.Log("Cutback cam");
 	}
 
 	IEnumerator LerpTo(Camera target, float dur){
+		_transitioning=true;
 		transform.SetParent(null);
 
 		Vector3 startPos=transform.position;
@@ -314,6 +322,7 @@ public class MCamera : MonoBehaviour
 		}
 
 		SnapToCamera(target,false);
+		_transitioning=false;
 	}
 
 	public void EnableCurrentShot(bool en){

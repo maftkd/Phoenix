@@ -169,7 +169,6 @@ public class WaddleCam : Shot
 	}
 
 	public void ResetCamera(){
-		Debug.Log("resetting waddle cam");
 		OnEnable();
 	}
 	/*

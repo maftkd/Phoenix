@@ -12,8 +12,6 @@ public class Seed : MonoBehaviour
 	public float _riseTime;
 	public float _riseDelay;
 	public float _scaleDown;
-	Rigidbody _rb;
-	bool _effectsStarted;
 	public float _minVel;
 	public float _minEffectTime;
 	float _timer;
@@ -25,18 +23,12 @@ public class Seed : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		_rb=GetComponent<Rigidbody>();
-		_rb.freezeRotation=true;
-        
+		StartEffects();
     }
 
     // Update is called once per frame
     void Update()
     {
-		_timer+=Time.deltaTime;
-		if(!_effectsStarted&&_timer>_minEffectTime&&_rb.velocity.sqrMagnitude<_minVel*_minVel){
-			StartEffects();
-		}
 
     }
 
@@ -48,17 +40,11 @@ public class Seed : MonoBehaviour
 		}
 		else
 			_groundEffects = Instantiate(_groundEffectsPrefab,transform.position,Quaternion.identity);
-		_effectsStarted=true;
 	}
 
 	void OnTriggerEnter(Collider other){
 		if(other.GetComponent<Bird>()==null)
 			return;
-		//activate next puzzle
-		//PuzzleBox puzzle = transform.GetComponentInParent<PuzzleBox>();
-		//puzzle.ActivateNextPuzzle();
-
-		//collect seed
 		CollectSeed(other.GetComponent<Bird>());
 		GetComponent<Rotator>().enabled=false;
 

@@ -11,7 +11,7 @@ public class ScienceCamera : MonoBehaviour
 	public AudioClip _zoom;
 	public AudioClip _rewind;
 	public float _slerp;
-	public float _minDotToFocus;
+	public float _minDotToFilm;
 	int _recordState;
 	bool _recording;
 	public float _requiredFootage;
@@ -35,12 +35,17 @@ public class ScienceCamera : MonoBehaviour
     {
     }
 
+	Quaternion curRot;
     // Update is called once per frame
     void Update()
     {
 		switch(_recordState){
 			case 0:
 				_inZone=(_player.transform.position-_camera.position).sqrMagnitude<_radius*_radius;
+				curRot=_camera.rotation;
+				_camera.LookAt(_player.transform);
+				_inZone=Vector3.Dot(_camera.forward,transform.forward)>=_minDotToFilm&&_inZone;
+				_camera.rotation=curRot;
 				if(_inZone){
 					_recordState=1;
 					Sfx.PlayOneShot3D(_zoom,transform.position,1f);
@@ -48,11 +53,15 @@ public class ScienceCamera : MonoBehaviour
 				break;
 			case 1:
 				_inZone=(_player.transform.position-_camera.position).sqrMagnitude<_radius*_radius;
+				curRot=_camera.rotation;
+				_camera.LookAt(_player.transform);
+				_inZone=Vector3.Dot(_camera.forward,transform.forward)>=_minDotToFilm&&_inZone;
+				_camera.rotation=curRot;
 				if(!_inZone){
 					_recordState=0;
 				}
 				else{
-					Quaternion curRot=_camera.rotation;
+					curRot=_camera.rotation;
 					_camera.LookAt(_player.transform);
 					_camera.rotation=Quaternion.Slerp(curRot,_camera.rotation,_slerp*Time.deltaTime);
 					_footage+=Time.deltaTime;

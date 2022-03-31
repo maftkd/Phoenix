@@ -135,6 +135,7 @@ public class Fly : MonoBehaviour
 		_forwardness=0;
 		//_diving=false;
 		_anim.ResetTrigger("soar");
+		_rollAngle=0f;
 
 		Flap(false);
 

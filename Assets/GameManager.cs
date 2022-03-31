@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 	public static MCamera _mCam;
 	public static ColorPalette _color;
 	public static GameObject _islands;
+	public static GameObject _sky;
 	public static PuzzleCounter _counter;
 
 	void Awake(){
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
 		_color = FindObjectOfType<ColorPalette>();
 		_counter = FindObjectOfType<PuzzleCounter>();
 		_islands=GameObject.Find("Islands");
+		_sky=GameObject.Find("Sky");
 	}
 
     // Start is called before the first frame update

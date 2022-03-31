@@ -41,7 +41,6 @@ public class Footstep : MonoBehaviour
 	public void Sound(Vector3 pos,float volume=-1f,float pitch=-1f){
 		if(_clips.Length==0)
 			return;
-		Debug.Log("Sounding!");
 		pitch = pitch<0? 1f : pitch;
 		Sfx.PlayOneShot3D(_clips[Random.Range(0,_clips.Length)],pos,pitch,volume<0? _volume : volume);
 	}

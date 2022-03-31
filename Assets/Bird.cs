@@ -829,7 +829,7 @@ public class Bird : MonoBehaviour
 
 	Vector3 _posBeforeNestBox;
 	Camera _camBeforeNestBox;
-	public void WalkInNestBox(Transform t,GameObject nb){
+	public void WalkInNestBox(Transform t,GameObject interior){
 		if(_state==7)
 			return;
 		if(_fly.enabled)
@@ -850,17 +850,17 @@ public class Bird : MonoBehaviour
 		Debug.Log("Setting pos on enter box");
 		//set state to something special
 		_state=7;
-		StartCoroutine(WalkThroughDoorR(dir,nb));
+		StartCoroutine(WalkThroughDoorR(dir,interior));
 	}
 
-	IEnumerator WalkThroughDoorR(Vector3 dir,GameObject nb){
+	IEnumerator WalkThroughDoorR(Vector3 dir,GameObject interior){
 		float timer=0;
 		transform.forward=dir;
 		_anim.SetFloat("walkSpeed",0.1f);
 		float dur = 0.4f;
 		while(timer<dur){
 			timer+=Time.deltaTime;
-			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.5f;
+			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.75f;
 			yield return null;
 		}
 		_posBeforeNestBox=transform.position;
@@ -869,21 +869,22 @@ public class Bird : MonoBehaviour
 		//transition to nest box
 		dur = 3f;
 		float halfDur=dur*0.5f;
-		Camera nestCam = nb.GetComponentInChildren<Camera>();
+		//Camera doorCam=t.GetComponentInChildren<Camera>();
 		_camBeforeNestBox=GameManager._mCam.GetCurTargetCam();
-		GameManager._mCam.Transition(nestCam,MCamera.Transitions.FADE,0,null,dur);
+		GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur);
 
 		yield return new WaitForSeconds(halfDur);
-		nb.SetActive(true);
-		Transform startT = MUtility.FindRecursive(nb.transform,"PlayerStart");
+		interior.SetActive(true);
+		Transform startT = MUtility.FindRecursive(interior.transform,"PlayerStart");
 		transform.position=startT.position;
 		transform.rotation=startT.rotation;
 		Ground();
 		GameManager._islands.SetActive(false);
+		GameManager._sky.SetActive(false);
 		_state=0;
 	}
 
-	public void WalkOutNestBox(Transform t,GameObject nb){
+	public void WalkOutNestBox(Transform t,GameObject interior){
 		if(_fly.enabled)
 		{
 			_fly.Soar(false);
@@ -891,17 +892,20 @@ public class Bird : MonoBehaviour
 		}
 		//start coroutine
 		Vector3 dir = t.forward;
-		StartCoroutine(WalkOutDoorR(dir,nb));
+		Camera doorCam=t.GetComponentInChildren<Camera>();
+		StartCoroutine(WalkOutDoorR(doorCam,dir,interior));
 	}
 
-	IEnumerator WalkOutDoorR(Vector3 dir,GameObject nb){
+	IEnumerator WalkOutDoorR(Camera cam,Vector3 dir,GameObject interior){
 		float dur = 3f;
 		float halfDur=dur*0.5f;
-		GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
+		GameManager._mCam.Transition(cam,MCamera.Transitions.FADE,0,null,dur,true,true);
+		//GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
 
 		yield return new WaitForSeconds(halfDur);
-		nb.SetActive(false);
+		interior.SetActive(false);
 		GameManager._islands.SetActive(true);
+		GameManager._sky.SetActive(true);
 		_waddle.enabled=false;
 		_hop.enabled=false;
 		_fly.enabled=false;
@@ -925,7 +929,9 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 
 		Ground();
-		_state=0;
+		//_state=0;
+		ResetState();
+		//GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
 	}
 
 	IEnumerator ResetAfterDelay(float dur){
