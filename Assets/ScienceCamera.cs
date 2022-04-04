@@ -6,28 +6,27 @@ public class ScienceCamera : MonoBehaviour
 {
 	Transform _camera;
 	Bird _player;
-	public float _radius;
-	bool _inZone;
 	public AudioClip _zoom;
-	public AudioClip _rewind;
 	public float _slerp;
-	public float _minDotToFilm;
-	int _recordState;
-	bool _recording;
-	public float _requiredFootage;
-	float _footage;
-	Material _footageMat;
 	Material _blinkMat;
-	Transform _boundary;
+	Vector3 _hiddenPos;
+	Vector3 _activePos;
+	Quaternion _hiddenRot;
+	public Vector3 _offset;
+	int _state;
+	public float _animDur;
+	public float _hideDur;
+	public AudioClip _hydraulic;
 
 	void Awake(){
-		_camera=transform.Find("camera");
 		_player=GameManager._player;
-		_footageMat=_camera.Find("Footage").GetComponent<Renderer>().material;
-		_footageMat.SetFloat("_FillAmount",0);
+		_camera=transform.GetChild(0);
 		_blinkMat=_camera.GetChild(0).GetComponent<Renderer>().material;
-		_blinkMat.SetFloat("_Blink",1);
-		_boundary=_camera.Find("Boundary");
+		_blinkMat.SetFloat("_Blink",0);
+		_hiddenPos=_camera.position;
+		_activePos=_hiddenPos+_camera.right*_offset.x+_camera.up*_offset.y+_camera.forward*_offset.z;
+		_camera.position=_hiddenPos;
+		_hiddenRot=_camera.rotation;
 	}
 
     // Start is called before the first frame update
@@ -35,76 +34,51 @@ public class ScienceCamera : MonoBehaviour
     {
     }
 
-	Quaternion curRot;
     // Update is called once per frame
     void Update()
     {
-		switch(_recordState){
+		switch(_state){
 			case 0:
-				_inZone=(_player.transform.position-_camera.position).sqrMagnitude<_radius*_radius;
-				curRot=_camera.rotation;
-				_camera.LookAt(_player.transform);
-				_inZone=Vector3.Dot(_camera.forward,transform.forward)>=_minDotToFilm&&_inZone;
-				_camera.rotation=curRot;
-				if(_inZone){
-					_recordState=1;
-					Sfx.PlayOneShot3D(_zoom,transform.position,1f);
-				}
 				break;
 			case 1:
-				_inZone=(_player.transform.position-_camera.position).sqrMagnitude<_radius*_radius;
-				curRot=_camera.rotation;
+				Quaternion cur=_camera.rotation;
 				_camera.LookAt(_player.transform);
-				_inZone=Vector3.Dot(_camera.forward,transform.forward)>=_minDotToFilm&&_inZone;
-				_camera.rotation=curRot;
-				if(!_inZone){
-					_recordState=0;
-				}
-				else{
-					curRot=_camera.rotation;
-					_camera.LookAt(_player.transform);
-					_camera.rotation=Quaternion.Slerp(curRot,_camera.rotation,_slerp*Time.deltaTime);
-					_footage+=Time.deltaTime;
-					_footageMat.SetFloat("_FillAmount",_footage/_requiredFootage);
-					if(_footage>=_requiredFootage)
-					{
-						_recordState=2;
-						Sfx.PlayOneShot3D(_rewind,transform.position,2f);
-						_footageMat.SetColor("_FillColor",Color.green);
-						_blinkMat.SetFloat("_Blink",0);
-						StartCoroutine(DestroyBoundary());
-					}
-				}
+				_camera.rotation=Quaternion.Slerp(cur,_camera.rotation,_slerp*Time.deltaTime);
 				break;
 			case 2:
-				//done
+				break;
+			case 3:
 				break;
 			default:
 				break;
 		}
-		if(_inZone){
-
-			Vector3 diff=_player.transform.position-_camera.position;
-			float dt=Vector3.Dot(diff.normalized,_camera.forward);
-		}
     }
 
-	IEnumerator DestroyBoundary(){
+	public void Activate(bool a){
+		if(a)
+			StartCoroutine(ActivateR(true));
+		else
+			StartCoroutine(ActivateR(false));
+	}
+
+	IEnumerator ActivateR(bool a){
+		_state=a?1:0;
+		_blinkMat.SetFloat("_Blink",a?1:0);
 		float timer=0;
-		float dur=1;
-		Vector3 startScale=_boundary.localScale;
-		Vector3 endScale=Vector3.zero;
+		float dur=a?_animDur:_hideDur;
+		Sfx.PlayOneShot3D(_hydraulic,_camera.position,a?1.5f:2f);
+		Quaternion cur=_camera.rotation;
 		while(timer<dur){
 			timer+=Time.deltaTime;
-			_boundary.localScale=Vector3.Lerp(startScale,endScale,timer/dur);
+			float frac=timer/dur;
+			if(a)
+				_camera.position=Vector3.Lerp(_hiddenPos,_activePos,frac);
+			else
+			{
+				_camera.position=Vector3.Lerp(_hiddenPos,_activePos,1-frac);
+				_camera.rotation=Quaternion.Slerp(cur,_hiddenRot,frac);
+			}
 			yield return null;
 		}
-		Destroy(_boundary.gameObject);
 	}
-
-	void OnDrawGizmos(){
-		Gizmos.color=Color.red;
-		Gizmos.DrawWireSphere(transform.position,_radius);
-	}
-
 }

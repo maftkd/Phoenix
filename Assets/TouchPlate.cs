@@ -36,27 +36,32 @@ public class TouchPlate : MonoBehaviour
 
 	void OnTriggerEnter(Collider other){
 		_player.NearTouchPlate(this);
-		_mat.SetFloat("_Interactable",1);
+		//_mat.SetFloat("_Interactable",1);
+		Toggle();
 	}
 
 	void OnTriggerExit(Collider other){
-		_player.LeaveTouchPlate(this);
-		_mat.SetFloat("_Interactable",0);
+		//_player.LeaveTouchPlate(this);
+		//_mat.SetFloat("_Interactable",0);
 	}
 
 	public void Toggle(){
-		_player._anim.SetTrigger("peck");
+		//_player._anim.SetTrigger("peck");
 		_isOn=!_isOn;
 		StartCoroutine(ToggleR());
-		_player.SetCheckPoint();
+		//_player.SetCheckPoint();
 		//mat set emission: 
 		//_mat.SetColor("_EmissionColor",_isOn?_emissionColor:Color.black);
 	}
 
 	IEnumerator ToggleR(){
+		/*
 		yield return new WaitForSeconds(_delay);
-		Sfx.PlayOneShot3D(_sound,transform.position,Random.Range(0.7f,1.3f));
 		Transform fx = Instantiate(_plateParts,_player.transform.position+_player.transform.forward*0.1f,Quaternion.identity);
+		*/
+		float pitch=_isOn? Random.Range(1f,1.3f) : Random.Range(0.7f,1f);
+		float vol = _isOn? 1f : 0.3f;
+		Sfx.PlayOneShot3D(_sound,transform.position,pitch,vol);
 		if(_isOn)
 			_onPowerOn.Invoke();
 		else

@@ -56,12 +56,18 @@ public class DebugScreen : MonoBehaviour
 	public static void Print(float f, int slot){
 		_instance.PrintA(f,slot);
 	}
+	public static void Print(string s, int slot){
+		_instance.PrintA(s,slot);
+	}
 
 	public void PrintA(bool b, int slot){
 		_slots[slot].text=b.ToString();
 	}
 	public void PrintA(float f, int slot){
 		_slots[slot].text=f.ToString("0.000");
+	}
+	public void PrintA(string s, int slot){
+		_slots[slot].text=s;
 	}
 
 	//point debugging

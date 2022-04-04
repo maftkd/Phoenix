@@ -51,12 +51,19 @@
             // Albedo comes from a texture tinted by color
             //fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			fixed4 c = _Color*_Color.a;
+			/*
 			fixed xDiff=0.5-abs(IN.uv_MainTex.x-0.5);
 			fixed zDiff=0.5-abs(IN.uv_MainTex.y-0.5);
 			fixed border=saturate(step(xDiff,_Border)+step(zDiff,_Border))*_Interactable;
 			fixed border2=saturate(step(xDiff,_Border2)+step(zDiff,_Border2))*_Interactable;
 			fixed3 borderColor=fixed3(1,1,1)*(1-border2)+border2*c.rgb;
             o.Albedo = border*borderColor+(1-border)*c.rgb;
+			*/
+			fixed xDiff=0.5-abs(IN.uv_MainTex.x-0.5);
+			fixed zDiff=0.5-abs(IN.uv_MainTex.y-0.5);
+			fixed border=saturate(step(xDiff,_Border)+step(zDiff,_Border));
+            o.Albedo = border*fixed3(0,0,0)+(1-border)*c.rgb;
+			//o.Albedo=c.rgb;
 
 			fixed n = tex2D (_MainTex, IN.uv_MainTex).r;
 			n=1-step(_On,n);

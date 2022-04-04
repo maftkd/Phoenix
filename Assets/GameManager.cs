@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
 	public static GameObject _islands;
 	public static GameObject _sky;
 	public static PuzzleCounter _counter;
+	bool _editMode;
+	Camera _editCam;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
@@ -29,6 +31,7 @@ public class GameManager : MonoBehaviour
 		_counter = FindObjectOfType<PuzzleCounter>();
 		_islands=GameObject.Find("Islands");
 		_sky=GameObject.Find("Sky");
+		_editCam=transform.GetComponentInChildren<Camera>();
 	}
 
     // Start is called before the first frame update
@@ -54,15 +57,10 @@ public class GameManager : MonoBehaviour
 #endif
 */
 		}
-		/*
-		if(_mIn.GetTabDown()&&Time.timeScale>0){
-			_counter.Show();
-		}
-		else if(_mIn.GetTabUp()){
-			_counter.Show(false);
-		}
-		*/
         
+		if(Input.GetKeyDown(KeyCode.F1)){
+			ToggleEditMode();
+		}
     }
 
 	public void Pause(){
@@ -99,5 +97,18 @@ public class GameManager : MonoBehaviour
 
 	public void ResetPuzzleCounter(){
 		_counter.Reset();
+	}
+
+	void ToggleEditMode(){
+		_editMode=!_editMode;
+		Debug.Log("Edit Mode: "+_editMode);
+		if(_editMode)
+		{
+			_mCam.Transition(_editCam,MCamera.Transitions.CUT_BACK);
+			DebugScreen.Print("Edit Mode", 0);
+		}
+		else
+			DebugScreen.Print("", 0);
+		_player.SetEditMode(_editMode);
 	}
 }

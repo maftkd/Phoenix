@@ -252,6 +252,8 @@ public class Bird : MonoBehaviour
 					break;
 				case 9://interacting
 					break;
+				case 10://edit mode
+					break;
 				default:
 					break;
 			}
@@ -259,6 +261,7 @@ public class Bird : MonoBehaviour
 				LoadCheckPoint();
 				Ground();
 			}
+			/*
 			if(Input.GetKeyDown(KeyCode.F1)){
 				_waddle.ToggleCamLines();
 			}
@@ -269,6 +272,7 @@ public class Bird : MonoBehaviour
 			if(Input.GetKeyDown(KeyCode.Y)){
 				TransformBird("Crow");
 			}
+			*/
 		}
 		else{
 			switch(_state){
@@ -490,16 +494,6 @@ public class Bird : MonoBehaviour
 		if(ignoreNpc&&!_playerControlled)
 			return;
 		if(!supress){
-			/*
-			//add particel to collision
-			Transform fp = Instantiate(_wallprint,ch._hitPoint,Quaternion.identity);
-			//orientate
-			fp.forward=-dir;
-			//offset footprint
-			float vertMult = _state==3?0.4f : 0.9f;
-			fp.position+=dir*_footprintOffset.y*0.1f+Vector3.up*_size.y*vertMult;
-			*/
-
 			if(_state>2)
 				_starParts.Play();
 		}
@@ -752,12 +746,6 @@ public class Bird : MonoBehaviour
 		if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
 			Bird b = _cols[0].GetComponent<Bird>();
 		}
-	}
-
-	public void FlyToNextPuzzle(){
-		PuzzleBox latest = PuzzleBox._latestPuzzle;
-		Transform perch=latest.GetPerch();
-		FlyTo(perch.position);
 	}
 
 	public void Drown(){
@@ -1057,8 +1045,19 @@ public class Bird : MonoBehaviour
 		_state=0;
 	}
 
+	public void SetEditMode(bool edit){
+		if(edit)
+		{
+			Ground();
+			_state=10;
+		}
+		else
+		{
+			Ground();
+			ResetState();
+		}
+	}
+
 	void OnDrawGizmos(){
-		Gizmos.color=Color.magenta;
-		Gizmos.DrawWireSphere(transform.position,_triggerRadius);
 	}
 }

@@ -248,24 +248,9 @@ public class Hop : MonoBehaviour
 	}
 
 	public void KnockBack(Vector3 dir){
-		//_anim.SetFloat("hopTime",-1f/_hopTime);
-		//_knockBack=true;
 		Vector3 reflected = Vector3.Reflect(_input,dir)*_knockBackMult;
-		//float dot = Vector3.Dot(_input.normalized,reflected.normalized);
-		//make sure reflected is more than 90 degrees away from original
-		//but why?
-		/*
-		if(dot>0)
-			_input=-_input*_knockBackMult;
-		else
-			_input=reflected;
-			*/
 		_input=reflected;
 		float dot = Vector3.Dot(dir,Vector3.down);
-		if(dot>=_dotToKillVert){
-			_velocity=0;
-		}
-		//Debug.Break();
 	}
 
 	void CompleteHop(Transform ground){

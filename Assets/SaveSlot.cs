@@ -91,8 +91,10 @@ public class SaveSlot : MonoBehaviour
 					break;
 				case 1://puzzles
 					foreach(PuzzleBox pb in puzzles){
+						/*
 						if(pb._puzzleId==l)
 							pb.SolveSilent();
+							*/
 					}
 					break;
 				default:
