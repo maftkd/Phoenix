@@ -257,10 +257,12 @@ public class Bird : MonoBehaviour
 				default:
 					break;
 			}
+			/*
 			if(_mIn.GetResetDown()){
 				LoadCheckPoint();
 				Ground();
 			}
+			*/
 			/*
 			if(Input.GetKeyDown(KeyCode.F1)){
 				_waddle.ToggleCamLines();
@@ -613,6 +615,8 @@ public class Bird : MonoBehaviour
 
 
 	public void Ground(bool resetState=true){
+		if(_waddle==null)
+			return;
 		if(resetState){
 			_waddle.enabled=false;
 			_hop.enabled=false;

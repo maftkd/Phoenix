@@ -67,7 +67,8 @@ public class DebugScreen : MonoBehaviour
 		_slots[slot].text=f.ToString("0.000");
 	}
 	public void PrintA(string s, int slot){
-		_slots[slot].text=s;
+		if(_slots[slot]!=null)
+			_slots[slot].text=s;
 	}
 
 	//point debugging

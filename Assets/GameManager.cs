@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 	public static GameObject _sky;
 	public static PuzzleCounter _counter;
 	bool _editMode;
-	Camera _editCam;
+	MEditor _editor;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 		_counter = FindObjectOfType<PuzzleCounter>();
 		_islands=GameObject.Find("Islands");
 		_sky=GameObject.Find("Sky");
-		_editCam=transform.GetComponentInChildren<Camera>();
+		_editor=FindObjectOfType<MEditor>();
 	}
 
     // Start is called before the first frame update
@@ -102,13 +102,6 @@ public class GameManager : MonoBehaviour
 	void ToggleEditMode(){
 		_editMode=!_editMode;
 		Debug.Log("Edit Mode: "+_editMode);
-		if(_editMode)
-		{
-			_mCam.Transition(_editCam,MCamera.Transitions.CUT_BACK);
-			DebugScreen.Print("Edit Mode", 0);
-		}
-		else
-			DebugScreen.Print("", 0);
-		_player.SetEditMode(_editMode);
+		_editor.enabled=_editMode;
 	}
 }

@@ -24,7 +24,6 @@ public class EditCamera : Shot
 
 	protected override void Update(){
 		base.Update();
-		Debug.Log("Updating edit cam!");
 		Vector3 move=Vector3.zero;
 		move+=transform.forward*Input.GetAxis("Vertical");
 		move+=transform.right*Input.GetAxis("Horizontal");

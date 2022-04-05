@@ -91,6 +91,8 @@ public class MCamera : MonoBehaviour
 	}
 	public void Transition(Camera cam, Transitions transition,float letterBox=0,Transform target=null,float dur=0f,
 			bool overridePriority=false,bool stopImmediate=false){
+		if(this==null)
+			return;
 
 		//random ass logic used when going into birdhouse, cam is same, and fading
 		//Any other time the cams are the same, we ignore this operation
