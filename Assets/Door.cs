@@ -19,8 +19,11 @@ public class Door : MonoBehaviour
 	Material _leftMat;
 	Material _rightMat;
 	GameObject _entranceTrigger;
+	bool _open;
+	Bird _player;
 
 	void Awake(){
+		_player=GameManager._player;
 		_right=transform.Find("WindowRight");
 		_left=transform.Find("WindowLeft");
 		_leftClosed=_left.rotation;
@@ -49,13 +52,23 @@ public class Door : MonoBehaviour
     }
 
 	public void Open(){
+		if(_player._state>=2||_open)
+			return;
 		StartCoroutine(OpenDoors(1));
+		Debug.Log("Open doors");
+	}
+
+	public void Close(){
+		if(!_open||_player._state==7)
+			return;
+		StartCoroutine(OpenDoors(-1));
+		Debug.Log("Close doors");
 	}
 
 	IEnumerator OpenDoors(float dir){
-		bool open=dir>0;
-		_rightMat.SetFloat("_Lerp",dir>0?1:0);
-		_leftMat.SetFloat("_Lerp",dir>0?1:0);
+		_open=dir>0;
+		//_rightMat.SetFloat("_Lerp",dir>0?1:0);
+		//_leftMat.SetFloat("_Lerp",dir>0?1:0);
 
 		yield return null;
 		if(dir>0)
@@ -69,9 +82,9 @@ public class Door : MonoBehaviour
 		float dur=_openTime;
 		
 		Quaternion leftStartRot=_left.rotation;
-		Quaternion leftEndRot=open? _leftOpened : _leftClosed;
+		Quaternion leftEndRot=_open? _leftOpened : _leftClosed;
 		Quaternion rightStartRot=_right.rotation;
-		Quaternion rightEndRot=open? _rightOpened : _rightClosed;
+		Quaternion rightEndRot=_open? _rightOpened : _rightClosed;
 
 		while(timer<dur){
 			timer+=Time.deltaTime;
