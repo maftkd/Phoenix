@@ -888,7 +888,7 @@ public class Bird : MonoBehaviour
 	}
 
 	IEnumerator WalkOutDoorR(Camera cam,Vector3 dir,BirdHouse bh){
-		float dur = 3f;
+		float dur = 2f;
 		float halfDur=dur*0.5f;
 		GameManager._mCam.Transition(cam,MCamera.Transitions.FADE,0,null,dur,true,true);
 		//GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
@@ -911,10 +911,11 @@ public class Bird : MonoBehaviour
 
 		float timer=0;
 		_anim.SetFloat("walkSpeed",0.1f);
+		_anim.SetFloat("hopTime",3f);
 		dur = 1f;
 		while(timer<dur){
 			timer+=Time.deltaTime;
-			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.5f;
+			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.9f;
 			yield return null;
 		}
 		_anim.SetFloat("walkSpeed",0f);

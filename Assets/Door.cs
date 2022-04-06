@@ -24,8 +24,8 @@ public class Door : MonoBehaviour
 
 	void Awake(){
 		_player=GameManager._player;
-		_right=transform.Find("WindowRight");
-		_left=transform.Find("WindowLeft");
+		_right=transform.Find("DoorRight");
+		_left=transform.Find("DoorLeft");
 		_leftClosed=_left.rotation;
 		_rightClosed=_right.rotation;
 		_left.Rotate(Vector3.up*_openAngle);
