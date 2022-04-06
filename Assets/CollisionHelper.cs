@@ -23,6 +23,7 @@ public class CollisionHelper : MonoBehaviour
 	BoxCollider _box;
 	public bool _supressHitFx;
 	public bool _supressNpcKnockback;
+	public bool _inverted;
 
 	//float _fudge = 1.1f;
 
@@ -49,11 +50,17 @@ public class CollisionHelper : MonoBehaviour
     }
 
 	void OnTriggerEnter(Collider other){
-		HandleCollision(other);
+		if(!_inverted)
+			HandleCollision(other);
 	}
 	void OnTriggerStay(Collider other){
 		Bird b = other.GetComponent<Bird>();
-		if(b!=null&&b._state<3)
+		if(b!=null&&b._state<3&&!_inverted)
+			HandleCollision(other);
+	}
+
+	void OnTriggerExit(Collider other){
+		if(_inverted)
 			HandleCollision(other);
 	}
 
