@@ -14,6 +14,8 @@ public class BirdHouse : MonoBehaviour
 	Transform _playerStart;
 	Camera _doorCam;
 	Transform _door;
+	Material _doorMatR;
+	Material _doorMatL;
 	Transform _mainCam;
 	bool _intActive;
 	public bool _swapInteriorExterior;
@@ -31,6 +33,10 @@ public class BirdHouse : MonoBehaviour
 	public UnityEvent _onSolveExit;
 	bool _exitAndSolve;
 	TouchPlate [] _plates;
+	[HideInInspector]
+	public bool _activated;
+	[HideInInspector]
+	public string _houseId;
 
 	void OnValidate(){
 		if(_swapInteriorExterior){
@@ -55,6 +61,8 @@ public class BirdHouse : MonoBehaviour
 		_playerStart=MUtility.FindRecursive(_interior.transform,"PlayerStart");
 		_doorCam=transform.GetComponentInChildren<Camera>();
 		_door=_doorCam.transform.parent;
+		_doorMatR=_door.Find("DoorRight").GetComponent<Renderer>().material;
+		_doorMatL=_door.Find("DoorLeft").GetComponent<Renderer>().material;
 
 		_interiorRim=_interior.transform.Find("Floor").GetComponent<Renderer>().materials[1];
 		_exteriorRim=_exterior.transform.Find("House").GetComponent<Renderer>().materials[0];
@@ -67,6 +75,11 @@ public class BirdHouse : MonoBehaviour
 
 		if(_activateOnAwake)
 			Activate(true);
+
+		Island i = transform.GetComponentInParent<Island>();
+		int islandIndex = i.transform.GetSiblingIndex();
+		int houseIndex = transform.GetSiblingIndex();
+		_houseId=(islandIndex+1)+"."+(houseIndex+1);
 	}
 
     // Start is called before the first frame update
@@ -98,6 +111,10 @@ public class BirdHouse : MonoBehaviour
 		_intActive=intActive;
 	}
 
+	public bool GetInteriorActive(){
+		return _intActive;
+	}
+
 	public Transform GetPlayerStart(){
 		return _playerStart;
 	}
@@ -106,15 +123,38 @@ public class BirdHouse : MonoBehaviour
 		return _doorCam;
 	}
 
-	public void Solve(){
+	public void Solve(bool silent=false){
 		if(_solved)
 			return;
-		StartCoroutine(PulseRim());
 		_solved=true;
+		if(!silent){
+			StartCoroutine(PulseRim());
+		}
+		else{
+			//bad #temp code
+			//We need some way to set the cardinal position
+			//And we don't know for sure that player has exited the puzzle
+			/*
+			Cardinal card = transform.GetComponentInChildren<Cardinal>();
+			if(card==null)
+				card=FindObjectOfType<Cardinal>();
+			card.FlyToNextHouse(this);
+			*/
+			_interiorRim.SetColor("_EmissionColor",Color.white);
+			if(_next!=null)
+				_next.Activate();
+			_player.SetCheckPoint();
+			_exitAndSolve=true;
+
+		}
+		GameManager._instance.PuzzleSolved(this);
 	}
 
 	public void Activate(bool suppress=false){
 		_cable.FillNearPosition(_door.position,suppress);
+		_doorMatR.SetFloat("_Lerp",1f);
+		_doorMatL.SetFloat("_Lerp",1f);
+		_activated=true;
 	}
 
 	IEnumerator PulseRim(){

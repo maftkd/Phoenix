@@ -21,6 +21,7 @@ public class Door : MonoBehaviour
 	GameObject _entranceTrigger;
 	bool _open;
 	Bird _player;
+	BirdHouse _bh;
 
 	void Awake(){
 		_player=GameManager._player;
@@ -38,6 +39,7 @@ public class Door : MonoBehaviour
 		_rightMat=_right.GetComponent<Renderer>().material;
 		_entranceTrigger=transform.Find("EntranceTrigger").gameObject;
 		_entranceTrigger.SetActive(false);
+		_bh=transform.GetComponentInParent<BirdHouse>();
 	}
 
     // Start is called before the first frame update
@@ -53,6 +55,8 @@ public class Door : MonoBehaviour
 
 	public void Open(){
 		if(_player._state>=2||_open)
+			return;
+		if(!_bh._activated)
 			return;
 		StartCoroutine(OpenDoors(1));
 		Debug.Log("Open doors");

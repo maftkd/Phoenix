@@ -46,9 +46,13 @@ public class SaveSlot : MonoBehaviour
 		saveData+=_divider+System.Environment.NewLine;
 
 		//get puzzle data
-		List<string> puzzles=GameManager._instance.GetSolvedPuzzles();
-		foreach(string p in puzzles)
-			saveData+=p+System.Environment.NewLine;
+		List<BirdHouse> puzzles=GameManager._instance.GetSolvedPuzzles();
+		foreach(BirdHouse bh in puzzles)
+		{
+			string name = bh._houseId;
+			bool intActive = bh.GetInteriorActive();
+			saveData+=name+"%"+intActive+System.Environment.NewLine;
+		}
 
 		File.WriteAllText(_saveFile,saveData);
 	}
@@ -66,8 +70,7 @@ public class SaveSlot : MonoBehaviour
 		float z=0;
 		int seeds=0;
 		Bird[] birds = FindObjectsOfType<Bird>();
-		PuzzleBox [] puzzles = FindObjectsOfType<PuzzleBox>();
-		GameManager._instance.ResetPuzzleCounter();
+		BirdHouse [] houses = FindObjectsOfType<BirdHouse>();
 		foreach(string l in lines){
 			if(l==_divider)
 			{
@@ -75,9 +78,10 @@ public class SaveSlot : MonoBehaviour
 				continue;
 			}
 
+			string[] parts;
 			switch(headerCode){
 				case 0://birds
-					string [] parts = l.Split('%');
+					parts = l.Split('%');
 					string birdName = parts[0];
 					float.TryParse(parts[1],NumberStyles.Float,CultureInfo.InvariantCulture,out x);
 					float.TryParse(parts[2],NumberStyles.Float,CultureInfo.InvariantCulture,out y);
@@ -90,11 +94,16 @@ public class SaveSlot : MonoBehaviour
 					b.ResetState();
 					break;
 				case 1://puzzles
-					foreach(PuzzleBox pb in puzzles){
-						/*
-						if(pb._puzzleId==l)
-							pb.SolveSilent();
-							*/
+					parts = l.Split('%');
+					string houseName = parts[0];
+					bool intActive=false;
+					bool.TryParse(parts[1],out intActive);
+					foreach(BirdHouse bh in houses){
+						if(bh._houseId==houseName)
+						{
+							bh.Solve(true);
+							bh.SetInteriorActive(intActive);
+						}
 					}
 					break;
 				default:

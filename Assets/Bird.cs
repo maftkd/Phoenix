@@ -833,22 +833,24 @@ public class Bird : MonoBehaviour
 		_fly.enabled=false;
 		//start coroutine
 		Vector3 dir = -t.forward;
+		/*
 		Transform parent = transform.parent;
 		transform.SetParent(t);
 		Vector3 pos=transform.localPosition;
 		pos.x=0;
 		transform.localPosition=pos;
 		transform.SetParent(parent);
+		*/
 		//set state to something special
 		_state=7;
 		StartCoroutine(WalkThroughDoorR(dir,bh));
 	}
 
-	IEnumerator WalkThroughDoorR(Vector3 dir,BirdHouse bh){
+	IEnumerator WalkR(){
 		float timer=0;
-		transform.forward=dir;
+		Vector3 dir=transform.forward;
 		_anim.SetFloat("walkSpeed",0.1f);
-		float dur = 0.6f;
+		float dur = 1f;
 		while(timer<dur){
 			timer+=Time.deltaTime;
 			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.75f;
@@ -857,8 +859,14 @@ public class Bird : MonoBehaviour
 		_posBeforeNestBox=transform.position;
 		_anim.SetFloat("walkSpeed",0f);
 
+	}
+
+	IEnumerator WalkThroughDoorR(Vector3 dir,BirdHouse bh){
+		transform.forward=dir;
+		StartCoroutine(WalkR());
+
 		//transition to nest box
-		dur = 3f;
+		float dur = 3f;
 		float halfDur=dur*0.5f;
 		//Camera doorCam=t.GetComponentInChildren<Camera>();
 		_camBeforeNestBox=GameManager._mCam.GetCurTargetCam();
@@ -870,8 +878,6 @@ public class Bird : MonoBehaviour
 		transform.position=startT.position;
 		transform.rotation=startT.rotation;
 		Ground();
-		//GameManager._islands.SetActive(false);
-		//GameManager._sky.SetActive(false);
 		_state=0;
 	}
 
@@ -902,20 +908,25 @@ public class Bird : MonoBehaviour
 		_fly.enabled=false;
 		//enabled=false;
 		_state=7;
-		transform.position=_posBeforeNestBox;
 		transform.forward=dir;
+		Transform door = bh.GetDoor();
+		transform.position=door.position;//+transform.forward*0.25f;
+		door.GetComponent<Door>().Open();
+		/*
+		transform.position=_posBeforeNestBox;
 		yield return null;
 		if(transform.position!=_posBeforeNestBox){
 			Debug.Log("Error! position is wack!: "+transform.position);
 		}
+		*/
 
 		float timer=0;
 		_anim.SetFloat("walkSpeed",0.1f);
 		_anim.SetFloat("hopTime",3f);
-		dur = 1f;
+		dur = 0.5f;
 		while(timer<dur){
 			timer+=Time.deltaTime;
-			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.9f;
+			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.75f;
 			yield return null;
 		}
 		_anim.SetFloat("walkSpeed",0f);

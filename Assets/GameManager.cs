@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
 	Sfx _sfx;
 	GameObject _pauseScreen;
-	List<string> _solvedPuzzles;
+	List<BirdHouse> _solvedPuzzles;
 	public static GameManager _instance;
 	public static Bird _player;
 	public static MInput _mIn;
@@ -15,20 +15,18 @@ public class GameManager : MonoBehaviour
 	public static ColorPalette _color;
 	public static GameObject _islands;
 	public static GameObject _sky;
-	public static PuzzleCounter _counter;
 	bool _editMode;
 	MEditor _editor;
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
 		_pauseScreen=transform.GetChild(0).gameObject;
-		_solvedPuzzles=new List<string>();
+		_solvedPuzzles=new List<BirdHouse>();
 		_instance=this;
 		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
 		_mIn=FindObjectOfType<MInput>();
 		_mCam=FindObjectOfType<MCamera>();
 		_color = FindObjectOfType<ColorPalette>();
-		_counter = FindObjectOfType<PuzzleCounter>();
 		_islands=GameObject.Find("Islands");
 		_sky=GameObject.Find("Sky");
 		_editor=FindObjectOfType<MEditor>();
@@ -83,20 +81,18 @@ public class GameManager : MonoBehaviour
 		_mIn.EnableCursor(false);
 	}
 
-	public void PuzzleSolved(PuzzleBox pb){
-		if(!_solvedPuzzles.Contains(pb._puzzleId))
+	public void PuzzleSolved(BirdHouse bh){
+		if(!_solvedPuzzles.Contains(bh))
 		{
-			_solvedPuzzles.Add(pb._puzzleId);
-			_counter.Increment(_solvedPuzzles.Count);
+			_solvedPuzzles.Add(bh);
 		}
 	}
 
-	public List<string> GetSolvedPuzzles(){
+	public List<BirdHouse> GetSolvedPuzzles(){
 		return _solvedPuzzles;
 	}
 
 	public void ResetPuzzleCounter(){
-		_counter.Reset();
 	}
 
 	void ToggleEditMode(){
