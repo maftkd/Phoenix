@@ -282,6 +282,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 1
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -396,7 +397,7 @@ Transform:
   m_GameObject: {fileID: 5101308343263774923}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0.08500004, z: 0.2107}
-  m_LocalScale: {x: 0.12990631, y: 0.12990633, z: 0.43031034}
+  m_LocalScale: {x: 0.12990631, y: 0.12990633, z: 0.2647045}
   m_Children: []
   m_Father: {fileID: 5101308343691228129}
   m_RootOrder: 4
@@ -618,6 +619,7 @@ Transform:
   - {fileID: 5101308343210943264}
   - {fileID: 5101308343879223743}
   - {fileID: 401208988276986734}
+  - {fileID: 8004264631101476132}
   m_Father: {fileID: 5101308345131205436}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 180.00002, z: 0}
@@ -743,6 +745,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 0
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -1065,6 +1068,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 1
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -1269,6 +1273,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 0
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -1474,6 +1479,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 0
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -1930,6 +1936,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 1
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -2150,6 +2157,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 0
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -2377,7 +2385,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5101308345131205437}
         m_MethodName: Exit
-        m_Mode: 1
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2602,6 +2610,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 0
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -2819,6 +2828,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 1
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -2946,10 +2956,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f0dccb4db20934ca7dc5bfe363f56e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wallVisDot: 0.5
   _swapInteriorExterior: 0
   _pulseDelay: 0.05
   _rewardSound: {fileID: 8300000, guid: 3f86814970ffda74fb82c8c3c7a6f6a8, type: 3}
+  _next: {fileID: 0}
 --- !u!1 &5101308345204986656
 GameObject:
   m_ObjectHideFlags: 0
@@ -3060,6 +3070,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 0
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -3199,6 +3210,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 1
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -3244,9 +3256,40 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 1
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &6536190159897190413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8004264631101476132}
+  m_Layer: 0
+  m_Name: LevelGeo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8004264631101476132
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536190159897190413}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5101308343640269920}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4528457845560789906
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3623,15 +3666,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d922e2fea8b44784a9560787ca761eec, type: 3}
---- !u!1 &5335100042398828308 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d922e2fea8b44784a9560787ca761eec,
-    type: 3}
-  m_PrefabInstance: {fileID: 5101308343907498565}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4702256726721355182 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d922e2fea8b44784a9560787ca761eec,
+    type: 3}
+  m_PrefabInstance: {fileID: 5101308343907498565}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5335100042398828308 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d922e2fea8b44784a9560787ca761eec,
     type: 3}
   m_PrefabInstance: {fileID: 5101308343907498565}
   m_PrefabAsset: {fileID: 0}
@@ -3705,7 +3748,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 23813c53ec11a124d92776b67846ffbc,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 23813c53ec11a124d92776b67846ffbc,
         type: 3}
@@ -3716,7 +3759,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: 428e13c1e71c7094f980a9ffe4e21a4d, type: 2}
+      objectReference: {fileID: 2100000, guid: 44cd438925abfa445a6b1184b63f3b00, type: 2}
     - target: {fileID: -7511558181221131132, guid: 23813c53ec11a124d92776b67846ffbc,
         type: 3}
       propertyPath: m_Materials.Array.data[2]

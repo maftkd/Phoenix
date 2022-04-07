@@ -51,7 +51,15 @@ public class CollisionHelper : MonoBehaviour
 
 	void OnTriggerEnter(Collider other){
 		if(!_inverted)
-			HandleCollision(other);
+		{
+			Bird b = other.GetComponent<Bird>();
+			if(b._state<3)
+				HandleCollision(other);
+			else{
+				_hitPoint=b.transform.position;
+				b.KnockBack(this,-b.transform.forward.normalized,_supressHitFx,_supressNpcKnockback);
+			}
+		}
 	}
 	void OnTriggerStay(Collider other){
 		Bird b = other.GetComponent<Bird>();
@@ -93,7 +101,6 @@ public class CollisionHelper : MonoBehaviour
 					b.KnockBack(this,_hitNormal.normalized,_supressHitFx,_supressNpcKnockback);
 			}
 		}
-
 	}
 
 	public void Sound(float vol){

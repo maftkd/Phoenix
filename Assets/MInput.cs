@@ -217,7 +217,7 @@ public class MInput : MonoBehaviour
 	public bool GetResetDown(){
 		if(_inputLocked)
 			return false;
-		return (GetTriggerLDown()||Input.GetKeyDown(KeyCode.R)||GetTriggerRDown());
+		return (Input.GetKeyDown(KeyCode.R)||GetTriggerRDown());
 
 	}
 

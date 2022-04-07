@@ -270,6 +270,7 @@ public class Fly : MonoBehaviour
 		float normVel=flatVel.magnitude/_maxVel.z;
 		float gLerp=1-normVel;
 		_gravity=Mathf.Lerp(_soarGravity,_defaultGravity,gLerp);
+		DebugScreen.Print(_gravity,0);
 		_velocity-=flatForward*_airResistance*Time.deltaTime;
 		_velocity+=Vector3.down*_gravity*Time.deltaTime;
 		_velocity+=Vector3.up*_lift*Time.deltaTime*normVel*_liftMult;

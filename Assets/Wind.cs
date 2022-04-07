@@ -37,7 +37,7 @@ public class Wind : MonoBehaviour
 		float g = (forward.y+1)*0.5f;
 		float b = (forward.z+1)*0.5f;
 		Color arrowColor=new Color(r,g,b);
-		main.startColor=arrowColor;
+		//main.startColor=arrowColor;
 	}
 
     // Start is called before the first frame update
