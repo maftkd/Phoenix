@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -24,6 +25,12 @@ public class BirdHouse : MonoBehaviour
 	public AudioClip _rewardSound;
 	public BirdHouse _next;
 	public GameObject _tempEnd;
+	Transform _perch;
+	public Cable _cable;
+	public bool _activateOnAwake;
+	public UnityEvent _onSolveExit;
+	bool _exitAndSolve;
+	TouchPlate [] _plates;
 
 	void OnValidate(){
 		if(_swapInteriorExterior){
@@ -52,7 +59,14 @@ public class BirdHouse : MonoBehaviour
 		_interiorRim=_interior.transform.Find("Floor").GetComponent<Renderer>().materials[1];
 		_exteriorRim=_exterior.transform.Find("House").GetComponent<Renderer>().materials[0];
 
+
+		_plates=transform.GetComponentsInChildren<TouchPlate>();
+
+		//do get references before this is called
 		SetInteriorActive(false);
+
+		if(_activateOnAwake)
+			Activate(true);
 	}
 
     // Start is called before the first frame update
@@ -96,11 +110,16 @@ public class BirdHouse : MonoBehaviour
 		if(_solved)
 			return;
 		StartCoroutine(PulseRim());
-		Sfx.PlayOneShot3D(_rewardSound,transform.position);
 		_solved=true;
 	}
 
+	public void Activate(bool suppress=false){
+		_cable.FillNearPosition(_door.position,suppress);
+	}
+
 	IEnumerator PulseRim(){
+		yield return new WaitForSeconds(0.25f);
+		Sfx.PlayOneShot3D(_rewardSound,transform.position);
 		for(int i=0;i<5;i++){
 			_interiorRim.SetColor("_EmissionColor",Color.black);
 			yield return new WaitForSeconds(_pulseDelay);
@@ -113,7 +132,8 @@ public class BirdHouse : MonoBehaviour
 	public Transform GetDoor(){
 		if(_door==null){
 			_doorCam=transform.GetComponentInChildren<Camera>();
-			_door=_doorCam.transform.parent;
+			if(_doorCam!=null)
+				_door=_doorCam.transform.parent;
 		}
 		return _door;
 	}
@@ -132,19 +152,65 @@ public class BirdHouse : MonoBehaviour
 
 	}
 
+	public Transform GetPerchSpot(){
+		if(_exterior==null)
+			_exterior = transform.Find("Exterior").gameObject;
+		_perch=_exterior.transform.Find("PerchSpot");
+		return _perch;
+	}
+
+	public Transform GetExterior(){
+		return _exterior.transform;
+	}
+
+	//solved and exited
+	public void DoneWalkingOut(){
+		if(_solved&&!_exitAndSolve){
+			_onSolveExit.Invoke();
+			//cardinal go next
+			Cardinal card = transform.GetComponentInChildren<Cardinal>();
+			if(card==null)
+				card=FindObjectOfType<Cardinal>();
+			card.FlyToNextHouse(this);
+			if(_next!=null)
+				_next.Activate();
+			_player.SetCheckPoint();
+			_exitAndSolve=true;
+		}
+	}
+
+	public void CheckPlates(){
+		bool allOn=true;
+		foreach(TouchPlate tp in _plates){
+			if(!tp._isOn)
+				allOn=false;
+		}
+		if(allOn)
+			Solve();
+	}
+
 	void OnDrawGizmos(){
+		if(_perch==null){
+			GetPerchSpot();
+		}
+		if(_perch!=null){
+			Gizmos.color=Color.red;
+			Gizmos.DrawWireSphere(_perch.position,0.25f);
+		}
 		if(_next==null)
 			return;
 		if(_door==null){
 			_doorCam=transform.GetComponentInChildren<Camera>();
-			_door=_doorCam.transform.parent;
+			if(_doorCam!=null)
+				_door=_doorCam.transform.parent;
 		}
-		if(_door==null)
+		Transform nextDoor=_next.GetDoor();
+		if(_door==null||nextDoor==null)
 			return;
 
 		Gizmos.color=Color.magenta;
 		Vector3 posA=_door.position;
-		Vector3 posB=_next.GetDoor().position;
+		Vector3 posB=nextDoor.position;
 		Gizmos.DrawLine(posA,posB);
 		Vector3 mid=Vector3.Lerp(posA,posB,0.5f);
 		float dist=(posA-posB).magnitude;

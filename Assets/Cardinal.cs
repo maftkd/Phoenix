@@ -12,9 +12,15 @@ public class Cardinal : MonoBehaviour
 	public float _flySpeed;
 	public AudioClip _flapSound;
 	public float _flapDur;
+	int _state;
+	public float _initialRadius;
+	Bird _player;
+	public BirdHouse _firstHouse;
+	BirdHouse _curHouse;
 	
 	void Awake(){
 		_anim=GetComponent<Animator>();
+		_player=GameManager._player;
 	}
 
     // Start is called before the first frame update
@@ -25,7 +31,19 @@ public class Cardinal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+		switch(_state){
+			case 0:
+				if((_player.transform.position-transform.position).sqrMagnitude<_initialRadius*_initialRadius){
+					_state=1;
+					FlyToNextHouse(null);
+				}
+				break;
+			case 1:
+				//chill
+				break;
+			default:
+				break;
+		}
     }
 
 	public void Call(){
@@ -47,7 +65,20 @@ public class Cardinal : MonoBehaviour
 		Destroy(call.gameObject);
 	}
 	
-	public void FlyToPuzzle(PuzzleBox pb){
+	public void FlyToNextHouse(BirdHouse cur){
+		if(cur!=null)
+			_curHouse=cur;
+		if(_curHouse==null){
+			_curHouse=_firstHouse;
+		}
+		else if(_curHouse._next!=null){
+			_curHouse=_curHouse._next;
+		}
+		else
+			return;
+		Transform target=_curHouse.GetPerchSpot();
+		transform.SetParent(_curHouse.GetExterior());
+		StartCoroutine(FlyTo(target.position));
 		/*
 		Transform target=pb.transform.Find("Cage");
 		StartCoroutine(FlyTo(target.position+Vector3.up*0.3f));
@@ -86,7 +117,6 @@ public class Cardinal : MonoBehaviour
 		Destroy(gameObject);
 	}
 
-	/*
 	IEnumerator FlyTo(Vector3 p){
 		_anim.SetTrigger("flyLoop");
 		Vector3 start=transform.position;
@@ -100,21 +130,31 @@ public class Cardinal : MonoBehaviour
 		float dist=(target-start).magnitude;
 		float dur=dist/_flySpeed;
 
+		float flapTimer=10f;
+
 		while(timer<dur){
 			timer+=Time.deltaTime;
 			float frac=timer/dur;
 			transform.position=Vector3.Lerp(start,target,frac);
+			flapTimer+=Time.deltaTime;
+			if(flapTimer>_flapDur){
+				Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(0.7f,1.3f));
+				flapTimer=0f;
+			}
 			yield return null;
 		}
 		transform.position=target;
 		_anim.SetTrigger("land");
 
-		transform.LookAt(GameManager._player.transform);
+		transform.LookAt(_player.transform);
 		eulerAngles=transform.eulerAngles;
 		eulerAngles.x=0;
 		transform.eulerAngles=eulerAngles;
 
 		Call();
 	}
-	*/
+
+	void OnDrawGizmos(){
+		Gizmos.DrawWireSphere(transform.position,_initialRadius);
+	}
 }

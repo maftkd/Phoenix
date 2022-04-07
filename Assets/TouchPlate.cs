@@ -7,19 +7,21 @@ public class TouchPlate : MonoBehaviour
 {
 	Bird _player;
 	public AudioClip _sound;
-	bool _isOn;
+	public bool _isOn;
 	Material _mat;
 	public float _delay;
 	public float _animDur;
 	public Transform _plateParts;
 	public UnityEvent _onPowerOn;
 	public UnityEvent _onPowerOff;
+	BirdHouse _bh;
 
 	void Awake(){
 		_player=GameManager._player;
 		_mat=GetComponent<Renderer>().material;
 		_mat.SetFloat("_Interactable",0);
 		_mat.SetFloat("_On",0);
+		_bh=transform.GetComponentInParent<BirdHouse>();
 	}
 
     // Start is called before the first frame update
@@ -36,22 +38,21 @@ public class TouchPlate : MonoBehaviour
 
 	void OnTriggerEnter(Collider other){
 		_player.NearTouchPlate(this);
-		//_mat.SetFloat("_Interactable",1);
-		Toggle();
+		_mat.SetFloat("_Interactable",1);
+		//Toggle();
 	}
 
 	void OnTriggerExit(Collider other){
-		//_player.LeaveTouchPlate(this);
-		//_mat.SetFloat("_Interactable",0);
+		_player.LeaveTouchPlate(this);
+		_mat.SetFloat("_Interactable",0);
 	}
 
 	public void Toggle(){
-		//_player._anim.SetTrigger("peck");
 		_isOn=!_isOn;
 		StartCoroutine(ToggleR());
-		//_player.SetCheckPoint();
-		//mat set emission: 
-		//_mat.SetColor("_EmissionColor",_isOn?_emissionColor:Color.black);
+		if(_bh!=null){
+			_bh.CheckPlates();
+		}
 	}
 
 	IEnumerator ToggleR(){

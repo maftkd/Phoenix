@@ -9,8 +9,7 @@
 		_Interactable ("Interactable", Range(0,1)) = 0
 		_On ("Is on", Range(0,1)) = 0
 		_Border ("Border Size", Range(0,0.5)) = 0.05
-		_Border2 ("Border 2 Size", Range(0,0.5)) = 0.05
-		_BorderColor ("Border Color", Color) = (0,0,0,1)
+		_RingParams ("Ring Params", Vector) = (0,0,0,0)
     }
     SubShader
     {
@@ -37,7 +36,7 @@
 		fixed _Interactable;
 		fixed _On;
 		fixed _Border;
-		fixed _Border2;
+		fixed4 _RingParams;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -51,23 +50,19 @@
             // Albedo comes from a texture tinted by color
             //fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			fixed4 c = _Color*_Color.a;
-			/*
-			fixed xDiff=0.5-abs(IN.uv_MainTex.x-0.5);
-			fixed zDiff=0.5-abs(IN.uv_MainTex.y-0.5);
-			fixed border=saturate(step(xDiff,_Border)+step(zDiff,_Border))*_Interactable;
-			fixed border2=saturate(step(xDiff,_Border2)+step(zDiff,_Border2))*_Interactable;
-			fixed3 borderColor=fixed3(1,1,1)*(1-border2)+border2*c.rgb;
-            o.Albedo = border*borderColor+(1-border)*c.rgb;
-			*/
+
 			fixed xDiff=0.5-abs(IN.uv_MainTex.x-0.5);
 			fixed zDiff=0.5-abs(IN.uv_MainTex.y-0.5);
 			fixed border=saturate(step(xDiff,_Border)+step(zDiff,_Border));
-            o.Albedo = border*fixed3(0,0,0)+(1-border)*c.rgb;
-			//o.Albedo=c.rgb;
+
+			fixed3 borderColor=_Interactable*fixed3(1,1,1)*(pow(abs(sin(_Time.y*2)),2)+0.5)*0.3;
 
 			fixed n = tex2D (_MainTex, IN.uv_MainTex).r;
 			n=1-step(_On,n);
-			o.Emission=_Color.rgb*n*(1-border);
+			c=_On*_Color*n+(1-_On)*c;
+            o.Albedo = border*borderColor+(1-border)*c.rgb;
+
+			o.Emission=o.Albedo;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

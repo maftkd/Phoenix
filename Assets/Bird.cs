@@ -833,10 +833,12 @@ public class Bird : MonoBehaviour
 		_fly.enabled=false;
 		//start coroutine
 		Vector3 dir = -t.forward;
-		Vector3 pos=transform.position;
-		Vector3 newPos=t.position+t.forward*0.41f;
-		newPos.y=pos.y;
-		transform.position=newPos;
+		Transform parent = transform.parent;
+		transform.SetParent(t);
+		Vector3 pos=transform.localPosition;
+		pos.x=0;
+		transform.localPosition=pos;
+		transform.SetParent(parent);
 		//set state to something special
 		_state=7;
 		StartCoroutine(WalkThroughDoorR(dir,bh));
@@ -917,6 +919,7 @@ public class Bird : MonoBehaviour
 			yield return null;
 		}
 		_anim.SetFloat("walkSpeed",0f);
+		bh.DoneWalkingOut();
 
 		Ground();
 		//_state=0;
@@ -997,7 +1000,8 @@ public class Bird : MonoBehaviour
 			_nearSwitch.Toggle();
 			_waddle.enabled=false;
 			_hop.enabled=false;
-			_fly.enabled=false;
+			//_fly.enabled=false;
+			_player._anim.SetTrigger("peck");
 			//_anim.SetFloat("walkSpeed",0f);
 		}
 		else if(_nearPlate!=null){
@@ -1007,9 +1011,14 @@ public class Bird : MonoBehaviour
 			_hop.enabled=false;
 			_fly.enabled=false;
 			*/
+			_player._anim.SetTrigger("peck");
 		}
 		else if(_inWater){
 			StartCoroutine(Bathe());
+		}
+		else{
+			_player._anim.SetTrigger("peck");
+
 		}
 	}
 
