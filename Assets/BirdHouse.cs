@@ -21,10 +21,12 @@ public class BirdHouse : MonoBehaviour
 	public bool _swapInteriorExterior;
 	bool _solved;
 	Material _interiorRim;
+	Material _interiorWallRim;
 	Material _exteriorRim;
 	[Header("Solved effects")]
 	public float _pulseDelay;
 	public AudioClip _rewardSound;
+	public AudioClip _failSound;
 	public BirdHouse _next;
 	public GameObject _tempEnd;
 	Transform _perch;
@@ -65,7 +67,10 @@ public class BirdHouse : MonoBehaviour
 		_doorMatL=_door.Find("DoorLeft").GetComponent<Renderer>().material;
 
 		_interiorRim=_interior.transform.Find("Floor").GetComponent<Renderer>().materials[1];
+		_interiorWallRim=_interior.transform.Find("Walls").Find("windowDoorWall").GetComponent<Renderer>().materials[1];
 		_exteriorRim=_exterior.transform.Find("House").GetComponent<Renderer>().materials[0];
+		_interiorRim.SetColor("_EmissionColor",Color.red);
+		_interiorWallRim.SetColor("_EmissionColor",Color.red);
 
 
 		_plates=transform.GetComponentsInChildren<TouchPlate>();
@@ -123,6 +128,13 @@ public class BirdHouse : MonoBehaviour
 		return _doorCam;
 	}
 
+	void Unsolve(){
+		_interiorRim.SetColor("_EmissionColor",Color.red);
+		_interiorWallRim.SetColor("_EmissionColor",Color.red);
+		_solved=false;
+		Sfx.PlayOneShot3D(_failSound,transform.position);
+	}
+
 	public void Solve(bool silent=false){
 		if(_solved)
 			return;
@@ -140,9 +152,11 @@ public class BirdHouse : MonoBehaviour
 				card=FindObjectOfType<Cardinal>();
 			card.FlyToNextHouse(this);
 			*/
-			_interiorRim.SetColor("_EmissionColor",Color.white);
+			_interiorRim.SetColor("_EmissionColor",Color.green);
+			_interiorWallRim.SetColor("_EmissionColor",Color.green);
+			_exteriorRim.SetColor("_EmissionColor",Color.white);
 			if(_next!=null)
-				_next.Activate();
+				_next.Activate(silent);
 			_player.SetCheckPoint();
 			_exitAndSolve=true;
 
@@ -161,9 +175,11 @@ public class BirdHouse : MonoBehaviour
 		yield return new WaitForSeconds(0.25f);
 		Sfx.PlayOneShot3D(_rewardSound,transform.position);
 		for(int i=0;i<5;i++){
-			_interiorRim.SetColor("_EmissionColor",Color.black);
+			_interiorRim.SetColor("_EmissionColor",Color.red);
+			_interiorWallRim.SetColor("_EmissionColor",Color.red);
 			yield return new WaitForSeconds(_pulseDelay);
-			_interiorRim.SetColor("_EmissionColor",Color.white);
+			_interiorRim.SetColor("_EmissionColor",Color.green);
+			_interiorWallRim.SetColor("_EmissionColor",Color.green);
 			yield return new WaitForSeconds(_pulseDelay);
 		}
 		_exteriorRim.SetColor("_EmissionColor",Color.white);
@@ -222,11 +238,15 @@ public class BirdHouse : MonoBehaviour
 	public void CheckPlates(){
 		bool allOn=true;
 		foreach(TouchPlate tp in _plates){
-			if(!tp._isOn)
+			if(!tp._isOn&&tp.gameObject.activeSelf)
 				allOn=false;
 		}
+
 		if(allOn)
 			Solve();
+		else if(_solved){
+			Unsolve();
+		}
 	}
 
 	void OnDrawGizmos(){

@@ -923,7 +923,7 @@ public class Bird : MonoBehaviour
 		float timer=0;
 		_anim.SetFloat("walkSpeed",0.1f);
 		_anim.SetFloat("hopTime",3f);
-		dur = 0.5f;
+		dur = 0.75f;
 		while(timer<dur){
 			timer+=Time.deltaTime;
 			transform.position+=dir*Time.deltaTime*_waddle._walkSpeed*0.75f;

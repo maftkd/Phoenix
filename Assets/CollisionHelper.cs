@@ -20,10 +20,13 @@ public class CollisionHelper : MonoBehaviour
 
 	bool _hasMeshCollider;
 	bool _hasBoxCollider;
+	bool _isCapsule;
 	BoxCollider _box;
 	public bool _supressHitFx;
 	public bool _supressNpcKnockback;
 	public bool _inverted;
+	bool _inZone;
+	Bird _player;
 
 	//float _fudge = 1.1f;
 
@@ -33,8 +36,10 @@ public class CollisionHelper : MonoBehaviour
 		_col=GetComponent<Collider>();
 		_hasMeshCollider=transform.GetComponent<MeshCollider>()!=null;
 		_hasBoxCollider=transform.GetComponent<BoxCollider>()!=null;
+		_isCapsule=transform.GetComponent<CapsuleCollider>()!=null;
 		if(_hasBoxCollider)
 			_box=GetComponent<BoxCollider>();
+		_player=GameManager._player;
 	}
 
     // Start is called before the first frame update
@@ -46,6 +51,8 @@ public class CollisionHelper : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if(_inverted&&_isCapsule&&!_inZone)
+			HandleCollision(null);
         
     }
 
@@ -60,6 +67,7 @@ public class CollisionHelper : MonoBehaviour
 				b.KnockBack(this,-b.transform.forward.normalized,_supressHitFx,_supressNpcKnockback);
 			}
 		}
+		_inZone=true;
 	}
 	void OnTriggerStay(Collider other){
 		Bird b = other.GetComponent<Bird>();
@@ -69,37 +77,50 @@ public class CollisionHelper : MonoBehaviour
 
 	void OnTriggerExit(Collider other){
 		if(_inverted)
+		{
 			HandleCollision(other);
+		}
+		_inZone=false;
 	}
 
 	void HandleCollision(Collider other){
 		if(!enabled)
 			return;
-		if(other.GetComponent<Bird>()!=null&&other.gameObject.tag=="Player")
+		Bird b;
+		if(other==null)
+			b=_player;
+		else if(other.GetComponent<Bird>()!=null&&other.gameObject.tag=="Player")
+			b=other.GetComponent<Bird>();
+		else
+			return;
+
+		_onBirdEnter.Invoke();
+		Vector3 curPos=b.transform.position;
+		_hitPoint=_col.ClosestPoint(b.transform.position);
+		_hitNormal=b.transform.position-_hitPoint;
+		if(_isCapsule)
+			_hitNormal*=-1;
+		_newPoint=_hitPoint+_hitNormal.normalized*b._hitRadius;
+		if(b._state==1)
 		{
-			_onBirdEnter.Invoke();
-			Bird b = other.GetComponent<Bird>();
-			Vector3 curPos=other.transform.position;
-			_hitPoint=_col.ClosestPoint(other.transform.position);
-			_hitNormal=other.transform.position-_hitPoint;
-			_newPoint=_hitPoint+_hitNormal.normalized*b._hitRadius;
-			if(b._state==1)
-			{
+			if(!_isCapsule)
 				b.SnapToPos(_newPoint);
-			}
-			Vector3 flatNormal=_hitNormal;
-			flatNormal.y=0;
-			flatNormal.Normalize();
-			float dt = Vector3.Dot(flatNormal, other.transform.forward);
-			if(dt>_maxDotToKnock){
-				other.transform.position=curPos;
-			}
 			else
-			{
-				bool closeEnough=false;
-				if(!closeEnough)
-					b.KnockBack(this,_hitNormal.normalized,_supressHitFx,_supressNpcKnockback);
-			}
+				b.RevertToPreviousPosition();
+
+		}
+		Vector3 flatNormal=_hitNormal;
+		flatNormal.y=0;
+		flatNormal.Normalize();
+		float dt = Vector3.Dot(flatNormal, b.transform.forward);
+		if(dt>_maxDotToKnock){
+			b.transform.position=curPos;
+		}
+		else
+		{
+			bool closeEnough=false;
+			if(!closeEnough)
+				b.KnockBack(this,_hitNormal.normalized,_supressHitFx,_supressNpcKnockback);
 		}
 	}
 
