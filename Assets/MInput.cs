@@ -128,6 +128,12 @@ public class MInput : MonoBehaviour
 		return Input.GetButtonDown("Jump")||Input.GetMouseButtonDown(0);
 	}
 
+	public bool GetLandDown(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonDown("Cancel")||Input.GetMouseButtonDown(0);
+	}
+
 	public bool GetJumpUp(){
 		if(_inputLocked)
 			return false;
