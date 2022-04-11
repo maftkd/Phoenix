@@ -213,11 +213,16 @@ public class MInput : MonoBehaviour
 			return false;
 		return _triggerRState==1;
 	}
+	public bool GetTriggerR(){
+		if(_inputLocked)
+			return false;
+		return _triggerR>0.5f;
+	}
 
 	public bool GetResetDown(){
 		if(_inputLocked)
 			return false;
-		return (Input.GetKeyDown(KeyCode.R)||GetTriggerRDown());
+		return Input.GetKeyDown(KeyCode.R);
 
 	}
 

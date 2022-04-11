@@ -10,6 +10,7 @@ public class DebugScreen : MonoBehaviour
 	Text [] _slots;
 	Vector3 [] _pSlots;
 	Color [] _pColors;
+	int _curSlot;
 
 	void Awake(){
 		_instance=this;
@@ -46,29 +47,39 @@ public class DebugScreen : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+		_curSlot=0;
     }
 
 	//text debugging
-	public static void Print(bool b, int slot){
-		_instance.PrintA(b,slot);
+	public static void Print(string s, bool b, int slot){
+		_instance.PrintA(s,b,slot);
 	}
-	public static void Print(float f, int slot){
-		_instance.PrintA(f,slot);
+	public static void Print(string s, float f, int slot){
+		_instance.PrintA(s,f,slot);
 	}
 	public static void Print(string s, int slot){
 		_instance.PrintA(s,slot);
 	}
-
-	public void PrintA(bool b, int slot){
-		_slots[slot].text=b.ToString();
+	public static void Print(string s){
+		_instance.PrintA(s);
 	}
-	public void PrintA(float f, int slot){
-		_slots[slot].text=f.ToString("0.000");
+
+	public void PrintA(string s, bool b, int slot){
+		_slots[slot].text=s+b.ToString();
+	}
+	public void PrintA(string s, float f, int slot){
+		_slots[slot].text=s+f.ToString("0.000");
 	}
 	public void PrintA(string s, int slot){
 		if(_slots[slot]!=null)
 			_slots[slot].text=s;
+	}
+	public void PrintA(string s){
+		if(_slots[_curSlot]!=null)
+		{
+			_slots[_curSlot].text=s;
+			_curSlot++;
+		}
 	}
 
 	//point debugging

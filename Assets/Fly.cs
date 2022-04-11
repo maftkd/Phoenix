@@ -25,7 +25,6 @@ public class Fly : MonoBehaviour
 	[Tooltip("The vertical boost gained if jump button is held down during a flap")]
 	public float _flapHoldBoost;
 	Bird _bird;
-	Vector3 _groundPoint;
 	MInput _mIn;
 	[Header("Turning")]
 	[Tooltip("Set via script")]
@@ -50,16 +49,14 @@ public class Fly : MonoBehaviour
 	[Tooltip("How quickly pitch resets to zero when vertical input is low")]
 	public float _angleFallMult;
 	float _aoa;
-	[Tooltip("The speed boost given when angled downward")]
-	public float _thrustMult;
-	[Tooltip("The speed slow down when angled upward")]
-	public float _dragMult;
-	[Tooltip("The amount of vertical velocity gained while angled upward")]
-	public float _liftMult;
+	[Header("Lift")]
 	public float _maxLift;
-	[Tooltip("The amount of vertical velocity lost while angled downward")]
 	public float _maxWeight;
+	[Header("Thrust")]
+	public float _maxThrust;
+	public float _maxDrag;
 	float _lift;
+	float _thrust;
 	Animator _anim;
 	[HideInInspector]
 	public float _forwardness;
@@ -81,6 +78,8 @@ public class Fly : MonoBehaviour
 	public float _knockBackMult;
 	public float _minKnockBackMag;
 	float _knockBackTimer;
+	//Conservation
+	float _prevSqrMag;
 
 	//shadow
 	Transform _flyShadow;
@@ -115,16 +114,16 @@ public class Fly : MonoBehaviour
 	void OnEnable(){
 		_velocity=Vector3.zero;
 
-		_curFlapAccel=transform.forward*_flapAccel.z+Vector3.up*_flapAccel.y;
+		_curFlapAccel=Vector3.up*_flapAccel.y;
 
 		//initial velocity
 		_velocity=_curFlapAccel;
 		_velocity+=transform.forward*_bird.GetVel();
 
-
 		_speedFrac=0;
 
 		_knockBackTimer=0;
+		_prevSqrMag=0;
 
 		_aoa=0;
 		_lift=0;
@@ -165,16 +164,20 @@ public class Fly : MonoBehaviour
 		Vector3 flatForward=transform.forward;
 		flatForward.y=0;
 		//flap
-		if(_mIn.GetJumpDown()){
+		if(_mIn.GetJumpDown()&&_flapTimer>_flapDur){
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
 				//forwardness depends on aoa
 				float aoa01=((_aoa/_maxAoa)+1)*0.5f;
-				_curFlapAccel=flatForward*_flapAccel.z*aoa01;
+				//DebugScreen.Print("aoa01: ",aoa01,0);
+				//_curFlapAccel=flatForward*_flapAccel.z*aoa01;
+				_curFlapAccel=transform.forward*_flapAccel.z;
 				//upness is uniform
-				_curFlapAccel+=Vector3.up*_flapAccel.y;
+				//_curFlapAccel+=transform.up*_flapAccel.y;
 				//if going forward, add proportionate vel boost
-				_velocity.y+=_flapAccel.y*aoa01;
+				//_velocity.y+=_flapAccel.y*(1-aoa01);
+				//add vertical when tilted back
+				_curFlapAccel+=Vector3.up*_flapAccel.y;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
 				Soar(false);
@@ -202,20 +205,30 @@ public class Fly : MonoBehaviour
 			flatForward=transform.forward;
 			flatForward.y=0;
 			flatForward.Normalize();
+			float prevAoa=_aoa;;
 			_aoa+=input.y*Time.deltaTime*_angleChangeMult;
 			if(input.y==0)
 				_aoa=Mathf.Lerp(_aoa,0,_angleFallMult*Time.deltaTime);
 			_aoa = Mathf.Clamp(_aoa,-_maxAoa,_maxAoa);
+			float aoaDiff=_aoa-prevAoa;
+			DebugScreen.Print("Aoa diff: "+aoaDiff.ToString("0.000"));
+			_velocity=Quaternion.Euler(aoaDiff*transform.right)*_velocity;
 
 			if(_aoa>0)
 			{
-				_velocity+=flatForward*Time.deltaTime*_aoa*_thrustMult;
+				_thrust=Mathf.InverseLerp(0,_maxAoa,_aoa)*_maxThrust;
 				_lift=Mathf.InverseLerp(0,_maxAoa,_aoa)*_maxWeight;
 			}
-			else
+			else if(_aoa<0)
 			{
-				_velocity+=flatForward*Time.deltaTime*_aoa*_dragMult;
-				_lift=Mathf.InverseLerp(0,_maxAoa,-_aoa)*_maxLift;
+				//_velocity+=flatForward*Time.deltaTime*_aoa*_dragMult;
+				float mult=Mathf.InverseLerp(0,_maxAoa,-_aoa);
+				_thrust=mult*_maxDrag;
+				_lift=mult*_maxLift;
+			}
+			else{
+				_thrust=0;
+				_lift=0;
 			}
 			flatVel=_velocity;
 			flatVel.y=0;
@@ -232,12 +245,10 @@ public class Fly : MonoBehaviour
 			//turning mid-air
 			_rollMult=_soaring ? _soarRollMult : _defaultRollMult;
 			_maxRoll=_soaring ? _soarMaxRoll : _defaultMaxRoll;
-			//float rollAngle=-_maxRoll*input.x;
 			_rollAngle=Mathf.Lerp(_rollAngle,-_maxRoll*input.x,_rollChangeMult*Time.deltaTime);
 			_speedFrac=flatVel.magnitude/_maxVel.z;
 
 			//rotate velocity
-			//flatVel.Rotate(Vector3.up*input.x*Time.deltaTime);
 			if(flatVel.sqrMagnitude>0.01f){
 				flatVel = Quaternion.Euler(0f,input.x*Time.deltaTime*_turnSpeed,0)*flatVel;
 				_velocity.x=flatVel.x;
@@ -270,10 +281,14 @@ public class Fly : MonoBehaviour
 		float normVel=flatVel.magnitude/_maxVel.z;
 		float gLerp=1-normVel;
 		_gravity=Mathf.Lerp(_soarGravity,_defaultGravity,gLerp);
-		DebugScreen.Print(_gravity,0);
 		_velocity-=flatForward*_airResistance*Time.deltaTime;
-		_velocity+=Vector3.down*_gravity*Time.deltaTime;
-		_velocity+=Vector3.up*_lift*Time.deltaTime*normVel*_liftMult;
+		_velocity-=Vector3.up*_gravity*Time.deltaTime;
+		_velocity+=Vector3.up*_lift*Time.deltaTime;
+		if(_thrust>0)
+			_velocity+=transform.forward*_thrust*Time.deltaTime;
+
+		flatVel=_velocity;
+		flatVel.y=0;
 
 		//cap vertical velocity
 		if(_velocity.y>_maxVel.y)
@@ -283,16 +298,26 @@ public class Fly : MonoBehaviour
 
 		//prevent backwards flight
 		if(_forwardness<=0){
-			flatVel=Vector3.zero;
-			_velocity.x=0;
-			_velocity.z=0;
+			_velocity.x*=-1;
+			_velocity.z*=-1;
 		}
+
+		_prevSqrMag=_velocity.sqrMagnitude;
+		
+		//debugging
+		DebugScreen.Print("Aoa: "+_aoa.ToString("0.000"));
+		/*
+		DebugScreen.Print("Thrust: "+_thrust.ToString("0.000"));
+		DebugScreen.Print("Lift: "+_lift.ToString("0.000"));
+		*/
+		DebugScreen.Print("flat vel mag: "+flatVel.magnitude.ToString("0.000"));
+		DebugScreen.Print("gravity: "+_gravity.ToString("0.000"));
+
 
 		if(_soaring){
 			var emission = _soarParticles.emission;
 			emission.rateOverTime = normVel*_maxSoarPartsRate;
 		}
-		
 
 		Vector3 ray = transform.position-prevPos;
 		RaycastHit hit;
@@ -305,9 +330,11 @@ public class Fly : MonoBehaviour
 			Soar(false);
 			Footstep footstep=hit.transform.GetComponent<Footstep>();
 			//float vol = _diving? 1f : 0.1f;
-			float vol = 0.1f;
+			float vol = 1f;
 			if(footstep!=null)
-				footstep.Sound(_groundPoint,vol);
+			{
+				footstep.Sound(hit.point,vol);
+			}
 			_bird.Land();
 			_flyShadow.gameObject.SetActive(false);
 		}
@@ -433,8 +460,6 @@ public class Fly : MonoBehaviour
 
 	void OnDrawGizmos(){
 		Gizmos.color=Color.red;
-		if(_groundPoint!=null)
-			Gizmos.DrawSphere(_groundPoint,0.02f);
 		Gizmos.color=Color.blue;
 		Vector3 right=transform.right;
 		right.y=0;
