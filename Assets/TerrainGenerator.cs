@@ -472,7 +472,7 @@ public class TerrainGenerator : MonoBehaviour
 
 				//add random noise
 				float noise = _heightMap.GetPixel(pixX,pixY).b;
-				hOffset+=noise*distance*_noiseAmplitude;
+				hOffset+=noise*_noiseAmplitude;
 
 				//get ridge map
 				float ridge = _ridgeMap.GetPixel(pixX,pixY).g;
@@ -778,12 +778,14 @@ public class TerrainGenerator : MonoBehaviour
 					layer=_grassLayer;
 				else if(upness>_pebbleDot)
 					layer=_pebbleLayer;
+				/*
 				if(height>_mountainHeight&&layer==_sandLayer){
 					if(perlin<_rockPerlinCutoff)
 						layer=_rockLayer;
 					else
 						layer=_pebbleLayer;
 				}
+				*/
 				if(layer==_grassLayer){
 					if(perlin2<1-_grassPerlinCutoff||puzzleZone)
 						layer=_sandLayer;
