@@ -51,14 +51,6 @@ public class Fly : MonoBehaviour
 	[Tooltip("How quickly pitch resets to zero when vertical input is low")]
 	public float _angleFallMult;
 	float _aoa;
-	[Header("Lift")]
-	public float _maxLift;
-	public float _maxWeight;
-	[Header("Thrust")]
-	public float _maxThrust;
-	public float _maxDrag;
-	float _lift;
-	float _thrust;
 	Animator _anim;
 	[HideInInspector]
 	public float _forwardness;
@@ -129,7 +121,6 @@ public class Fly : MonoBehaviour
 		_prevSqrMag=0;
 
 		_aoa=0;
-		_lift=0;
 
 		_flapTimer=0;
 		_flapCounter=0;
@@ -283,13 +274,6 @@ public class Fly : MonoBehaviour
 		_prevSqrMag=_velocity.sqrMagnitude;
 		
 		//debugging
-		/*
-		DebugScreen.Print("Aoa: "+_aoa.ToString("0.000"));
-		DebugScreen.Print("Thrust: "+_thrust.ToString("0.000"));
-		DebugScreen.Print("Lift: "+_lift.ToString("0.000"));
-		DebugScreen.Print("flat vel mag: "+flatVel.magnitude.ToString("0.000"));
-		DebugScreen.Print("gravity: "+_gravity.ToString("0.000"));
-		*/
 		DebugScreen.Print("flat vel mag: "+flatVel.magnitude.ToString("0.000"));
 		DebugScreen.Print("y vel: "+_velocity.y.ToString("0.000"));
 

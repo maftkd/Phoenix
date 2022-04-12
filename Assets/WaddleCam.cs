@@ -21,6 +21,8 @@ public class WaddleCam : Shot
 	public float _rLerp;
 	public float _thetaLerp;
 	public float _phiLerp;
+	public float _phiDelay;
+	float _phiDelayTimer;
 	public bool _camControl;
 
 	protected override void Awake(){
@@ -56,6 +58,7 @@ public class WaddleCam : Shot
 		_phi = Mathf.Asin(diff.y/diff.magnitude);
 		if(_targetPhi==0)
 			_targetPhi=_phi;
+		_phiDelayTimer=0;
 
 		//calc theta
 		Vector3 camBack=-transform.forward;
@@ -83,7 +86,10 @@ public class WaddleCam : Shot
 		float radius=Mathf.Lerp(diff.magnitude,_targetR,
 				_rLerp*Time.deltaTime);
 
-		_phi = Mathf.Lerp(_phi,_targetPhi,_phiLerp*Time.deltaTime);
+		if(_phiDelayTimer<=0)
+			_phi = Mathf.Lerp(_phi,_targetPhi,_phiLerp*Time.deltaTime);
+		else
+			_phiDelayTimer-=Time.deltaTime;
 
 		//modify theta
 		if(_camControl){
@@ -91,6 +97,8 @@ public class WaddleCam : Shot
 			_theta-=mouseMotion.x;
 			_phi+=mouseMotion.y;
 			_phi=Mathf.Clamp(_phi,_phiRange.x,_phiRange.y);
+			if(mouseMotion.y!=0)
+				_phiDelayTimer=_phiDelay;
 		}
 
 		//theta help

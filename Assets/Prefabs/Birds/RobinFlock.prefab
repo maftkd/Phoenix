@@ -102,7 +102,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8431319136727655531}
-  - component: {fileID: 8431319136727655530}
   m_Layer: 0
   m_Name: RobinFlock
   m_TagString: Untagged
@@ -128,40 +127,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8431319136727655530
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8431319136727655524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9927aff301df014380355b7bbb626ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _birdPrefab: {fileID: 4502612975586046856, guid: 64ee0b4a24e9c054c80046d0fcd1c1ae,
-    type: 3}
-  _matePrefab: {fileID: 4087833871458615536, guid: a56c1defc96ba0e4fae0438bf0a2b1a5,
-    type: 3}
-  _mats:
-  - {fileID: 2100000, guid: 9dc093e8186c5214e8a0bf75f2460364, type: 2}
-  _numBirds: 6
-  _trees:
-  - {fileID: 8253032581873539491}
-  - {fileID: 4053880886046460985}
-  - {fileID: 4053880884371522540}
-  _calls:
-  - {fileID: 8300000, guid: a2c080251f6238942b88f8fb392b20ee, type: 3}
-  - {fileID: 8300000, guid: 5c959748375d8b94a8a0c18cdfd02c9f, type: 3}
-  _flockMode: 0
-  _updateTime: 1
-  _flyChance: 0.1
-  _flySpeed: 2
-  _callChance: 0.7
-  _callVol: 0.3
-  _innerRadius: 2.5
-  _outerRadius: 8
 --- !u!1001 &4596203052007557491
 PrefabInstance:
   m_ObjectHideFlags: 0

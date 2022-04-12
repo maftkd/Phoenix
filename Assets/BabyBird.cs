@@ -60,7 +60,7 @@ public class BabyBird : MonoBehaviour
 
 	IEnumerator FlyAwayAfter(float del){
 		yield return new WaitForSeconds(del);
-		_hatchling.GetComponent<BirdSimple>().FlyAway();
+		//_hatchling.GetComponent<BirdSimple>().FlyAway();
 	}
 
 }

@@ -884,7 +884,7 @@ GameObject:
   - component: {fileID: 3979123256341653752}
   - component: {fileID: 3979123256332093254}
   - component: {fileID: 3979123256337009734}
-  - component: {fileID: 1984093779938817088}
+  - component: {fileID: 7739841402103758697}
   m_Layer: 0
   m_Name: Sparrow
   m_TagString: Untagged
@@ -935,58 +935,35 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3979123256341492952}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.08
+  m_Radius: 0.04
   m_Center: {x: 0, y: 0.04, z: 0}
---- !u!114 &1984093779938817088
+--- !u!114 &7739841402103758697
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3979123256341492952}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 063148d47c955462b99e3703c0e44997, type: 3}
+  m_Script: {fileID: 11500000, guid: e95a46172bcf9c44d9c478ca7067525e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _flyInDist: 1
-  _flySpeed: 1
-  _song: {fileID: 8300000, guid: cdd2bf3db646249429213541df377729, type: 3}
-  _songParts: {fileID: 4099120655822680657, guid: e265e8596a23dfd4e9827ca7d86fe230,
-    type: 3}
-  _songVolume: 0.5
-  _flapSound: {fileID: 8300000, guid: a21a3dbdf5339e345acd866a94992651, type: 3}
-  _flapDur: 0.333
-  _turnDur: 0.25
-  _turnDelay: 0.1
-  _jumpHeight: 0.04
-  _jumpCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: -0.000011444092
-      inSlope: 5.726829
-      outSlope: 5.726829
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.023283381
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: -1.8030465
-      outSlope: -1.8030465
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.052665472
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  _walkSpeed: 0.5
+  _maxWalkSlope: 3
+  _animSpeedMult: 2.5
+  _stepVolume: 0.1
+  _wadePitchRange: {x: 0.5, y: 0.8}
+  _inputSmoothLerp: 10
+  _slerp: 10
+  _minInput: 0.1
+  _minSlopeToCheckSpeed: 0.1
+  _knockBackTime: 0.2
+  _knockBackSpeedMult: 0.3
+  _npc: 1
 --- !u!1 &3979123256341492954
 GameObject:
   m_ObjectHideFlags: 0

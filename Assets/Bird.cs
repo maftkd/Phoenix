@@ -6,7 +6,6 @@ using UnityEngine.Events;
 public class Bird : MonoBehaviour
 {
 	public float _triggerRadius;
-	public float _arriveRadius;
 	public int _state;
 	public int _startPath;
 	Hop _hop;
@@ -408,6 +407,7 @@ public class Bird : MonoBehaviour
 		//Debug.Log("We stop waddling yooo");
 	}
 
+	/*
 	public bool Arrived(){
 		bool arrived=_hop.Arrived(_arriveRadius);
 		if(arrived)
@@ -418,6 +418,7 @@ public class Bird : MonoBehaviour
 	public bool ArrivedW(){
 		return _waddle.Arrived(_arriveRadius);
 	}
+	*/
 	
 	public bool IsWaddling(){
 		return _waddle.IsWaddling();

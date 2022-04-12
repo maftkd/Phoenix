@@ -8,6 +8,8 @@ public class Waddle : MonoBehaviour
 	MInput _mIn;
 	public float _walkSpeed;
 	Bird _bird;
+	LayerMask _colLayer;
+	float _size;
 	public float _maxWalkSlope;
 	public float _animSpeedMult;
 	public float _stepVolume;
@@ -34,6 +36,9 @@ public class Waddle : MonoBehaviour
 	float _timeEstimate;
 	float _walkTimer;
 
+	public delegate void WalkEvent();
+	public event WalkEvent _onDoneWalking;
+
 	WaddleCam _cam;
 
 	void Awake(){
@@ -42,6 +47,8 @@ public class Waddle : MonoBehaviour
 		_bird = GetComponent<Bird>();
 		_cols = new Collider[2];
 		_cam=transform.GetComponentInChildren<WaddleCam>();
+		_colLayer=_bird!=null?_bird._collisionLayer : (LayerMask)1;
+		_size=_bird!=null?_bird._size.y:GetComponent<SphereCollider>().radius*transform.localScale.x;
 	}
 
 	void OnEnable(){
@@ -49,7 +56,7 @@ public class Waddle : MonoBehaviour
 
 		//ground at start
 		RaycastHit hit;
-		if(Physics.Raycast(transform.position+Vector3.up*0.01f,Vector3.down,out hit, 0.02f,_bird._collisionLayer)){
+		if(Physics.Raycast(transform.position+Vector3.up*0.01f,Vector3.down,out hit, 0.02f,_colLayer)){
 			transform.position=hit.point;
 			if(hit.transform.GetComponent<Footstep>()!=null)
 				TakeStep(hit.transform);
@@ -57,19 +64,9 @@ public class Waddle : MonoBehaviour
 		_stepTimer=0;
 		_knockBackTimer=0;
 		_input=_mIn.GetInputDir();
-		if(!_npc)
-		{
-			//transition to waddle cam
-			//GameManager._mCam.Transition(_bird._waddleCam,MCamera.Transitions.CUT_BACK);
-		}
 	}
 
 	void OnDisable(){
-		if(!_npc)
-		{
-			//transition to idle cam
-			//GameManager._mCam.Transition(_bird._idleCam,MCamera.Transitions.CUT_BACK);
-		}
 	}
     // Start is called before the first frame update
     void Start()
@@ -90,7 +87,6 @@ public class Waddle : MonoBehaviour
 		else{
 			_knockBackTimer-=Time.deltaTime;
 			if(_knockBackTimer<=0){
-				//_bird.ShakeItOff();
 				return;
 			}
 		}
@@ -108,15 +104,14 @@ public class Waddle : MonoBehaviour
 		else
 		{
 			_anim.SetFloat("hopTime",-animSpeed);
-			//move=-transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*2;
 			move=_input*Time.deltaTime*_walkSpeed;
 		}
 
 		Vector3 targetPos = transform.position+move;
 
 		RaycastHit hit;
-		if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, 
-					_bird._size.y*2f,_bird._collisionLayer)){
+		if(Physics.Raycast(targetPos+Vector3.up*_size,Vector3.down,out hit, 
+					_size*2f,_colLayer)){
 			//raycast to ground
 			targetPos.y=hit.point.y;
 			float dy = (targetPos.y-transform.position.y);
@@ -125,10 +120,9 @@ public class Waddle : MonoBehaviour
 			if(slope<-_maxWalkSlope*0.5f){
 				//check for very negative slope
 				if(_input.magnitude>0.9f){
-					//_bird.Ground();
 					_anim.SetFloat("walkSpeed",0f);
-					_bird.StartHopping(true);
-					Debug.Log("bop");
+					if(_bird!=null)
+						_bird.StartHopping(true);
 				}
 			}
 			else if(slope<_maxWalkSlope)
@@ -136,49 +130,60 @@ public class Waddle : MonoBehaviour
 				if(slope>_minSlopeToCheckSpeed){
 					Vector3 dir=hit.point-transform.position;
 					targetPos=transform.position+dir.normalized*_walkSpeed*Time.deltaTime;
-					if(Physics.Raycast(targetPos+Vector3.up*_bird._size.y,Vector3.down,out hit, _bird._size.y*1.5f,_bird._collisionLayer)){
+					if(Physics.Raycast(targetPos+Vector3.up*_size,Vector3.down,out hit, _size*1.5f,_colLayer)){
 						transform.position=hit.point;
-						//_bird.Ground(false);
 					}
 				}
 				else
 				{
 					transform.position=hit.point;
-					//_bird.Ground(false);
 				}
 			}
-			_bird.Ground(false);
 			//always ground?
+			if(_bird!=null)
+				_bird.Ground(false);
 			if(_stepTimer>=0.5f/animSpeed){
 				TakeStep(hit.transform);
 				_stepTimer=0;
 			}
 			_anim.SetFloat("walkSpeed",0.1f);
 
+			if(_npc){
+				if(Arrived()){
+					if(_onDoneWalking!=null)
+						_onDoneWalking.Invoke();
+					StopWaddling();
+					//on arrive.Invoke
+					//stop walking
+				}
+				//check for being done walking
+			}
+			/*
 			if(_npc && Arrived(_bird._arriveRadius))
 				StopWaddling();
+				*/
 		}
 		else{
-			if(!_bird.IsGrounded()){
+			if(_bird!=null&&!_bird.IsGrounded()){
 				_anim.SetFloat("walkSpeed",0f);
 				_bird.StartHopping(true);
-				Debug.Log("boop");
 			}
 		}
     }
 
 	void TakeStep(Transform t){
 		Footstep f = t.GetComponent<Footstep>();
-		if(f!=null)
+		if(f!=null&&!_npc)
 		{
-			if(_bird._inWater)
+			if(_bird!=null&&_bird._inWater)
 			{
 				f.Sound(transform.position,-1f,Random.Range(_wadePitchRange.x,_wadePitchRange.y));
 			}
 			else
 				f.Sound(transform.position,_stepVolume);
 		}
-		_bird.MakeFootprint(t);
+		if(_bird!=null)
+			_bird.MakeFootprint(t);
 		if(_npc){
 			//recalibrate
 			float mag = _npcInput.magnitude;
@@ -198,10 +203,10 @@ public class Waddle : MonoBehaviour
 	}
 
 	public void KnockBack(Vector3 dir){
-		//_knockBackDir=dir;
-		//_knockBackTimer=_knockBackTime;
 		float mag = _input.magnitude;
 		Vector3 normIn = _input.normalized;
+		//figure out which dot is the properly reflected angle,
+		//I'm not really sure why we aren't just using Vector3 reflect, but w/e
 		Vector3 optionA = Vector3.Cross(dir,Vector3.up);
 		Vector3 optionB = Vector3.Cross(dir,Vector3.down);
 		float dotA=Vector3.Dot(optionA,normIn);
@@ -211,34 +216,28 @@ public class Waddle : MonoBehaviour
 		}
 		else
 			_input=optionB*mag;
-		//_input=dir*mag*_knockBackSpeedMult;
-		/*
-		if(mag>0)
-			transform.forward=_input;
-			*/
 	}
 
-	public void WaddleTo(Vector3 target,float speed){
+	public void WaddleTo(Vector3 target,float speed=-1f){
+		speed=speed<0?_walkSpeed : speed;
 		_destination=target;
 		RaycastHit hit;
-		if(Physics.Raycast(_destination+Vector3.up*_bird._size.y*0.5f,Vector3.down, out hit,1f,_bird._collisionLayer)){
+		if(Physics.Raycast(_destination+Vector3.up*_size*0.5f,Vector3.down, out hit,1f,_colLayer)){
 			_destination.y=hit.point.y;
 		}
 		Vector3 diff = _destination-transform.position;
 		diff.y=0;
 		diff.Normalize();
-		_npcInput=diff*speed;
-		_timeEstimate=(_destination-transform.position).magnitude/(_npcInput.magnitude*_walkSpeed);
-		//Debug.Log("te: "+_timeEstimate);
+		_npcInput=diff;
+		_timeEstimate=(_destination-transform.position).magnitude/_walkSpeed;
 		_walkTimer=0;
+		enabled=true;
 	}
 
-	public bool Arrived(float threshold){
+	public bool Arrived(){
 		float sqrDst=(transform.position-_destination).sqrMagnitude;
-		//Debug.Log("sqrDst: "+sqrDst);
-		bool closeEnough=sqrDst<threshold*threshold;
-		//bool timeOut=_walkTimer>_timeEstimate+0.5f;
-		return  closeEnough;// || timeOut ;
+		bool closeEnough=sqrDst<_size*_size;
+		return  closeEnough||(_walkTimer>_timeEstimate);
 	}
 
 	public void StopWaddling(){
