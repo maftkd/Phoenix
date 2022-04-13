@@ -132,8 +132,6 @@ public class Bird : MonoBehaviour
 		if(_playerControlled)
 		{
 			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
-			_idleCam = transform.Find("IdleCam").GetComponent<Camera>();
-			_hopCam = transform.Find("HopCam").GetComponent<Camera>();
 			_flyCam = transform.Find("FlyCam").GetComponent<Camera>();
 		}
 
@@ -756,6 +754,7 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 		if(_fly.enabled)
 		{
+			_fly.Reset();
 			_fly.Soar(false);
 			_anim.SetTrigger("land");
 		}

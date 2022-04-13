@@ -86,8 +86,17 @@ public class Fly : MonoBehaviour
 
 	//land target
 	Transform _landTarget;
+	public Transform _landTargetPrefab;
 	Material _landMat;
-	float _maxDist = 0.75f;
+	float _maxDist = 2f;
+
+	//water spray
+	Transform _waterSpray;
+	public Transform _waterSprayPrefab;
+	ParticleSystem _sprayParts;
+	AudioSource _spraySound;
+	ParticleSystem.EmissionModule _sprayEmission;
+	TrailRenderer _sprayTrail;
 
 	//stamina outline
 	public Color _fullColor;
@@ -101,12 +110,18 @@ public class Fly : MonoBehaviour
 		_anim=GetComponent<Animator>();
 		_soarParticles=transform.Find("SoarParticles").GetComponent<ParticleSystem>();
 		_soarAudio=_soarParticles.GetComponent<AudioSource>();
-		_landTarget=transform.Find("LandTarget");
+		_landTarget=Instantiate(_landTargetPrefab,transform);
 		if(_landTarget!=null)
 		{
 			_landTarget.gameObject.SetActive(false);
 			_landMat=_landTarget.GetComponent<Renderer>().material;
 		}
+		_waterSpray=Instantiate(_waterSprayPrefab,transform);
+		_sprayParts=_waterSpray.GetComponent<ParticleSystem>();
+		_sprayParts.Stop();
+		_sprayEmission=_sprayParts.emission;
+		_spraySound=_waterSpray.GetComponent<AudioSource>();
+		_sprayTrail=_waterSpray.GetComponentInChildren<TrailRenderer>();
 	}
 
 	void OnEnable(){
@@ -330,6 +345,8 @@ public class Fly : MonoBehaviour
 
 		//checking enabled because bird script may have disabled already from Land or Dive
 		if(enabled){
+			//check for shadow
+			/*
 			bool showShadow=false;
 			if(Physics.Raycast(transform.position,_sun.forward, out hit, 50f, _bird._oceanLayer)){
 				if(hit.transform.name=="Ocean")
@@ -343,18 +360,47 @@ public class Fly : MonoBehaviour
 				_flyShadow.gameObject.SetActive(showShadow);
 			}
 			_prevShowShadow=showShadow;
+			*/
 
 			//check for land target
 			if(Physics.Raycast(transform.position,Vector3.down, out hit, 50f, _bird._collisionLayer)){
-				float sqrDst = (transform.position-hit.point).sqrMagnitude;
+				//float sqrDst = (transform.position-hit.point).sqrMagnitude;
+				float diff=transform.position.y-hit.point.y;
 				_landTarget.position=hit.point;
 				Vector3 eulers = _landTarget.eulerAngles;
 				eulers.x=0;
 				eulers.z=0;
 				_landTarget.eulerAngles=eulers;
-				float frac=sqrDst/(_maxDist*_maxDist);
+				float frac=diff/_maxDist;
 				frac=Mathf.Clamp(frac,0.15f,1f);
 				_landMat.SetFloat("_Radius",frac);
+
+				bool sprayActive=hit.point.y<=5.1f;
+				if(sprayActive)
+					_landMat.SetFloat("_Radius",0);
+
+				Vector3 point=hit.point;
+				point.y=5f;
+				_waterSpray.position=point;
+				_waterSpray.rotation=Quaternion.identity;
+				diff=transform.position.y-point.y;
+				frac=Mathf.Clamp01(diff/_maxDist);
+				if(sprayActive&&!_sprayParts.isPlaying)
+				{
+					_sprayParts.Play();
+					_spraySound.Play();
+				}
+				else if(!sprayActive&&_sprayParts.isPlaying)
+				{
+					_sprayParts.Stop();
+					_spraySound.Stop();
+				}
+				if(_sprayParts.isPlaying){
+					//emissionRate=someNumber*frac
+					_sprayEmission.rateOverTime=50f*(1-frac);
+					_spraySound.volume=(1-frac);
+					_sprayTrail.startColor=Color.white*(1-frac);
+				}
 			}
 			else{
 				//_landTarget.gameObject.
@@ -438,6 +484,15 @@ public class Fly : MonoBehaviour
 
 	public void AddForce(Vector3 v){
 		_velocity+=v*Time.deltaTime;
+	}
+
+	public void Reset(){
+		_sprayParts.Stop();
+		_spraySound.Stop();
+	}
+
+	public bool IsFlapping(){
+		return _flapTimer<_flapDur*2f;
 	}
 
 	void OnDrawGizmos(){
