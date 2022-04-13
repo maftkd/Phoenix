@@ -44,6 +44,7 @@ public class Fly : MonoBehaviour
 	public float _turnSpeed;
 	[Header("Pitch")]
 	public float _maxAoa;
+	public float _pitchSpeed;
 	[Tooltip("Multiply by maxAoa to get max pitch when inclined downward")]
 	public float _downPitchMult;
 	[Tooltip("How quickly pitch responds to vertical input")]
@@ -209,7 +210,7 @@ public class Fly : MonoBehaviour
 			float aoaDiff=_aoa-prevAoa;
 			DebugScreen.Print("Aoa diff: "+aoaDiff.ToString("0.000"));
 			if(input.y!=0){
-				_velocity=Quaternion.Euler(aoaDiff*transform.right)*_velocity;
+				_velocity=Quaternion.Euler(_aoa*transform.right*_pitchSpeed*Time.deltaTime)*_velocity;
 				flatVel=_velocity;
 				flatVel.y=0;
 			}
