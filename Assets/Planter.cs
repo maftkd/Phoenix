@@ -83,7 +83,6 @@ public class Planter : MonoBehaviour
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, 0);
-		int grassCount=0;
 		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			float yNorm = y/(float)td.alphamapHeight;
@@ -106,7 +105,6 @@ public class Planter : MonoBehaviour
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, 0);
-		int grassCount=0;
 		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			float yNorm = y/(float)td.alphamapHeight;

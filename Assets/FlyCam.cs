@@ -8,11 +8,11 @@ public class FlyCam : Shot
 	Quaternion _rotation;
 	Vector3 _forward;
 	Fly _fly;
+	public Vector2 _phiRange;
 	public float _targetPhi;
 	public float _targetR;
 	public float _lerp;
 	public float _phiLerp;
-	public float _phiFlapLerp;
 	public float _slerp;
 	public float _rLerp;
 	public int _flightPriority;
@@ -20,6 +20,11 @@ public class FlyCam : Shot
 	Vector3 _offset;
 	float _warmUp;
 	public float _warmUpMult;
+	public float _mouseSens;
+	float _phiOffset;
+	float _thetaOffset;
+	float _theta;
+	float _phi;
 
 	protected override void Awake(){
 		base.Awake();
@@ -33,6 +38,13 @@ public class FlyCam : Shot
 		_rotation=transform.rotation;
 		_forward=transform.forward;
 		_warmUp=0;
+		Vector3 camBack=-transform.forward;
+		camBack.y=0;
+		camBack.Normalize();
+		_theta=Mathf.Atan2(camBack.z,camBack.x);
+
+		Vector3 diff=transform.position-_player.transform.position;
+		_phi=Mathf.Asin(diff.y/diff.magnitude);
 	}
 
 	public override void StartTracking(Transform t){
@@ -74,47 +86,41 @@ public class FlyCam : Shot
 				_warmUp=1f;
 		}
 
+		Vector2 mouseMotion = _mIn.GetMouseMotion();
+
 		//calc phi
+		Vector3 playerBack=-_player.transform.forward;
+		float targetPhi=Mathf.Asin(playerBack.y);
+		_phi=Mathf.Lerp(_phi,targetPhi,_phiLerp*Time.deltaTime*_warmUp);
+		_phi=Mathf.Clamp(_phi,_phiRange.x,_phiRange.y);
+		_phi-=mouseMotion.y*_mouseSens;
+
+		//calc r
 		Vector3 diff=transform.position-_player.transform.position;
 		float r = diff.magnitude;
-		float phi=Mathf.Asin(diff.y/diff.magnitude);
-		//phi=Mathf.Lerp(phi,_targetPhi,_lerp*Time.deltaTime*_warmUp);
-		if(_fly._soaring||_warmUp<1f)
-			phi=Mathf.Lerp(phi,_targetPhi,_phiLerp*Time.deltaTime*_warmUp);
-		else
-			phi=Mathf.Lerp(phi,_targetPhi,_phiFlapLerp*Time.deltaTime*_warmUp);
-		//phi=Mathf.Lerp(phi,_targetPhi,_warmUp);
-		//DebugScreen.Print(phi,0);
 		r=Mathf.Lerp(r,_targetR,_rLerp*Time.deltaTime*_warmUp);
-		//DebugScreen.Print(r,1);
 
 		//calc theta
-		Vector3 camBack=-transform.forward;
-		camBack.y=0;
-		camBack.Normalize();
-		float theta=Mathf.Atan2(camBack.z,camBack.x);
-
-		Vector3 playerBack=-_player.transform.forward;
+		_theta-=mouseMotion.x*_mouseSens;
 		playerBack.y=0;
 		playerBack.Normalize();
 		float targetTheta=Mathf.Atan2(playerBack.z,playerBack.x);
 
-		if(Mathf.Abs(theta-targetTheta)>Mathf.PI)
+		if(Mathf.Abs(_theta-targetTheta)>Mathf.PI)
 		{
-			if(theta<targetTheta)
-				targetTheta=-(Mathf.PI*2f-targetTheta);
+			if(_theta<targetTheta)
+				_theta+=Mathf.PI*2f;
 			else
-				targetTheta+=Mathf.PI*2f;
+				_theta-=Mathf.PI*2f;
 		}
 
-		theta=Mathf.Lerp(theta,targetTheta,_lerp*Time.deltaTime*_warmUp);
-		//DebugScreen.Print(theta,2);
-		//DebugScreen.Print(targetTheta,3);
+		_theta=Mathf.Lerp(_theta,targetTheta,_lerp*Time.deltaTime*_warmUp);
 
-		float y = Mathf.Sin(phi);
-		float xzRad = Mathf.Cos(phi);
-		float x = xzRad*Mathf.Cos(theta);
-		float z = xzRad*Mathf.Sin(theta);
+		//calc offset
+		float y = Mathf.Sin(_phi);
+		float xzRad = Mathf.Cos(_phi);
+		float x = xzRad*Mathf.Cos(_theta);
+		float z = xzRad*Mathf.Sin(_theta);
 		_offset = new Vector3(x,y,z)*r;
 		
 		Vector3 targetPos=_player.transform.position+_offset;
@@ -124,6 +130,7 @@ public class FlyCam : Shot
 		transform.forward=-_offset;
 		Quaternion targetRot=transform.rotation;
 		_rotation=Quaternion.Slerp(_rotation,targetRot,_slerp*Time.deltaTime*_warmUp);
+		//_rotation=targetRot;
 
 		transform.position=_position;
 		transform.rotation=_rotation;

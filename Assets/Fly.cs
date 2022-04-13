@@ -45,6 +45,9 @@ public class Fly : MonoBehaviour
 	[Header("Pitch")]
 	public float _maxAoa;
 	public float _pitchSpeed;
+	public float _upPitchSpeed;
+	public float _maxPhi;
+	public float _maxUpPhi;
 	[Tooltip("Multiply by maxAoa to get max pitch when inclined downward")]
 	public float _downPitchMult;
 	[Tooltip("How quickly pitch responds to vertical input")]
@@ -207,10 +210,22 @@ public class Fly : MonoBehaviour
 			if(input.y==0)
 				_aoa=Mathf.Lerp(_aoa,0,_angleFallMult*Time.deltaTime);
 			_aoa = Mathf.Clamp(_aoa,-_maxAoa,_maxAoa);
-			float aoaDiff=_aoa-prevAoa;
-			DebugScreen.Print("Aoa diff: "+aoaDiff.ToString("0.000"));
-			if(input.y!=0){
-				_velocity=Quaternion.Euler(_aoa*transform.right*_pitchSpeed*Time.deltaTime)*_velocity;
+
+			//rotate velocity
+			if(_soaring){
+				Vector3 prevVel=_velocity;
+				if(_aoa>0)
+					_velocity=Quaternion.Euler(_aoa*transform.right*_pitchSpeed*Time.deltaTime)*_velocity;
+				else if(_aoa<0)
+					_velocity=Quaternion.Euler(_aoa*transform.right*_upPitchSpeed*Time.deltaTime)*_velocity;
+				flatVel=_velocity;
+				flatVel.y=0;
+				float yVel=_velocity.y;
+				float phi=Mathf.Atan2(yVel,flatVel.magnitude);
+				if(phi<-_maxPhi&&_aoa>0||phi>_maxUpPhi&&_aoa<0)
+				{
+					_velocity=prevVel;
+				}
 				flatVel=_velocity;
 				flatVel.y=0;
 			}
@@ -222,7 +237,6 @@ public class Fly : MonoBehaviour
 				_velocity.z=flatVel.z;
 			}
 			_forwardness = Vector3.Dot(flatVel.normalized,transform.forward);
-
 
 			//turning mid-air
 			_rollMult=_soaring ? _soarRollMult : _defaultRollMult;
@@ -237,10 +251,12 @@ public class Fly : MonoBehaviour
 			eulerAngles.x=targetPitch;
 			transform.eulerAngles=eulerAngles;
 
+			//turn
 			float rotateAmount=_rollAngle*_turnSpeed*Time.deltaTime;
 			transform.Rotate(-Vector3.up*rotateAmount,Space.World);
 			float mag = flatVel.magnitude;
 			float theta=Mathf.Atan2(transform.forward.z,transform.forward.x);
+
 			flatVel.x=Mathf.Cos(theta)*mag;
 			flatVel.z=Mathf.Sin(theta)*mag;
 			_velocity.x=flatVel.x;
@@ -275,8 +291,9 @@ public class Fly : MonoBehaviour
 		_prevSqrMag=_velocity.sqrMagnitude;
 		
 		//debugging
-		DebugScreen.Print("flat vel mag: "+flatVel.magnitude.ToString("0.000"));
-		DebugScreen.Print("y vel: "+_velocity.y.ToString("0.000"));
+		DebugScreen.Print("Vel mag: "+_velocity.magnitude.ToString("0.000"));
+		//DebugScreen.Print("flat vel mag: "+flatVel.magnitude.ToString("0.000"));
+		//DebugScreen.Print("y vel: "+_velocity.y.ToString("0.000"));
 
 
 		if(_soaring){
