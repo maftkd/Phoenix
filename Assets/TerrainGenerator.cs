@@ -718,7 +718,6 @@ public class TerrainGenerator : MonoBehaviour
 			}
 		}
 		td.SetAlphamaps(0,0,alphaMaps);
-
 	}
 
 	void UpdateTexture(){

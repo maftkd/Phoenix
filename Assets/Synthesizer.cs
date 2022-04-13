@@ -32,8 +32,9 @@ public class Synthesizer : MonoBehaviour
 		for(int i=0;i<numSamples; i++){
 			float t01 = i/(float)numSamples;
 			float t = t01*dur;
-			float n = Mathf.Lerp(minNoise,noise,Random.value*Mathf.Abs(Mathf.Cos(t*noiseFreq*Mathf.PI*2)));
-			n=2*n-1f;
+			float n = Mathf.Lerp(minNoise,noise,Mathf.Abs(Mathf.Cos(t*noiseFreq*Mathf.PI*2)));
+			n=2*n*Random.value-1f;
+			//n=2*n-1f;
 			samples[i]=Mathf.Sin(t*frequency*Mathf.PI*2)+n;
 		}
 		AudioClip foo = AudioClip.Create("synth",numSamples,1,_sampleRate,false);
