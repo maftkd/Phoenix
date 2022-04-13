@@ -1049,6 +1049,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4502612975586046856}
   - component: {fileID: 7537990524811291122}
+  - component: {fileID: 5961420407949243555}
+  - component: {fileID: 8225865993607202457}
   m_Layer: 0
   m_Name: Robin
   m_TagString: Untagged
@@ -1091,6 +1093,43 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!135 &5961420407949243555
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3834724964098812210}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0.09, z: 0}
+--- !u!114 &8225865993607202457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3834724964098812210}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e95a46172bcf9c44d9c478ca7067525e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _walkSpeed: 0.75
+  _maxWalkSlope: 3
+  _animSpeedMult: 2.5
+  _stepVolume: 0.1
+  _wadePitchRange: {x: 0.5, y: 0.8}
+  _inputSmoothLerp: 10
+  _slerp: 10
+  _minInput: 0.1
+  _minSlopeToCheckSpeed: 0.1
+  _knockBackTime: 0.2
+  _knockBackSpeedMult: 0.3
+  _npc: 1
 --- !u!1 &3966938441412999100
 GameObject:
   m_ObjectHideFlags: 0

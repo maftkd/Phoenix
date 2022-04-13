@@ -41,11 +41,21 @@ public class Tree : MonoBehaviour
 	[Header("Buttons")]
 	public bool _genTree;
 	public bool _autoGen;
+	public bool _clearLeaves;
 
 	void OnValidate(){
 		if(_genTree || _autoGen){
 			GenTree();
 			_genTree=false;
+		}
+		if(_clearLeaves){
+			Transform [] leaves = new Transform[transform.childCount];
+			for(int i=0; i<transform.childCount; i++){
+				leaves[i]=transform.GetChild(i);
+			}
+			StartCoroutine(DestroyNextFrame(leaves));
+
+			_clearLeaves=false;
 		}
 	}
 
@@ -80,7 +90,8 @@ public class Tree : MonoBehaviour
 
 	void GenPalmTree(){
 		Mesh m = new Mesh();
-		Random.InitState(_trunkSeed);
+		//Random.InitState(_trunkSeed);
+		Random.InitState((int)System.DateTime.Now.Ticks);
 
 		//allocate some mem
 		Vector3[] vertices = new Vector3[(_vertsPerRing+1)*_numRings];
@@ -161,7 +172,8 @@ public class Tree : MonoBehaviour
 		}
 		StartCoroutine(DestroyNextFrame(leaves));
 
-		Random.InitState(_leafSeed);
+		//Random.InitState(_leafSeed);
+		Random.InitState((int)System.DateTime.Now.Ticks);
 		for(int i=0; i<_numLeaves; i++){
 			GeneratePalmLeaf(i);
 		}
@@ -286,5 +298,9 @@ public class Tree : MonoBehaviour
 		yield return null;
 		foreach(Transform t in ts)
 			DestroyImmediate(t.gameObject);
+	}
+
+	void Awake(){
+		GenTree();
 	}
 }

@@ -853,7 +853,7 @@ public class TerrainGenerator : MonoBehaviour
 			rock.localScale = new Vector3(Random.Range(_minRockScale.x,_maxRockScale.x),
 					Random.Range(_minRockScale.y,_maxRockScale.y),
 					Random.Range(_minRockScale.z,_maxRockScale.z));
-			rock.rotation = Random.rotation;
+			//rock.rotation = Random.rotation;
 		}
 	}
 }

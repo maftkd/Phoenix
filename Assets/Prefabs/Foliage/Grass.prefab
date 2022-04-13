@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 6469374889409952272}
   - component: {fileID: 6469374889409952275}
   - component: {fileID: 6469374889409952274}
-  - component: {fileID: 6469374889409952277}
   - component: {fileID: 6469374889409952366}
   - component: {fileID: 7492532924216002696}
+  - component: {fileID: 735394821147352855}
   m_Layer: 8
   m_Name: Grass
   m_TagString: Untagged
@@ -82,20 +82,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &6469374889409952277
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6469374889409952276}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &6469374889409952366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,7 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9daabac800f771448610a04c5ab20ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeRadius: 10
+  _activeRadius: 45
   _onTriggerEnter:
     m_PersistentCalls:
       m_Calls:
@@ -153,3 +139,16 @@ MonoBehaviour:
   _vol: 0.0025
   _minAudioPeriod: 0.24
   _pitchRange: {x: 0.7, y: 1.3}
+--- !u!65 &735394821147352855
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6469374889409952276}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.9999999, y: 0.99999994, z: 0.9999999}
+  m_Center: {x: 0, y: 0.49999997, z: 0}

@@ -9,10 +9,27 @@ public class Planter : MonoBehaviour
 	public int _terrainLayer;
 	public float _alphaThreshold;
 	public int _seed;
-	public float _plantChance;
 	public Vector3 _minSize;
 	public Vector3 _maxSize;
+	public int _grassDensity;
+	public float _plantChance;
 	public bool _offsetVert;
+	[Header("Controls")]
+	public bool _plantTerrain;
+	public bool _clearTerrain;
+	public bool _autoUpdate;
+
+	void OnValidate(){
+		if(_plantTerrain||_autoUpdate){
+			PlantGrass();
+			_plantTerrain=false;
+		}
+		if(_clearTerrain){
+			ClearGrass();
+			_clearTerrain=false;
+		}
+	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,14 +42,10 @@ public class Planter : MonoBehaviour
         
     }
 
-	[ContextMenu("Clear")]
 	public void ClearGrass(){
-		for(int i=transform.childCount-1;i>=0;i--){
-			DestroyImmediate(transform.GetChild(i).gameObject);
-		}
+		StartCoroutine(Clear());
 	}
 
-	[ContextMenu("Plant")]
 	public void PlantGrass(){
 		ClearGrass();
 		TerrainData td = _terrain.terrainData;
@@ -63,5 +76,62 @@ public class Planter : MonoBehaviour
 			}
 		}
 		Debug.Log("Grass count: "+grassCount);
+	}
+
+	public void PlantTerrain(){
+		//ClearGrass();
+		TerrainData td = _terrain.terrainData;
+		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
+		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, 0);
+		int grassCount=0;
+		Random.InitState(_seed);
+		for(int y=0;y<td.alphamapHeight; y++){
+			float yNorm = y/(float)td.alphamapHeight;
+			int yDetail=Mathf.FloorToInt(yNorm*td.detailHeight);
+			for(int x=0;x<td.alphamapWidth; x++){
+				float xNorm = x/(float)td.alphamapWidth;
+				int xDetail=Mathf.FloorToInt(xNorm*td.detailWidth);
+				if(alphaMaps[x,y,_terrainLayer]>_alphaThreshold)
+				{
+					detailMap[xDetail,yDetail]=_grassDensity;
+				}
+			}
+		}
+		td.SetDetailLayer(0, 0, 0, detailMap);
+		//Debug.Log("Grass count: "+grassCount);
+	}
+
+	public void ClearTerrain(){
+		//ClearGrass();
+		TerrainData td = _terrain.terrainData;
+		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
+		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, 0);
+		int grassCount=0;
+		Random.InitState(_seed);
+		for(int y=0;y<td.alphamapHeight; y++){
+			float yNorm = y/(float)td.alphamapHeight;
+			int yDetail=Mathf.FloorToInt(yNorm*td.detailHeight);
+			for(int x=0;x<td.alphamapWidth; x++){
+				float xNorm = x/(float)td.alphamapWidth;
+				int xDetail=Mathf.FloorToInt(xNorm*td.detailWidth);
+				detailMap[xDetail,yDetail]=0;
+			}
+		}
+		td.SetDetailLayer(0, 0, 0, detailMap);
+		//Debug.Log("Grass count: "+grassCount);
+	}
+
+	IEnumerator Clear(){
+		int numChildren=transform.childCount;
+		Transform [] children = new Transform[numChildren];
+		for(int i=0;i<numChildren; i++){
+			children[i]=transform.GetChild(i);
+		}
+
+		yield return null;
+
+		for(int i=0; i<numChildren; i++){
+			DestroyImmediate(children[i].gameObject);
+		}
 	}
 }

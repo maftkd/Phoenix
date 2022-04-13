@@ -6,8 +6,10 @@ public class Flock : MonoBehaviour
 {
 
 	public Transform _birdPrefab;
-	public int _numBirds;
+	public int _minBirds;
+	public int _maxBirds;
 	public Terrain _terrain;
+	[HideInInspector]
 	public Vector3 _center;
 	Vector3 _prevCenter;
 	public MBird [] _mBirds;
@@ -86,6 +88,7 @@ public class Flock : MonoBehaviour
 						}
 						else{
 							_anim.SetTrigger("peck");
+							/*
 							RaycastHit hit;
 							if(Physics.Raycast(_transform.position+Vector3.up*0.01f,Vector3.down,out hit, 0.02f,1)){
 								_transform.position=hit.point;
@@ -93,6 +96,7 @@ public class Flock : MonoBehaviour
 								if(f!=null)
 									f.Sound(_transform.position,0.1f);
 							}
+							*/
 						}
 					}
 					break;
@@ -281,7 +285,8 @@ public class Flock : MonoBehaviour
 		int iters=0;
 		int maxIters=100;
 		Vector3 pos=Vector3.zero;
-		Random.InitState(0);
+		//Random.InitState(0);
+		Random.InitState((int)System.DateTime.Now.Ticks);
 		while(height<6f&&iters<maxIters){
 			Vector2 v = new Vector2(Random.Range(-maxDist,maxDist)+center.x,Random.Range(-maxDist,maxDist)+center.z);
 			pos = new Vector3(v.x,0,v.y);
@@ -298,9 +303,10 @@ public class Flock : MonoBehaviour
 			_prevCenter=_center;
 		}
 
-		_mBirds = new MBird[_numBirds];
+		int numBirds=Random.Range(_minBirds,_maxBirds+1);
+		_mBirds = new MBird[numBirds];
 		//spawn some birds near center
-		for(int i=0; i<_numBirds; i++){
+		for(int i=0; i<numBirds; i++){
 			height=0f;
 			iters=0;
 			Vector3 spawnPos=_center;
@@ -324,6 +330,9 @@ public class Flock : MonoBehaviour
 		}
 
 		_groundTimer=Random.Range(_groundDurRange.x,_groundDurRange.y);
+		//50% to start with flight
+		if(Random.value<0.5f)
+			_groundTimer=-1f;
 		_flockCam=transform.GetComponentInChildren<Camera>();
 		_fCam=_flockCam.GetComponent<FlockCam>();
 		_player=GameManager._player;
