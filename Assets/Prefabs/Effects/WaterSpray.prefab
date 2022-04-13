@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 5449097511098522543}
   - component: {fileID: 6000174783632183640}
   - component: {fileID: 4715013568553754006}
+  - component: {fileID: 7711232409884365688}
   m_Layer: 9
   m_Name: WaterSpray
   m_TagString: Untagged
@@ -4988,3 +4989,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7711232409884365688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651099981766384230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 124d199db7aac4b46a6ce73f6abe6cdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxVol: 1
+  _lerp: 5

@@ -84,25 +84,20 @@ public class Fly : MonoBehaviour
 	Transform _sun;
 	bool _prevShowShadow;
 
-	//land target
-	Transform _landTarget;
-	public Transform _landTargetPrefab;
-	Material _landMat;
-	float _maxDist = 2f;
-
 	//water spray
+	const float _maxDist=2f;
 	[Header ("Effects")]
 	public Transform _waterSprayPrefab;
 	Transform _waterSpray;
 	ParticleSystem _sprayParts;
 	ParticleSystem.EmissionModule _sprayEmission;
-	AudioSource _spraySound;
+	Fader _spraySound;
 	TrailRenderer _sprayTrail;
 	public Transform _sandSprayPrefab;
 	Transform _sandSpray;
 	ParticleSystem _sandParts;
 	ParticleSystem.EmissionModule _sandEmission;
-	AudioSource _sandSound;
+	Fader _sandSound;
 	public Terrain _terrain;
 	float[,,] _alphaMaps;
 	TerrainData _terrainData;
@@ -120,18 +115,13 @@ public class Fly : MonoBehaviour
 		_anim=GetComponent<Animator>();
 		_soarParticles=transform.Find("SoarParticles").GetComponent<ParticleSystem>();
 		_soarAudio=_soarParticles.GetComponent<AudioSource>();
-		_landTarget=Instantiate(_landTargetPrefab,transform);
-		if(_landTarget!=null)
-		{
-			_landTarget.gameObject.SetActive(false);
-			_landMat=_landTarget.GetComponent<Renderer>().material;
-		}
+
 		//setup water spray
 		_waterSpray=Instantiate(_waterSprayPrefab,transform);
 		_sprayParts=_waterSpray.GetComponent<ParticleSystem>();
 		_sprayParts.Stop();
 		_sprayEmission=_sprayParts.emission;
-		_spraySound=_waterSpray.GetComponent<AudioSource>();
+		_spraySound=_waterSpray.GetComponent<Fader>();
 		_sprayTrail=_waterSpray.GetComponentInChildren<TrailRenderer>();
 		_sprayTrail.emitting=false;
 		//setup sand spray
@@ -141,11 +131,12 @@ public class Fly : MonoBehaviour
 		_sandEmission=_sandParts.emission;
 		_sandParts.Stop();
 		//sound
-		_sandSound=_sandSpray.gameObject.AddComponent<AudioSource>();
-		_sandSound.loop=true;
-		_sandSound.spatialBlend=1f;
-		_sandSound.clip=Synthesizer.GenerateSineWave(220f,10f,0.5f,0.2f,0.4f);
-		_sandSound.Stop();
+		AudioSource sandAudio=_sandSpray.gameObject.AddComponent<AudioSource>();
+		sandAudio.loop=true;
+		sandAudio.spatialBlend=1f;
+		sandAudio.clip=Synthesizer.GenerateSineWave(220f,10f,0.5f,0.2f,0.4f);
+		sandAudio.Stop();
+		_sandSound=_sandSpray.GetComponent<Fader>();
 		_terrainData = _terrain.terrainData;
 		_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
 	}
@@ -372,22 +363,6 @@ public class Fly : MonoBehaviour
 
 		//checking enabled because bird script may have disabled already from Land or Dive
 		if(enabled){
-			//check for shadow
-			/*
-			bool showShadow=false;
-			if(Physics.Raycast(transform.position,_sun.forward, out hit, 50f, _bird._oceanLayer)){
-				if(hit.transform.name=="Ocean")
-				{
-					showShadow=true;
-					_flyShadow.position=hit.point;
-					_flyShadow.rotation=Quaternion.identity;
-				}
-			}
-			if(showShadow!=_prevShowShadow){
-				_flyShadow.gameObject.SetActive(showShadow);
-			}
-			_prevShowShadow=showShadow;
-			*/
 
 			//check for land target
 			if(Physics.Raycast(transform.position,Vector3.down, out hit, 50f, _bird._collisionLayer)){
@@ -397,14 +372,15 @@ public class Fly : MonoBehaviour
 				point.y=5f;
 				float diff=transform.position.y-point.y;
 				float frac=Mathf.Clamp01(diff/_maxDist);
-				if(sprayActive&&!_spraySound.isPlaying)
+				if(sprayActive&&!_spraySound.IsOn())
 				{
 					_sprayParts.Play();
 					_spraySound.Play();
 					_sprayTrail.emitting=true;
 				}
-				else if(!sprayActive&&_spraySound.isPlaying)
+				else if(!sprayActive&&_spraySound.IsOn())
 				{
+					//_sprayParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
 					_sprayParts.Stop();
 					_spraySound.Stop();
 					_sprayTrail.emitting=false;
@@ -412,7 +388,7 @@ public class Fly : MonoBehaviour
 				if(_sprayParts.isPlaying){
 					//emissionRate=someNumber*frac
 					_sprayEmission.rateOverTime=50f*(1-frac);
-					_spraySound.volume=(1-frac);
+					_spraySound.SetTarget(1-frac);
 					_sprayTrail.startColor=Color.white*(1-frac);
 					_sprayTrail.startWidth=1f*(1-frac);
 					_waterSpray.position=point;
@@ -431,13 +407,14 @@ public class Fly : MonoBehaviour
 
 				diff=transform.position.y-hit.point.y;
 				frac=Mathf.Clamp01(diff/_maxDist);
-				if(sandActive&&!_sandSound.isPlaying)
+				if(sandActive&&!_sandSound.IsOn())
 				{
 					_sandParts.Play();
 					_sandSound.Play();
 				}
-				else if(!sandActive&&_sandSound.isPlaying)
+				else if(!sandActive&&_sandSound.IsOn())
 				{
+					//_sandParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
 					_sandParts.Stop();
 					_sandSound.Stop();
 				}
@@ -445,11 +422,8 @@ public class Fly : MonoBehaviour
 					_sandSpray.position=hit.point;
 					_sandSpray.rotation=Quaternion.identity;
 					_sandEmission.rateOverTime=200f*(1-frac);
-					_sandSound.volume=(1-frac)*0.1f;
+					_sandSound.SetTarget((1-frac));
 				}
-			}
-			else{
-				//_landTarget.gameObject.
 			}
 		}
     }
@@ -533,8 +507,10 @@ public class Fly : MonoBehaviour
 	}
 
 	public void Reset(){
+		//_sprayParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
 		_sprayParts.Stop();
 		_spraySound.Stop();
+		//_sandParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
 		_sandParts.Stop();
 		_sandSound.Stop();
 	}
