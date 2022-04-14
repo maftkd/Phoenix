@@ -119,6 +119,8 @@ public class Fly : MonoBehaviour
 	ParticleSystem.EmissionModule _rockEmissionLeft;
 	Fader _rockSoundRight;
 	Fader _rockSoundLeft;
+	TrailRenderer _rockTrailRight;
+	TrailRenderer _rockTrailLeft;
 
 	//stamina outline
 	[Header("Outline")]
@@ -167,6 +169,10 @@ public class Fly : MonoBehaviour
 		_rockPartsLeft=_rocksLeft.GetComponent<ParticleSystem>();
 		_rockSoundLeft=_rocksLeft.GetComponent<Fader>();
 		_rockEmissionLeft=_rockPartsLeft.emission;
+		_rockTrailLeft=_rocksLeft.GetComponentInChildren<TrailRenderer>();
+		_rockTrailRight=_rocksRight.GetComponentInChildren<TrailRenderer>();
+		_rockTrailLeft.emitting=false;
+		_rockTrailRight.emitting=false;
 
 		_terrainData = _terrain.terrainData;
 		_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
@@ -500,17 +506,20 @@ public class Fly : MonoBehaviour
 					_rocksRight.up=-right;
 					_rockEmissionRight.rateOverTime=100f*(1-frac);
 					_rockSoundRight.SetTarget((1-frac));
+					_rockTrailRight.startWidth=0.25f*(1-frac);
 				}
 			}
 			if(rocksActive&&!_rockSoundRight.IsOn())
 			{
 				_rockPartsRight.Play();
 				_rockSoundRight.Play();
+				_rockTrailRight.emitting=true;
 			}
 			else if(!rocksActive&&_rockSoundRight.IsOn())
 			{
 				_rockPartsRight.Stop();
 				_rockSoundRight.Stop();
+				_rockTrailRight.emitting=false;
 			}
 
 			//rocks on left
@@ -533,17 +542,20 @@ public class Fly : MonoBehaviour
 					_rocksLeft.up=-left;
 					_rockEmissionLeft.rateOverTime=100f*(1-frac);
 					_rockSoundLeft.SetTarget((1-frac));
+					_rockTrailLeft.startWidth=0.25f*(1-frac);
 				}
 			}
 			if(rocksActive&&!_rockSoundLeft.IsOn())
 			{
 				_rockPartsLeft.Play();
 				_rockSoundLeft.Play();
+				_rockTrailLeft.emitting=true;
 			}
 			else if(!rocksActive&&_rockSoundLeft.IsOn())
 			{
 				_rockPartsLeft.Stop();
 				_rockSoundLeft.Stop();
+				_rockTrailLeft.emitting=false;
 			}
 		}
     }
@@ -638,6 +650,8 @@ public class Fly : MonoBehaviour
 		_rockPartsRight.Stop();
 		_rockSoundRight.Stop();
 		_sprayTrail.emitting=false;
+		_rockTrailLeft.emitting=false;
+		_rockTrailRight.emitting=false;
 	}
 
 	public bool IsFlapping(){
