@@ -4,36 +4,47 @@ using UnityEngine;
 
 public class Grass : MonoBehaviour
 {
-	public AudioClip _clip;
-	[Range(0,1)]
-	public float _vol;
-	public static float _audioTimer;
-	public static Grass _timeKeeper;
-	public float _minAudioPeriod;
-	public Vector2 _pitchRange;
+	float _animDur=0.25f;
+	Vector3 _defaultScale;
+	Vector3 _squishedScale;
 
 	void Awake(){
-		if(_timeKeeper==null)
-			_timeKeeper=this;
+		_defaultScale=transform.localScale;
+		_squishedScale=_defaultScale;
+		_squishedScale.y*=0.5f;
 	}
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	public void React(){
+		if(GameManager._player.IsFlying())
+		{
+			StopAllCoroutines();
+			StartCoroutine(Shrink());
+		}
+	}
+	IEnumerator Shrink(){
+		float timer=0;
+		Vector3 startScale=transform.localScale;
+		while(timer<_animDur){
+			timer+=Time.deltaTime;
+			float frac=timer/_animDur;
+			transform.localScale=Vector3.Lerp(startScale,_squishedScale,frac);
+			yield return null;
+		}
+	}
 
-    // Update is called once per frame
-    void Update()
-    {
-		if(this==_timeKeeper)
-			_audioTimer+=Time.deltaTime;
-    }
+	public void Relax(){
+		StopAllCoroutines();
+		StartCoroutine(RelaxR());
+	}
 
-	public void Collide(){
-		if(_audioTimer>_minAudioPeriod){
-			Sfx.PlayOneShot3D(_clip,transform.position,Random.Range(_pitchRange.x,_pitchRange.y),_vol);
-			_audioTimer=0;
+	IEnumerator RelaxR(){
+		float timer=0;
+		Vector3 startScale=transform.localScale;
+		while(timer<_animDur){
+			timer+=Time.deltaTime;
+			float frac=timer/_animDur;
+			transform.localScale=Vector3.Lerp(startScale,_defaultScale,frac);
+			yield return null;
 		}
 	}
 }

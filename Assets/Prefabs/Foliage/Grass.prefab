@@ -99,7 +99,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7492532924216002696}
-        m_MethodName: Collide
+        m_MethodName: React
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -111,7 +111,18 @@ MonoBehaviour:
         m_CallState: 2
   _onTriggerExit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7492532924216002696}
+        m_MethodName: Relax
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _onTriggerStay:
     m_PersistentCalls:
       m_Calls: []
@@ -135,10 +146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3962463ba275c0143b2d6322c9be7c1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _clip: {fileID: 8300000, guid: b0ee3ff22fb9101438ded1eaf83bcb75, type: 3}
-  _vol: 0.0025
-  _minAudioPeriod: 0.24
-  _pitchRange: {x: 0.7, y: 1.3}
 --- !u!65 &735394821147352855
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -150,5 +157,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.9999999, y: 0.99999994, z: 0.9999999}
-  m_Center: {x: 0, y: 0.49999997, z: 0}
+  m_Size: {x: 0.9999999, y: 3, z: 0.9999999}
+  m_Center: {x: 0, y: 1.5, z: 0}

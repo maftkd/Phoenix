@@ -84,8 +84,12 @@ public class Fly : MonoBehaviour
 	Transform _sun;
 	bool _prevShowShadow;
 
-	//water spray
-	const float _maxDist=2f;
+	//ground effects
+	const float _maxDist=3f;
+	public Terrain _terrain;
+	float[,,] _alphaMaps;
+	TerrainData _terrainData;
+	//water
 	[Header ("Effects")]
 	public Transform _waterSprayPrefab;
 	Transform _waterSpray;
@@ -93,14 +97,28 @@ public class Fly : MonoBehaviour
 	ParticleSystem.EmissionModule _sprayEmission;
 	Fader _spraySound;
 	TrailRenderer _sprayTrail;
+	//sand
 	public Transform _sandSprayPrefab;
 	Transform _sandSpray;
 	ParticleSystem _sandParts;
 	ParticleSystem.EmissionModule _sandEmission;
 	Fader _sandSound;
-	public Terrain _terrain;
-	float[,,] _alphaMaps;
-	TerrainData _terrainData;
+	//grass
+	public Transform _grassSprayPrefab;
+	Transform _grassSpray;
+	ParticleSystem _grassParts;
+	ParticleSystem.EmissionModule _grassEmission;
+	Fader _grassSound;
+	//rocks right
+	public Transform _rockSprayPrefab;
+	Transform _rocksRight;
+	Transform _rocksLeft;
+	ParticleSystem _rockPartsRight;
+	ParticleSystem _rockPartsLeft;
+	ParticleSystem.EmissionModule _rockEmissionRight;
+	ParticleSystem.EmissionModule _rockEmissionLeft;
+	Fader _rockSoundRight;
+	Fader _rockSoundLeft;
 
 	//stamina outline
 	[Header("Outline")]
@@ -127,16 +145,29 @@ public class Fly : MonoBehaviour
 		//setup sand spray
 		_sandSpray=Instantiate(_sandSprayPrefab,transform);
 		_sandParts=_sandSpray.GetComponent<ParticleSystem>();
-		//emission
 		_sandEmission=_sandParts.emission;
 		_sandParts.Stop();
-		//sound
 		AudioSource sandAudio=_sandSpray.gameObject.AddComponent<AudioSource>();
 		sandAudio.loop=true;
 		sandAudio.spatialBlend=1f;
 		sandAudio.clip=Synthesizer.GenerateSineWave(220f,10f,0.5f,0.2f,0.4f);
 		sandAudio.Stop();
 		_sandSound=_sandSpray.GetComponent<Fader>();
+		//setup grass spray
+		_grassSpray=Instantiate(_grassSprayPrefab,transform);
+		_grassParts=_grassSpray.GetComponent<ParticleSystem>();
+		_grassSound=_grassSpray.GetComponent<Fader>();
+		_grassEmission=_grassParts.emission;
+		//setup rock spray
+		_rocksRight=Instantiate(_rockSprayPrefab,transform);
+		_rockPartsRight=_rocksRight.GetComponent<ParticleSystem>();
+		_rockSoundRight=_rocksRight.GetComponent<Fader>();
+		_rockEmissionRight=_rockPartsRight.emission;
+		_rocksLeft=Instantiate(_rockSprayPrefab,transform);
+		_rockPartsLeft=_rocksLeft.GetComponent<ParticleSystem>();
+		_rockSoundLeft=_rocksLeft.GetComponent<Fader>();
+		_rockEmissionLeft=_rockPartsLeft.emission;
+
 		_terrainData = _terrain.terrainData;
 		_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
 	}
@@ -365,7 +396,7 @@ public class Fly : MonoBehaviour
 		if(enabled){
 
 			//check for land target
-			if(Physics.Raycast(transform.position,Vector3.down, out hit, 50f, _bird._collisionLayer)){
+			if(Physics.Raycast(transform.position,Vector3.down, out hit, 5f, _bird._collisionLayer)){
 
 				bool sprayActive=hit.point.y<=5.1f;
 				Vector3 point=hit.point;
@@ -424,6 +455,95 @@ public class Fly : MonoBehaviour
 					_sandEmission.rateOverTime=200f*(1-frac);
 					_sandSound.SetTarget((1-frac));
 				}
+				
+				//grass parts
+				bool grassActive=false;
+				if(!sprayActive&&!sandActive&&hit.transform==_terrain.transform){
+					//check if point is sand
+					int layer = GetTerrainTextureIndex(hit.point);
+					grassActive=layer==2;
+				}
+				if(grassActive&&!_grassSound.IsOn())
+				{
+					_grassParts.Play();
+					_grassSound.Play();
+				}
+				else if(!grassActive&&_grassSound.IsOn())
+				{
+					_grassParts.Stop();
+					_grassSound.Stop();
+				}
+				if(_grassParts.isPlaying){
+					_grassSpray.position=hit.point;
+					_grassSpray.rotation=Quaternion.identity;
+					_grassEmission.rateOverTime=100f*(1-frac);
+					_grassSound.SetTarget((1-frac));
+				}
+			}
+			bool rocksActive=false;
+			Vector3 right=transform.right;
+			right.y=0f;
+			//rocks on right
+			if(Physics.Raycast(transform.position,right, out hit, _maxDist, _bird._collisionLayer)){
+
+				//sand parts
+				if(hit.transform==_terrain.transform){
+					//check if point is sand
+					int layer = GetTerrainTextureIndex(hit.point);
+					rocksActive=layer==1;
+				}
+
+				float dist=(transform.position-hit.point).magnitude;
+				float frac=Mathf.Clamp01(dist/(_maxDist));
+				if(_rockPartsRight.isPlaying){
+					_rocksRight.position=hit.point;
+					_rocksRight.up=-right;
+					_rockEmissionRight.rateOverTime=100f*(1-frac);
+					_rockSoundRight.SetTarget((1-frac));
+				}
+			}
+			if(rocksActive&&!_rockSoundRight.IsOn())
+			{
+				_rockPartsRight.Play();
+				_rockSoundRight.Play();
+			}
+			else if(!rocksActive&&_rockSoundRight.IsOn())
+			{
+				_rockPartsRight.Stop();
+				_rockSoundRight.Stop();
+			}
+
+			//rocks on left
+			rocksActive=false;
+			Vector3 left=-transform.right;
+			left.y=0f;
+			if(Physics.Raycast(transform.position,left, out hit, _maxDist, _bird._collisionLayer)){
+
+				//sand parts
+				if(hit.transform==_terrain.transform){
+					//check if point is sand
+					int layer = GetTerrainTextureIndex(hit.point);
+					rocksActive=layer==1;
+				}
+
+				float dist=(transform.position-hit.point).magnitude;
+				float frac=Mathf.Clamp01(dist/(_maxDist));
+				if(_rockPartsLeft.isPlaying){
+					_rocksLeft.position=hit.point;
+					_rocksLeft.up=-left;
+					_rockEmissionLeft.rateOverTime=100f*(1-frac);
+					_rockSoundLeft.SetTarget((1-frac));
+				}
+			}
+			if(rocksActive&&!_rockSoundLeft.IsOn())
+			{
+				_rockPartsLeft.Play();
+				_rockSoundLeft.Play();
+			}
+			else if(!rocksActive&&_rockSoundLeft.IsOn())
+			{
+				_rockPartsLeft.Stop();
+				_rockSoundLeft.Stop();
 			}
 		}
     }
@@ -507,12 +627,17 @@ public class Fly : MonoBehaviour
 	}
 
 	public void Reset(){
-		//_sprayParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
 		_sprayParts.Stop();
 		_spraySound.Stop();
-		//_sandParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
 		_sandParts.Stop();
 		_sandSound.Stop();
+		_grassParts.Stop();
+		_grassSound.Stop();
+		_rockPartsLeft.Stop();
+		_rockSoundLeft.Stop();
+		_rockPartsRight.Stop();
+		_rockSoundRight.Stop();
+		_sprayTrail.emitting=false;
 	}
 
 	public bool IsFlapping(){
