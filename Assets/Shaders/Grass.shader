@@ -22,6 +22,7 @@
             #pragma fragment frag
             // make fog work
 			#pragma multi_compile_fwdbase
+            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
 			#include "AutoLight.cginc"
@@ -38,6 +39,7 @@
                 float4 pos : SV_POSITION;
 				float dist : DIST;
 				LIGHTING_COORDS(0,1)
+                UNITY_FOG_COORDS(2)
             };
 
             sampler2D _MainTex;
@@ -57,7 +59,7 @@
 				o.dist=min(1,length(ObjSpaceViewDir(v.vertex))*_AlphaDist);
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                //UNITY_TRANSFER_FOG(o,o.vertex);
+                UNITY_TRANSFER_FOG(o,o.pos);
 				TRANSFER_VERTEX_TO_FRAGMENT(o);
                 return o;
             }
@@ -72,7 +74,7 @@
 				col.rgb*=lerp(_ColorDark,_Color,attenuation);
 				//col.a=1;
                 // apply fog
-                //UNITY_APPLY_FOG(i.fogCoord, col);
+                UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
             }
             ENDCG

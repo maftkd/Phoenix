@@ -636,11 +636,15 @@ public class Bird : MonoBehaviour
 			}
 			else
 				transform.position=hit.point;
-			_terrain=hit.transform.GetComponent<Terrain>();
-			if(_terrain!=null){
-				_terrainData = _terrain.terrainData;
-				_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
-			}
+			SetTerrain(hit.transform.GetComponent<Terrain>());
+		}
+	}
+
+	public void SetTerrain(Terrain t){
+		_terrain=t;
+		if(_terrain!=null){
+			_terrainData = _terrain.terrainData;
+			_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
 		}
 	}
 

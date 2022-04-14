@@ -113,16 +113,11 @@ public class Fly : MonoBehaviour
 	Fader _grassSound;
 	//rocks right
 	public Transform _rockSprayPrefab;
-	Transform _rocksRight;
-	Transform _rocksLeft;
-	ParticleSystem _rockPartsRight;
-	ParticleSystem _rockPartsLeft;
-	ParticleSystem.EmissionModule _rockEmissionRight;
-	ParticleSystem.EmissionModule _rockEmissionLeft;
-	Fader _rockSoundRight;
-	Fader _rockSoundLeft;
-	TrailRenderer _rockTrailRight;
-	TrailRenderer _rockTrailLeft;
+	Transform _rockSpray;
+	ParticleSystem _rockParts;
+	ParticleSystem.EmissionModule _rockEmission;
+	Fader _rockSound;
+	TrailRenderer _rockTrail;
 
 	//stamina outline
 	[Header("Outline")]
@@ -163,18 +158,12 @@ public class Fly : MonoBehaviour
 		_grassSound=_grassSpray.GetComponent<Fader>();
 		_grassEmission=_grassParts.emission;
 		//setup rock spray
-		_rocksRight=Instantiate(_rockSprayPrefab,transform);
-		_rockPartsRight=_rocksRight.GetComponent<ParticleSystem>();
-		_rockSoundRight=_rocksRight.GetComponent<Fader>();
-		_rockEmissionRight=_rockPartsRight.emission;
-		_rocksLeft=Instantiate(_rockSprayPrefab,transform);
-		_rockPartsLeft=_rocksLeft.GetComponent<ParticleSystem>();
-		_rockSoundLeft=_rocksLeft.GetComponent<Fader>();
-		_rockEmissionLeft=_rockPartsLeft.emission;
-		_rockTrailLeft=_rocksLeft.GetComponentInChildren<TrailRenderer>();
-		_rockTrailRight=_rocksRight.GetComponentInChildren<TrailRenderer>();
-		_rockTrailLeft.emitting=false;
-		_rockTrailRight.emitting=false;
+		_rockSpray=Instantiate(_rockSprayPrefab,transform);
+		_rockParts=_rockSpray.GetComponent<ParticleSystem>();
+		_rockSound=_rockSpray.GetComponent<Fader>();
+		_rockEmission=_rockParts.emission;
+		_rockTrail=_rockSpray.GetComponentInChildren<TrailRenderer>();
+		_rockTrail.emitting=false;
 
 		_terrainData = _terrain.terrainData;
 		_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
@@ -431,35 +420,19 @@ public class Fly : MonoBehaviour
 					//ok
 				}
 				else if(hit.transform.GetComponent<Terrain>()!=null){
-					_bird._terrain=hit.transform.GetComponent<Terrain>();
+					_bird.SetTerrain(hit.transform.GetComponent<Terrain>());
 				}
 			}
 			else{
-				_bird._terrain=null;
+				_bird.SetTerrain(null);
+				//_bird._terrain=null;
 			}
 
-			//water = false
-			//if (terrain==null || hit point <5) && yPos<5+maxDist
-			// 	water = true
-
+			//determine which fx to play
 			bool water=false;
 			if ((_bird._terrain==null || hitPoint.y<=5f)&&transform.position.y<5f+_maxDist)
 				water=true;
 			DebugScreen.Print("Water: "+water);
-
-			//grass = false
-			//sand = false
-			//gravel = false
-			//if terrain!=null && water==false
-			//	int terrainIndex=bird.GetTerrainIndex
-			//	if tI==0
-			//		sand = true
-			//	else if tI==1
-			//		gravel = true
-			//	else if tI==2
-			//		sand = true
-			//		
-
 			bool grass=false;
 			bool sand=false;
 			bool gravel=false;
@@ -476,6 +449,91 @@ public class Fly : MonoBehaviour
 			DebugScreen.Print("Gravel: "+gravel);
 			DebugScreen.Print("Grass: "+grass);
 
+			if(water)
+			{
+				if(_bird._terrain==null)
+					hitPoint=transform.position;
+				hitPoint.y=5f;
+			}
+			float diff=transform.position.y-hitPoint.y;
+			float frac=Mathf.Clamp01(diff/_maxDist);
+
+			//water fx
+			if(water&&!_spraySound.IsOn()){
+				_sprayParts.Play();
+				_spraySound.Play();
+				_sprayTrail.emitting=true;
+			}
+			else if(!water&&_spraySound.IsOn()){
+				_sprayParts.Stop();
+				_spraySound.Stop();
+				_sprayTrail.emitting=false;
+			}
+			if(_sprayParts.isPlaying){
+				_sprayEmission.rateOverTime=100f*(1-frac);
+				_spraySound.SetTarget(1-frac);
+				_sprayTrail.startColor=Color.white*(1-frac);
+				_sprayTrail.startWidth=0.5f*(1-frac);
+				_waterSpray.position=hitPoint;
+				_waterSpray.rotation=Quaternion.identity;
+			}
+
+			//sand fx
+			if(sand&&!_sandSound.IsOn())
+			{
+				_sandParts.Play();
+				_sandSound.Play();
+			}
+			else if(!sand&&_sandSound.IsOn())
+			{
+				_sandParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+				_sandSound.Stop();
+			}
+			if(_sandParts.isPlaying){
+				_sandSpray.position=hitPoint;
+				_sandSpray.rotation=Quaternion.identity;
+				_sandEmission.rateOverTime=200f*(1-frac);
+				_sandSound.SetTarget((1-frac));
+			}
+			
+			//gravel parts
+			if(gravel&&!_rockSound.IsOn())
+			{
+				_rockParts.Play();
+				_rockSound.Play();
+				_rockTrail.emitting=true;
+			}
+			else if(!gravel&&_rockSound.IsOn())
+			{
+				_rockParts.Stop();
+				_rockSound.Stop();
+				_rockTrail.emitting=false;
+			}
+			if(_rockParts.isPlaying){
+				_rockSpray.position=hit.point;
+				_rockSpray.rotation=Quaternion.identity;
+				_rockEmission.rateOverTime=100f*(1-frac);
+				_rockSound.SetTarget((1-frac));
+				_rockTrail.startWidth=0.25f*(1-frac);
+			}
+
+			//grass fx
+			if(grass&&!_grassSound.IsOn())
+			{
+				_grassParts.Play();
+				_grassSound.Play();
+			}
+			else if(!grass&&_grassSound.IsOn())
+			{
+				_grassParts.Stop();
+				_grassSound.Stop();
+			}
+			if(_grassParts.isPlaying){
+				_grassSpray.position=hitPoint;
+				_grassSpray.rotation=Quaternion.identity;
+				_grassEmission.rateOverTime=100f*(1-frac);
+				_grassSound.SetTarget((1-frac));
+			}
 
 			//check for land target
 			/*
@@ -536,6 +594,7 @@ public class Fly : MonoBehaviour
 					_sandEmission.rateOverTime=200f*(1-frac);
 					_sandSound.SetTarget((1-frac));
 				}
+
 				
 				//grass parts
 				bool grassActive=false;
@@ -722,13 +781,10 @@ public class Fly : MonoBehaviour
 		_sandSound.Stop();
 		_grassParts.Stop();
 		_grassSound.Stop();
-		_rockPartsLeft.Stop();
-		_rockSoundLeft.Stop();
-		_rockPartsRight.Stop();
-		_rockSoundRight.Stop();
+		_rockParts.Stop();
+		_rockSound.Stop();
 		_sprayTrail.emitting=false;
-		_rockTrailLeft.emitting=false;
-		_rockTrailRight.emitting=false;
+		_rockTrail.emitting=false;
 	}
 
 	public bool IsFlapping(){
