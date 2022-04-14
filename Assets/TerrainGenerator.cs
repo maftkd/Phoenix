@@ -79,7 +79,8 @@ public class TerrainGenerator : MonoBehaviour
 	[Tooltip("Distance from shore at which mountains start")]
 	public float _mountainStart;
 	public AnimationCurve _mountainCurve;
-	public float _noiseAmplitude;
+	public float _mountainNoiseAmplitude;
+	public float _baseNoiseAmplitude;
 	[Tooltip("Max depth cut into terrain for rivers")]
 	public float _riverDepression;
 	[Tooltip("X = min river dep. Y = max. Provides a gradient from higher up on terrain to sea level")]
@@ -469,14 +470,19 @@ public class TerrainGenerator : MonoBehaviour
 				//add mountains
 				float hOffset=Mathf.InverseLerp(_mountainStart,1f,distance);
 				hOffset=_mountainCurve.Evaluate(hOffset)*_mountainAmplitude;
-
-				//add random noise
+				
+				//add mountain noise
 				float noise = _heightMap.GetPixel(pixX,pixY).b;
-				hOffset+=noise*_noiseAmplitude;
+				hOffset+=noise*_mountainNoiseAmplitude;
 
 				//get ridge map
 				float ridge = _ridgeMap.GetPixel(pixX,pixY).g;
 				height+=hOffset*ridge;
+
+				//add random noise
+				noise = _heightMap.GetPixel(pixX,pixY).b;
+				height+=noise*_baseNoiseAmplitude*(1-ridge);
+
 
 				//cut out river
 				float river = _riverMap.GetPixel(pixX,pixY).g;

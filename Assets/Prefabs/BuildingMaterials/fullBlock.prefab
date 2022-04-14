@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2434237079107744754}
   - component: {fileID: 5571215235209167297}
   - component: {fileID: 7191115356515280751}
+  - component: {fileID: 5076017397440913837}
   m_Layer: 0
   m_Name: fullBlock
   m_TagString: Untagged
@@ -122,6 +123,31 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 0
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5076017397440913837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4235874910509109799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30d211eab4c45fd4b82a54d30538d664, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _clips:
+  - {fileID: 8300000, guid: 1f257cb5f96ba4f34930d1611c5f8ebd, type: 3}
+  - {fileID: 8300000, guid: 6b097a229862b4531b010d9f771a3cb5, type: 3}
+  - {fileID: 8300000, guid: 6c3a5d89f02f54ee79ae686b0fc98199, type: 3}
+  - {fileID: 8300000, guid: d0d47c3e34e42431e908f343347cf04d, type: 3}
+  - {fileID: 8300000, guid: fb2e890a0e99343fd9662e1d0562047f, type: 3}
+  - {fileID: 8300000, guid: da733b5076b2f4bdda5fa4e3bcadd845, type: 3}
+  - {fileID: 8300000, guid: b861b23d4dfa14ab3ad8055c60c0d3ce, type: 3}
+  _volume: 0.02
+  _onPlay:
     m_PersistentCalls:
       m_Calls: []

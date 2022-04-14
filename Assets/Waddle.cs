@@ -172,6 +172,8 @@ public class Waddle : MonoBehaviour
     }
 
 	void TakeStep(Transform t){
+		if(t==null)
+			return;
 		Footstep f = t.GetComponent<Footstep>();
 		if(f!=null&&!_npc)
 		{

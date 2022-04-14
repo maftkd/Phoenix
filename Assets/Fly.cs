@@ -17,6 +17,7 @@ public class Fly : MonoBehaviour
 	Vector3 _maxVelOverride;
 	public float _flapAccel;//z=forward,y=up
 	public float _flapDeccel;//z=forward,y=up
+	public float _flapDeccelDown;//z=forward,y=up
 	public float _initialVelBoost;
 	public float _airResistance;
 	Vector3 _curFlapAccel;
@@ -86,6 +87,7 @@ public class Fly : MonoBehaviour
 
 	//ground effects
 	const float _maxDist=3f;
+	const float _maxDistRocks=3f;
 	public Terrain _terrain;
 	float[,,] _alphaMaps;
 	TerrainData _terrainData;
@@ -181,12 +183,12 @@ public class Fly : MonoBehaviour
 	void OnEnable(){
 		_velocity=Vector3.zero;
 
-		_curFlapAccel=Vector3.up*_flapAccel;
-		//_curFlapAccel+=transform.forward*_bird.GetVel()*_flapAccel.z;
+		_curFlapAccel=Vector3.up*_flapAccel*_initialVelBoost;
+		//_curFlapAccel+=transform.forward*_bird.GetVel();//*_flapAccel.z;
 
 		//initial velocity
 		//_velocity=_curFlapAccel;
-		_velocity+=transform.forward*_bird.GetVel()*_maxVel.z*_initialVelBoost;
+		//_velocity+=transform.forward*_bird.GetVel()*_maxVel.z*_initialVelBoost;
 
 		_speedFrac=0;
 
@@ -235,7 +237,8 @@ public class Fly : MonoBehaviour
 		if(_mIn.GetJumpDown()){
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
-				_curFlapAccel=transform.up*_flapAccel;
+				//_curFlapAccel=transform.up*_flapAccel;
+				_curFlapAccel=(transform.up+transform.forward)*_flapAccel;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
 				Soar(false);
@@ -246,7 +249,7 @@ public class Fly : MonoBehaviour
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
 				_curFlapAccel=-flatForward*_flapDeccel;
-				_curFlapAccel+=Vector3.down*_flapDeccel;
+				_curFlapAccel+=Vector3.down*_flapDeccelDown;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
 				Soar(false);
@@ -275,11 +278,15 @@ public class Fly : MonoBehaviour
 			flatForward=transform.forward;
 			flatForward.y=0;
 			flatForward.Normalize();
-			float prevAoa=_aoa;;
+			float prevAoa=_aoa;
+			/*
 			_aoa+=input.y*Time.deltaTime*_angleChangeMult;
 			if(input.y==0)
 				_aoa=Mathf.Lerp(_aoa,0,_angleFallMult*Time.deltaTime);
-			_aoa = Mathf.Clamp(_aoa,-_maxAoa,_maxAoa);
+				*/
+			float y01=(input.y+1)*0.5f;
+			_aoa=Mathf.Lerp(-_maxAoa,_maxAoa,y01);
+			//_aoa = Mathf.Clamp(_aoa,-_maxAoa,_maxAoa);
 
 			//rotate velocity
 			if(_soaring){
@@ -374,21 +381,25 @@ public class Fly : MonoBehaviour
 		Vector3 ray = transform.position-prevPos;
 		RaycastHit hit;
 		if(Physics.Raycast(prevPos,ray,out hit, ray.magnitude+0.01f,_bird._collisionLayer)){
-			transform.position=prevPos;
-			Vector3 eulers = transform.eulerAngles;
-			eulers.z=0;
-			eulers.x=0;
-			transform.eulerAngles=eulers;
-			Soar(false);
-			Footstep footstep=hit.transform.GetComponent<Footstep>();
-			//float vol = _diving? 1f : 0.1f;
-			float vol = 1f;
-			if(footstep!=null)
-			{
-				footstep.Sound(hit.point,vol);
+			//don't land when hitting trees - landing causes trees to switch to triggers which interferes with
+			//trees knockback behaviour which requires them to remain colliders
+			if(hit.transform.GetComponent<Tree>()==null){
+				transform.position=prevPos;
+				Vector3 eulers = transform.eulerAngles;
+				eulers.z=0;
+				eulers.x=0;
+				transform.eulerAngles=eulers;
+				Soar(false);
+				Footstep footstep=hit.transform.GetComponent<Footstep>();
+				//float vol = _diving? 1f : 0.1f;
+				float vol = 1f;
+				if(footstep!=null)
+				{
+					footstep.Sound(hit.point,vol);
+				}
+				_bird.Land();
+				_flyShadow.gameObject.SetActive(false);
 			}
-			_bird.Land();
-			_flyShadow.gameObject.SetActive(false);
 		}
 
 		//update kb timer
@@ -427,7 +438,7 @@ public class Fly : MonoBehaviour
 					_sprayEmission.rateOverTime=50f*(1-frac);
 					_spraySound.SetTarget(1-frac);
 					_sprayTrail.startColor=Color.white*(1-frac);
-					_sprayTrail.startWidth=1f*(1-frac);
+					_sprayTrail.startWidth=0.5f*(1-frac);
 					_waterSpray.position=point;
 					_waterSpray.rotation=Quaternion.identity;
 				}
@@ -451,8 +462,8 @@ public class Fly : MonoBehaviour
 				}
 				else if(!sandActive&&_sandSound.IsOn())
 				{
-					//_sandParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
-					_sandParts.Stop();
+					_sandParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+					//_sandParts.Stop();
 					_sandSound.Stop();
 				}
 				if(_sandParts.isPlaying){
@@ -490,7 +501,7 @@ public class Fly : MonoBehaviour
 			Vector3 right=transform.right;
 			right.y=0f;
 			//rocks on right
-			if(Physics.Raycast(transform.position,right, out hit, _maxDist, _bird._collisionLayer)){
+			if(Physics.Raycast(transform.position,right, out hit, _maxDistRocks, _bird._collisionLayer)){
 
 				//sand parts
 				if(hit.transform==_terrain.transform){
@@ -500,7 +511,7 @@ public class Fly : MonoBehaviour
 				}
 
 				float dist=(transform.position-hit.point).magnitude;
-				float frac=Mathf.Clamp01(dist/(_maxDist));
+				float frac=Mathf.Clamp01(dist/(_maxDistRocks));
 				if(_rockPartsRight.isPlaying){
 					_rocksRight.position=hit.point;
 					_rocksRight.up=-right;
@@ -526,7 +537,7 @@ public class Fly : MonoBehaviour
 			rocksActive=false;
 			Vector3 left=-transform.right;
 			left.y=0f;
-			if(Physics.Raycast(transform.position,left, out hit, _maxDist, _bird._collisionLayer)){
+			if(Physics.Raycast(transform.position,left, out hit, _maxDistRocks, _bird._collisionLayer)){
 
 				//sand parts
 				if(hit.transform==_terrain.transform){
@@ -536,7 +547,7 @@ public class Fly : MonoBehaviour
 				}
 
 				float dist=(transform.position-hit.point).magnitude;
-				float frac=Mathf.Clamp01(dist/(_maxDist));
+				float frac=Mathf.Clamp01(dist/(_maxDistRocks));
 				if(_rockPartsLeft.isPlaying){
 					_rocksLeft.position=hit.point;
 					_rocksLeft.up=-left;
@@ -641,7 +652,8 @@ public class Fly : MonoBehaviour
 	public void Reset(){
 		_sprayParts.Stop();
 		_spraySound.Stop();
-		_sandParts.Stop();
+		//_sandParts.Stop();
+		_sandParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
 		_sandSound.Stop();
 		_grassParts.Stop();
 		_grassSound.Stop();
@@ -682,7 +694,6 @@ public class Fly : MonoBehaviour
 			}
 		}
 		return layer;
-
 	}
 
 	void OnDrawGizmos(){

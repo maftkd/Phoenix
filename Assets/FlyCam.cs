@@ -90,11 +90,16 @@ public class FlyCam : Shot
 
 		//calc phi
 		Vector3 playerBack=-_player.transform.forward;
-		Vector3 vel = _player.GetVelocity().normalized;
-		float targetPhi=Mathf.Asin(-vel.y);
-		targetPhi+=0.2f;
-		_phi=Mathf.Lerp(_phi,targetPhi,_phiLerp*Time.deltaTime*_warmUp);
-		_phi=Mathf.Clamp(_phi,_phiRange.x,_phiRange.y);
+		Vector3 vel = _player.GetVelocity();
+		float velMag=vel.magnitude;
+		if(Mathf.Abs(velMag)>0.000001){
+			vel/=velMag;
+			float velFrac=velMag/_fly._maxVel.z;
+			float targetPhi=Mathf.Asin(-vel.y);
+			targetPhi+=0.2f;
+			_phi=Mathf.Lerp(_phi,targetPhi*velFrac,_phiLerp*Time.deltaTime*_warmUp);
+			_phi=Mathf.Clamp(_phi,_phiRange.x,_phiRange.y);
+		}
 		_phi-=mouseMotion.y*_mouseSens;
 
 		//calc r

@@ -71,6 +71,8 @@ public class Planter : MonoBehaviour
 						grass.localScale=scale;
 						if(_offsetVert)
 							grass.position+=Vector3.up*grass.localScale.y*0.5f;
+						if(grass.GetComponent<Tree>()!=null)
+							grass.GetComponent<Tree>().Generate();
 					}
 				}
 			}

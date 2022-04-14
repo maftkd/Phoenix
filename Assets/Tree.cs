@@ -91,7 +91,7 @@ public class Tree : MonoBehaviour
 	void GenPalmTree(){
 		Mesh m = new Mesh();
 		//Random.InitState(_trunkSeed);
-		Random.InitState((int)System.DateTime.Now.Ticks);
+		//Random.InitState((int)System.DateTime.Now.Ticks);
 
 		//allocate some mem
 		Vector3[] vertices = new Vector3[(_vertsPerRing+1)*_numRings];
@@ -173,7 +173,7 @@ public class Tree : MonoBehaviour
 		StartCoroutine(DestroyNextFrame(leaves));
 
 		//Random.InitState(_leafSeed);
-		Random.InitState((int)System.DateTime.Now.Ticks);
+		//Random.InitState((int)System.DateTime.Now.Ticks);
 		for(int i=0; i<_numLeaves; i++){
 			GeneratePalmLeaf(i);
 		}
@@ -300,7 +300,18 @@ public class Tree : MonoBehaviour
 			DestroyImmediate(t.gameObject);
 	}
 
+	/*
 	void Awake(){
+		StartCoroutine(GenTreeNextFrame());
+	}
+	*/
+
+	public void Generate(){
+		StartCoroutine(GenTreeNextFrame());
+	}
+
+	IEnumerator GenTreeNextFrame(){
+		yield return null;
 		GenTree();
 	}
 }

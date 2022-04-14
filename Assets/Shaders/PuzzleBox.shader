@@ -59,6 +59,7 @@
         }
         ENDCG
 
+			/*
 		Pass{
 			Stencil {
 				Ref 1
@@ -92,6 +93,7 @@
 
 			ENDCG
 		}
+		*/
     }
     FallBack "Diffuse"
 }

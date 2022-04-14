@@ -18,7 +18,7 @@ public class CollisionHelper : MonoBehaviour
 	[Range(0,1)]
 	public float _volume;
 
-	bool _hasMeshCollider;
+	MeshCollider _meshCol;
 	bool _hasBoxCollider;
 	bool _isCapsule;
 	BoxCollider _box;
@@ -34,12 +34,14 @@ public class CollisionHelper : MonoBehaviour
 
 	void Awake(){
 		_col=GetComponent<Collider>();
-		_hasMeshCollider=transform.GetComponent<MeshCollider>()!=null;
+		_meshCol=transform.GetComponent<MeshCollider>();
 		_hasBoxCollider=transform.GetComponent<BoxCollider>()!=null;
 		_isCapsule=transform.GetComponent<CapsuleCollider>()!=null;
 		if(_hasBoxCollider)
 			_box=GetComponent<BoxCollider>();
 		_player=GameManager._player;
+		_player._onFlight+=FlightMode;
+		_player._onLand+=LandMode;
 	}
 
     // Start is called before the first frame update
@@ -128,6 +130,21 @@ public class CollisionHelper : MonoBehaviour
 		if(_clips.Length==0)
 			return;
 		Sfx.PlayOneShot3DVol(_clips[Random.Range(0,_clips.Length)],_hitPoint,vol);
+	}
+
+	public void FlightMode(){
+		if(_meshCol!=null){
+			_meshCol.isTrigger=false;
+			_meshCol.convex=false;
+		}
+	}
+
+	public void LandMode(){
+		if(_meshCol!=null){
+			_meshCol.convex=true;
+			_meshCol.isTrigger=true;
+		}
+
 	}
 
 	void OnDrawGizmos(){

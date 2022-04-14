@@ -15,11 +15,8 @@ public class Grass : MonoBehaviour
 	}
 
 	public void React(){
-		if(GameManager._player.IsFlying())
-		{
-			StopAllCoroutines();
-			StartCoroutine(Shrink());
-		}
+		StopAllCoroutines();
+		StartCoroutine(Shrink());
 	}
 	IEnumerator Shrink(){
 		float timer=0;

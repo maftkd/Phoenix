@@ -32,10 +32,13 @@ public class Bird : MonoBehaviour
 	public LayerMask _oceanLayer;
 	public float _controllerZero;
 	[Header("Footprints")]
-	public Transform _footprint;
-	public Transform _wallprint;
+	public Transform [] _footprints;
 	public Vector3 _footprintOffset;
-	//int _leftRightPrint=1;
+	int _leftRightPrint=1;
+	public Terrain _terrain;
+	float[,,] _alphaMaps;
+	TerrainData _terrainData;
+
 	[Header("Explosion")]
 	public float _afterDiveDelay;
 	float _afterDiveTimer;
@@ -160,6 +163,11 @@ public class Bird : MonoBehaviour
 		_hitRadius=_sphereCol.radius*transform.localScale.x;
 		_hitYOffset=_sphereCol.center.y*transform.localScale.x;
 		SetCheckPoint();
+
+		//#temp terrain setup
+		//in future we won't have terrain on awake as we may fly from island to island
+		_terrainData = _terrain.terrainData;
+		_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
 	}
 
     // Start is called before the first frame update
@@ -422,6 +430,8 @@ public class Bird : MonoBehaviour
 		_anim.SetTrigger("fly");
 		//GameManager._mCam.Transition(_flyCam,MCamera.Transitions.LERP,0f,null,0.5f);
 		GameManager._mCam.Transition(_flyCam,MCamera.Transitions.CUT_BACK);
+		if(_onFlight!=null)
+			_onFlight.Invoke();
 	}
 	public void Land(){
 		SaveLastSpot();
@@ -430,9 +440,6 @@ public class Bird : MonoBehaviour
 		_anim.SetFloat("walkSpeed",0f);
 		_anim.SetTrigger("land");
 		_hop.PlayStepParticles();
-		//reset puzzle box cam - puzzle box needs to re-check if player is in zone after landing
-		//because typically flight takes priority
-		//PuzzleBox._latestPuzzle.ResetCamera();
 
 		//reset flight priority to 0
 		_flyCam.GetComponent<FlyCam>().ResetPriority();
@@ -441,6 +448,8 @@ public class Bird : MonoBehaviour
 
 		//which allows us to switch back to the idle cam
 		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);
+		if(_onLand!=null)
+			_onLand.Invoke();
 	}
 
 	public void Dive(float vel){
@@ -461,7 +470,16 @@ public class Bird : MonoBehaviour
 	}
 
 	public void MakeFootprint(Transform surface, float offset=0){
-		return ;
+		Vector3 mOffset=_footprintOffset;
+		if(_leftRightPrint<0)
+			mOffset.x*=-1;
+		mOffset+=transform.forward*offset;
+		_leftRightPrint*=-1;
+		if(surface==_terrain.transform){
+			Vector3 pos=transform.position+mOffset;
+			int terrainIndex = GetTerrainTextureIndex(pos);
+			Instantiate(_footprints[terrainIndex],pos,Quaternion.identity);
+		}
 	}
 
 	/*
@@ -682,6 +700,8 @@ public class Bird : MonoBehaviour
 
 	public delegate void BirdEvent();
 	public event BirdEvent _onDoneFlying;
+	public event BirdEvent _onFlight;
+	public event BirdEvent _onLand;
 
 	IEnumerator FlyToR(Vector3 target,float flapChance){
 		_state=3;
@@ -1067,6 +1087,35 @@ public class Bird : MonoBehaviour
 			Ground();
 			ResetState();
 		}
+	}
+
+	//#temp - marked but in future I'd like this to be the one spot
+	//where we get terrain stuff
+	//#todo - rework footstep, fly to use this get terrain texture method
+	int GetTerrainTextureIndex(Vector3 pos){
+		//convert world coord to terrain space
+		float xWorld=pos.x;
+		float zWorld=pos.z;
+		Vector3 local=pos-_terrain.transform.position;
+		float xFrac=local.x/_terrainData.size.x;
+		float zFrac=local.z/_terrainData.size.z;
+		if(xFrac<0||xFrac>=1)
+			return 0;
+		if(zFrac<0||zFrac>=1)
+			return 0;
+		int xCoord=Mathf.FloorToInt(zFrac*_terrainData.alphamapHeight);
+		int yCoord=Mathf.FloorToInt(xFrac*_terrainData.alphamapWidth);
+		float max=0;
+		int layer=0;
+		for(int i=0;i<_terrainData.alphamapLayers;i++){
+			float v = _alphaMaps[xCoord,yCoord,i];
+			if(v>max)
+			{
+				max=v;
+				layer=i;
+			}
+		}
+		return layer;
 	}
 
 	void OnDrawGizmos(){
