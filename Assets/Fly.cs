@@ -412,7 +412,73 @@ public class Fly : MonoBehaviour
 		//checking enabled because bird script may have disabled already from Land or Dive
 		if(enabled){
 
+			//raycast down like 50
+			//hit point = foobar
+			//if hit
+			//	if terrain!=null && hit==terrain
+			//		proceed
+			//	else if hasTerrain component
+			//		terrain=hit.terrain
+			//	hit point = hit
+			//else
+			//	terrain=null
+
+			Vector3 hitPoint=Vector3.zero;
+			if(Physics.Raycast(transform.position,Vector3.down, out hit, 5f, _bird._collisionLayer)){
+				hitPoint=hit.point;
+				if(_bird._terrain!=null && hit.transform==_bird._terrain.transform)
+				{
+					//ok
+				}
+				else if(hit.transform.GetComponent<Terrain>()!=null){
+					_bird._terrain=hit.transform.GetComponent<Terrain>();
+				}
+			}
+			else{
+				_bird._terrain=null;
+			}
+
+			//water = false
+			//if (terrain==null || hit point <5) && yPos<5+maxDist
+			// 	water = true
+
+			bool water=false;
+			if ((_bird._terrain==null || hitPoint.y<=5f)&&transform.position.y<5f+_maxDist)
+				water=true;
+			DebugScreen.Print("Water: "+water);
+
+			//grass = false
+			//sand = false
+			//gravel = false
+			//if terrain!=null && water==false
+			//	int terrainIndex=bird.GetTerrainIndex
+			//	if tI==0
+			//		sand = true
+			//	else if tI==1
+			//		gravel = true
+			//	else if tI==2
+			//		sand = true
+			//		
+
+			bool grass=false;
+			bool sand=false;
+			bool gravel=false;
+			if(_bird._terrain!=null && water==false){
+				int terrainIndex=_bird.GetTerrainTextureIndex();
+				if(terrainIndex==0)
+					sand=true;
+				else if(terrainIndex==1)
+					gravel=true;
+				else if(terrainIndex==2)
+					grass=true;
+			}
+			DebugScreen.Print("Sand: "+sand);
+			DebugScreen.Print("Gravel: "+gravel);
+			DebugScreen.Print("Grass: "+grass);
+
+
 			//check for land target
+			/*
 			if(Physics.Raycast(transform.position,Vector3.down, out hit, 5f, _bird._collisionLayer)){
 
 				bool sprayActive=hit.point.y<=5.1f;
@@ -428,13 +494,11 @@ public class Fly : MonoBehaviour
 				}
 				else if(!sprayActive&&_spraySound.IsOn())
 				{
-					//_sprayParts.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
 					_sprayParts.Stop();
 					_spraySound.Stop();
 					_sprayTrail.emitting=false;
 				}
 				if(_sprayParts.isPlaying){
-					//emissionRate=someNumber*frac
 					_sprayEmission.rateOverTime=50f*(1-frac);
 					_spraySound.SetTarget(1-frac);
 					_sprayTrail.startColor=Color.white*(1-frac);
@@ -568,6 +632,7 @@ public class Fly : MonoBehaviour
 				_rockSoundLeft.Stop();
 				_rockTrailLeft.emitting=false;
 			}
+			*/
 		}
     }
 

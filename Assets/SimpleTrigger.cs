@@ -25,6 +25,7 @@ public class SimpleTrigger : MonoBehaviour
 		_mesh=GetComponent<MeshRenderer>();
 		_col = GetComponent<Collider>();
 		_mainCam=Camera.main.transform;
+		/*
 		if((_mainCam.position-transform.position).sqrMagnitude<=_activeRadius*_activeRadius){
 			_active=true;
 			if(!_ignoreMesh)
@@ -40,6 +41,7 @@ public class SimpleTrigger : MonoBehaviour
 				_col.enabled=false;
 
 		}
+		*/
 	}
 
     // Start is called before the first frame update
@@ -48,6 +50,7 @@ public class SimpleTrigger : MonoBehaviour
         
     }
 
+	/*
     // Update is called once per frame
     void Update()
     {
@@ -66,6 +69,7 @@ public class SimpleTrigger : MonoBehaviour
 				_col.enabled=false;
 		}
     }
+	*/
 
 	void OnTriggerEnter(Collider other){
 		_onTriggerEnter.Invoke();

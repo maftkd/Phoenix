@@ -164,10 +164,6 @@ public class Bird : MonoBehaviour
 		_hitYOffset=_sphereCol.center.y*transform.localScale.x;
 		SetCheckPoint();
 
-		//#temp terrain setup
-		//in future we won't have terrain on awake as we may fly from island to island
-		_terrainData = _terrain.terrainData;
-		_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
 	}
 
     // Start is called before the first frame update
@@ -477,7 +473,7 @@ public class Bird : MonoBehaviour
 		_leftRightPrint*=-1;
 		if(surface==_terrain.transform){
 			Vector3 pos=transform.position+mOffset;
-			int terrainIndex = GetTerrainTextureIndex(pos);
+			int terrainIndex = GetTerrainTextureIndex();
 			Instantiate(_footprints[terrainIndex],pos,Quaternion.identity);
 		}
 	}
@@ -640,6 +636,11 @@ public class Bird : MonoBehaviour
 			}
 			else
 				transform.position=hit.point;
+			_terrain=hit.transform.GetComponent<Terrain>();
+			if(_terrain!=null){
+				_terrainData = _terrain.terrainData;
+				_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
+			}
 		}
 	}
 
@@ -1092,7 +1093,8 @@ public class Bird : MonoBehaviour
 	//#temp - marked but in future I'd like this to be the one spot
 	//where we get terrain stuff
 	//#todo - rework footstep, fly to use this get terrain texture method
-	int GetTerrainTextureIndex(Vector3 pos){
+	public int GetTerrainTextureIndex(){
+		Vector3 pos=transform.position;
 		//convert world coord to terrain space
 		float xWorld=pos.x;
 		float zWorld=pos.z;
