@@ -147,9 +147,6 @@ public class Bird : MonoBehaviour
 		//band
 		_band.GetComponent<MeshRenderer>().material.SetColor("_Color",_bandColor);
 
-		//setup things
-		_fly.SetupFlyShadow();
-
 		_player=GameManager._player;
 
 		if(_state==0)
@@ -1123,6 +1120,12 @@ public class Bird : MonoBehaviour
 		}
 		return layer;
 	}
+
+	public void BoostSpeed(float amount,float dur){
+		if(_fly.enabled)
+			_fly.BoostSpeed(amount,dur);
+	}
+
 
 	void OnDrawGizmos(){
 	}

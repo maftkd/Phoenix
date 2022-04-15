@@ -15,13 +15,19 @@ public class Planter : MonoBehaviour
 	public float _plantChance;
 	public bool _offsetVert;
 	[Header("Controls")]
+	public bool _plantTransform;
 	public bool _plantTerrain;
 	public bool _clearTerrain;
 	public bool _autoUpdate;
 
 	void OnValidate(){
-		if(_plantTerrain||_autoUpdate){
+		if(_plantTransform||_autoUpdate){
 			PlantGrass();
+			_plantTerrain=false;
+		}
+		if(_plantTerrain){
+			ClearTerrain();
+			PlantTerrain();
 			_plantTerrain=false;
 		}
 		if(_clearTerrain){
@@ -92,9 +98,20 @@ public class Planter : MonoBehaviour
 			for(int x=0;x<td.alphamapWidth; x++){
 				float xNorm = x/(float)td.alphamapWidth;
 				int xDetail=Mathf.FloorToInt(xNorm*td.detailWidth);
-				if(alphaMaps[x,y,_terrainLayer]>_alphaThreshold)
+				if(x>0&&x<td.alphamapWidth-1&&y>0&&y<td.alphamapWidth-1)
 				{
-					detailMap[xDetail,yDetail]=_grassDensity;
+					if(alphaMaps[x-1,y,_terrainLayer]>_alphaThreshold&&
+							alphaMaps[x+1,y,_terrainLayer]>_alphaThreshold&&
+							alphaMaps[x,y-1,_terrainLayer]>_alphaThreshold&&
+							alphaMaps[x,y+1,_terrainLayer]>_alphaThreshold&&
+							alphaMaps[x-1,y-1,_terrainLayer]>_alphaThreshold&&
+							alphaMaps[x+1,y-1,_terrainLayer]>_alphaThreshold&&
+							alphaMaps[x-1,y+1,_terrainLayer]>_alphaThreshold&&
+							alphaMaps[x+1,y+1,_terrainLayer]>_alphaThreshold&&
+							alphaMaps[x,y,_terrainLayer]>_alphaThreshold){
+						detailMap[xDetail,yDetail]=_grassDensity;
+
+					}
 				}
 			}
 		}

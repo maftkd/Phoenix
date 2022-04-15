@@ -15,6 +15,8 @@ public class MCamera : MonoBehaviour
 	public float _fadeDur;
 	[Header("Letterbox")]
 	public Material _letterBox;
+	[Header("Vignette")]
+	public Material _vignette;
 	[Header("Orbit")]
 	public AnimationCurve _orbitCurve;
 
@@ -41,6 +43,7 @@ public class MCamera : MonoBehaviour
 		_wipe.SetFloat("_Amount",0);
 		_fade.SetFloat("_Amount",0);
 		_letterBox.SetFloat("_Amount",0);
+		_vignette.SetFloat("_Amount",0);
 	}
 
 
@@ -329,6 +332,10 @@ public class MCamera : MonoBehaviour
 	public void EnableCurrentShot(bool en){
 		if(_curShot!=null)
 			_curShot.enabled=en;
+	}
+
+	public void SetVignette(float f){
+		_vignette.SetFloat("_Amount", f);
 	}
 
 	void OnDrawGizmos(){

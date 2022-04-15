@@ -46,6 +46,7 @@ public class Fader : MonoBehaviour
 
 	public void Play(){
 		SetTarget(_maxVol);
+		_audio.pitch=Random.Range(0.8f,1.2f);
 		_on=true;
 	}
 	public void Stop(){
