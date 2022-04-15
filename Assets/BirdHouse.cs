@@ -165,7 +165,8 @@ public class BirdHouse : MonoBehaviour
 	}
 
 	public void Activate(bool suppress=false){
-		_cable.FillNearPosition(_door.position,suppress);
+		if(_cable!=null)
+			_cable.FillNearPosition(_door.position,suppress);
 		_doorMatR.SetFloat("_Lerp",1f);
 		_doorMatL.SetFloat("_Lerp",1f);
 		_activated=true;

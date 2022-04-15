@@ -468,7 +468,7 @@ public class Bird : MonoBehaviour
 			mOffset.x*=-1;
 		mOffset+=transform.forward*offset;
 		_leftRightPrint*=-1;
-		if(surface==_terrain.transform){
+		if(_terrain!=null&&surface==_terrain.transform){
 			Vector3 pos=transform.position+mOffset;
 			int terrainIndex = GetTerrainTextureIndex();
 			Instantiate(_footprints[terrainIndex],pos,Quaternion.identity);

@@ -76,6 +76,7 @@ public class Flock : MonoBehaviour
 					if(_updateTimer<=0f){
 						float r=Random.value;
 						if(r<_flock._walkChance){
+							/*
 							//pick random walk spot, and waddle to it
 							Vector2 v = Random.insideUnitCircle*_flock._walkRadius;
 							Vector3 pos = _transform.position + new Vector3(v.x,0,v.y);
@@ -85,9 +86,11 @@ public class Flock : MonoBehaviour
 								_state=1;
 								ResetUpdateTimer();
 							}
+							*/
 						}
 						else{
 							_anim.SetTrigger("peck");
+							ResetUpdateTimer();
 							/*
 							RaycastHit hit;
 							if(Physics.Raycast(_transform.position+Vector3.up*0.01f,Vector3.down,out hit, 0.02f,1)){

@@ -266,8 +266,8 @@ public class Fly : MonoBehaviour
 		else if(_mIn.GetLandDown()){
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
-				_curFlapAccel=-flatForward*_flapDeccel;
-				_curFlapAccel+=Vector3.down*_flapDeccelDown;
+				_curFlapAccel=-transform.forward*_flapDeccel;
+				//_curFlapAccel+=Vector3.down*_flapDeccelDown;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
 				Soar(false);
@@ -285,10 +285,14 @@ public class Fly : MonoBehaviour
 			_velocity+=_curFlapAccel*Time.deltaTime;
 			if(_velocity.magnitude>_maxFlapVel)
 			{
-				if(curMag<_maxFlapVel)
+				if(curMag<_maxFlapVel)//if we've just accelerated past the max vel
 					_velocity=_velocity.normalized*_maxFlapVel;
 				else
-					_velocity=_velocity.normalized*curMag;
+				{
+					//if we are over the max flap vel, and trying to increase
+					if(_velocity.magnitude>=_prevMag)
+						_velocity=_velocity.normalized*curMag;
+				}
 			}
 		}
 		_anim.SetBool("soar",_soaring);
@@ -366,6 +370,10 @@ public class Fly : MonoBehaviour
 		flatForward=transform.forward;
 		flatForward.y=0;
 
+		//cap velocity
+		if(_velocity.magnitude>_maxVel){
+			_velocity=_velocity.normalized*_maxVel;
+		}
 
 		//apply physics
 		Vector3 prevPos=transform.position;
@@ -379,10 +387,6 @@ public class Fly : MonoBehaviour
 		flatVel=_velocity;
 		flatVel.y=0;
 
-		//cap vertical velocity
-		if(_velocity.magnitude>_maxVel){
-			_velocity=_velocity.normalized*_maxVel;
-		}
 
 		//prevent backwards flight
 		if(_forwardness<=0){
@@ -420,7 +424,7 @@ public class Fly : MonoBehaviour
 		//_mCam.SetVignette(boostFrac);
 		
 		//debugging
-		DebugScreen.Print("Vel mag: "+_velocity.magnitude.ToString("0.000"));
+		DebugScreen.Print("Flat vel mag: "+flatVel.magnitude.ToString("0.000"));
 		DebugScreen.Print("Accel: "+accel.ToString("0.000"));
 		DebugScreen.Print("Boost: "+_boost.ToString("0.000"));
 		//DebugScreen.Print("flat vel mag: "+flatVel.magnitude.ToString("0.000"));
