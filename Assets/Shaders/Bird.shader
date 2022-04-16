@@ -12,6 +12,7 @@
 		_RimColor ("Outline color", Color) = (1,1,1,1)
 		_Shiney ("Shiney vec", Vector) = (0,1,1,1)
 		_ColorParams ("Color vec", Vector) = (0,1,1,1)
+		_Highlight ("Highlighted", Range(0,1)) = 0
     }
     SubShader
     {
@@ -106,10 +107,12 @@
 
 				fixed _OutlineThickness;
 				fixed4 _RimColor;
+				fixed _Highlight;
 
 				v2f vert(appdata v){
 					v2f o;
 					float3 normal = normalize(v.normal);
+					_OutlineThickness=_OutlineThickness*(1-_Highlight)+_Highlight*0.01;
 					float3 outlineOffset = normal*_OutlineThickness;
 					float3 position = v.vertex+outlineOffset;
 					o.position = UnityObjectToClipPos(position);
@@ -118,7 +121,9 @@
 				}
 				fixed4 frag(v2f i) : SV_TARGET{
 					clip(_OutlineThickness-0.0001);
-					return _RimColor;
+					fixed4 hlCol=lerp(fixed4(1,1,1,1),fixed4(1,1,0,1),abs(sin(_Time.z)));
+					fixed4 col = _Highlight*hlCol+(1-_Highlight)*_RimColor;
+					return col;
 				}
 
 				ENDCG

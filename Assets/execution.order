@@ -6,3 +6,4 @@ MCamera - needs to get Camera before Intro can make calls to snap camera
 FlyCam - needs to be after-default to counter-rotate and counter-translate any other motion of the bird
 Intro - needs to be after default, because we want to ensure the Shots are already awake. They disable on awake. So 
 WaddleCam - trying this after-default for same reason as fly cam
+DebugScreen - early af because it has to clear its slots before anything else writes to them

@@ -44,6 +44,11 @@ public class Flock : MonoBehaviour
 	FlockCam _fCam;
 	Bird _player;
 
+	[Header("interactivity")]
+	public float _minPlayerDist;
+	bool _playerNear;
+	public Color _nearOutline;
+
 	public  class MBird {
 		public Transform _transform;
 		public int _state;
@@ -54,6 +59,7 @@ public class Flock : MonoBehaviour
 		Vector3 _velocity;
 		Vector3 _targetPos;
 		float _flightDur;
+		Material _mat;
 
 		public MBird(Flock f, Transform t){
 			_flock=f;
@@ -67,6 +73,7 @@ public class Flock : MonoBehaviour
 			_waddle=t.GetComponent<Waddle>();
 			_waddle._onDoneWalking+=DoneWalking;
 			_velocity=Vector3.zero;
+			_mat=t.GetComponentInChildren<SkinnedMeshRenderer>().material;
 		}
 
 		public void Update(){
@@ -278,6 +285,10 @@ public class Flock : MonoBehaviour
 		public bool HasLanded(){
 			return _state<2;
 		}
+
+		public void SetHighlight(bool c){
+			_mat.SetFloat("_Highlight", c?1f:0f);
+		}
 	}
 
 	void Awake(){
@@ -417,6 +428,19 @@ public class Flock : MonoBehaviour
 		foreach(MBird mb in _mBirds)
 			_center+=mb._transform.position;
 		_center/=_mBirds.Length;
+
+		//check for player close
+		float sqrDst=(_center-_player.transform.position).sqrMagnitude;
+
+		bool playerIn=sqrDst<_minPlayerDist*_minPlayerDist;
+		if(playerIn!=_playerNear){
+			foreach(MBird mb in _mBirds){
+				mb.SetHighlight(playerIn);
+			}
+			_playerNear=playerIn;
+		}
+		if(playerIn)
+			DebugScreen.Print("Near flock: "+name);
 
 		//handle cam toggling
 		if(_toggleCam==true){

@@ -424,9 +424,9 @@ public class Fly : MonoBehaviour
 		//_mCam.SetVignette(boostFrac);
 		
 		//debugging
-		DebugScreen.Print("Flat vel mag: "+flatVel.magnitude.ToString("0.000"));
-		DebugScreen.Print("Accel: "+accel.ToString("0.000"));
-		DebugScreen.Print("Boost: "+_boost.ToString("0.000"));
+		DebugScreen.Print("Velocity: "+flatVel.magnitude.ToString("0.000"));
+		//DebugScreen.Print("Accel: "+accel.ToString("0.000"));
+		//DebugScreen.Print("Boost: "+_boost.ToString("0.000"));
 		//DebugScreen.Print("flat vel mag: "+flatVel.magnitude.ToString("0.000"));
 		//DebugScreen.Print("y vel: "+_velocity.y.ToString("0.000"));
 

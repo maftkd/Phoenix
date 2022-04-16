@@ -47,6 +47,9 @@ public class DebugScreen : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		for(int i=0;i<_curSlot;i++){
+			_slots[i].text="";
+		}
 		_curSlot=0;
     }
 
