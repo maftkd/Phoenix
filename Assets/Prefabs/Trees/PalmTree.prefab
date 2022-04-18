@@ -835,9 +835,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _treeType: 0
+  _useSeed: 0
   _trunkSeed: 11
   _vertsPerRing: 5
-  _numRings: 10
+  _numRings: 5
   _heightRange: {x: 1.5, y: 3.5}
   _trunkRadiusRange: {x: 0.08, y: 0.25}
   _trunkRadiusCurve:
@@ -866,13 +867,14 @@ MonoBehaviour:
     m_RotationOrder: 4
   _trunkNoiseScale: 4.33
   _trunkNoiseAmplitude: 0.135
-  _leafSeed: 122
-  _numLeaves: 15
+  _leafSeed: 186
+  _minLeaves: 3
+  _maxLeaves: 6
   _leafSegments: 4
   _leafRes: 3
-  _leafSizeRange: {x: 0.6, y: 1.5}
-  _leafWidthRange: {x: 0.2, y: 0.5}
-  _leafHeightRange: {x: 0.15, y: 0.5}
+  _leafSizeRange: {x: 2, y: 2.5}
+  _leafWidthRange: {x: 0.5, y: 0.62}
+  _leafHeightRange: {x: 0, y: 0.12}
   _palmLeafMat: {fileID: 2100000, guid: dea034633f38fc445bcf897771dbed63, type: 2}
   _palmLeafSpineCurve:
     serializedVersion: 2
@@ -955,8 +957,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _palmPitchRange: {x: -54.9, y: -28.45}
-  _palmSpinRange: {x: 36, y: 36}
+  _palmPitchRange: {x: 0, y: 20}
+  _palmSpinRange: {x: 90, y: 90}
+  _leafSounds:
+  - {fileID: 8300000, guid: 18f1ff003e8fbdb44aba8266f6e1d168, type: 3}
+  - {fileID: 8300000, guid: 2f96d3d47551ed848be9307342dcd667, type: 3}
+  - {fileID: 8300000, guid: 4dcd8f2dc477f5e4aa277ee503048ee8, type: 3}
+  - {fileID: 8300000, guid: 79a7606463e6a0748b531715f315489d, type: 3}
   _genTree: 0
   _autoGen: 0
   _clearLeaves: 0

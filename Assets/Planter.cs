@@ -21,6 +21,7 @@ public class Planter : MonoBehaviour
 	public bool _plantTransform;
 	public bool _plantTerrain;
 	public bool _clearTerrain;
+	public bool _clearDetails;
 	public bool _autoUpdate;
 
 	void OnValidate(){
@@ -36,6 +37,10 @@ public class Planter : MonoBehaviour
 		if(_clearTerrain){
 			ClearGrass();
 			_clearTerrain=false;
+		}
+		if(_clearDetails){
+			ClearTerrain();
+			_clearDetails=false;
 		}
 	}
 
@@ -107,7 +112,6 @@ public class Planter : MonoBehaviour
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, _detailLayer);
-		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			float yNorm = y/(float)td.alphamapHeight;
 			int yDetail=Mathf.FloorToInt(yNorm*td.detailHeight);
@@ -139,11 +143,9 @@ public class Planter : MonoBehaviour
 	}
 
 	public void ClearTerrain(){
-		//ClearGrass();
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, _detailLayer);
-		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			float yNorm = y/(float)td.alphamapHeight;
 			int yDetail=Mathf.FloorToInt(yNorm*td.detailHeight);
