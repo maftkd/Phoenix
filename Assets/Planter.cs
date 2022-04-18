@@ -11,7 +11,10 @@ public class Planter : MonoBehaviour
 	public int _seed;
 	public Vector3 _minSize;
 	public Vector3 _maxSize;
+	public float _minSpacing;
 	public int _grassDensity;
+	public int _detailLayer;
+	public float _minHeight;
 	public float _plantChance;
 	public bool _offsetVert;
 	[Header("Controls")]
@@ -23,7 +26,7 @@ public class Planter : MonoBehaviour
 	void OnValidate(){
 		if(_plantTransform||_autoUpdate){
 			PlantGrass();
-			_plantTerrain=false;
+			_plantTransform=false;
 		}
 		if(_plantTerrain){
 			ClearTerrain();
@@ -63,22 +66,35 @@ public class Planter : MonoBehaviour
 				if(alphaMaps[x,y,_terrainLayer]>_alphaThreshold)
 				{
 					if(Random.value<_plantChance){
-						grassCount++;
 						float xFrac=(y/(float)(td.alphamapHeight-1));
 						float zFrac=(x/(float)(td.alphamapWidth-1));
 						float worldX=_terrain.transform.position.x+td.size.x*xFrac;
 						float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
 						float worldY = _terrain.SampleHeight(new Vector3(worldX,0,worldZ));
-						Transform grass = Instantiate(_grassPrefab, new Vector3(worldX,worldY,worldZ),Quaternion.Euler(0,Random.value*360f,0),transform);
-						Vector3 scale = grass.localScale;
-						scale.x*=Random.Range(_minSize.x,_maxSize.x);
-						scale.y*=Random.Range(_minSize.y,_maxSize.y);
-						scale.z*=Random.Range(_minSize.z,_maxSize.z);
-						grass.localScale=scale;
-						if(_offsetVert)
-							grass.position+=Vector3.up*grass.localScale.y*0.5f;
-						if(grass.GetComponent<Tree>()!=null)
-							grass.GetComponent<Tree>().Generate();
+						Vector3 p = new Vector3(worldX,worldY,worldZ);
+						bool canPlant=true;
+						foreach(Transform t in transform){
+							float sqrDist=(p-t.position).sqrMagnitude;
+							if(sqrDist<_minSpacing*_minSpacing)
+							{
+								canPlant=false;
+								break;
+							}
+
+						}
+						if(canPlant){
+							grassCount++;
+							Transform grass = Instantiate(_grassPrefab, p,Quaternion.Euler(0,Random.value*360f,0),transform);
+							Vector3 scale = grass.localScale;
+							scale.x*=Random.Range(_minSize.x,_maxSize.x);
+							scale.y*=Random.Range(_minSize.y,_maxSize.y);
+							scale.z*=Random.Range(_minSize.z,_maxSize.z);
+							grass.localScale=scale;
+							if(_offsetVert)
+								grass.position+=Vector3.up*grass.localScale.y*0.5f;
+							if(grass.GetComponent<Tree>()!=null)
+								grass.GetComponent<Tree>().Generate();
+						}
 					}
 				}
 			}
@@ -90,7 +106,7 @@ public class Planter : MonoBehaviour
 		//ClearGrass();
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
-		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, 0);
+		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, _detailLayer);
 		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			float yNorm = y/(float)td.alphamapHeight;
@@ -100,7 +116,10 @@ public class Planter : MonoBehaviour
 				int xDetail=Mathf.FloorToInt(xNorm*td.detailWidth);
 				if(x>0&&x<td.alphamapWidth-1&&y>0&&y<td.alphamapWidth-1)
 				{
-					if(alphaMaps[x-1,y,_terrainLayer]>_alphaThreshold&&
+					float worldX=_terrain.transform.position.x+td.size.x*yNorm;
+					float worldZ=_terrain.transform.position.z+td.size.z*xNorm;
+					float worldY = _terrain.SampleHeight(new Vector3(worldX,0,worldZ));
+					if(worldY>_minHeight&&alphaMaps[x-1,y,_terrainLayer]>_alphaThreshold&&
 							alphaMaps[x+1,y,_terrainLayer]>_alphaThreshold&&
 							alphaMaps[x,y-1,_terrainLayer]>_alphaThreshold&&
 							alphaMaps[x,y+1,_terrainLayer]>_alphaThreshold&&
@@ -115,7 +134,7 @@ public class Planter : MonoBehaviour
 				}
 			}
 		}
-		td.SetDetailLayer(0, 0, 0, detailMap);
+		td.SetDetailLayer(0, 0, _detailLayer, detailMap);
 		//Debug.Log("Grass count: "+grassCount);
 	}
 
@@ -123,7 +142,7 @@ public class Planter : MonoBehaviour
 		//ClearGrass();
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
-		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, 0);
+		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, _detailLayer);
 		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			float yNorm = y/(float)td.alphamapHeight;
@@ -134,7 +153,7 @@ public class Planter : MonoBehaviour
 				detailMap[xDetail,yDetail]=0;
 			}
 		}
-		td.SetDetailLayer(0, 0, 0, detailMap);
+		td.SetDetailLayer(0, 0, _detailLayer, detailMap);
 		//Debug.Log("Grass count: "+grassCount);
 	}
 
