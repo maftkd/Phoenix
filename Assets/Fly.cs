@@ -80,8 +80,7 @@ public class Fly : MonoBehaviour
 	float _prevMag;
 
 	//ground effects
-	const float _maxDist=3f;
-	const float _maxDistRocks=3f;
+	const float _maxDist=4f;
 	public Terrain _terrain;
 	float[,,] _alphaMaps;
 	TerrainData _terrainData;
@@ -233,7 +232,7 @@ public class Fly : MonoBehaviour
 		_mat.SetColor("_RimColor",Color.black);
 		Soar(false);
 		_anim.SetTrigger("land");
-		_boundary.SetActive(false);
+		//_boundary.SetActive(false);
 		_mCam.SetFovFrac(0);
 		Reset();
 		//_landTarget.gameObject.SetActive(false);
@@ -410,15 +409,15 @@ public class Fly : MonoBehaviour
 		bool boosted=_boost>_minBoost;
 		if(boosted&&!_windSound.IsOn()){
 			_windSound.Play();
-			_windParts.Play();
+			//_windParts.Play();
 		}
 		else if(!boosted&&_windSound.IsOn()){
 			_windSound.Stop();
-			_windParts.Stop();
+			//_windParts.Stop();
 		}
 		if(_windParts.isPlaying){
 			//_windLines.rotation=Quaternion.identity;
-			_windEmission.rateOverTime=boostFrac*50f;
+			//_windEmission.rateOverTime=boostFrac*50f;
 			_windSound.SetTarget(boostFrac);
 		}
 
@@ -585,8 +584,8 @@ public class Fly : MonoBehaviour
 				_grassSound.SetTarget((1-frac));
 			}
 
-			_boundary.SetActive(!sand && !grass && !water);
-			_boundary.transform.rotation=Quaternion.identity;
+			//_boundary.SetActive(!sand && !grass && !water);
+			//_boundary.transform.rotation=Quaternion.identity;
 		}
     }
 
