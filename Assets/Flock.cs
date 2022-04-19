@@ -59,6 +59,10 @@ public class Flock : MonoBehaviour
 	bool _playerNear;
 	public Color _nearOutline;
 
+	public static float _nearTimer;
+	public const float _requiredNearTime=10f;
+
+
 	public  class MBird {
 		public Transform _transform;
 		public int _state;
@@ -446,7 +450,16 @@ public class Flock : MonoBehaviour
 			_playerNear=playerIn;
 		}
 		if(playerIn)
-			DebugScreen.Print("Near flock: "+name);
+		{
+			_nearTimer+=Time.deltaTime;
+			float frac=_nearTimer/_requiredNearTime;
+			float percent=Mathf.Min(100f,frac*100);
+			if(percent>=100){
+				DebugScreen.Print(_birdPrefab.name);
+			}
+			else
+				DebugScreen.Print("Identifying: "+percent.ToString("0")+"%");
+		}
 
 		//handle cam toggling
 		if(_toggleCam==true){

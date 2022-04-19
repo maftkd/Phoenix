@@ -224,7 +224,7 @@ public class Fly : MonoBehaviour
 		Flap(false);
 
 		_mat = _bird.GetMaterial();
-		_mat.SetColor("_RimColor",_fullColor);
+		//_mat.SetColor("_RimColor",_fullColor);
 		//_landTarget.gameObject.SetActive(true);
 	}
 
@@ -609,7 +609,9 @@ public class Fly : MonoBehaviour
 			Color.RGBToHSV(_emptyColor,out hEmpty, out sEmpty, out vEmpty);
 			float frac=_flapCounter/(float)_numFlaps;
 			Color newCol = Color.HSVToRGB(Mathf.Lerp(hFull,hEmpty,frac),Mathf.Lerp(sFull,sEmpty,frac),Mathf.Lerp(vFull,vEmpty,frac));
-			_mat.SetColor("_RimColor",newCol);
+			//_mat.SetColor("_RimColor",newCol);
+			if(_flapCounter==_numFlaps)
+				_mat.SetColor("_RimColor",_emptyColor);
 		}
 	}
 

@@ -886,7 +886,7 @@ GameObject:
   - component: {fileID: 3979123256337009734}
   - component: {fileID: 7739841402103758697}
   m_Layer: 0
-  m_Name: Sparrow
+  m_Name: House Sparrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
