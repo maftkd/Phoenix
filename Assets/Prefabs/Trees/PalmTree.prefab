@@ -868,7 +868,7 @@ MonoBehaviour:
   _trunkNoiseScale: 4.33
   _trunkNoiseAmplitude: 0.135
   _leafSeed: 186
-  _minLeaves: 3
+  _minLeaves: 5
   _maxLeaves: 6
   _leafSegments: 4
   _leafRes: 3
