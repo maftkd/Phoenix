@@ -66,6 +66,7 @@ public class Cardinal : MonoBehaviour
 	}
 	
 	public void FlyToNextHouse(BirdHouse cur){
+		/*
 		if(cur!=null)
 			_curHouse=cur;
 		if(_curHouse==null){
@@ -79,6 +80,7 @@ public class Cardinal : MonoBehaviour
 		Transform target=_curHouse.GetPerchSpot();
 		transform.SetParent(_curHouse.GetExterior());
 		StartCoroutine(FlyTo(target.position));
+		*/
 		/*
 		Transform target=pb.transform.Find("Cage");
 		StartCoroutine(FlyTo(target.position+Vector3.up*0.3f));

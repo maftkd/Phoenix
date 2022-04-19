@@ -69,6 +69,9 @@ public class Sfx : MonoBehaviour
 		audio.pitch=pitch;
 		audio.clip=clip;
 		audio.Play();
+		audio.rolloffMode=AudioRolloffMode.Linear;
+		audio.maxDistance=10f;
+
 		Destroy(foo,clip.length);
 	}
 

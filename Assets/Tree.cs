@@ -196,6 +196,7 @@ public class Tree : MonoBehaviour
 			Random.InitState(_leafSeed);
 		//Random.InitState((int)System.DateTime.Now.Ticks);
 		_numLeaves=Random.Range(_minLeaves,_maxLeaves+1);
+		leafPitch=Random.Range(_palmPitchRange.x,_palmPitchRange.y);
 		for(int i=0; i<_numLeaves; i++){
 			GeneratePalmLeaf(i);
 		}
@@ -314,7 +315,8 @@ public class Tree : MonoBehaviour
 		//leafT.Rotate(Vector3.up*index*Random.Range(_palmSpinRange.x,_palmSpinRange.y));
 		leafT.Rotate(Vector3.up*index*spin);
 
-		leafT.Rotate(Vector3.right*Random.Range(_palmPitchRange.x,_palmPitchRange.y));
+		//leafT.Rotate(Vector3.right*Random.Range(_palmPitchRange.x,_palmPitchRange.y));
+		leafT.Rotate(Vector3.right*leafPitch);
 		meshC.sharedMesh=m;
 		meshC.convex=true;
 		meshC.isTrigger=false;
@@ -360,11 +362,14 @@ public class Tree : MonoBehaviour
 			Random.InitState(_leafSeed);
 		//Random.InitState((int)System.DateTime.Now.Ticks);
 		_numLeaves=Random.Range(_minLeaves,_maxLeaves+1);
+		leafPitch=Random.Range(_palmPitchRange.x,_palmPitchRange.y);
+		//leafT.Rotate(Vector3.right*);
 		for(int i=0; i<_numLeaves; i++){
 			GenerateEvergreenLeaf(i);
 		}
 	}
 
+	float leafPitch;
 	void GenerateEvergreenLeaf(int index){
 		if(_leafSegments<2)
 		{
@@ -490,7 +495,16 @@ public class Tree : MonoBehaviour
 		leafT.localPosition=local;
 		leafT.Rotate(Vector3.up*index*Random.Range(_palmSpinRange.x,_palmSpinRange.y));
 
-		leafT.Rotate(Vector3.right*Random.Range(_palmPitchRange.x,_palmPitchRange.y));
+		//leafT.Rotate(Vector3.right*Random.Range(_palmPitchRange.x,_palmPitchRange.y));
+		leafT.Rotate(Vector3.right*leafPitch);
+	}
 
+	public Transform GetRandomPerch(){
+		return transform.GetChild(Random.Range(0,transform.childCount));
+		/*
+		Transform leaf=
+		Vector3 [] verts = leaf.GetComponent<MeshFilter>().sharedMesh.vertices;
+		return leaf.TransformPoint(verts[Random.Range(0,verts.Length)]);
+		*/
 	}
 }

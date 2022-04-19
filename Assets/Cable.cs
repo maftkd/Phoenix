@@ -316,6 +316,18 @@ public class Cable : MonoBehaviour
 			StartCoroutine(_powerRoutine);
 	}
 
+	public void Fill(Vector3 pos){
+		_powerRoutine=SetPower(1f,pos);
+		if(enabled&&gameObject.activeInHierarchy)
+			StartCoroutine(_powerRoutine);
+	}
+
+	public void Unfill(Vector3 pos){
+		_powerRoutine=SetPower(0f,pos);
+		if(enabled&&gameObject.activeInHierarchy)
+			StartCoroutine(_powerRoutine);
+	}
+
 	public void FillNearPosition(Vector3 pos,bool supressAudio=false){
 		if(!gameObject.activeSelf)
 			return;

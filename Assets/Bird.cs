@@ -323,28 +323,9 @@ public class Bird : MonoBehaviour
 		source.clip=_call;
 		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
 		source.Play();
-		if(_playerControlled)
-		{
-			//#temp
-			//this stuff should be reworked a bit
-			//The logic for finding a new mate should depend on both bird and mate being within the same puzzle sphere
-			//the logic for finding an existing mate, should verify that the target location is within puzzle sphere
-			//basically we just need a quick check, what puzzle sphere is a bird in?
-			//find existing mate
-			//find new mate
-			if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
-				Bird b = _cols[0].GetComponent<Bird>();
-				//b.ComeTo(transform);
-				Vector3 diff=b.transform.position-transform.position;
-				diff.y=0;
-				b.FlyTo(transform.position+diff.normalized*_summonDist);
-				b._mate=this;
-			}
-
-		}
-		else{
-			_anim.SetTrigger("sing");
-		}
+		_anim.SetTrigger("sing");
+		if(_onCall!=null)
+			_onCall.Invoke();
 	}
 
 	public void CopyCall(Bird other){
@@ -704,6 +685,7 @@ public class Bird : MonoBehaviour
 	public event BirdEvent _onDoneFlying;
 	public event BirdEvent _onFlight;
 	public event BirdEvent _onLand;
+	public event BirdEvent _onCall;
 
 	IEnumerator FlyToR(Vector3 target,float flapChance){
 		_state=3;
@@ -842,7 +824,7 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 		_fly.enabled=false;
 		//start coroutine
-		Vector3 dir = -t.forward;
+		Vector3 dir = t.forward;
 		/*
 		Transform parent = transform.parent;
 		transform.SetParent(t);
@@ -879,8 +861,8 @@ public class Bird : MonoBehaviour
 		float dur = 3f;
 		float halfDur=dur*0.5f;
 		//Camera doorCam=t.GetComponentInChildren<Camera>();
-		_camBeforeNestBox=GameManager._mCam.GetCurTargetCam();
-		GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur);
+		//_camBeforeNestBox=GameManager._mCam.GetCurTargetCam();
+		//GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur);
 
 		yield return new WaitForSeconds(halfDur);
 		bh.SetInteriorActive(true);
@@ -898,7 +880,7 @@ public class Bird : MonoBehaviour
 			Land();
 		}
 		//start coroutine
-		Vector3 dir = t.forward;
+		Vector3 dir = -t.forward;
 		Camera doorCam=bh.GetDoorCam();
 		StartCoroutine(WalkOutDoorR(doorCam,dir,bh));
 	}
@@ -906,7 +888,7 @@ public class Bird : MonoBehaviour
 	IEnumerator WalkOutDoorR(Camera cam,Vector3 dir,BirdHouse bh){
 		float dur = 2f;
 		float halfDur=dur*0.5f;
-		GameManager._mCam.Transition(cam,MCamera.Transitions.FADE,0,null,dur,true,true);
+		//GameManager._mCam.Transition(cam,MCamera.Transitions.FADE,0,null,dur,true,true);
 		//GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
 
 		yield return new WaitForSeconds(halfDur);
@@ -945,6 +927,7 @@ public class Bird : MonoBehaviour
 		Ground();
 		//_state=0;
 		ResetState();
+		door.GetComponent<Door>().Close();
 		//GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
 	}
 

@@ -1371,7 +1371,7 @@ MonoBehaviour:
   _leafSegments: 4
   _leafRes: 3
   _leafSizeRange: {x: 1, y: 3}
-  _leafWidthRange: {x: 0.75, y: 1.5}
+  _leafWidthRange: {x: 0.5, y: 1}
   _leafHeightRange: {x: -0.6, y: 0}
   _palmLeafMat: {fileID: 2100000, guid: d61aa7e2d4f52fd42925361ec85e2937, type: 2}
   _palmLeafSpineCurve:

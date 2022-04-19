@@ -7,13 +7,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TtPuzzleBox
-  m_Shader: {fileID: 4800000, guid: 5223151faa3a643c18098dfb42c4347d, type: 3}
-  m_ShaderKeywords: _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+  m_Name: IslandForceField
+  m_Shader: {fileID: 4800000, guid: 7156011b8a8df2645a7ae5799f4e0984, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3001
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -37,15 +37,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 3, y: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 379a091afa2a068499fe661e149a9d17, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: db7f352b98b6e42459c90baed53f7b53, type: 3}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: d3e91349b501bf446a7f5e64ed1006c2, type: 3}
+        m_Scale: {x: 3, y: 3}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
@@ -56,26 +60,45 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaCutoff: 0.25
+    - _AlphaDist: 0.5
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _GlossMapScale: 0.2
-    - _Glossiness: 0.3
+    - _FoamDist: 0.1
+    - _FoamFreq: 1
+    - _Frequency: 20
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _MaxStep: 3.78
     - _Metallic: 0
+    - _MinAlpha: 0
+    - _MinStep: 0
     - _Mode: 0
+    - _NoiseMult: 50
     - _OcclusionStrength: 1
-    - _Outline: 0
     - _Parallax: 0.02
-    - _SmoothnessTextureChannel: 1
+    - _PhaseMult: -1.66
+    - _SineMult: 0.1
+    - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TexScale: 4
     - _UVSec: 0
+    - _VCut: 0.52
+    - _VWidth: 0.02
+    - _WavePower: 20
+    - _WindSpeed: 0.25
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
+    - _BackColor: {r: 0.14505488, g: 0.78699994, b: 0.5909348, a: 0.02745098}
+    - _Color: {r: 1, g: 1, b: 1, a: 0.5019608}
+    - _ColorBot: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorDeep: {r: 1, g: 0, b: 0.82725763, a: 1}
+    - _ColorShallow: {r: 1, g: 1, b: 1, a: 0}
+    - _ColorTop: {r: 1, g: 1, b: 1, a: 0}
+    - _DistParams: {r: 0.05, g: 0.1, b: 0.05, a: 0.05}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PowerSilhouette: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 1}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
+    - _WindDir: {r: 1, g: 0, b: 1, a: 0}

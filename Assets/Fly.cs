@@ -80,7 +80,7 @@ public class Fly : MonoBehaviour
 	float _prevMag;
 
 	//ground effects
-	const float _maxDist=4f;
+	const float _maxDist=5f;
 	public Terrain _terrain;
 	float[,,] _alphaMaps;
 	TerrainData _terrainData;
@@ -181,6 +181,7 @@ public class Fly : MonoBehaviour
 		_windLines=Instantiate(_windLinesPrefab,transform);
 		_windLines.SetParent(_mCam.transform);
 		_windLines.localPosition=Vector3.zero;
+		_windLines.localEulerAngles=Vector3.zero;
 		_windParts=_windLines.GetComponent<ParticleSystem>();
 		_windSound=_windLines.GetComponent<Fader>();
 		_windEmission=_windParts.emission;
@@ -397,6 +398,7 @@ public class Fly : MonoBehaviour
 
 		float velMag=_velocity.magnitude;
 		float accel=(velMag-_prevMag)/Time.deltaTime;
+		/*
 		if(_soaring)
 			_boost+=accel;
 		if(_boost<0)
@@ -406,20 +408,23 @@ public class Fly : MonoBehaviour
 		if(_boost>_maxBoost)
 			_boost=_maxBoost;
 		float boostFrac=_boost/_maxBoost;
-		bool boosted=_boost>_minBoost;
+		*/
+		bool boosted=normVel>0.2f;
+		//bool boosted=_boost>_minBoost;
 		if(boosted&&!_windSound.IsOn()){
 			_windSound.Play();
-			//_windParts.Play();
+			_windParts.Play();
 		}
 		else if(!boosted&&_windSound.IsOn()){
 			_windSound.Stop();
-			//_windParts.Stop();
+			_windParts.Stop();
 		}
 		if(_windParts.isPlaying){
 			//_windLines.rotation=Quaternion.identity;
-			//_windEmission.rateOverTime=boostFrac*50f;
-			_windSound.SetTarget(boostFrac);
+			_windEmission.rateOverTime=normVel*25f;
+			_windSound.SetTarget(normVel);
 		}
+		//_windSound.SetTarget(normVel);
 
 		_prevMag=_velocity.magnitude;
 		//_mCam.SetVignette(boostFrac);

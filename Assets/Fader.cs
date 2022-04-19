@@ -28,13 +28,13 @@ public class Fader : MonoBehaviour
 		if(!_audio.isPlaying)
 			return;
 		//fade in
-		if(_audio.volume<_targetVolume-_fudge){
+		if(_on && _audio.volume<_targetVolume-_fudge){
 			_audio.volume=Mathf.Lerp(_audio.volume,_targetVolume,_lerp*Time.deltaTime);
 			if(_audio.volume>=_targetVolume-_fudge)
 				_audio.volume=_targetVolume;
 		}
 		//fade out - assuming targetVolume is 0
-		else if(_audio.volume>_targetVolume+_fudge){
+		else if(!_on&&_audio.volume>_targetVolume+_fudge){
 			_audio.volume=Mathf.Lerp(_audio.volume,_targetVolume,_lerp*Time.deltaTime);
 			if(_audio.volume<=_targetVolume+_fudge)
 			{
@@ -59,7 +59,9 @@ public class Fader : MonoBehaviour
 			return;
 		_targetVolume=f*_maxVol;
 		if(f>0&&!_audio.isPlaying)
+		{
 			_audio.Play();
+		}
 	}
 
 	public bool IsOn(){

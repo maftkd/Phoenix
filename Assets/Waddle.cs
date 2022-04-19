@@ -117,6 +117,7 @@ public class Waddle : MonoBehaviour
 			float dy = (targetPos.y-transform.position.y);
 			float dx = move.magnitude;
 			float slope = dy/dx;
+			/*
 			if(slope<-_maxWalkSlope*0.5f){
 				//check for very negative slope
 				if(_input.magnitude>0.9f){
@@ -125,7 +126,8 @@ public class Waddle : MonoBehaviour
 						_bird.StartHopping(true);
 				}
 			}
-			else if(slope<_maxWalkSlope)
+			*/
+			if(slope<_maxWalkSlope)
 			{
 				if(slope>_minSlopeToCheckSpeed){
 					Vector3 dir=hit.point-transform.position;

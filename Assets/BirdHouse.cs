@@ -19,20 +19,13 @@ public class BirdHouse : MonoBehaviour
 	Transform _mainCam;
 	bool _intActive;
 	public bool _swapInteriorExterior;
-	bool _solved;
-	Material _interiorRim;
-	Material _interiorWallRim;
-	Material _exteriorRim;
-	[Header("Solved effects")]
-	public float _pulseDelay;
-	public AudioClip _rewardSound;
-	public AudioClip _failSound;
-	public BirdHouse _next;
+	public bool _solved;
 	public GameObject _tempEnd;
 	Transform _perch;
 	public Cable _cable;
 	public bool _activateOnAwake;
 	public UnityEvent _onSolveExit;
+	public UnityEvent _onStateChange;
 	bool _exitAndSolve;
 	TouchPlate [] _plates;
 	[HideInInspector]
@@ -66,25 +59,22 @@ public class BirdHouse : MonoBehaviour
 		_doorMatR=_door.Find("DoorRight").GetComponent<Renderer>().material;
 		_doorMatL=_door.Find("DoorLeft").GetComponent<Renderer>().material;
 
-		_interiorRim=_interior.transform.Find("Floor").GetComponent<Renderer>().materials[1];
-		_interiorWallRim=_interior.transform.Find("Walls").Find("windowDoorWall").GetComponent<Renderer>().materials[1];
-		_exteriorRim=_exterior.transform.Find("House").GetComponent<Renderer>().materials[0];
-		_interiorRim.SetColor("_EmissionColor",Color.red);
-		_interiorWallRim.SetColor("_EmissionColor",Color.red);
-
-
 		_plates=transform.GetComponentsInChildren<TouchPlate>();
 
 		//do get references before this is called
 		SetInteriorActive(false);
 
+		/*
 		if(_activateOnAwake)
 			Activate(true);
+			*/
 
 		Island i = transform.GetComponentInParent<Island>();
-		int islandIndex = i.transform.GetSiblingIndex();
-		int houseIndex = transform.GetSiblingIndex();
-		_houseId=(islandIndex+1)+"."+(houseIndex+1);
+		if(i!=null){
+			int islandIndex = i.transform.GetSiblingIndex();
+			int houseIndex = transform.GetSiblingIndex();
+			_houseId=(islandIndex+1)+"."+(houseIndex+1);
+		}
 	}
 
     // Start is called before the first frame update
@@ -128,40 +118,14 @@ public class BirdHouse : MonoBehaviour
 		return _doorCam;
 	}
 
-	void Unsolve(){
-		_interiorRim.SetColor("_EmissionColor",Color.red);
-		_interiorWallRim.SetColor("_EmissionColor",Color.red);
-		_solved=false;
-		Sfx.PlayOneShot3D(_failSound,transform.position);
-	}
-
-	public void Solve(bool silent=false){
-		if(_solved)
-			return;
-		_solved=true;
-		if(!silent){
-			StartCoroutine(PulseRim());
-		}
-		else{
-			//bad #temp code
-			//We need some way to set the cardinal position
-			//And we don't know for sure that player has exited the puzzle
-			/*
-			Cardinal card = transform.GetComponentInChildren<Cardinal>();
-			if(card==null)
-				card=FindObjectOfType<Cardinal>();
-			card.FlyToNextHouse(this);
-			*/
-			_interiorRim.SetColor("_EmissionColor",Color.green);
-			_interiorWallRim.SetColor("_EmissionColor",Color.green);
-			_exteriorRim.SetColor("_EmissionColor",Color.white);
-			if(_next!=null)
-				_next.Activate(silent);
-			_player.SetCheckPoint();
-			_exitAndSolve=true;
-
-		}
-		GameManager._instance.PuzzleSolved(this);
+	public void Solve(bool solved){
+		//GameManager._instance.PuzzleSolved(this);
+		_solved=solved;
+		if(solved)
+			_cable.Fill(transform.position);
+		else
+			_cable.Unfill(transform.position);
+		_onStateChange.Invoke();
 	}
 
 	public void Activate(bool suppress=false){
@@ -170,20 +134,6 @@ public class BirdHouse : MonoBehaviour
 		_doorMatR.SetFloat("_Lerp",1f);
 		_doorMatL.SetFloat("_Lerp",1f);
 		_activated=true;
-	}
-
-	IEnumerator PulseRim(){
-		yield return new WaitForSeconds(0.25f);
-		Sfx.PlayOneShot3D(_rewardSound,transform.position);
-		for(int i=0;i<5;i++){
-			_interiorRim.SetColor("_EmissionColor",Color.red);
-			_interiorWallRim.SetColor("_EmissionColor",Color.red);
-			yield return new WaitForSeconds(_pulseDelay);
-			_interiorRim.SetColor("_EmissionColor",Color.green);
-			_interiorWallRim.SetColor("_EmissionColor",Color.green);
-			yield return new WaitForSeconds(_pulseDelay);
-		}
-		_exteriorRim.SetColor("_EmissionColor",Color.white);
 	}
 
 	public Transform GetDoor(){
@@ -225,12 +175,14 @@ public class BirdHouse : MonoBehaviour
 		if(_solved&&!_exitAndSolve){
 			_onSolveExit.Invoke();
 			//cardinal go next
+			/*
 			Cardinal card = transform.GetComponentInChildren<Cardinal>();
 			if(card==null)
 				card=FindObjectOfType<Cardinal>();
 			card.FlyToNextHouse(this);
 			if(_next!=null)
 				_next.Activate();
+				*/
 			_player.SetCheckPoint();
 			_exitAndSolve=true;
 		}
@@ -243,11 +195,14 @@ public class BirdHouse : MonoBehaviour
 				allOn=false;
 		}
 
+		Solve(allOn);
+		/*
 		if(allOn)
 			Solve();
 		else if(_solved){
 			Unsolve();
 		}
+		*/
 	}
 
 	void OnDrawGizmos(){
@@ -258,6 +213,7 @@ public class BirdHouse : MonoBehaviour
 			Gizmos.color=Color.red;
 			Gizmos.DrawWireSphere(_perch.position,0.25f);
 		}
+		/*
 		if(_next==null)
 			return;
 		if(_door==null){
@@ -283,5 +239,6 @@ public class BirdHouse : MonoBehaviour
         style.normal.textColor = Color.magenta;
 		Handles.Label(mid,"dist: "+dist+"\nflat: "+xDiff+"\nclimb: "+yDiff,style);
 		Handles.EndGUI();
+		*/
 	}
 }

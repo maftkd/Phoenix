@@ -60,6 +60,8 @@ public class CollisionHelper : MonoBehaviour
 	*/
 
 	void OnTriggerEnter(Collider other){
+		if(other.transform==transform)
+			return;
 		if(!_inverted)
 		{
 			Bird b = other.GetComponent<Bird>();
@@ -73,6 +75,8 @@ public class CollisionHelper : MonoBehaviour
 		_inZone=true;
 	}
 	void OnTriggerStay(Collider other){
+		if(other.transform==transform)
+			return;
 		Bird b = other.GetComponent<Bird>();
 		if(b!=null&&b._state<3&&!_inverted)
 			HandleCollision(other);
@@ -81,6 +85,7 @@ public class CollisionHelper : MonoBehaviour
 	void OnTriggerExit(Collider other){
 		if(_inverted)
 		{
+			Debug.Log("uhm");
 			HandleCollision(other);
 		}
 		_inZone=false;
@@ -101,7 +106,7 @@ public class CollisionHelper : MonoBehaviour
 		Vector3 curPos=b.transform.position;
 		_hitPoint=_col.ClosestPoint(b.transform.position);
 		_hitNormal=b.transform.position-_hitPoint;
-		if(_isCapsule)
+		if(_isCapsule||_inverted)
 			_hitNormal*=-1;
 		_newPoint=_hitPoint+_hitNormal.normalized*b._hitRadius;
 		if(b._state==1)

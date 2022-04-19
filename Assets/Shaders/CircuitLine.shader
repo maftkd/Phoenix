@@ -11,7 +11,6 @@
     {
         Tags { "RenderType"="Opaque" }
         LOD 100
-			Cull Front
 
         Pass
         {
@@ -60,6 +59,7 @@
             }
             ENDCG
         }
+		/*
 		Pass{
 			Cull Back
 			Stencil {
@@ -100,5 +100,6 @@
 
 			ENDCG
 		}
+		*/
     }
 }

@@ -56,8 +56,10 @@ public class Door : MonoBehaviour
 	public void Open(){
 		if(_player._state>=2||_open)
 			return;
+		/*
 		if(!_bh._activated)
 			return;
+			*/
 		StartCoroutine(OpenDoors(1));
 		Debug.Log("Open doors");
 	}

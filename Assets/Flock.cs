@@ -29,6 +29,7 @@ public class Flock : MonoBehaviour
 	public Vector3 _maxZone;
 	public float _margin;
 	public float _turnFactor;
+	public float _steerFactor;
 	public float _minDistance;
 	public float _avoidance;
 	public float _matching;
@@ -37,6 +38,15 @@ public class Flock : MonoBehaviour
 	public float _minSpeed;
 	public float _maxVertDot;
 	public float _yVelDamp;
+	public float _minDistToLand;
+	public bool _nearTarget;
+
+	[Header("Audio")]
+	public AudioClip _flapSound;
+	public int _minFlaps;
+	public int _maxFlaps;
+	public Vector2 _pitchRange;
+	public Vector2 _flapDelayRange;
 
 	[Header("Flock cam")]
 	public bool _toggleCam;
@@ -60,6 +70,7 @@ public class Flock : MonoBehaviour
 		Vector3 _targetPos;
 		float _flightDur;
 		Material _mat;
+		Footstep _footstep;
 
 		public MBird(Flock f, Transform t){
 			_flock=f;
@@ -122,7 +133,9 @@ public class Flock : MonoBehaviour
 					//check terrain
 					CheckTerrain();
 					//keep within bounds
-					KeepWithinBounds();
+					//KeepWithinBounds();
+					//seek target
+					SeekTarget();
 					//limit speed
 					LimitSpeed();
 					//level out
@@ -141,6 +154,8 @@ public class Flock : MonoBehaviour
 						Vector3 eulers=_transform.eulerAngles;
 						eulers.x=0;
 						_transform.eulerAngles=eulers;
+						if(_footstep!=null)
+							_footstep.Sound(_transform.position,0.2f);
 					}
 					else{
 						_transform.position+=_velocity*Time.deltaTime;
@@ -215,6 +230,7 @@ public class Flock : MonoBehaviour
 				_velocity.y*=_flock._yVelDamp;
 		}
 
+		/*
 		void KeepWithinBounds(){
 			Vector3 pos = _transform.position;
 			if(pos.x<_flock._minZone.x+_flock._margin){
@@ -236,6 +252,19 @@ public class Flock : MonoBehaviour
 				_velocity.z-=_flock._turnFactor;
 			}
 		}
+		*/
+
+		void SeekTarget(){
+			Vector3 targetVel=_targetPos-_transform.position;
+			float dist=targetVel.magnitude;
+			if(dist<=_flock._minDistToLand){
+				_flock._nearTarget=true;
+			}
+			targetVel.Normalize();
+			if(Vector3.Dot(_velocity.normalized,targetVel)<1){
+				_velocity=Vector3.Lerp(_velocity,targetVel*_velocity.magnitude,_flock._steerFactor*Time.deltaTime);
+			}
+		}
 
 		void ResetUpdateTimer(){
 			_updateTimer=Random.Range(_flock._updateTimeRange.x,_flock._updateTimeRange.y);
@@ -246,33 +275,21 @@ public class Flock : MonoBehaviour
 			ResetUpdateTimer();
 		}
 		
-		public void Fly(){
+		public void Fly(Tree t){
 			if(_state==1){
 				_waddle.StopWaddling();
 			}
 			_state=2;
 			_anim.SetTrigger("flyLoop");
 			ResetUpdateTimer();
+			Transform leaf = t.GetRandomPerch();
+			Vector3 [] verts = leaf.GetComponent<MeshFilter>().sharedMesh.vertices;
+			_targetPos =  leaf.TransformPoint(verts[Random.Range(0,verts.Length)]);
+			_footstep=leaf.GetComponent<Footstep>();
 		}
 
-		public void LandNear(Vector3 pos){
+		public void LandNearTarget(){
 			_state=3;
-			float height=0f;
-			int iters=0;
-			int maxIters=50;
-			Vector3 p=Vector3.zero;
-			while(height<6f&&iters<maxIters){
-				Vector2 v = Random.insideUnitCircle*_flock._spawnRadius;
-				p = pos + new Vector3(v.x,0,v.y);
-				p.y=_flock._terrain.SampleHeight(p);
-				height=pos.y;
-				iters++;
-			}
-			if(iters>=maxIters){
-				Debug.Log("Well poop");
-				p=pos;
-			}
-			_targetPos=p;
 			Vector3 diff=_targetPos-_transform.position;
 			float dist=diff.magnitude;
 			diff.Normalize();
@@ -343,10 +360,13 @@ public class Flock : MonoBehaviour
 			_mBirds[i]=mb;
 		}
 
+		/*
 		_groundTimer=Random.Range(_groundDurRange.x,_groundDurRange.y);
 		//50% to start with flight
 		if(Random.value<0.5f)
 			_groundTimer=-1f;
+			*/
+		_groundTimer=-1f;
 		_flockCam=transform.GetComponentInChildren<Camera>();
 		_fCam=_flockCam.GetComponent<FlockCam>();
 		_player=GameManager._player;
@@ -361,41 +381,27 @@ public class Flock : MonoBehaviour
     void Update()
     {
 		switch(_state){
-			case 0://on ground / foraging
+			case 0://perched
 				_groundTimer-=Time.deltaTime;
 				if(_groundTimer<0){
 					//start flying
 					_state=1;
+					Island i=transform.GetComponentInParent<Island>();
+					Tree[] trees = i.GetComponentsInChildren<Tree>();
+					Tree t = trees[Random.Range(0,trees.Length)];
+					//choose tree target
 					foreach(MBird mb in _mBirds)
-						mb.Fly();
-					_flightTimer=Random.Range(_flightDurRange.x,_flightDurRange.y);
+						mb.Fly(t);
+					StartCoroutine(FlapSounds());
+					//_flightTimer=Random.Range(_flightDurRange.x,_flightDurRange.y);
 				}
 				break;
 			case 1://flying
-				_flightTimer-=Time.deltaTime;
-				if(_flightTimer<0){
-					//done flying
+				if(_nearTarget){
 					_state=2;
-					Vector3 pos=Vector3.zero;
-					Vector3 center=transform.parent.position;
-					float height=0f;
-					int iters=0;
-					int maxIters=100;
-					float maxDist=Mathf.Abs(_terrain.transform.localPosition.x);
-					while(height<6f&&iters<maxIters){
-						Vector2 v = new Vector2(Random.Range(-maxDist,maxDist)+center.x,Random.Range(-maxDist,maxDist)+center.z);
-						pos = new Vector3(v.x,0,v.y);
-						pos.y=_terrain.SampleHeight(pos);
-						height=pos.y;
-						iters++;
-					}
-					if(iters>=maxIters){
-						Debug.Log("Well poop");
-						pos=_prevCenter;
-					}
 					foreach(MBird mb in _mBirds){
 						//come in for landing
-						mb.LandNear(pos);
+						mb.LandNearTarget();
 					}
 				}
 				break;
@@ -460,6 +466,16 @@ public class Flock : MonoBehaviour
 		return pos;
 	}
 	*/
+
+	IEnumerator FlapSounds(){
+		int numFlaps=Random.Range(_minFlaps,_maxFlaps);
+		for(int i=0;i<numFlaps;i++)
+		{
+			Sfx.PlayOneShot3D(_flapSound,_center,Random.Range(_pitchRange.x,_pitchRange.y));
+			float delay = Random.Range(_flapDelayRange.x,_flapDelayRange.y);
+			yield return new WaitForSeconds(delay);
+		}
+	}
 
 	void OnDrawGizmos(){
 		Gizmos.color=Color.magenta;
