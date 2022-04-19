@@ -234,6 +234,7 @@ public class Fly : MonoBehaviour
 		Soar(false);
 		_anim.SetTrigger("land");
 		_boundary.SetActive(false);
+		_mCam.SetFovFrac(0);
 		Reset();
 		//_landTarget.gameObject.SetActive(false);
 		//_mCam.SetVignette(0);
@@ -383,6 +384,7 @@ public class Fly : MonoBehaviour
 		_gravity=_defaultGravity;
 		_velocity-=flatForward.normalized*_airResistance*Time.deltaTime;
 		_velocity-=Vector3.up*_gravity*Time.deltaTime;
+		_mCam.SetFovFrac(normVel);
 
 		flatVel=_velocity;
 		flatVel.y=0;
@@ -473,13 +475,8 @@ public class Fly : MonoBehaviour
 			Vector3 hitPoint=Vector3.zero;
 			if(Physics.Raycast(transform.position,Vector3.down, out hit, 5f, _bird._collisionLayer)){
 				hitPoint=hit.point;
-				if(_bird._terrain!=null && hit.transform==_bird._terrain.transform)
-				{
-					//ok
-				}
-				else if(hit.transform.GetComponent<Terrain>()!=null){
-					_bird.SetTerrain(hit.transform.GetComponent<Terrain>());
-				}
+				//change of terrain
+				_bird.SetTerrain(hit.transform.GetComponent<Terrain>());
 			}
 			else{
 				_bird.SetTerrain(null);
@@ -496,7 +493,7 @@ public class Fly : MonoBehaviour
 				int terrainIndex=_bird.GetTerrainTextureIndex();
 				if(terrainIndex==0)
 					sand=true;
-				else if(terrainIndex==1)
+				else if(terrainIndex==1||terrainIndex==3)
 					gravel=true;
 				else if(terrainIndex==2)
 					grass=true;
@@ -515,18 +512,18 @@ public class Fly : MonoBehaviour
 			if(water&&!_spraySound.IsOn()){
 				_sprayParts.Play();
 				_spraySound.Play();
-				_sprayTrail.emitting=true;
+				//_sprayTrail.emitting=true;
 			}
 			else if(!water&&_spraySound.IsOn()){
 				_sprayParts.Stop();
 				_spraySound.Stop();
-				_sprayTrail.emitting=false;
+				//_sprayTrail.emitting=false;
 			}
 			if(_sprayParts.isPlaying){
-				_sprayEmission.rateOverTime=100f*(1-frac);
+				_sprayEmission.rateOverTime=200f*(1-frac);
 				_spraySound.SetTarget(1-frac);
-				_sprayTrail.startColor=Color.white*(1-frac);
-				_sprayTrail.startWidth=0.5f*(1-frac);
+				//_sprayTrail.startColor=Color.white*(1-frac);
+				//_sprayTrail.startWidth=0.5f*(1-frac);
 				_waterSpray.position=hitPoint;
 				_waterSpray.rotation=Quaternion.identity;
 			}
@@ -554,20 +551,20 @@ public class Fly : MonoBehaviour
 			{
 				_rockParts.Play();
 				_rockSound.Play();
-				_rockTrail.emitting=true;
+				//_rockTrail.emitting=true;
 			}
 			else if(!gravel&&_rockSound.IsOn())
 			{
 				_rockParts.Stop();
 				_rockSound.Stop();
-				_rockTrail.emitting=false;
+				//_rockTrail.emitting=false;
 			}
 			if(_rockParts.isPlaying){
 				_rockSpray.position=hit.point;
 				_rockSpray.rotation=Quaternion.identity;
 				_rockEmission.rateOverTime=100f*(1-frac);
 				_rockSound.SetTarget((1-frac));
-				_rockTrail.startWidth=0.25f*(1-frac);
+				//_rockTrail.startWidth=0.25f*(1-frac);
 			}
 
 			//grass fx

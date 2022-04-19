@@ -15,31 +15,32 @@ public class Planter : MonoBehaviour
 	public int _grassDensity;
 	public int _detailLayer;
 	public float _minHeight;
+	public float _maxHeight;
 	public float _plantChance;
 	public bool _offsetVert;
 	[Header("Controls")]
 	public bool _plantTransform;
-	public bool _plantTerrain;
-	public bool _clearTerrain;
+	public bool _clearTransform;
+	public bool _plantDetail;
 	public bool _clearDetails;
 	public bool _autoUpdate;
 
 	void OnValidate(){
 		if(_plantTransform||_autoUpdate){
-			PlantGrass();
+			PlantTransform();
 			_plantTransform=false;
 		}
-		if(_plantTerrain){
-			ClearTerrain();
-			PlantTerrain();
-			_plantTerrain=false;
+		if(_plantDetail){
+			ClearDetail();
+			PlantDetail();
+			_plantDetail=false;
 		}
-		if(_clearTerrain){
+		if(_clearTransform){
 			ClearGrass();
-			_clearTerrain=false;
+			_clearTransform=false;
 		}
 		if(_clearDetails){
-			ClearTerrain();
+			ClearDetail();
 			_clearDetails=false;
 		}
 	}
@@ -60,7 +61,7 @@ public class Planter : MonoBehaviour
 		StartCoroutine(Clear());
 	}
 
-	public void PlantGrass(){
+	public void PlantTransform(){
 		ClearGrass();
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
@@ -76,6 +77,8 @@ public class Planter : MonoBehaviour
 						float worldX=_terrain.transform.position.x+td.size.x*xFrac;
 						float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
 						float worldY = _terrain.SampleHeight(new Vector3(worldX,0,worldZ));
+						if(worldY<_minHeight||worldY>_maxHeight)
+							continue;
 						Vector3 p = new Vector3(worldX,worldY,worldZ);
 						bool canPlant=true;
 						foreach(Transform t in transform){
@@ -90,11 +93,13 @@ public class Planter : MonoBehaviour
 						if(canPlant){
 							grassCount++;
 							Transform grass = Instantiate(_grassPrefab, p,Quaternion.Euler(0,Random.value*360f,0),transform);
+							/*
 							Vector3 scale = grass.localScale;
 							scale.x*=Random.Range(_minSize.x,_maxSize.x);
 							scale.y*=Random.Range(_minSize.y,_maxSize.y);
 							scale.z*=Random.Range(_minSize.z,_maxSize.z);
 							grass.localScale=scale;
+							*/
 							if(_offsetVert)
 								grass.position+=Vector3.up*grass.localScale.y*0.5f;
 							if(grass.GetComponent<Tree>()!=null)
@@ -107,7 +112,7 @@ public class Planter : MonoBehaviour
 		Debug.Log("Grass count: "+grassCount);
 	}
 
-	public void PlantTerrain(){
+	public void PlantDetail(){
 		//ClearGrass();
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
@@ -123,7 +128,7 @@ public class Planter : MonoBehaviour
 					float worldX=_terrain.transform.position.x+td.size.x*yNorm;
 					float worldZ=_terrain.transform.position.z+td.size.z*xNorm;
 					float worldY = _terrain.SampleHeight(new Vector3(worldX,0,worldZ));
-					if(worldY>_minHeight&&alphaMaps[x-1,y,_terrainLayer]>_alphaThreshold&&
+					if(worldY>_minHeight&&worldY<_maxHeight&&alphaMaps[x-1,y,_terrainLayer]>_alphaThreshold&&
 							alphaMaps[x+1,y,_terrainLayer]>_alphaThreshold&&
 							alphaMaps[x,y-1,_terrainLayer]>_alphaThreshold&&
 							alphaMaps[x,y+1,_terrainLayer]>_alphaThreshold&&
@@ -142,7 +147,7 @@ public class Planter : MonoBehaviour
 		//Debug.Log("Grass count: "+grassCount);
 	}
 
-	public void ClearTerrain(){
+	public void ClearDetail(){
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, _detailLayer);

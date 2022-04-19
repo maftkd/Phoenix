@@ -19,6 +19,11 @@ public class MCamera : MonoBehaviour
 	public Material _vignette;
 	[Header("Orbit")]
 	public AnimationCurve _orbitCurve;
+	[Header("Fov")]
+	public float _bigFov;
+	float _defaultFov;
+	public float _fovLerp;
+	float _targetFov;
 
 	public enum Transitions {CUT, FADE, WIPE, LERP, ORBIT, CUT_BACK};
 
@@ -32,6 +37,8 @@ public class MCamera : MonoBehaviour
 	void Awake(){
 		_cutBackEnabled=true;
 		_camera=GetComponent<Camera>();
+		_defaultFov=_camera.fieldOfView;
+		_targetFov=_defaultFov;
 		//disable all cameras
 		_cams=FindObjectsOfType<Camera>();
 		foreach(Camera c in _cams)
@@ -64,6 +71,7 @@ public class MCamera : MonoBehaviour
 		{
 			transform.position=Vector3.Lerp(transform.position,_targetCam.transform.position,_lerp*Time.deltaTime);
 			transform.rotation=Quaternion.Slerp(transform.rotation,_targetCam.transform.rotation,_lerp*Time.deltaTime);
+			_camera.fieldOfView=Mathf.Lerp(_camera.fieldOfView,_targetFov,_fovLerp*Time.deltaTime);
 		}
     }
 
@@ -336,6 +344,10 @@ public class MCamera : MonoBehaviour
 
 	public void SetVignette(float f){
 		_vignette.SetFloat("_Amount", f);
+	}
+
+	public void SetFovFrac(float frac){
+		_targetFov=Mathf.Lerp(_defaultFov,_bigFov,frac);
 	}
 
 	void OnDrawGizmos(){

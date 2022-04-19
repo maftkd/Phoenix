@@ -839,7 +839,7 @@ MonoBehaviour:
   _trunkSeed: 11
   _vertsPerRing: 5
   _numRings: 5
-  _heightRange: {x: 1.5, y: 3.5}
+  _heightRange: {x: 1.5, y: 5}
   _trunkRadiusRange: {x: 0.08, y: 0.25}
   _trunkRadiusCurve:
     serializedVersion: 2
@@ -872,8 +872,8 @@ MonoBehaviour:
   _maxLeaves: 6
   _leafSegments: 4
   _leafRes: 3
-  _leafSizeRange: {x: 2, y: 2.5}
-  _leafWidthRange: {x: 0.5, y: 0.62}
+  _leafSizeRange: {x: 1, y: 2.5}
+  _leafWidthRange: {x: 0.3, y: 0.62}
   _leafHeightRange: {x: 0, y: 0.12}
   _palmLeafMat: {fileID: 2100000, guid: dea034633f38fc445bcf897771dbed63, type: 2}
   _palmLeafSpineCurve:
@@ -964,6 +964,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2f96d3d47551ed848be9307342dcd667, type: 3}
   - {fileID: 8300000, guid: 4dcd8f2dc477f5e4aa277ee503048ee8, type: 3}
   - {fileID: 8300000, guid: 79a7606463e6a0748b531715f315489d, type: 3}
+  _leafStartHeight: 0
   _genTree: 0
   _autoGen: 0
   _clearLeaves: 0

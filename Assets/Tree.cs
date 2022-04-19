@@ -42,6 +42,9 @@ public class Tree : MonoBehaviour
 	public Vector2 _palmSpinRange;
 	public AudioClip [] _leafSounds;
 
+	[Header("Evergreen branches")]
+	public float _leafStartHeight;
+
 	[Header("Buttons")]
 	public bool _genTree;
 	public bool _autoGen;
@@ -95,12 +98,11 @@ public class Tree : MonoBehaviour
 		}
 	}
 
+	float trunkHeight;
 	void GenTrunk(){
 		Mesh m = new Mesh();
-		/*
 		if(_useSeed)
 			Random.InitState(_trunkSeed);
-			*/
 		//Random.InitState((int)System.DateTime.Now.Ticks);
 
 		//allocate some mem
@@ -115,7 +117,7 @@ public class Tree : MonoBehaviour
 		ringCenter.rotation=transform.rotation;
 
 		//some initial calculations
-		float trunkHeight = Random.Range(_heightRange.x,_heightRange.y);
+		trunkHeight = Random.Range(_heightRange.x,_heightRange.y);
 		float ringSpacing=trunkHeight/(_numRings-1);
 		Vector2 offsetDir = Random.insideUnitCircle.normalized;
 		float offset=Random.value;
@@ -190,10 +192,8 @@ public class Tree : MonoBehaviour
 		}
 		StartCoroutine(DestroyNextFrame(leaves));
 
-		/*
 		if(_useSeed)
 			Random.InitState(_leafSeed);
-			*/
 		//Random.InitState((int)System.DateTime.Now.Ticks);
 		_numLeaves=Random.Range(_minLeaves,_maxLeaves+1);
 		for(int i=0; i<_numLeaves; i++){
@@ -227,8 +227,10 @@ public class Tree : MonoBehaviour
 		//gen centers
 		List<Vector3> centers = new List<Vector3>();
 		List<Vector3> centerNormals = new List<Vector3>();
-		float length = Random.Range(_leafSizeRange.x,_leafSizeRange.y);
-		float maxWidth = Random.Range(_leafWidthRange.x,_leafWidthRange.y);
+		//float length = Random.Range(_leafSizeRange.x,_leafSizeRange.y);
+		float sizeFrac=Mathf.InverseLerp(_heightRange.x,_heightRange.y,trunkHeight);
+		float length = Mathf.Lerp(_leafSizeRange.x,_leafSizeRange.y,sizeFrac);
+		float maxWidth = Mathf.Lerp(_leafWidthRange.x,_leafWidthRange.y,sizeFrac);
 		float maxHeight = Random.Range(_leafHeightRange.x,_leafHeightRange.y);
 		for(int i=0; i<_leafSegments; i++){
 			float t01 = i/(float)(_leafSegments-1);
@@ -354,14 +356,13 @@ public class Tree : MonoBehaviour
 		}
 		StartCoroutine(DestroyNextFrame(leaves));
 
-		/*
 		if(_useSeed)
 			Random.InitState(_leafSeed);
 		//Random.InitState((int)System.DateTime.Now.Ticks);
+		_numLeaves=Random.Range(_minLeaves,_maxLeaves+1);
 		for(int i=0; i<_numLeaves; i++){
 			GenerateEvergreenLeaf(i);
 		}
-		*/
 	}
 
 	void GenerateEvergreenLeaf(int index){
@@ -375,21 +376,38 @@ public class Tree : MonoBehaviour
 			return;
 		}
 
+		//determine leaf placement
+		Mesh treeMesh= _meshF.sharedMesh;
+		Vector3 [] trunkVerts = treeMesh.vertices;
+		int numVerts=trunkVerts.Length;
+		int minVert=(_vertsPerRing+1)*Mathf.FloorToInt(_numRings*_leafStartHeight);
+		int vIndex=Mathf.FloorToInt(Mathf.Lerp(minVert,numVerts,(float)(index)/_numLeaves));
+		//int vIndex=Random.Range(minVert,numVerts);
+		float heightFrac=Mathf.InverseLerp(minVert,numVerts,vIndex);
+		Vector3 local=trunkVerts[vIndex];
+
 		//gen game object
 		GameObject leafGo = new GameObject("Leaf");
 		Transform leafT = leafGo.transform;
 		leafT.SetParent(transform);
 		MeshFilter meshF = leafGo.AddComponent<MeshFilter>();
 		MeshRenderer meshR = leafGo.AddComponent<MeshRenderer>();
+		MeshCollider meshC = leafGo.AddComponent<MeshCollider>();
 		meshR.material=_palmLeafMat;
 		Mesh m = new Mesh();
+		Footstep foot = leafGo.AddComponent<Footstep>();
+		foot._clips=_leafSounds;
 
 		//gen centers
 		List<Vector3> centers = new List<Vector3>();
 		List<Vector3> centerNormals = new List<Vector3>();
-		float length = Random.Range(_leafSizeRange.x,_leafSizeRange.y);
-		float maxWidth = Random.Range(_leafWidthRange.x,_leafWidthRange.y);
-		float maxHeight = Random.Range(_leafHeightRange.x,_leafHeightRange.y);
+		float sizeFrac=Mathf.InverseLerp(_heightRange.x,_heightRange.y,trunkHeight);
+		float maxLength=Mathf.Lerp(_leafSizeRange.x,_leafSizeRange.y,sizeFrac);
+		//float length = Mathf.Lerp(_leafSizeRange.x,_leafSizeRange.y,sizeFrac);
+		float length = Mathf.Lerp(_leafSizeRange.x,maxLength,1-heightFrac);
+		float maxW = Mathf.Lerp(_leafWidthRange.x,_leafWidthRange.y,sizeFrac);
+		float maxWidth = Mathf.Lerp(_leafWidthRange.x,maxW,1-heightFrac);
+		float maxHeight = Mathf.Lerp(_leafHeightRange.x,_leafHeightRange.y,1-heightFrac);
 		for(int i=0; i<_leafSegments; i++){
 			float t01 = i/(float)(_leafSegments-1);
 			Vector3 pos = Vector3.forward*length*t01;
@@ -409,7 +427,7 @@ public class Tree : MonoBehaviour
 		Vector3[] norms = new Vector3[vertices.Length];
 		Vector2[] uvs = new Vector2[vertices.Length];
 
-		int vIndex=0;
+		vIndex=0;
 		//set up verts
 		for(int i=0; i<_leafSegments; i++){
 			float i01 = i/(float)(_leafSegments-1);
@@ -464,10 +482,12 @@ public class Tree : MonoBehaviour
 		m.RecalculateBounds();
 		meshF.sharedMesh=m;
 		//_meshC.sharedMesh=m;
+		meshC.sharedMesh=m;
+		meshC.convex=true;
+		meshC.isTrigger=false;
 
-		//Mesh treeMesh= _meshF.sharedMesh;
 
-		leafT.localPosition=_treeTop;
+		leafT.localPosition=local;
 		leafT.Rotate(Vector3.up*index*Random.Range(_palmSpinRange.x,_palmSpinRange.y));
 
 		leafT.Rotate(Vector3.right*Random.Range(_palmPitchRange.x,_palmPitchRange.y));

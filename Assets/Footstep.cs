@@ -38,12 +38,6 @@ public class Footstep : MonoBehaviour
 		_clips[0]=synth._myClip;
 	}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 	public void Sound(Vector3 pos,float volume=-1f,float pitch=-1f){
 		if(_clips.Length==0)
 			return;

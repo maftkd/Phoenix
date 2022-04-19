@@ -67,7 +67,7 @@ Material:
     - _FoamDist: 0.6
     - _FoamFreq: 5.35
     - _GlossMapScale: 1
-    - _Glossiness: 0.754
+    - _Glossiness: 1
     - _GlossyReflections: 1
     - _MaxStep: 2.39
     - _Metallic: 0

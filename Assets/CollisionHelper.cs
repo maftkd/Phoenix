@@ -50,13 +50,14 @@ public class CollisionHelper : MonoBehaviour
         
     }
 
+	/*
     // Update is called once per frame
     void Update()
     {
 		if(_inverted&&_isCapsule&&!_inZone)
 			HandleCollision(null);
-        
     }
+	*/
 
 	void OnTriggerEnter(Collider other){
 		if(!_inverted)
