@@ -22,7 +22,7 @@ public class BirdHouse : MonoBehaviour
 	public bool _solved;
 	public GameObject _tempEnd;
 	Transform _perch;
-	public Cable _cable;
+	public Cable [] _cable;
 	public bool _activateOnAwake;
 	public UnityEvent _onSolveExit;
 	public UnityEvent _onStateChange;
@@ -122,12 +122,19 @@ public class BirdHouse : MonoBehaviour
 		//GameManager._instance.PuzzleSolved(this);
 		_solved=solved;
 		if(solved)
-			_cable.Fill(transform.position);
+		{
+			foreach(Cable c in _cable)
+				c.Fill(transform.position);
+		}
 		else
-			_cable.Unfill(transform.position);
+		{
+			foreach(Cable c in _cable)
+				c.Unfill(transform.position);
+		}
 		_onStateChange.Invoke();
 	}
 
+	/*
 	public void Activate(bool suppress=false){
 		if(_cable!=null)
 			_cable.FillNearPosition(_door.position,suppress);
@@ -135,6 +142,7 @@ public class BirdHouse : MonoBehaviour
 		_doorMatL.SetFloat("_Lerp",1f);
 		_activated=true;
 	}
+	*/
 
 	public Transform GetDoor(){
 		if(_door==null){

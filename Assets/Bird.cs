@@ -861,8 +861,8 @@ public class Bird : MonoBehaviour
 		float dur = 3f;
 		float halfDur=dur*0.5f;
 		//Camera doorCam=t.GetComponentInChildren<Camera>();
-		//_camBeforeNestBox=GameManager._mCam.GetCurTargetCam();
-		//GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur);
+		_camBeforeNestBox=GameManager._mCam.GetCurTargetCam();
+		GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur);
 
 		yield return new WaitForSeconds(halfDur);
 		bh.SetInteriorActive(true);
@@ -889,7 +889,7 @@ public class Bird : MonoBehaviour
 		float dur = 2f;
 		float halfDur=dur*0.5f;
 		//GameManager._mCam.Transition(cam,MCamera.Transitions.FADE,0,null,dur,true,true);
-		//GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
+		GameManager._mCam.Transition(_camBeforeNestBox,MCamera.Transitions.FADE,0,null,dur,true);
 
 		yield return new WaitForSeconds(halfDur);
 		bh.SetInteriorActive(false);

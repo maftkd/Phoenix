@@ -36,7 +36,7 @@ public class Tower : MonoBehaviour
 	public void CheckHouses(){
 		_allSolved=true;
 		for(int i=0;i<_houses.Length; i++){
-			_rings[i].material.SetColor("_EmissionColor",_houses[i]._solved?_rings[i].material.color*2: Color.black);
+			_rings[i].material.SetColor("_EmissionColor",_houses[i]._solved?_rings[i].material.color*2: Color.white*-1);
 			if(!_houses[i]._solved)
 				_allSolved=false;
 

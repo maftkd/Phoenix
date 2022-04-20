@@ -112,7 +112,7 @@
 				v2f vert(appdata v){
 					v2f o;
 					float3 normal = normalize(v.normal);
-					_OutlineThickness=_OutlineThickness*(1-_Highlight)+_Highlight*0.01;
+					//_OutlineThickness=_OutlineThickness*(1-_Highlight)+_Highlight*0.01;
 					float3 outlineOffset = normal*_OutlineThickness;
 					float3 position = v.vertex+outlineOffset;
 					o.position = UnityObjectToClipPos(position);

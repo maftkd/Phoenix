@@ -957,7 +957,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _palmPitchRange: {x: -20, y: 20}
+  _palmPitchRange: {x: -20, y: 0}
   _palmSpinRange: {x: 90, y: 90}
   _leafSounds:
   - {fileID: 8300000, guid: 18f1ff003e8fbdb44aba8266f6e1d168, type: 3}
