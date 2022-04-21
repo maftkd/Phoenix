@@ -644,6 +644,7 @@ MonoBehaviour:
   _maxWalkSlope: 3
   _animSpeedMult: 2.5
   _stepVolume: 0.01
+  _wadePitchRange: {x: 0, y: 0}
   _inputSmoothLerp: 10
   _slerp: 10
   _minInput: 0.1
@@ -695,50 +696,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e81a98a6e57585d4fa87928ca3e0b48c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _flapSound: {fileID: 8300000, guid: 589db3261b2539f4fb9066ebd1fda464, type: 3}
-  _velocity: {x: 0, y: 0, z: 0}
+  _flapSound: {fileID: 8300000, guid: a21a3dbdf5339e345acd866a94992651, type: 3}
+  _velocity: {x: 2.1335514, y: -0.54192543, z: 4.5219407}
   _defaultGravity: 1
-  _soarGravity: 0.75
-  _maxVel: {x: 2, y: 0.5, z: 1.5}
-  _minVel: 0.5
-  _flapAccel: {x: 0, y: 2.5, z: 0}
-  _airResistance: 0.2
-  _flapDur: 0.25
-  _numFlaps: 2
+  _maxVel: 4
+  _maxFlapVel: 3
+  _flapAccel: 5
+  _flapDeccel: 6
+  _flapDeccelDown: 0.5
+  _initialVelBoost: 2
+  _airResistance: 0.1
+  _flapDur: 0.1
+  _numFlaps: 99
   _flapHoldBoost: 2
-  _maxRoll: 35
-  _soarMaxRoll: 45
+  _maxRoll: 45
+  _soarMaxRoll: 60
   _defaultMaxRoll: 10
   _minTurnRadius: 0.1
   _rollMult: 0.2
-  _rollChangeMult: 5
+  _rollChangeMult: 10
   _soarRollMult: 0.2
   _defaultRollMult: 0.05
-  _turnSpeed: 90
+  _turnSpeed: 2
   _maxAoa: 45
+  _pitchSpeed: 1
+  _upPitchSpeed: 2
+  _maxPhi: 1
+  _maxUpPhi: 0.5
   _downPitchMult: 0.5
-  _angleChangeMult: 200
-  _angleFallMult: 5
-  _thrustMult: 0.025
-  _dragMult: 0.025
-  _liftMult: 50
-  _maxLift: 0.002
-  _maxWeight: -0.001
-  _forwardness: 0
+  _angleChangeMult: 100
+  _angleFallMult: 10
+  _forwardness: 0.9999998
   _flapPitchRange: {x: 0.8, y: 1.2}
   _flapVolume: 0.1
-  _maxSoarPartsRate: 20
+  _maxSoarPartsRate: 30
   _soarVolume: 0.15
   _soaring: 0
   _diveVolume: 0.3
   _divePitch: 1.5
   _flapParts: {fileID: 6898834388162613930, guid: edc6a0550ab36cb4eb9b56c5af76b3de,
     type: 3}
-  _knockBackDelay: 0.5
-  _knockBackMult: 0.2
+  _knockBackDelay: 1
+  _knockBackMult: 0.5
   _minKnockBackMag: 0.25
+  _terrain: {fileID: 0}
+  _waterSprayPrefab: {fileID: 8899104292279772344, guid: 8819635d367653b41b482d47d282cb72,
+    type: 3}
+  _sandSprayPrefab: {fileID: 159457317356166050, guid: b5133b7e29911e146a9eb84e33ef7c53,
+    type: 3}
+  _grassSprayPrefab: {fileID: 5081222316724609233, guid: 96d3a359723abdf4cbbade6a5c137b0f,
+    type: 3}
+  _rockSprayPrefab: {fileID: 8475070022047999185, guid: 34e2dbaa4247a364a8505e7851ae1125,
+    type: 3}
   _fullColor: {r: 0, g: 1, b: 0.13333344, a: 1}
   _emptyColor: {r: 1, g: 0, b: 0, a: 1}
+  _boostGravity: 2
+  _minBoost: 1
+  _maxBoost: 30
+  _windLinesPrefab: {fileID: 3881486823634694559, guid: 3657682ca49352641a41822747d849f8,
+    type: 3}
 --- !u!114 &5569285346532965423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -767,7 +783,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _triggerRadius: 0.7
-  _arriveRadius: 0.1
   _state: 0
   _startPath: 0
   _anim: {fileID: 0}
@@ -788,11 +803,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   _controllerZero: 0.1
-  _footprint: {fileID: 6281567206045793963, guid: 51d67c04f4db344459bb599647a03a9c,
-    type: 3}
-  _wallprint: {fileID: 6281567206045793963, guid: ba1c721a7e36a4344a993c5fb67c948e,
-    type: 3}
+  _footprints: []
   _footprintOffset: {x: 0.015, y: 0.0025, z: 0}
+  _terrain: {fileID: 0}
   _afterDiveDelay: 0.5
   _explodeParts: {fileID: 8364014487585317613, guid: fd0ecdfcdd5274549961c35f858d4412,
     type: 3}
@@ -823,6 +836,9 @@ MonoBehaviour:
   _birds: []
   _transformationEffects: {fileID: 0}
   _transformDelay: 0
+  _inWater: 0
+  _waterShake: {fileID: 0}
+  _splash: {fileID: 0}
 --- !u!1 &1792526787315343659
 GameObject:
   m_ObjectHideFlags: 0
@@ -1097,9 +1113,9 @@ ParticleSystem:
     enabled: 1
     startLifetime:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0.5
-      minScalar: 5
+      minMaxState: 3
+      scalar: 0.75
+      minScalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1151,7 +1167,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 4
+      scalar: 0
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1205,7 +1221,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.35686275}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -1266,9 +1282,9 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     startSize:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0.2
-      minScalar: 1
+      minMaxState: 3
+      scalar: 1
+      minScalar: 0.25
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1319,7 +1335,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -1372,7 +1388,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -1588,8 +1604,8 @@ ParticleSystem:
     rotation3D: 0
     gravityModifier:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 0.1
+      minMaxState: 0
+      scalar: 0
       minScalar: -0.1
       maxCurve:
         serializedVersion: 2
@@ -1718,18 +1734,18 @@ ParticleSystem:
     m_UseMeshMaterialIndex: 0
     m_UseMeshColors: 1
     alignToDirection: 0
-    m_Texture: {fileID: 0}
+    m_Texture: {fileID: 2800000, guid: b873b69e8967dd3409fc2a92923a5798, type: 3}
     m_TextureClipChannel: 3
     m_TextureClipThreshold: 0
     m_TextureUVChannel: 0
-    m_TextureColorAffectsParticles: 1
+    m_TextureColorAffectsParticles: 0
     m_TextureAlphaAffectsParticles: 1
     m_TextureBilinearFiltering: 0
     randomDirectionAmount: 0
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 0.26
+      value: 0.3
       mode: 0
       spread: 0
       speed:
@@ -4920,7 +4936,7 @@ ParticleSystem:
     textureMode: 0
     ribbonCount: 1
     shadowBias: 0.5
-    worldSpace: 0
+    worldSpace: 1
     dieWithParticles: 1
     sizeAffectsWidth: 1
     sizeAffectsLifetime: 0
