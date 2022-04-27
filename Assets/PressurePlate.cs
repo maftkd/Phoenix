@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PressurePlate : MonoBehaviour
 {
@@ -31,6 +32,9 @@ public class PressurePlate : MonoBehaviour
 	public Transform _icon;
 	Material _quad;
 	bool _init;
+
+	public UnityEvent _onButtonDown;
+	public UnityEvent _onButtonUp;
 
 	void Awake(){
 		if(!_init)
@@ -164,7 +168,12 @@ public class PressurePlate : MonoBehaviour
 
 	void Power(bool p){
 		_powered=p;
-		UpdateWires();
+		//UpdateWires();
+		if(_powered)
+			_onButtonDown.Invoke();
+		else
+			_onButtonUp.Invoke();
+		_mat.SetColor("_EmissionColor", _powered? _emissionColor : Color.black);
 	}
 
 	void UpdateWires(){

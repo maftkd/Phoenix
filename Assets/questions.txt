@@ -54,3 +54,8 @@
 - Can rain and wind be feasible simultaneously, both visually / mechanically?
 - How large does an island need to be to accomidate the flight puzzles?
 
+4/26/22
+- How does flight feel, qualitatively?
+- How is the speed?
+- How are the controls?
+- What input device?

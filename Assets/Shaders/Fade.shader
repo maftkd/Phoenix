@@ -3,6 +3,7 @@
     Properties
     {
 		_Amount("Amount", Range(0,1)) = 0
+		_Value ("Value", Range(0,1)) = 0 
     }
     SubShader
     {
@@ -30,6 +31,7 @@
             };
 
 			fixed _Amount;
+			fixed _Value;
 
             v2f vert (appdata v)
             {
@@ -42,7 +44,7 @@
             fixed4 frag (v2f i) : SV_Target
             {
 				//if amount is basically 0, add a fudge value to make sure all pixels are clipped
-				fixed4 col = fixed4(0,0,0,_Amount);
+				fixed4 col = fixed4(_Value,_Value,_Value,_Amount);
                 return col;
             }
             ENDCG

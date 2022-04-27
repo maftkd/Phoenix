@@ -111,7 +111,7 @@ public class Waddle : MonoBehaviour
 
 		RaycastHit hit;
 		if(Physics.Raycast(targetPos+Vector3.up*_size,Vector3.down,out hit, 
-					_size*2f,_colLayer)){
+					_size*1.5f,_colLayer)){
 			//raycast to ground
 			targetPos.y=hit.point.y;
 			float dy = (targetPos.y-transform.position.y);

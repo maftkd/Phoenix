@@ -4,81 +4,65 @@ using UnityEngine;
 
 public class ScienceCamera : MonoBehaviour
 {
-	Transform _camera;
-	Bird _player;
-	public AudioClip _zoom;
-	public float _slerp;
-	Material _blinkMat;
-	Vector3 _hiddenPos;
-	Vector3 _activePos;
-	Quaternion _hiddenRot;
-	public Vector3 _offset;
-	int _state;
-	public float _animDur;
-	public float _hideDur;
-	public AudioClip _hydraulic;
+
+	public AudioClip _shutter;
+	public AudioClip _flashClip;
+	public Camera _cam;
+	MCamera _mCam;
+	public float _flashDur;
+	public Transform _photo;
+	Transform _printer;
+	public float _printDelay;
+	public AudioClip _printSound;
+	public float _printDur;
+	public float _printDist;
 
 	void Awake(){
-		_player=GameManager._player;
-		_camera=transform.GetChild(0);
-		_blinkMat=_camera.GetChild(0).GetComponent<Renderer>().material;
-		_blinkMat.SetFloat("_Blink",0);
-		_hiddenPos=_camera.position;
-		_activePos=_hiddenPos+_camera.right*_offset.x+_camera.up*_offset.y+_camera.forward*_offset.z;
-		_camera.position=_hiddenPos;
-		_hiddenRot=_camera.rotation;
+		_cam.enabled=true;
+		_mCam=GameManager._mCam;
+		_printer=transform.parent.Find("Printer");
 	}
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
+	public void ChargeFlash(){
+		Sfx.PlayOneShot3D(_flashClip,transform.position);
+	}
 
-    // Update is called once per frame
-    void Update()
-    {
-		switch(_state){
-			case 0:
-				break;
-			case 1:
-				Quaternion cur=_camera.rotation;
-				_camera.LookAt(_player.transform);
-				_camera.rotation=Quaternion.Slerp(cur,_camera.rotation,_slerp*Time.deltaTime);
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			default:
-				break;
+	public void TakePhoto(){
+		Sfx.PlayOneShot3D(_shutter,transform.position);
+		StartCoroutine(Flash());
+		StartCoroutine(Print());
+	}
+
+	IEnumerator Flash(){
+		_mCam.SetFlash(1f);
+		yield return null;
+		float timer=_flashDur;
+		while(timer>0){
+			timer-=Time.deltaTime;
+			float frac=timer/_flashDur;
+			_mCam.SetFlash(frac);
+			yield return null;
 		}
-    }
-
-	public void Activate(bool a){
-		if(a)
-			StartCoroutine(ActivateR(true));
-		else
-			StartCoroutine(ActivateR(false));
+		_mCam.SetFlash(0f);
 	}
 
-	IEnumerator ActivateR(bool a){
-		_state=a?1:0;
-		_blinkMat.SetFloat("_Blink",a?1:0);
-		float timer=0;
-		float dur=a?_animDur:_hideDur;
-		Sfx.PlayOneShot3D(_hydraulic,_camera.position,a?1.5f:2f);
-		Quaternion cur=_camera.rotation;
+	IEnumerator Print(){
+		yield return new WaitForSeconds(_printDelay);
+		Sfx.PlayOneShot3D(_printSound,transform.position);
+		Transform photo = Instantiate(_photo,_printer.position,Quaternion.identity);
+		photo.Rotate(Vector3.right,90f);
+		yield return null;
+		float dur = _printDur;
+		float timer = 0;
+		Vector3 startPos=photo.position;
+		Vector3 endPos=startPos+transform.forward*_printDist;
 		while(timer<dur){
 			timer+=Time.deltaTime;
 			float frac=timer/dur;
-			if(a)
-				_camera.position=Vector3.Lerp(_hiddenPos,_activePos,frac);
-			else
-			{
-				_camera.position=Vector3.Lerp(_hiddenPos,_activePos,1-frac);
-				_camera.rotation=Quaternion.Slerp(cur,_hiddenRot,frac);
-			}
+			photo.position=Vector3.Lerp(startPos,endPos,frac);
 			yield return null;
 		}
+		photo.position=endPos;
 	}
+
 }

@@ -17,6 +17,8 @@ public class MCamera : MonoBehaviour
 	public Material _letterBox;
 	[Header("Vignette")]
 	public Material _vignette;
+	[Header("Flash")]
+	public Material _flash;
 	[Header("Orbit")]
 	public AnimationCurve _orbitCurve;
 	[Header("Fov")]
@@ -51,6 +53,7 @@ public class MCamera : MonoBehaviour
 		_fade.SetFloat("_Amount",0);
 		_letterBox.SetFloat("_Amount",0);
 		_vignette.SetFloat("_Amount",0);
+		_flash.SetFloat("_Amount",0);
 	}
 
 
@@ -344,6 +347,10 @@ public class MCamera : MonoBehaviour
 
 	public void SetVignette(float f){
 		_vignette.SetFloat("_Amount", f);
+	}
+
+	public void SetFlash(float f){
+		_flash.SetFloat("_Amount",f);
 	}
 
 	public void SetFovFrac(float frac){
