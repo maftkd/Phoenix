@@ -25,7 +25,6 @@ public class CollisionHelper : MonoBehaviour
 	public bool _supressHitFx;
 	public bool _supressNpcKnockback;
 	public bool _inverted;
-	bool _inZone;
 	Bird _player;
 
 	//float _fudge = 1.1f;
@@ -72,7 +71,6 @@ public class CollisionHelper : MonoBehaviour
 				b.KnockBack(this,-b.transform.forward.normalized,_supressHitFx,_supressNpcKnockback);
 			}
 		}
-		_inZone=true;
 	}
 	void OnTriggerStay(Collider other){
 		if(other.transform==transform)
@@ -88,7 +86,6 @@ public class CollisionHelper : MonoBehaviour
 			Debug.Log("uhm");
 			HandleCollision(other);
 		}
-		_inZone=false;
 	}
 
 	void HandleCollision(Collider other){

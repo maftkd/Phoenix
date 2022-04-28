@@ -176,6 +176,10 @@ public class PressurePlate : MonoBehaviour
 		_mat.SetColor("_EmissionColor", _powered? _emissionColor : Color.black);
 	}
 
+	public bool IsPowered(){
+		return _powered;
+	}
+
 	void UpdateWires(){
 		if(!_active)
 			return;

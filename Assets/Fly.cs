@@ -24,7 +24,6 @@ public class Fly : MonoBehaviour
 	public float _flapDur;
 	int _flapCounter;
 	public int _numFlaps;
-	[Tooltip("The vertical boost gained if jump button is held down during a flap")]
 	public float _flapHoldBoost;
 	Bird _bird;
 	MInput _mIn;
@@ -118,15 +117,7 @@ public class Fly : MonoBehaviour
 	public Color _emptyColor;
 	Material _mat;
 
-	//boost
-	float _boostAmount;
-	float _boostTimer;
-	float _boost;
 	MCamera _mCam;
-	[Header("Boost")]
-	public float _boostGravity;
-	public float _minBoost;
-	public float _maxBoost;
 	public Transform _windLinesPrefab;
 	Transform _windLines;
 	ParticleSystem _windParts;
@@ -219,8 +210,6 @@ public class Fly : MonoBehaviour
 		_anim.ResetTrigger("soar");
 		_rollAngle=0f;
 
-		_boost=0;
-
 		Flap(false);
 
 		_mat = _bird.GetMaterial();
@@ -305,13 +294,6 @@ public class Fly : MonoBehaviour
 
 		if(_knockBackTimer<=0)
 		{
-			//speed boost
-			if(_boostTimer>0)
-			{
-				_velocity+=_velocity.normalized*_boostAmount*Time.deltaTime;
-				_boostTimer-=Time.deltaTime;
-			}
-
 
 			//pitch control
 			flatForward=transform.forward;
@@ -398,19 +380,7 @@ public class Fly : MonoBehaviour
 
 		float velMag=_velocity.magnitude;
 		float accel=(velMag-_prevMag)/Time.deltaTime;
-		/*
-		if(_soaring)
-			_boost+=accel;
-		if(_boost<0)
-			_boost=0;
-		else
-			_boost=Mathf.Lerp(_boost,0,_boostGravity*Time.deltaTime);
-		if(_boost>_maxBoost)
-			_boost=_maxBoost;
-		float boostFrac=_boost/_maxBoost;
-		*/
 		bool boosted=normVel>0.2f;
-		//bool boosted=_boost>_minBoost;
 		if(boosted&&!_windSound.IsOn()){
 			_windSound.Play();
 			_windParts.Play();
@@ -427,12 +397,10 @@ public class Fly : MonoBehaviour
 		//_windSound.SetTarget(normVel);
 
 		_prevMag=_velocity.magnitude;
-		//_mCam.SetVignette(boostFrac);
 		
 		//debugging
 		//DebugScreen.Print("Velocity: "+flatVel.magnitude.ToString("0.000"));
 		//DebugScreen.Print("Accel: "+accel.ToString("0.000"));
-		//DebugScreen.Print("Boost: "+_boost.ToString("0.000"));
 		//DebugScreen.Print("flat vel mag: "+flatVel.magnitude.ToString("0.000"));
 		//DebugScreen.Print("y vel: "+_velocity.y.ToString("0.000"));
 
@@ -488,7 +456,7 @@ public class Fly : MonoBehaviour
 
 			//determine which fx to play
 			bool water=false;
-			if ((_bird._terrain==null || hitPoint.y<=5f)&&transform.position.y<5f+_maxDist)
+			if (hitPoint.y<=5f&&transform.position.y<5f+_maxDist)
 				water=true;
 			bool grass=false;
 			bool sand=false;
@@ -714,8 +682,8 @@ public class Fly : MonoBehaviour
 	}
 
 	public void BoostSpeed(float amount, float dur){
-		_boostAmount=amount;
-		_boostTimer=dur;
+		//_boostAmount=amount;
+		//_boostTimer=dur;
 	}
 
 	void OnDrawGizmos(){
