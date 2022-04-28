@@ -59,3 +59,9 @@
 - How is the speed?
 - How are the controls?
 - What input device?
+
+4/28/22
+- What variations do puzzles take?
+- How challenging do puzzles get?
+- Is there one main island or several?
+- Are islands generated procedurally or based off actual topo maps?

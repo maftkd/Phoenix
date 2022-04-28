@@ -29,7 +29,7 @@ public class ScienceCamera : MonoBehaviour
 
 	public void TakePhoto(){
 		Sfx.PlayOneShot3D(_shutter,transform.position);
-		StartCoroutine(Flash());
+		//StartCoroutine(Flash());
 		StartCoroutine(Print());
 	}
 

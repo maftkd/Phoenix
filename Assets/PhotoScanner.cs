@@ -22,11 +22,13 @@ public class PhotoScanner : MonoBehaviour
 	public float _scanDur;
 	public Text _output;
 	AudioSource _scanSound;
+	MInput _mIn;
 
 	void Awake(){
 		_progressMat=_progress.material;
 		_progressMat.SetFloat("_FillAmount",0);
 		_scanSound=GetComponent<AudioSource>();
+		_mIn=GameManager._mIn;
 	}
 
     // Start is called before the first frame update
@@ -40,7 +42,7 @@ public class PhotoScanner : MonoBehaviour
     {
 		switch(_state){
 			case 0:
-				if(Input.GetKeyDown(KeyCode.F)&&_photoCount<_photos.Length){
+				if(_mIn.GetSingDown()&&_photoCount<_photos.Length){
 					StartCoroutine(PlacePhotoOnScanner());
 				}
 				break;
