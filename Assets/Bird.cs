@@ -696,7 +696,7 @@ public class Bird : MonoBehaviour
 			flapTimer+=Time.deltaTime;
 			if(flapTimer>_flapDur){
 				if(Random.value<flapChance){
-					_fly.FlapSounds();
+					_fly.FlapSounds(true);
 					_anim.SetTrigger("fly");
 					_fly.Soar(false);
 				}

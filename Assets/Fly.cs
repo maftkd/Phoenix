@@ -8,6 +8,7 @@ public class Fly : MonoBehaviour
 	bool _init;
 	Collider[] _cols;
 	public AudioClip _flapSound;
+	public AudioClip _flapBackSound;
 	[HideInInspector]
 	public Vector3 _velocity;
 	float _gravity;
@@ -205,7 +206,7 @@ public class Fly : MonoBehaviour
 		_anim.ResetTrigger("soar");
 		_rollAngle=0f;
 
-		Flap(false);
+		Flap();
 
 		_mat = _bird.GetMaterial();
 		//_mat.SetColor("_RimColor",_fullColor);
@@ -256,9 +257,9 @@ public class Fly : MonoBehaviour
 				_curFlapAccel+=transform.up*_flapDeccel*0.25f;
 				//_curFlapAccel+=Vector3.down*_flapDeccelDown;
 				_flapTimer=0;
-				_anim.SetTrigger("fly");
+				_anim.SetTrigger("flyBack");
 				Soar(false);
-				Flap();
+				Flap(false);
 			}
 
 		}
@@ -559,8 +560,9 @@ public class Fly : MonoBehaviour
 		}
     }
 
-	void Flap(bool countFlap=true){
-		FlapEffects();
+	void Flap(bool forward=true){
+		FlapEffects(forward);
+		/*
 		if(countFlap)
 		{
 			_flapCounter++;
@@ -578,15 +580,19 @@ public class Fly : MonoBehaviour
 			if(_flapCounter==_numFlaps)
 				_mat.SetColor("_RimColor",_emptyColor);
 		}
+		*/
 	}
 
-	public void FlapEffects(){
+	public void FlapEffects(bool forward){
 		Instantiate(_flapParts,transform.position+_bird._size.y*Vector3.up,Quaternion.identity);
-		FlapSounds();
+		FlapSounds(forward);
 	}
 
-	public void FlapSounds(){
-		Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(_flapPitchRange.x,_flapPitchRange.y),_flapVolume);
+	public void FlapSounds(bool forward){
+		if(forward)
+			Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(_flapPitchRange.x,_flapPitchRange.y),_flapVolume);
+		else
+			Sfx.PlayOneShot3D(_flapBackSound,transform.position,Random.Range(_flapPitchRange.x,_flapPitchRange.y),_flapVolume);
 	}
 
 	public void Soar(bool soaring){

@@ -6,8 +6,8 @@ using UnityEditor;
 
 public class Ship : EditorWindow
 {
-	[MenuItem("Build/Ship")]
-	public static void SendIt(){
+	[MenuItem("Build/Ship Web")]
+	public static void SendWeb(){
 		Debug.Log("shipping");
 		//determine build path
 		string buildPath=Application.dataPath;
@@ -38,6 +38,26 @@ public class Ship : EditorWindow
 		File.WriteAllText(indexPath,html);
 
         System.Diagnostics.Process.Start("cmd.exe", "/k " + batPath);
+	}
+
+	[MenuItem("Build/Build Windows")]
+	public static void BuildWindows(){
+		//determine build path
+		string buildPath=Application.dataPath;
+		buildPath = Directory.GetParent(buildPath).FullName.Replace('\\', '/') + "/buildPath/Windows/";
+		//buildPath+=
+		int buildNumber=0;
+		if(!PlayerPrefs.HasKey("build"))
+			PlayerPrefs.SetInt("build",buildNumber);
+		else{
+			buildNumber=PlayerPrefs.GetInt("build")+1;
+			PlayerPrefs.SetInt("build",buildNumber);
+		}
+		PlayerPrefs.Save();
+
+		buildPath+="Slice_"+buildNumber.ToString("0")+".exe";
+
+		BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPath,BuildTarget.StandaloneWindows, BuildOptions.None);
 	}
 
 }

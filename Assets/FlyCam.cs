@@ -106,7 +106,7 @@ public class FlyCam : Shot
 			_phi=Mathf.Lerp(_phi,targetPhi,_phiLerp*Time.deltaTime*_warmUp);
 			_phi=Mathf.Clamp(_phi,_phiRange.x,_phiRange.y);
 		//}
-		_phi-=mouseMotion.y*_mouseSens;
+		//_phi-=mouseMotion.y*_mouseSens;
 
 		//calc r
 		Vector3 diff=transform.position-_player.transform.position;
@@ -114,7 +114,7 @@ public class FlyCam : Shot
 		r=Mathf.Lerp(r,_targetR,_rLerp*Time.deltaTime*_warmUp);
 
 		//calc theta
-		_theta-=mouseMotion.x*_mouseSens;
+		//_theta-=mouseMotion.x*_mouseSens;
 		playerBack.y=0;
 		playerBack.Normalize();
 		float targetTheta=Mathf.Atan2(playerBack.z,playerBack.x);
