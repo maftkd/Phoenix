@@ -80,9 +80,6 @@ public class Fly : MonoBehaviour
 
 	//ground effects
 	const float _maxDist=5f;
-	public Terrain _terrain;
-	float[,,] _alphaMaps;
-	TerrainData _terrainData;
 	//water
 	[Header ("Effects")]
 	public Transform _waterSprayPrefab;
@@ -180,16 +177,14 @@ public class Fly : MonoBehaviour
 		//boundary
 		_boundary=transform.Find("Boundary").gameObject;
 		_boundary.SetActive(false);
-
-		_terrainData = _terrain.terrainData;
-		_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
 	}
 
 	void OnEnable(){
 		_velocity=Vector3.zero;
 
 		_curFlapAccel=Vector3.up*_flapAccel*_initialVelBoost;
-		//_curFlapAccel+=transform.forward*_bird.GetVel();//*_flapAccel.z;
+		//_curFlapAccel=(transform.up+transform.forward*0.5f)*_flapAccel;
+		_curFlapAccel+=transform.forward*_bird.GetVel();//*_flapAccel.z;
 
 		//initial velocity
 		//_velocity=_curFlapAccel;
@@ -246,7 +241,8 @@ public class Fly : MonoBehaviour
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
 				//_curFlapAccel=transform.up*_flapAccel;
-				_curFlapAccel=(transform.up+transform.forward)*_flapAccel;
+				//_curFlapAccel=(transform.up+transform.forward)*_flapAccel;
+				_curFlapAccel=(transform.up+transform.forward*0.5f)*_flapAccel;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
 				Soar(false);
@@ -257,6 +253,7 @@ public class Fly : MonoBehaviour
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
 				_curFlapAccel=-transform.forward*_flapDeccel;
+				_curFlapAccel+=transform.up*_flapDeccel*0.25f;
 				//_curFlapAccel+=Vector3.down*_flapDeccelDown;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
@@ -653,32 +650,6 @@ public class Fly : MonoBehaviour
 
 	public bool IsFlapping(){
 		return _flapTimer<_flapDur*2f;
-	}
-
-	int GetTerrainTextureIndex(Vector3 pos){
-		//convert world coord to terrain space
-		float xWorld=pos.x;
-		float zWorld=pos.z;
-		Vector3 local=pos-_terrain.transform.position;
-		float xFrac=local.x/_terrainData.size.x;
-		float zFrac=local.z/_terrainData.size.z;
-		if(xFrac<0||xFrac>=1)
-			return 0;
-		if(zFrac<0||zFrac>=1)
-			return 0;
-		int xCoord=Mathf.FloorToInt(zFrac*_terrainData.alphamapHeight);
-		int yCoord=Mathf.FloorToInt(xFrac*_terrainData.alphamapWidth);
-		float max=0;
-		int layer=0;
-		for(int i=0;i<_terrainData.alphamapLayers;i++){
-			float v = _alphaMaps[xCoord,yCoord,i];
-			if(v>max)
-			{
-				max=v;
-				layer=i;
-			}
-		}
-		return layer;
 	}
 
 	public void BoostSpeed(float amount, float dur){

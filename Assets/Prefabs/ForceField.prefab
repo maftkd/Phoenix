@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 1932890350907656760}
   - component: {fileID: 8867280497452520854}
   - component: {fileID: 7991976810365318323}
-  - component: {fileID: 2480821795517689291}
   m_Layer: 0
   m_Name: ForceField
   m_TagString: Untagged
@@ -115,21 +114,7 @@ MonoBehaviour:
   _volume: 0.1
   _supressHitFx: 0
   _supressNpcKnockback: 0
+  _inverted: 0
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2480821795517689291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6589476226801973894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e9c701cb76303a4eab790eda833d83c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _powerOff: {fileID: 8300000, guid: 7fe54617118fb994e8fed50187b84a12, type: 3}
-  _deactivatedHeight: 0.52
-  _deactivatedPhase: 0.3

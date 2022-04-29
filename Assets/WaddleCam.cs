@@ -24,6 +24,7 @@ public class WaddleCam : Shot
 	public float _phiDelay;
 	float _phiDelayTimer;
 	public bool _camControl;
+	public bool _autoCam;
 
 	protected override void Awake(){
 		base.Awake();
@@ -86,10 +87,13 @@ public class WaddleCam : Shot
 		float radius=Mathf.Lerp(diff.magnitude,_targetR,
 				_rLerp*Time.deltaTime);
 
-		if(_phiDelayTimer<=0)
-			_phi = Mathf.Lerp(_phi,_targetPhi,_phiLerp*Time.deltaTime);
-		else
-			_phiDelayTimer-=Time.deltaTime;
+
+		if(_autoCam){
+			if(_phiDelayTimer<=0)
+				_phi = Mathf.Lerp(_phi,_targetPhi,_phiLerp*Time.deltaTime);
+			else
+				_phiDelayTimer-=Time.deltaTime;
+		}
 
 		//modify theta
 		if(_camControl){
@@ -102,18 +106,20 @@ public class WaddleCam : Shot
 		}
 
 		//theta help
-		Vector3 birdBack=-_player.transform.forward;
-		float pTheta=Mathf.Atan2(birdBack.z,birdBack.x);
-		//check for large diff
-		if(Mathf.Abs(pTheta-_theta)>Mathf.PI){
-			if(pTheta<_theta)
-				_theta=-(Mathf.PI*2f-_theta);
-			else
-				_theta+=Mathf.PI*2f;
-		}
+		if(_autoCam){
+			Vector3 birdBack=-_player.transform.forward;
+			float pTheta=Mathf.Atan2(birdBack.z,birdBack.x);
+			//check for large diff
+			if(Mathf.Abs(pTheta-_theta)>Mathf.PI){
+				if(pTheta<_theta)
+					_theta=-(Mathf.PI*2f-_theta);
+				else
+					_theta+=Mathf.PI*2f;
+			}
 
-		float birdVel=_player.GetVel();
-		_theta=Mathf.Lerp(_theta,pTheta,_thetaLerp*Time.deltaTime*birdVel);
+			float birdVel=_player.GetVel();
+			_theta=Mathf.Lerp(_theta,pTheta,_thetaLerp*Time.deltaTime*birdVel);
+		}
 
 			//update position
 		float y = Mathf.Sin(_phi);

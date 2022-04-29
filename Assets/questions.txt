@@ -65,3 +65,17 @@
 - How challenging do puzzles get?
 - Is there one main island or several?
 - Are islands generated procedurally or based off actual topo maps?
+
+4/29/22
+- Can you call in the air? If so, what happens?
+- When you call, how is it determined which birds respond? Which species?
+- Do you choose which bird's song to call?
+- Do you sing your own song / call?
+- Do you win over birds individually or by a species? Or does it depend on the species?
+- Do you have an inventory? Or just a single item in the beak?
+- Should I simplify to a single specimen per species?
+- Or one specimen per island?
+- Can calls span across multiple islands?
+- Do birds fly away after being called? Do some of have shorter hang/times?
+- Are birds constantly calling? Would that get annoying?
+- If there are more than like 20 birds, wouldn't flipping through left and right be slow and annoying?

@@ -20,6 +20,7 @@ public class Bird : MonoBehaviour
 	public bool _playerControlled;
 	MInput _mIn;
 	MCamera _mCam;
+	Transform _camera;
 	public Bird _mate;
 	[HideInInspector]
 	public Vector3 _size;
@@ -58,8 +59,6 @@ public class Bird : MonoBehaviour
 	SphereCollider _sphereCol;
 	public Transform _mandible;
 	Transform _curKey;
-	Transform _curSeed;
-	public int _seeds;
 	public Transform _ruffleEffects;
 	public float _summonDist;
 	SkinnedMeshRenderer _smr;
@@ -106,6 +105,9 @@ public class Bird : MonoBehaviour
 	//[Header("Interactions")]
 	LightSwitch _nearSwitch;
 	TouchPlate _nearPlate;
+	//#todo - rework so it's near food or something
+	//seed is for prototoype
+	Seed _nearSeed;
 	//checkpoint
 	Vector3 _checkPoint;
 
@@ -131,6 +133,7 @@ public class Bird : MonoBehaviour
 		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
 		_mIn = GameManager._mIn;
 		_mCam = GameManager._mCam;
+		_camera=_mCam.transform;
 		_cols = new Collider[3];
 		if(_playerControlled)
 		{
@@ -271,6 +274,11 @@ public class Bird : MonoBehaviour
 				TransformBird("Crow");
 			}
 			*/
+			RaycastHit hit;
+			if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
+				//Debug.Log("Hit: "+hit.transform.name);
+				hit.transform.parent.GetComponent<NpcBird>().Targeted();
+			}
 		}
 		else{
 			switch(_state){
@@ -324,6 +332,12 @@ public class Bird : MonoBehaviour
 		source.pitch=Random.Range(_callPitchRange.x,_callPitchRange.y);
 		source.Play();
 		_anim.SetTrigger("sing");
+		StartCoroutine(InvokeCall());
+	}
+
+	IEnumerator InvokeCall(){
+		float dur = _call.length;
+		yield return new WaitForSeconds(dur);
 		if(_onCall!=null)
 			_onCall.Invoke();
 	}
@@ -539,11 +553,6 @@ public class Bird : MonoBehaviour
 		_curKey=t;
 	}
 
-	public void CollectSeed(Transform t){
-		_anim.SetTrigger("peck");
-		_seeds++;
-	}
-
 	public Transform GetKey(){
 		return _curKey;
 	}
@@ -575,21 +584,6 @@ public class Bird : MonoBehaviour
 		_state=0;
 		_tool.enabled=false;
 	}
-
-	public bool HasSeed(){
-		return _curSeed!=null;
-	}
-
-	public Transform GiveSeed(){
-		Transform seed=_curSeed;
-		_curSeed=null;
-		return seed;
-	}
-
-	public Transform GetSeed(){
-		return _curSeed;
-	}
-
 
 	public void Ground(bool resetState=true){
 		if(_waddle==null)
@@ -661,10 +655,6 @@ public class Bird : MonoBehaviour
 		_follow.StopFollowingMate();
 	}
 
-	public void GainSeed(){
-		_seeds++;
-	}
-
 	public void ShowTutorial(int index){
 		_tutorial.ShowTutorial(index);
 	}
@@ -727,18 +717,6 @@ public class Bird : MonoBehaviour
 		_state=0;
 		if(_onDoneFlying!=null)
 			_onDoneFlying.Invoke();
-	}
-
-	public void SetSeeds(int s){
-		_seeds=s;
-		if(!_playerControlled&&s>0)
-			_smr.enabled=true;
-	}
-
-	public void PartySnacks(){
-		if(Physics.OverlapSphereNonAlloc(transform.position,2f,_cols,_birdLayer)>0){
-			Bird b = _cols[0].GetComponent<Bird>();
-		}
 	}
 
 	public void Drown(){
@@ -987,6 +965,15 @@ public class Bird : MonoBehaviour
 	public void NearTouchPlate(TouchPlate tp){
 		_nearPlate=tp;
 	}
+
+	public void NearSeed(Seed seed){
+		_nearSeed=seed;
+		if(_nearSeed!=null)
+			Debug.Log("near seed");
+		else
+			Debug.Log("Not near seed");
+	}
+
 	public void LeaveTouchPlate(TouchPlate tp){
 		if(_nearPlate==tp)
 			_nearPlate=null;
@@ -1016,6 +1003,11 @@ public class Bird : MonoBehaviour
 			_fly.enabled=false;
 			*/
 			_player._anim.SetTrigger("peck");
+		}
+		else if(_nearSeed!=null){
+			_player._anim.SetTrigger("peck");
+			_nearSeed.GetHeld();
+			HoldNearSeed();
 		}
 		else if(_inWater){
 			StartCoroutine(Bathe());
@@ -1109,6 +1101,23 @@ public class Bird : MonoBehaviour
 			_fly.BoostSpeed(amount,dur);
 	}
 
+	public void HoldNearSeed(){
+		Transform t = _nearSeed.transform;
+		t.SetParent(_mandible);
+		t.localPosition=Vector3.zero;
+		t.localEulerAngles=new Vector3(90,0,0);
+		t.localScale=Vector3.one*0.25f;
+		//this prevents re-eating same seed
+		_nearSeed=null;
+	}
+
+	public bool DestroyIfHasSeed(){
+		bool hasSeed=_mandible.childCount>0;
+		if(!hasSeed)
+			return false;
+		Destroy(_mandible.GetChild(0).gameObject);
+		return true;
+	}
 
 	void OnDrawGizmos(){
 	}

@@ -57,6 +57,7 @@ public class Sfx : MonoBehaviour
 		foo.transform.position=pos;
 		AudioSource audio = foo.AddComponent<AudioSource>();
 		audio.spatialBlend=1f;
+		audio.maxDistance=100f;
 		audio.clip=clip;
 		audio.Play();
 		Destroy(foo,clip.length);

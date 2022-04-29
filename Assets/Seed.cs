@@ -5,10 +5,10 @@ using UnityEngine.Events;
 
 public class Seed : MonoBehaviour
 {
-	public Transform _groundEffectsPrefab;
-	Transform _groundEffects;
 	public AudioClip _choir;
+	public AudioClip _chalp;
 	Transform _player;
+	Bird _bird;
 	public float _riseAmount;
 	public float _riseTime;
 	public float _riseDelay;
@@ -17,46 +17,50 @@ public class Seed : MonoBehaviour
 	public float _minEffectTime;
 	float _timer;
 	public UnityEvent _onEat;
+	GameObject _sphere;
 
 	void Awake(){
-		_player=GameManager._player.transform;
-		//StartEffects();
+		_bird=GameManager._player;
+		_player=_bird.transform;
+		_sphere=transform.GetChild(0).gameObject;
+		_sphere.SetActive(false);
 	}
     // Start is called before the first frame update
     void Start()
     {
-		StartEffects();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+		_sphere.transform.rotation=Quaternion.identity;
     }
 
-	void StartEffects(){
-
-		RaycastHit hit;
-		if(Physics.Raycast(transform.position,Vector3.down, out hit, 1f, 1)){
-			_groundEffects = Instantiate(_groundEffectsPrefab,hit.point,Quaternion.identity);
-		}
-		else
-			_groundEffects = Instantiate(_groundEffectsPrefab,transform.position,Quaternion.identity);
-	}
-
 	void OnTriggerEnter(Collider other){
+		/*
 		if(other.GetComponent<Bird>()==null)
 			return;
 		CollectSeed(other.GetComponent<Bird>());
 		GetComponent<Rotator>().enabled=false;
 		_onEat.Invoke();
+		*/
+		_sphere.SetActive(true);
+		_bird.NearSeed(this);
 	}
 
+	void OnTriggerExit(Collider other){
+		_sphere.SetActive(false);
+		_bird.NearSeed(null);
+	}
+
+	public void GetHeld(){
+		GetComponent<Rotator>().enabled=false;
+		_sphere.SetActive(false);
+		Sfx.PlayOneShot2D(_chalp);
+	}
+
+	/*
 	public void CollectSeed(Bird other){
-		if(_groundEffects!=null)
-			Destroy(_groundEffects.gameObject);
-		else
-			Debug.Log("bug alert - effects not started");
 		//play some sound
 		Sfx.PlayOneShot2D(_choir);
 		other.CollectSeed(transform);
@@ -82,4 +86,5 @@ public class Seed : MonoBehaviour
 		yield return new WaitForSeconds(_riseDelay);
 		Destroy(gameObject);
 	}
+	*/
 }

@@ -40,7 +40,7 @@ public class SaveSlot : MonoBehaviour
 		string saveData="";
 		Bird b = GameManager._player;
 		saveData+=b.name+"%"+b.transform.position.x+"%"+b.transform.position.y+"%"+b.transform.position.z
-			+"%"+b._seeds+System.Environment.NewLine;
+			+System.Environment.NewLine;
 
 		//add divider
 		saveData+=_divider+System.Environment.NewLine;
@@ -86,11 +86,11 @@ public class SaveSlot : MonoBehaviour
 					float.TryParse(parts[1],NumberStyles.Float,CultureInfo.InvariantCulture,out x);
 					float.TryParse(parts[2],NumberStyles.Float,CultureInfo.InvariantCulture,out y);
 					float.TryParse(parts[3],NumberStyles.Float,CultureInfo.InvariantCulture,out z);
-					int.TryParse(parts[4],NumberStyles.Integer,CultureInfo.InvariantCulture, out seeds);
+					//int.TryParse(parts[4],NumberStyles.Integer,CultureInfo.InvariantCulture, out seeds);
 					Vector3 pos = new Vector3(x,y,z);
 					Bird b = GameManager._player;
 					b.transform.position=pos;
-					b.SetSeeds(seeds);
+					//b.SetSeeds(seeds);
 					b.ResetState();
 					break;
 				case 1://puzzles
