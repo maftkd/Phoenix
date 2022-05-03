@@ -3,15 +3,11 @@
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
-		_ColorB ("Color B", Color) = (0,0,0,0)
-		_ColorC ("Color C", Color) = (0,0,0,0)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
 		_OutlineThickness ("Outline thickness",Float) = 0.001
 		_RimColor ("Outline color", Color) = (1,1,1,1)
-		_Shiney ("Shiney vec", Vector) = (0,1,1,1)
-		_ColorParams ("Color vec", Vector) = (0,1,1,1)
 		_Highlight ("Highlighted", Range(0,1)) = 0
     }
     SubShader
@@ -36,8 +32,6 @@
         struct Input
         {
             float2 uv_MainTex;
-			float3 worldNormal;
-			float3 viewDir;
 			float3 localPos;
         };
 
@@ -66,14 +60,7 @@
         {
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
-			fixed dt = dot(IN.viewDir,_WorldSpaceLightPos0.xyz);
-
-			fixed4 col = lerp(lerp(_Color,_ColorB,smoothstep(_ColorParams.x,_ColorParams.y,dt)),
-					_ColorC,smoothstep(_ColorParams.y,1,dt));
-			fixed shiney = smoothstep(_Shiney.x,_Shiney.y,dot(IN.viewDir,IN.worldNormal));
-			col.rgb=lerp(c.rgb,col.rgb,shiney);
-			o.Albedo=col;
-
+			o.Albedo=c.rgb;
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
