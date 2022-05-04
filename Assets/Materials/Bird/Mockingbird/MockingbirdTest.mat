@@ -69,6 +69,7 @@ Material:
     - _GlossyReflections: 1
     - _Highlight: 0
     - _Metallic: 0
+    - _MinShadow: 0.68
     - _Mode: 0
     - _OcclusionStrength: 1
     - _OutlineThickness: 0.00348

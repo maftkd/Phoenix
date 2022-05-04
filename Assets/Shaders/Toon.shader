@@ -8,6 +8,7 @@ Shader "Unlit/Toon"
         _MainTex ("Texture", 2D) = "white" {}
 		_OutlineThickness ("Outline Thickness", Range(0,0.01)) = 0.001
 		_ToonGrad ("Toon Gradient", 2D) = "white" {}
+		_MinShadow ("Max Shadow", Range(0,1)) = 0.5
     }
     SubShader
     {
@@ -46,6 +47,7 @@ Shader "Unlit/Toon"
             float4 _MainTex_ST;
 			sampler2D _ToonGrad;
 			fixed4 _Color;
+			fixed _MinShadow;
 
             v2f vert (appdata v)
             {
@@ -72,21 +74,21 @@ Shader "Unlit/Toon"
 				float attenuation = LIGHT_ATTENUATION(i);
 
 				//get shading via dir light
-				fixed dt = dot(i.norm,_WorldSpaceLightPos0.xyz);
-				dt=(dt+1)*0.5;
-
-				//combine lighting
-				fixed lit=dt*attenuation;
-				//fixed lit=dt;
-				//fixed lit=attenuation;
+				fixed dt = -dot(-i.norm,_WorldSpaceLightPos0.xyz);
+				dt=saturate(dt);
 
 				//remap to toon grad
-				lit*=tex2D(_ToonGrad, fixed2(1-lit,0)).x;
-				fixed minShadow=0.05;
-				fixed ambient=0.25;
-				lit=lerp(minShadow,1,lit);
+				fixed minShadow=0.25;
+				fixed lit=tex2D(_ToonGrad, fixed2(1-dt,0)).x;
+				lit=lerp(_MinShadow,1,lit);
 				col.rgb*=lit;
-				col.rgb=lerp(col.rgb,unity_FogColor.rgb,(1-lit)*ambient);
+				
+				//receive shadow
+				fixed shadow=lerp(minShadow,1,attenuation);
+				col.rgb*=shadow;
+				fixed ambient=0.25;
+				col.rgb=lerp(col.rgb,unity_FogColor.rgb,(1-shadow)*ambient);
+
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
