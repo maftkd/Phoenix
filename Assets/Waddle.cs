@@ -94,16 +94,15 @@ public class Waddle : MonoBehaviour
 		Vector3 move=Vector3.zero;
 		if(_knockBackTimer<=0)
 		{
-			_anim.SetFloat("hopTime",animSpeed);
 			Quaternion curRot=transform.rotation;
 			transform.forward=_input;
 			Quaternion endRot=transform.rotation;
 			transform.rotation=Quaternion.Slerp(curRot,endRot,_slerp*Time.deltaTime);
 			move=transform.forward*_input.magnitude*Time.deltaTime*_walkSpeed*Mathf.Max(0,Vector3.Dot(transform.forward,_input));
+			_anim.SetFloat("walkSpeed",animSpeed);
 		}
 		else
 		{
-			_anim.SetFloat("hopTime",-animSpeed);
 			move=_input*Time.deltaTime*_walkSpeed;
 		}
 
@@ -148,7 +147,7 @@ public class Waddle : MonoBehaviour
 				TakeStep(hit.transform);
 				_stepTimer=0;
 			}
-			_anim.SetFloat("walkSpeed",0.1f);
+			//_anim.SetFloat("walkSpeed",0.1f);
 
 			if(_npc){
 				if(Arrived()){
@@ -168,6 +167,7 @@ public class Waddle : MonoBehaviour
 		else{
 			if(_bird!=null&&!_bird.IsGrounded()){
 				_anim.SetFloat("walkSpeed",0f);
+				Debug.Log("erm?");
 				_bird.StartHopping(true);
 			}
 		}

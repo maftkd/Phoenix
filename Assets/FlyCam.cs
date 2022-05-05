@@ -9,7 +9,8 @@ public class FlyCam : Shot
 	Vector3 _forward;
 	Fly _fly;
 	public Vector2 _phiRange;
-	public float _targetPhi;
+	float _targetPhi;
+	public float _targetPhiOffset;
 	public float _targetR;
 	public float _lerp;
 	public float _phiLerp;
@@ -102,7 +103,7 @@ public class FlyCam : Shot
 			if(vel.sqrMagnitude>=0.000001)
 				targetPhi=Mathf.Asin(-vel.y);
 
-			targetPhi+=0.2f;
+			targetPhi+=_targetPhiOffset;
 			_phi=Mathf.Lerp(_phi,targetPhi,_phiLerp*Time.deltaTime*_warmUp);
 			_phi=Mathf.Clamp(_phi,_phiRange.x,_phiRange.y);
 		//}

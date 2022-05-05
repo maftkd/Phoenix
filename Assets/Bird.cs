@@ -129,8 +129,8 @@ public class Bird : MonoBehaviour
 		_follow=GetComponent<Follow>();
 		_tutorial=GetComponentInChildren<Tutorial>();
 		_anim=GetComponent<Animator>();
-		_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
-		_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
+		//_ruffleAudio=transform.Find("Ruffle").GetComponent<AudioSource>();
+		//_starParts=transform.Find("StarParts").GetComponent<ParticleSystem>();
 		_mIn = GameManager._mIn;
 		_mCam = GameManager._mCam;
 		_camera=_mCam.transform;
@@ -317,11 +317,12 @@ public class Bird : MonoBehaviour
 	}
 
 	public float Ruffle(){
-		_anim.SetTrigger("ruffle");
-		Instantiate(_ruffleEffects,transform.position+_size.y*0.5f*Vector3.up,Quaternion.identity,transform);
+		//_anim.SetTrigger("ruffle");
+		//Instantiate(_ruffleEffects,transform.position+_size.y*0.5f*Vector3.up,Quaternion.identity,transform);
 		//_state=2;
-		_ruffleAudio.Play();
-		return _ruffleAudio.clip.length;
+		//_ruffleAudio.Play();
+		//return _ruffleAudio.clip.length;
+		return 0;
 	}
 
 	public void Call(){
@@ -487,8 +488,10 @@ public class Bird : MonoBehaviour
 		if(ignoreNpc&&!_playerControlled)
 			return;
 		if(!supress){
+			/*
 			if(_state>2)
 				_starParts.Play();
+				*/
 		}
 
 		switch(_state){
@@ -891,8 +894,8 @@ public class Bird : MonoBehaviour
 		*/
 
 		float timer=0;
-		_anim.SetFloat("walkSpeed",0.1f);
-		_anim.SetFloat("hopTime",3f);
+		//_anim.SetFloat("walkSpeed",0.1f);
+		//_anim.SetFloat("hopTime",3f);
 		dur = 0.75f;
 		while(timer<dur){
 			timer+=Time.deltaTime;

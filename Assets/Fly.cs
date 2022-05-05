@@ -123,7 +123,7 @@ public class Fly : MonoBehaviour
 	ParticleSystem.EmissionModule _windEmission;
 
 	//boundary
-	GameObject _boundary;
+	//GameObject _boundary;
 
 	void Awake(){
 		_mIn=GameManager._mIn;
@@ -176,8 +176,8 @@ public class Fly : MonoBehaviour
 		_windEmission=_windParts.emission;
 
 		//boundary
-		_boundary=transform.Find("Boundary").gameObject;
-		_boundary.SetActive(false);
+		//_boundary=transform.Find("Boundary").gameObject;
+		//_boundary.SetActive(false);
 	}
 
 	void OnEnable(){

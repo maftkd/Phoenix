@@ -38,7 +38,7 @@ public class Hop : MonoBehaviour
 	public float _hopBoost;
 	bool _diving;
 	AudioSource _soarAudio;
-	AudioSource _hopAudio;
+	//AudioSource _hopAudio;
 	public float _divePitchMult;
 	bool _knockBack;
 	public float _knockBackMult;
@@ -71,7 +71,7 @@ public class Hop : MonoBehaviour
 		_terrain=FindObjectOfType<Terrain>();
 		_input=Vector3.zero;
 		_soarAudio=transform.Find("SoarParticles").GetComponent<AudioSource>();
-		_hopAudio=transform.Find("JumpSound").GetComponent<AudioSource>();
+		//_hopAudio=transform.Find("JumpSound").GetComponent<AudioSource>();
 		ResetScale();
 		_mesh=transform.GetChild(0);
 		_defaultAngle=_mesh.localEulerAngles.y;
@@ -305,8 +305,8 @@ public class Hop : MonoBehaviour
 		_hopStartPos=transform.position;
 		_hopStartRot=transform.rotation;
 
-		_hopAudio.pitch=Random.Range(0.8f,1.2f);
-		_hopAudio.Play();
+		//_hopAudio.pitch=Random.Range(0.8f,1.2f);
+		//_hopAudio.Play();
 	}
 
 	public void ResetScale(){
