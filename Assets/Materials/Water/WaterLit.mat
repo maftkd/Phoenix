@@ -49,7 +49,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
         m_Texture: {fileID: 2800000, guid: 67cacab8b61dce748aca08575a4e02b9, type: 3}
-        m_Scale: {x: 12, y: 12}
+        m_Scale: {x: 200, y: 200}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
@@ -76,11 +76,12 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _SineMult: 0.2
+    - _SineMult: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _WaveCutoff: 0.483
     - _WavePower: 46.03
     - _WindSpeed: 0.1
     - _ZWrite: 1
@@ -90,4 +91,4 @@ Material:
     - _ColorShallow: {r: 0, g: 0.5885999, b: 0.872, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
-    - _WindDir: {r: 0.5, g: 0.5, b: 0.25, a: 0.25}
+    - _WindDir: {r: 0.5, g: 0.5, b: 0, a: 0}

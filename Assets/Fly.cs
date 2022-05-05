@@ -113,7 +113,7 @@ public class Fly : MonoBehaviour
 	[Header("Outline")]
 	public Color _fullColor;
 	public Color _emptyColor;
-	Material _mat;
+	//Material _mat;
 
 	MCamera _mCam;
 	public Transform _windLinesPrefab;
@@ -184,38 +184,26 @@ public class Fly : MonoBehaviour
 		_velocity=Vector3.zero;
 
 		_curFlapAccel=Vector3.up*_flapAccel*_initialVelBoost;
-		//_curFlapAccel=(transform.up+transform.forward*0.5f)*_flapAccel;
 		_curFlapAccel+=transform.forward*_bird.GetVel();//*_flapAccel.z;
 
-		//initial velocity
-		//_velocity=_curFlapAccel;
-		//_velocity+=transform.forward*_bird.GetVel()*_maxVel.z*_initialVelBoost;
-
 		_speedFrac=0;
-
 		_knockBackTimer=0;
 		_prevMag=0;
-
 		_aoa=0;
-
 		_flapTimer=0;
 		_flapCounter=0;
-
 		_forwardness=0;
-		//_diving=false;
-		_anim.ResetTrigger("soar");
+		_anim.SetBool("soar",false);
 		_rollAngle=0f;
 
 		Flap();
 
-		_mat = _bird.GetMaterial();
-		//_mat.SetColor("_RimColor",_fullColor);
-		//_landTarget.gameObject.SetActive(true);
+		//_mat = _bird.GetMaterial();
 	}
 
 	void OnDisable(){
 		//Soar(false);
-		_mat.SetColor("_RimColor",Color.black);
+		//_mat.SetColor("_RimColor",Color.black);
 		Soar(false);
 		_anim.SetTrigger("land");
 		//_boundary.SetActive(false);
@@ -375,6 +363,7 @@ public class Fly : MonoBehaviour
 			_velocity.x=0f;
 			_velocity.z=0f;
 		}
+		DebugScreen.Print(_velocity.y.ToString("0.000"));
 
 		float velMag=_velocity.magnitude;
 		float accel=(velMag-_prevMag)/Time.deltaTime;
@@ -661,6 +650,11 @@ public class Fly : MonoBehaviour
 	public void BoostSpeed(float amount, float dur){
 		//_boostAmount=amount;
 		//_boostTimer=dur;
+		_velocity+=transform.forward*amount;
+	}
+
+	public void KillVert(){
+		_velocity.y=0;
 	}
 
 	void OnDrawGizmos(){

@@ -7,7 +7,7 @@ public class Bird : MonoBehaviour
 {
 	public float _triggerRadius;
 	public int _state;
-	public int _startPath;
+	public bool _startSoaring;
 	Hop _hop;
 	Fly _fly;
 	Waddle _waddle;
@@ -96,11 +96,6 @@ public class Bird : MonoBehaviour
 		//walk speed
 		//camera distance
 	}
-	[Header("Bird Transformations")]
-	public BirdData [] _birds;
-	public Transform _transformationEffects;
-	IEnumerator _transformRoutine;
-	public float _transformDelay;
 
 	//[Header("Interactions")]
 	LightSwitch _nearSwitch;
@@ -169,6 +164,11 @@ public class Bird : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+		if(_startSoaring){
+			Fly();
+			_fly.BoostSpeed(3f,0);
+			_fly.KillVert();
+		}
     }
 
     // Update is called once per frame
@@ -265,13 +265,6 @@ public class Bird : MonoBehaviour
 			/*
 			if(Input.GetKeyDown(KeyCode.F1)){
 				_waddle.ToggleCamLines();
-			}
-			if(Input.GetKeyDown(KeyCode.T)){
-				//switch to cardinal
-				TransformBird("Cardinal");
-			}
-			if(Input.GetKeyDown(KeyCode.Y)){
-				TransformBird("Crow");
 			}
 			*/
 			RaycastHit hit;
@@ -924,41 +917,6 @@ public class Bird : MonoBehaviour
 			return true;
 		}
 		return false;
-	}
-
-	public void TransformBird(string birdName){
-		int birdIndex=-1;
-		for(int i=0; i<_birds.Length; i++){
-			if(_birds[i]._name==birdName)
-				birdIndex=i;
-		}
-		if(birdIndex==-1){
-			Debug.Log("Could not transform into bird. Name not found: "+birdName);
-			return;
-		}
-		if(_transformRoutine!=null){
-			Debug.Log("Cannot transform while already transforming");
-			return;
-		}
-		_transformRoutine = TransformRoutine(birdIndex);
-		StartCoroutine(_transformRoutine);
-	}
-
-	IEnumerator TransformRoutine(int birdIndex){
-		//start effects
-		Transform effects = Instantiate(_transformationEffects,transform);
-		effects.localPosition=Vector3.zero;
-		effects.localEulerAngles=Vector3.zero;
-		yield return new WaitForSeconds(_transformDelay);
-		BirdData bird = _birds[birdIndex];
-		transform.localScale=bird._scale*Vector3.one;
-		effects.localScale/=bird._scale;
-		_smr.sharedMesh=bird._mesh;
-		_smr.material=bird._mat;
-		_waddle._walkSpeed=bird._walkSpeed;
-		_hop.ResetScale();
-		_waddleCam.GetComponent<WaddleCam>().ResetCamera();
-		_transformRoutine=null;
 	}
 
 	public void NearLightSwitch(LightSwitch ls){

@@ -46,19 +46,22 @@
             // Albedo comes from a texture tinted by color
 
 			fixed2 myUv=IN.uv_MainTex;
+			/*
 			myUv.x=(myUv.x-((1-_PicParams.x)*0.5))/_PicParams.x;
 			fixed inZone=step(abs(myUv.x-0.5)*2,1);
 			fixed height=_PicParams.x*_PicParams.z;
 			myUv.y=(myUv.y-(_PicParams.y))/height;
 			inZone*=step(abs(myUv.y-0.5)*2,1);
+			*/
 
 			fixed4 picColor=tex2D(_MainTex,myUv)*_Develop;
 
 
-            o.Albedo = inZone*picColor+(1-inZone)*fixed3(1,1,1);
+            //o.Albedo = inZone*picColor+(1-inZone)*fixed3(1,1,1);
+            o.Albedo = picColor;
             // Metallic and smoothness come from slider variables
-            o.Metallic = _Metallic*inZone;
-            o.Smoothness = _Glossiness*(1-inZone);
+            o.Metallic = _Metallic;//*inZone;
+            o.Smoothness = _Glossiness;//*(1-inZone);
             o.Alpha = 1;
         }
         ENDCG

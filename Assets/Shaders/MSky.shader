@@ -10,6 +10,10 @@
 		_SunData ("Sun Data (min,max,na,na)", Vector) = (0.1,0.2,0,0)
 		_SkyData ("Sky Data (gMin, gMax,hMin,hMax)",Vector) = (-0.05,0.05,0.5,0.75)
 		_GroundData ("Ground",Vector) = (-0.05,0.05,0.5,0.75)
+		_NoiseTex ("Noise Tex", 2D) = "white" {}
+		_CloudScale ("Cloud Scale", Range(0,.1)) = 0.1
+		_CloudRange ("Cloud Range", Vector) = (0.2,1,0,0)
+		_CloudSpeed ("Cloud Speed", Float) = 0.5
     }
     SubShader
     {
@@ -35,6 +39,7 @@
 				float4  pos             : SV_POSITION;
 				half3   rayDir          : TEXCOORD0;
 				fixed3   bgColor			: TEXCOORD1;
+				fixed2 cloudPlane : CLOUD;
 			};
 
 			fixed4 _GroundColor;
@@ -45,6 +50,10 @@
 			fixed4 _GroundData;
 			fixed4 _SunData;
 			fixed4 _SkyData;
+			sampler2D _NoiseTex;
+			fixed _CloudScale;
+			fixed4 _CloudRange;
+			fixed _CloudSpeed;
 
             v2f vert (appdata_t v)
             {
@@ -61,6 +70,13 @@
 				horizon = smoothstep(_SkyData.z,_SkyData.w,o.rayDir.y);
 				fixed3 skyColor=lerp(horizonColor,_SkyColor,horizon);
 				o.bgColor = lerp(_GroundColor,skyColor,sky);
+				
+				//project sky ray to a plane say 50 units up, so from 0,0,0 to y=50ggj
+				fixed t = _CloudRange.w/o.rayDir.y;
+				fixed x = t*o.rayDir.x;
+				fixed z = t*o.rayDir.z;
+				o.cloudPlane = fixed2(x,z);
+				//o.cloudPlane = fixed2(o.rayDir.xy);
 
 				return o;
             }
@@ -73,6 +89,21 @@
 				fixed sun =dot(_WorldSpaceLightPos0.xyz,skyRay);
 				sun=smoothstep(_SunData.x,_SunData.y,sun);
 				col.rgb=lerp(col.rgb,_SunColor.rgb,sun);
+
+				//cloud
+				fixed cloudOffset=tex2D(_NoiseTex, (i.cloudPlane+fixed2(1,1)*_Time.y*_CloudSpeed)*_CloudScale).r;
+				cloudOffset=lerp(_CloudRange.z,_CloudRange.w,cloudOffset);
+                fixed cloud = tex2D(_NoiseTex, ((i.cloudPlane)*_CloudScale)).r;
+				fixed3 cloudColor = lerp(fixed3(1,1,1),fixed3(0.95,0.95,0.95),smoothstep(cloudOffset,1,cloud));
+				cloud=step(cloudOffset,cloud);
+				//fixed3 cloudColor=fixed3(1,1,1);
+				fixed cloudAmount=smoothstep(_CloudRange.x,_CloudRange.y,i.rayDir.y);
+				cloudAmount=1-abs(cloudAmount-0.5)*2;
+
+				col.rgb=lerp(col.rgb,cloudColor,cloud*cloudAmount);
+				//col.rgb*=cloud;
+
+
 				//col.rgb=fixed3(sun,0,0);
 				col.a=0.5;
                 return col;

@@ -55,8 +55,8 @@ Shader "Unlit/Toon"
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
-				float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-				float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
+				//float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				//float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
                 // world space normal
                 o.norm= UnityObjectToWorldNormal(v.normal);
 

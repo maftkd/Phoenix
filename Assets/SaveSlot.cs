@@ -68,7 +68,6 @@ public class SaveSlot : MonoBehaviour
 		float x=0;
 		float y=0;
 		float z=0;
-		int seeds=0;
 		Bird[] birds = FindObjectsOfType<Bird>();
 		BirdHouse [] houses = FindObjectsOfType<BirdHouse>();
 		foreach(string l in lines){
@@ -86,11 +85,9 @@ public class SaveSlot : MonoBehaviour
 					float.TryParse(parts[1],NumberStyles.Float,CultureInfo.InvariantCulture,out x);
 					float.TryParse(parts[2],NumberStyles.Float,CultureInfo.InvariantCulture,out y);
 					float.TryParse(parts[3],NumberStyles.Float,CultureInfo.InvariantCulture,out z);
-					//int.TryParse(parts[4],NumberStyles.Integer,CultureInfo.InvariantCulture, out seeds);
 					Vector3 pos = new Vector3(x,y,z);
 					Bird b = GameManager._player;
 					b.transform.position=pos;
-					//b.SetSeeds(seeds);
 					b.ResetState();
 					break;
 				case 1://puzzles

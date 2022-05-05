@@ -13,7 +13,6 @@ public class NpcBird : MonoBehaviour
 	public Vector2 _callPitchRange;
 	Animator _anim;
 	AudioSource _source;
-	bool _inZone;
 	Dialog _dialog;
 	bool _targeted;
 	GameObject _target;
@@ -54,7 +53,6 @@ public class NpcBird : MonoBehaviour
 	}
 
 	public void PlayerEnter(){
-		_inZone=true;
 		_dialog.Activate(true);
 
 		//if player has seed
@@ -71,7 +69,6 @@ public class NpcBird : MonoBehaviour
 	}
 
 	public void PlayerExit(){
-		_inZone=false;
 		_dialog.Activate(false);
 	}
 
