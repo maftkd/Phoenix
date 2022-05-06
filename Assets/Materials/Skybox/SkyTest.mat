@@ -89,7 +89,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.49056602, g: 0.49056602, b: 0.49056602, a: 1}
     - _GroundData: {r: -0.65, g: -0.05, b: 0, a: 0}
-    - _HorizonColor: {r: 0.43137258, g: 1, b: 1, a: 1}
+    - _HorizonColor: {r: 0.681, g: 0.9736, b: 1, a: 1}
     - _HorizonColor2: {r: 1, g: 1, b: 1, a: 1}
     - _SkyColor: {r: 0.39999998, g: 0.63071775, b: 1, a: 1}
     - _SkyData: {r: -0.15, g: 0.1, b: -0.3, a: 0.48}

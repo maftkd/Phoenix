@@ -10,13 +10,14 @@
 		_ReflectPow ("Reflection Power", Float) = 5
 		_ReflectPow2 ("Reflection Power 2", Float) = 5
 		_ReflectDamp ("Reflection Dampen", Range(0,1)) = 0.1
-		_WavePow ("Wave Pow", Range(0,10)) = 0.5
 		_WaveSpeed ("Wave Speed", Range(0,.3)) = 0.5
 		_WaveScale ("Wave Scale", Range(0,.1)) = 0.1
         _GradTex ("Grad Tex", 2D) = "white" {}
-		_FresnelPow ("Fresnel Power", Range(0,1))=1
 		_MinFresnel ("Min Fresnel", Range(0,1)) = 0.5
-		_WaveSize ("Wave Size", Range(0,1)) = 0.5
+		_MaxPlayerDist ("Min player dist", Range(0,8)) = 5
+		_PlayerPos ("Player Pos", Vector) = (0,0,0,0)
+		_MaxNoiseBoost ("Max Noise Boost", Range(0.5,1.5)) = 1
+		_RippleNoiseReduce ("Ripple Noise Reduce", Range(0,1)) = 0.1
     }
     SubShader
     {
@@ -60,13 +61,14 @@
 			fixed _ReflectPow2;
 			fixed _ReflectDamp;
 			fixed4 _LightColor0;
-			fixed _WavePow;
 			fixed _WaveSpeed;
 			fixed _WaveScale;
 			sampler2D _GradTex;
-			fixed _FresnelPow;
 			fixed _MinFresnel;
-			fixed _WaveSize;
+			fixed4 _PlayerPos;
+			fixed _MaxPlayerDist;
+			fixed _MaxNoiseBoost;
+			fixed _RippleNoiseReduce;
 
             v2f vert (appdata v)
             {
@@ -91,23 +93,31 @@
 				fixed s=smoothstep(_MinStep,_MaxStep,depth);
 				fixed4 col = lerp(_ColorShallow,_ColorDeep,s);
 
+				//player position
+				fixed3 diff=i.worldPos-_PlayerPos.xyz;
+				fixed dSqr=dot(diff,diff);
+				//fixed playerNearWater=step(dSqr,_MaxPlayerDist*_MaxPlayerDist);
+				fixed playerNearWater=1-smoothstep(0,_MaxPlayerDist*_MaxPlayerDist,dSqr);
+				//col.rgb=lerp(col.rgb,fixed3(1,0,0),playerNearWater);
+
 				//NOISE NOISE NOISE
                 fixed noise = tex2D(_MainTex, i.uv).r;
-                fixed noise2 = tex2D(_MainTex, (i.uv+fixed2(0.9,1)*_Time.y*_WaveSpeed)*_WaveScale).r;
-                //fixed noise3 = tex2D(_MainTex, (i.uv+fixed2(1,1)*_Time.y*_NoiseSpeed)*_NoiseScale).r;
+
+				fixed noiseBoostMult=lerp(1,_MaxNoiseBoost,saturate(playerNearWater-noise*_RippleNoiseReduce));
+                fixed noise2 = tex2D(_MainTex, (i.uv+fixed2(0.9,1)*_Time.y*_WaveSpeed)*_WaveScale*noiseBoostMult).r;
 				//noise2+=step(noise2,noise3);
 
 				//get reflectance
 				fixed3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
 				fixed3 reflectView=viewDir;
 				reflectView.y*=-1;
-				//reflectView.y*=-pow(noise,_WavePow);
 				fixed dt = -dot(reflectView,_WorldSpaceLightPos0.xyz);
 				dt=(dt+1)*0.5;
 				fixed rawDt=dt;
 				dt=pow(dt,_ReflectPow);
 				fixed dt2=pow(rawDt,_ReflectPow2);
-				fixed reflectNoise=step(noise,dt2-_ReflectDamp);
+				//fixed reflectNoise=step(noise,dt2-_ReflectDamp);
+				fixed reflectNoise=step(noise,dt2);
 
 				//wave stuff
 				fixed wave=noise;
@@ -121,8 +131,10 @@
 				fresnel=smoothstep(_MinFresnel,1,fresnel);
 				col.rgb=lerp(col.rgb,_ColorShallow.rgb,fresnel);
 
-				//col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise);
+				//apply sun reflect
 				col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise*0.85);
+
+
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

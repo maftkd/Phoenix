@@ -11,8 +11,8 @@ public class Fly : MonoBehaviour
 	public AudioClip _flapBackSound;
 	[HideInInspector]
 	public Vector3 _velocity;
-	float _gravity;
-	public float _defaultGravity;
+	public float _gravityBoost;
+	//public float _defaultGravity;
 	public float _maxVel;
 	public float _maxFlapVel;
 	public float _flapAccel;//z=forward,y=up
@@ -82,6 +82,8 @@ public class Fly : MonoBehaviour
 	//ground effects
 	const float _maxDist=5f;
 	//water
+	Material _oceanMat;
+	Vector4 _playerPos;
 	[Header ("Effects")]
 	public Transform _waterSprayPrefab;
 	Transform _waterSpray;
@@ -178,6 +180,9 @@ public class Fly : MonoBehaviour
 		//boundary
 		//_boundary=transform.Find("Boundary").gameObject;
 		//_boundary.SetActive(false);
+		_oceanMat=FindObjectOfType<Ocean>().GetComponent<Renderer>().material;
+		_playerPos=Vector4.zero;
+		_oceanMat.SetVector("_PlayerPos",_playerPos);
 	}
 
 	void OnEnable(){
@@ -211,6 +216,8 @@ public class Fly : MonoBehaviour
 		Reset();
 		//_landTarget.gameObject.SetActive(false);
 		//_mCam.SetVignette(0);
+		_playerPos=Vector4.zero;
+		_oceanMat.SetVector("_PlayerPos",_playerPos);
 	}
 
     // Start is called before the first frame update
@@ -231,7 +238,8 @@ public class Fly : MonoBehaviour
 				_knockBackTimer=0f;//can reset knockback by flapping
 				//_curFlapAccel=transform.up*_flapAccel;
 				//_curFlapAccel=(transform.up+transform.forward)*_flapAccel;
-				_curFlapAccel=(transform.up+transform.forward*0.5f)*_flapAccel;
+				_curFlapAccel=transform.forward*_flapAccel;
+				//_curFlapAccel=(transform.up+transform.forward*0.5f)*_flapAccel;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
 				Soar(false);
@@ -294,16 +302,31 @@ public class Fly : MonoBehaviour
 			if(_soaring){
 				Vector3 prevVel=_velocity;
 				if(_aoa>0)
+				{
 					_velocity=Quaternion.Euler(_aoa*transform.right*_pitchSpeed*Time.deltaTime)*_velocity;
+					_velocity+=_velocity.normalized*_gravityBoost*Time.deltaTime;
+				}
 				else if(_aoa<0)
+				{
 					_velocity=Quaternion.Euler(_aoa*transform.right*_upPitchSpeed*Time.deltaTime)*_velocity;
+					//_velocity-=_velocity.normalized*1*Time.deltaTime;
+				}
+				//level out
+				else
+				{
+					Vector3 targetVel=flatForward*_prevMag;
+					_velocity=Vector3.Lerp(_velocity,targetVel,Time.deltaTime);
+					_velocity=_velocity.normalized*_prevMag;
+					//Debug.Log("yoyoyo");
+				}
 				flatVel=_velocity;
 				flatVel.y=0;
 				float yVel=_velocity.y;
 				float phi=Mathf.Atan2(yVel,flatVel.magnitude);
+				//cap aoa
 				if(phi<-_maxPhi&&_aoa>0||phi>_maxUpPhi&&_aoa<0)
 				{
-					_velocity=prevVel;
+					_velocity=prevVel.normalized*_velocity.magnitude;
 				}
 				flatVel=_velocity;
 				flatVel.y=0;
@@ -349,9 +372,9 @@ public class Fly : MonoBehaviour
 		transform.position+=_velocity*Time.deltaTime;
 		float normVel=_velocity.magnitude/_maxVel;
 		//float gLerp=1-normVel;
-		_gravity=_defaultGravity;
+		//_gravity=_defaultGravity;
 		_velocity-=flatForward.normalized*_airResistance*Time.deltaTime;
-		_velocity-=Vector3.up*_gravity*Time.deltaTime;
+		//_velocity-=Vector3.up*_gravity*Time.deltaTime;
 		_mCam.SetFovFrac(normVel);
 
 		flatVel=_velocity;
@@ -363,9 +386,9 @@ public class Fly : MonoBehaviour
 			_velocity.x=0f;
 			_velocity.z=0f;
 		}
-		DebugScreen.Print(_velocity.y.ToString("0.000"));
 
 		float velMag=_velocity.magnitude;
+		DebugScreen.Print(velMag.ToString("0.000"));
 		float accel=(velMag-_prevMag)/Time.deltaTime;
 		bool boosted=normVel>0.2f;
 		if(boosted&&!_windSound.IsOn()){
@@ -429,6 +452,12 @@ public class Fly : MonoBehaviour
 
 		//checking enabled because bird script may have disabled already from Land or Dive
 		if(enabled){
+
+			_playerPos.x=transform.position.x;
+			_playerPos.y=transform.position.y;
+			_playerPos.z=transform.position.z;
+			_playerPos.w=_prevMag;
+			_oceanMat.SetVector("_PlayerPos",_playerPos);
 
 			//raycast down 
 			Vector3 hitPoint=Vector3.zero;

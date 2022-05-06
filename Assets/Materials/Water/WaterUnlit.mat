@@ -74,6 +74,8 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
+    - _MaxNoiseBoost: 1.1
+    - _MaxPlayerDist: 2.12
     - _MaxStep: 2.39
     - _Metallic: 0
     - _MinAlpha: 0.256
@@ -85,9 +87,10 @@ Material:
     - _NoiseSpeed: 0.835
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectDamp: 0.216
-    - _ReflectPow: 0.22
-    - _ReflectPow2: 2.78
+    - _ReflectDamp: 0.278
+    - _ReflectPow: 0.2
+    - _ReflectPow2: 53.66
+    - _RippleNoiseReduce: 0.5
     - _SineMult: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -112,4 +115,5 @@ Material:
     - _ColorShallow: {r: 0.64705884, g: 0.882353, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
+    - _PlayerPos: {r: -20, g: 6, b: 0, a: 0}
     - _WindDir: {r: 0.5, g: 0.5, b: 0, a: 0}
