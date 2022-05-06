@@ -46,8 +46,9 @@
 				//if amount is basically 0, add a fudge value to make sure all pixels are clipped
 				fixed2 diff = fixed2(0.5,0.5)-i.uv;
 				fixed dstSqr=dot(diff,diff);
-				fixed ds01=smoothstep(_Params.x,_Params.y,dstSqr);
-				fixed a = ds01*_Amount;
+				fixed xMax=lerp(0,_Params.y,1-_Amount);
+				fixed ds01=smoothstep(_Params.x,xMax,dstSqr);
+				fixed a = ds01;
 				fixed4 col = fixed4(0,0,0,a);
                 return col;
             }

@@ -96,9 +96,8 @@
 				//player position
 				fixed3 diff=i.worldPos-_PlayerPos.xyz;
 				fixed dSqr=dot(diff,diff);
-				//fixed playerNearWater=step(dSqr,_MaxPlayerDist*_MaxPlayerDist);
 				fixed playerNearWater=1-smoothstep(0,_MaxPlayerDist*_MaxPlayerDist,dSqr);
-				//col.rgb=lerp(col.rgb,fixed3(1,0,0),playerNearWater);
+				playerNearWater*=lerp(0.75,1,_PlayerPos.w);
 
 				//NOISE NOISE NOISE
                 fixed noise = tex2D(_MainTex, i.uv).r;
@@ -129,7 +128,7 @@
 				//fresnel
 				fixed fresnel=1-abs(dot(viewDir,fixed3(0,-1,0)));
 				fresnel=smoothstep(_MinFresnel,1,fresnel);
-				col.rgb=lerp(col.rgb,_ColorShallow.rgb,fresnel);
+				col.rgb=lerp(col.rgb,unity_FogColor.rgb,fresnel);
 
 				//apply sun reflect
 				col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise);

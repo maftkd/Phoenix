@@ -462,7 +462,7 @@ public class Fly : MonoBehaviour
 			_playerPos.x=transform.position.x;
 			_playerPos.y=transform.position.y;
 			_playerPos.z=transform.position.z;
-			_playerPos.w=_prevMag;
+			_playerPos.w=_prevMag/_maxVel;
 			_oceanMat.SetVector("_PlayerPos",_playerPos);
 
 			//raycast down 
@@ -479,7 +479,13 @@ public class Fly : MonoBehaviour
 			//determine which fx to play
 			bool water=false;
 			if (hitPoint.y<=5f&&transform.position.y<5f+_maxDist)
-				water=true;
+			{
+				if(transform.position.y<5f){
+					//under water
+				}
+				else
+					water=true;
+			}
 			bool grass=false;
 			bool sand=false;
 			bool gravel=false;

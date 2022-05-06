@@ -140,6 +140,8 @@ public class FlyCam : Shot
 		Vector3 targetPos=_player.transform.position+_offset;
 
 		_position=targetPos;
+		if(_position.y<5.5f)
+			_position.y=5.5f;
 
 		transform.forward=-_offset;
 		Quaternion targetRot=transform.rotation;

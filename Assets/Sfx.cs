@@ -52,7 +52,7 @@ public class Sfx : MonoBehaviour
 		Destroy(foo,clip.length);
 	}
 
-	public static void PlayOneShot3D(AudioClip clip,Vector3 pos){
+	public static AudioSource PlayOneShot3D(AudioClip clip,Vector3 pos){
 		GameObject foo = new GameObject("one-shot audio");
 		foo.transform.position=pos;
 		AudioSource audio = foo.AddComponent<AudioSource>();
@@ -61,6 +61,7 @@ public class Sfx : MonoBehaviour
 		audio.clip=clip;
 		audio.Play();
 		Destroy(foo,clip.length);
+		return audio;
 	}
 	public static void PlayOneShot3D(AudioClip clip,Vector3 pos,float pitch){
 		GameObject foo = new GameObject("one-shot audio");
