@@ -20,6 +20,7 @@ public class Fly : MonoBehaviour
 	public float _flapDeccelDown;//z=forward,y=up
 	public float _initialVelBoost;
 	public float _airResistance;
+	bool _airResistEnabled=true;
 	Vector3 _curFlapAccel;
 	float _flapTimer;
 	public float _flapDur;
@@ -373,7 +374,12 @@ public class Fly : MonoBehaviour
 		float normVel=_velocity.magnitude/_maxVel;
 		//float gLerp=1-normVel;
 		//_gravity=_defaultGravity;
-		_velocity-=flatForward.normalized*_airResistance*Time.deltaTime;
+		if(Input.GetKeyDown(KeyCode.F3))
+			_airResistEnabled=!_airResistEnabled;
+		if(_airResistEnabled)
+			_velocity-=flatForward.normalized*_airResistance*Time.deltaTime;
+		else
+			DebugScreen.Print("Air Resistance off");
 		//_velocity-=Vector3.up*_gravity*Time.deltaTime;
 		_mCam.SetFovFrac(normVel);
 
@@ -508,12 +514,16 @@ public class Fly : MonoBehaviour
 				//_sprayTrail.emitting=false;
 			}
 			if(_sprayParts.isPlaying){
-				_sprayEmission.rateOverTime=200f*(1-frac);
+				_sprayEmission.rateOverTime=500f*(1-frac);
 				_spraySound.SetTarget(1-frac);
 				//_sprayTrail.startColor=Color.white*(1-frac);
-				//_sprayTrail.startWidth=0.5f*(1-frac);
-				_waterSpray.position=hitPoint;
-				_waterSpray.rotation=Quaternion.identity;
+				//_sprayTrail.startWidth=0.25f*(1-frac);
+				_waterSpray.position=hitPoint+Vector3.up*0.05f;
+				_waterSpray.rotation=transform.rotation;//Quaternion.identity;
+				Vector3 eulers = _waterSpray.eulerAngles;
+				eulers.z=0;
+				eulers.x=0;
+				_waterSpray.eulerAngles=eulers;
 			}
 
 			//sand fx

@@ -132,7 +132,7 @@
 				col.rgb=lerp(col.rgb,_ColorShallow.rgb,fresnel);
 
 				//apply sun reflect
-				col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise*0.85);
+				col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise);
 
 
                 // apply fog
