@@ -8,16 +8,15 @@
 		_MinStep ("Min Step", Float) = 0
 		_MaxStep ("Max Step", Float) = 1
 		_ReflectPow ("Reflection Power", Float) = 5
+		_ReflectPow2 ("Reflection Power 2", Float) = 5
 		_ReflectDamp ("Reflection Dampen", Range(0,1)) = 0.1
-		_WaveCutoff ("Wave Cutoff", Range(0,1)) = 0.5
-		_WaveCutoffMax ("Wave CutoffMax", Range(0,1)) = 0.5
+		_WavePow ("Wave Pow", Range(0,10)) = 0.5
 		_WaveSpeed ("Wave Speed", Range(0,.3)) = 0.5
-		_WavePower ("Wave Power", Range(0.01,5)) = 1
 		_WaveScale ("Wave Scale", Range(0,.1)) = 0.1
-		_WavePeak ("Wave Peak", Range(0,1)) = 0.9
-		_NoiseScale ("Noise Scale", Float) = 4
-		_NoiseSpeed ("Noise Speed", Range(0,1)) = 0.1
-		_NoiseIntensity ("Noise intensity", Range(0,3)) = 0.1
+        _GradTex ("Grad Tex", 2D) = "white" {}
+		_FresnelPow ("Fresnel Power", Range(0,1))=1
+		_MinFresnel ("Min Fresnel", Range(0,1)) = 0.5
+		_WaveSize ("Wave Size", Range(0,1)) = 0.5
     }
     SubShader
     {
@@ -58,17 +57,16 @@
 			fixed _MinStep;
 			fixed _MaxStep;
 			fixed _ReflectPow;
+			fixed _ReflectPow2;
 			fixed _ReflectDamp;
 			fixed4 _LightColor0;
-			fixed _WaveCutoff;
-			fixed _WaveCutoffMax;
+			fixed _WavePow;
 			fixed _WaveSpeed;
-			fixed _WavePower;
 			fixed _WaveScale;
-			fixed _WavePeak;
-			fixed _NoiseScale;
-			fixed _NoiseSpeed;
-			fixed _NoiseIntensity;
+			sampler2D _GradTex;
+			fixed _FresnelPow;
+			fixed _MinFresnel;
+			fixed _WaveSize;
 
             v2f vert (appdata v)
             {
@@ -96,35 +94,35 @@
 				//NOISE NOISE NOISE
                 fixed noise = tex2D(_MainTex, i.uv).r;
                 fixed noise2 = tex2D(_MainTex, (i.uv+fixed2(0.9,1)*_Time.y*_WaveSpeed)*_WaveScale).r;
-                fixed noise3 = tex2D(_MainTex, (i.uv+fixed2(1,1)*_Time.y*_NoiseSpeed)*_NoiseScale).r;
-				noise+=step(noise,noise3)*_NoiseIntensity;
+                //fixed noise3 = tex2D(_MainTex, (i.uv+fixed2(1,1)*_Time.y*_NoiseSpeed)*_NoiseScale).r;
+				//noise2+=step(noise2,noise3);
 
 				//get reflectance
 				fixed3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
 				fixed3 reflectView=viewDir;
 				reflectView.y*=-1;
+				//reflectView.y*=-pow(noise,_WavePow);
 				fixed dt = -dot(reflectView,_WorldSpaceLightPos0.xyz);
 				dt=(dt+1)*0.5;
 				fixed rawDt=dt;
 				dt=pow(dt,_ReflectPow);
+				fixed dt2=pow(rawDt,_ReflectPow2);
+				fixed reflectNoise=step(noise,dt2-_ReflectDamp);
 
-				//sun reflection ripples
-				fixed reflectNoise=step(noise3,dt-_ReflectDamp);
-				//fixed reflectNoise=step(noise,dt);
-				//fixed3 reflectColor=lerp(fixed3(1,1,1),_LightColor0.rgb,dt);
+				//wave stuff
+				fixed wave=noise;
+				wave*=dt;
+				wave+=noise2;
+				wave=saturate(wave);
+				col.rgb=lerp(col.rgb,_ColorShallow.rgb,tex2D(_GradTex,fixed2(wave,0)));
 
-				//wave ripples v2
-				fixed cut = lerp(_WaveCutoff,_WaveCutoffMax,noise2);
-				fixed wave = step(cut,noise);
-				fixed waveHeight=saturate(pow((noise-cut)/(1-cut),_WavePower));
-				fixed3 waveColor=lerp(col.rgb,_ColorShallow.rgb,smoothstep(0,_WavePeak,waveHeight));
-				//fixed wavePeak=smoothstep(_WavePeak,1,waveHeight)*noise2;//*sin(waveHeight*_Time.y);
-				//waveColor=lerp(waveColor,fixed3(1,1,1),reflectNoise);
-				col.rgb=lerp(col.rgb,waveColor,wave);
+				//fresnel
+				fixed fresnel=1-abs(dot(viewDir,fixed3(0,-1,0)));
+				fresnel=smoothstep(_MinFresnel,1,fresnel);
+				col.rgb=lerp(col.rgb,_ColorShallow.rgb,fresnel);
 
-				col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise);
-
-
+				//col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise);
+				col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise*0.85);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

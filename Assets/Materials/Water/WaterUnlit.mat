@@ -39,6 +39,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _GradTex:
+        m_Texture: {fileID: 2800000, guid: 39ea2baee31548347b39201a514f70dd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: db7f352b98b6e42459c90baed53f7b53, type: 3}
         m_Scale: {x: 100, y: 100}
@@ -66,34 +70,46 @@ Material:
     - _DstBlend: 0
     - _FoamDist: 0.4
     - _FoamFreq: 5.35
+    - _FresnelPow: 0.2
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
     - _MaxStep: 2.39
     - _Metallic: 0
     - _MinAlpha: 0.256
+    - _MinFresnel: 0.774
     - _MinStep: 0
     - _Mode: 0
+    - _NoiseIntensity: 3
+    - _NoiseScale: 9.77
+    - _NoiseSpeed: 0.835
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectPow: 17.46
+    - _ReflectDamp: 0.216
+    - _ReflectPow: 0.22
+    - _ReflectPow2: 2.78
     - _SineMult: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _WaveCutoff: 0.438
+    - _WaveCutoff: 0
+    - _WaveCutoffMax: 1
     - _WaveNoise: 0.007
     - _WaveNoise2: 68.6
-    - _WavePower: 46.03
-    - _WaveSpeed: 0.5
+    - _WavePeak: 0
+    - _WavePow: 1.74
+    - _WavePower: 2.73
+    - _WaveScale: 0.0339
+    - _WaveSize: 0.713
+    - _WaveSpeed: 0.136
     - _WaveWidth: 0.688
     - _WindSpeed: 0.1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.036517646, g: 0.17688234, b: 0.291, a: 1}
-    - _ColorDeep: {r: 0, g: 0.37184316, b: 0.7924528, a: 1}
-    - _ColorShallow: {r: 0, g: 0.5885999, b: 0.872, a: 0.57254905}
+    - _ColorDeep: {r: 0, g: 0.42492756, b: 0.97900003, a: 1}
+    - _ColorShallow: {r: 0.64705884, g: 0.882353, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
     - _WindDir: {r: 0.5, g: 0.5, b: 0, a: 0}

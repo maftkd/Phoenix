@@ -14,6 +14,7 @@
 		_CloudScale ("Cloud Scale", Range(0,.1)) = 0.1
 		_CloudRange ("Cloud Range", Vector) = (0.2,1,0,0)
 		_CloudSpeed ("Cloud Speed", Float) = 0.5
+		_GradTex ("Gradient Texture", 2D) = "white" {}
     }
     SubShader
     {
@@ -54,6 +55,7 @@
 			fixed _CloudScale;
 			fixed4 _CloudRange;
 			fixed _CloudSpeed;
+			sampler2D _GradTex;
 
             v2f vert (appdata_t v)
             {
@@ -94,15 +96,16 @@
 				fixed cloudOffset=tex2D(_NoiseTex, (i.cloudPlane+fixed2(1,1)*_Time.y*_CloudSpeed)*_CloudScale).r;
 				cloudOffset=lerp(_CloudRange.z,_CloudRange.w,cloudOffset);
                 fixed cloud = tex2D(_NoiseTex, ((i.cloudPlane)*_CloudScale)).r;
-				fixed3 cloudColor = lerp(fixed3(1,1,1),fixed3(0.95,0.95,0.95),smoothstep(cloudOffset,1,cloud));
+				fixed cloudLerp = smoothstep(cloudOffset,1,cloud);
 				cloud=step(cloudOffset,cloud);
-				//fixed3 cloudColor=fixed3(1,1,1);
+				cloudLerp=1-tex2D(_GradTex,fixed2(cloudLerp,0));
+				
+				fixed3 cloudColor = lerp(fixed3(1,1,1),fixed3(0.75,0.75,0.75),cloudLerp);
 				fixed cloudAmount=smoothstep(_CloudRange.x,_CloudRange.y,i.rayDir.y);
 				cloudAmount=1-abs(cloudAmount-0.5)*2;
 
 				col.rgb=lerp(col.rgb,cloudColor,cloud*cloudAmount);
 				//col.rgb*=cloud;
-
 
 				//col.rgb=fixed3(sun,0,0);
 				col.a=0.5;
