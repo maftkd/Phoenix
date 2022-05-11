@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7b7ae5e015f4a8941bdb0981c4f4247a
+guid: 2cf1cd749936b8c488605ed8a29aad91
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable: []
@@ -82,15 +82,15 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: Bip01
+    rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
-    skeletonHasParents: 0
+    skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
