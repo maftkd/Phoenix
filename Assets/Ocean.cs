@@ -122,5 +122,6 @@ public class Ocean : MonoBehaviour
 		}
 		_mCam.SetVignette(0);
 		_wet=false;
+		_breathTimer=0;
 	}
 }
