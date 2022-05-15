@@ -146,6 +146,42 @@ public class MInput : MonoBehaviour
 		return Input.GetButtonDown("Sing");
 	}
 
+	public bool GetLowDown(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonDown("Low");
+	}
+
+	public bool GetLowUp(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonUp("Low");
+	}
+
+	public bool GetMidDown(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonDown("Middle");
+	}
+
+	public bool GetMidUp(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonUp("Middle");
+	}
+
+	public bool GetHighDown(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonDown("High");
+	}
+
+	public bool GetHighUp(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButtonUp("High");
+	}
+
 
 	void RemapInputFromSquareToCircle(){
 		float theta = Mathf.Atan2(_controllerInput.y,_controllerInput.x)*Mathf.Rad2Deg;

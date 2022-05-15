@@ -33,11 +33,6 @@ public class Footstep : MonoBehaviour
     {
     }
 
-	public void AssignSynthClip(Synthesizer synth){
-		_clips = new AudioClip[1];
-		_clips[0]=synth._myClip;
-	}
-
 	public void Sound(Vector3 pos,float volume=-1f,float pitch=-1f){
 		if(_clips.Length==0)
 			return;

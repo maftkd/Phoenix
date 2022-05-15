@@ -10,6 +10,11 @@ public class Fader : MonoBehaviour
 	const float _fudge= 0.001f;
 	public float _lerp;
 	bool _on;
+	public bool _dontModPitch;
+	public bool _fancyEnvelope;
+	float _attack;
+	public float _attackDur;
+	public AnimationCurve _attackCurve;
 
 	void Awake(){
 	}
@@ -45,9 +50,10 @@ public class Fader : MonoBehaviour
     }
 
 	public void Play(){
-		SetTarget(_maxVol);
-		_audio.pitch=Random.Range(0.8f,1.2f);
 		_on=true;
+		SetTarget(_maxVol);
+		if(!_dontModPitch)
+			_audio.pitch=Random.Range(0.8f,1.2f);
 	}
 	public void Stop(){
 		SetTarget(0);

@@ -12,12 +12,14 @@ public class Fly : MonoBehaviour
 	[HideInInspector]
 	public Vector3 _velocity;
 	public float _gravityBoost;
+	public float _gravity;
 	//public float _defaultGravity;
 	public float _maxVel;
 	public float _maxFlapVel;
-	public float _flapAccel;//z=forward,y=up
-	public float _flapDeccel;//z=forward,y=up
-	public float _flapDeccelDown;//z=forward,y=up
+	public float _flapAccel;
+	public float _flapAccelUp;
+	public float _flapDeccel;
+	public float _flapDeccelDown;
 	public float _initialVelBoost;
 	public float _airResistance;
 	bool _airResistEnabled=true;
@@ -191,6 +193,7 @@ public class Fly : MonoBehaviour
 
 		_curFlapAccel=Vector3.up*_flapAccel*_initialVelBoost;
 		_curFlapAccel+=transform.forward*_bird.GetVel();//*_flapAccel.z;
+		_velocity=(transform.forward+transform.up).normalized;
 
 		_speedFrac=0;
 		_knockBackTimer=0;
@@ -240,6 +243,7 @@ public class Fly : MonoBehaviour
 				//_curFlapAccel=transform.up*_flapAccel;
 				//_curFlapAccel=(transform.up+transform.forward)*_flapAccel;
 				_curFlapAccel=transform.forward*_flapAccel;
+				_curFlapAccel+=transform.up*_flapAccelUp;
 				//_curFlapAccel=(transform.up+transform.forward*0.5f)*_flapAccel;
 				_flapTimer=0;
 				_anim.SetTrigger("fly");
@@ -251,8 +255,8 @@ public class Fly : MonoBehaviour
 			if(_flapCounter<_numFlaps){
 				_knockBackTimer=0f;//can reset knockback by flapping
 				_curFlapAccel=-transform.forward*_flapDeccel;
-				_curFlapAccel+=transform.up*_flapDeccel*0.25f;
-				//_curFlapAccel+=Vector3.down*_flapDeccelDown;
+				//_curFlapAccel+=transform.up*_flapDeccel*0.25f;
+				_curFlapAccel+=Vector3.down*_flapDeccelDown;
 				_flapTimer=0;
 				_anim.SetTrigger("flyBack");
 				Soar(false);
@@ -380,7 +384,7 @@ public class Fly : MonoBehaviour
 			_velocity-=flatForward.normalized*_airResistance*Time.deltaTime;
 		else
 			DebugScreen.Print("Air Resistance off");
-		//_velocity-=Vector3.up*_gravity*Time.deltaTime;
+		_velocity-=Vector3.up*_gravity*Time.deltaTime;
 		_mCam.SetFovFrac(normVel);
 
 		flatVel=_velocity;

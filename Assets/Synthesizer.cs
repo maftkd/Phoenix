@@ -5,25 +5,9 @@ using UnityEngine.Events;
 
 public class Synthesizer : MonoBehaviour
 {
-	public float _frequency;
-	public float _duration;
 	public static int _sampleRate = 44100;
-	[HideInInspector]
-	public AudioClip _myClip;
-	public UnityEvent _onGenerate;
-	public Transform _musicParts;
 
 	void Awake(){
-		int numSamples=Mathf.FloorToInt(_duration*_sampleRate);
-		float [] samples = new float[numSamples];
-		for(int i=0;i<numSamples; i++){
-			float t01 = i/(float)numSamples;
-			float t = t01*_duration;
-			samples[i]=Mathf.Sin(t*_frequency*Mathf.PI*2);
-		}
-		_myClip = AudioClip.Create("synth",numSamples,1,_sampleRate,false);
-		_myClip.SetData(samples,0);
-		_onGenerate.Invoke();
 	}
 
 	public static AudioClip GenerateSineWave(float frequency, float dur, float noise, float noiseFreq=0,float minNoise=0){
@@ -59,6 +43,126 @@ public class Synthesizer : MonoBehaviour
 		return foo;
 	}
 
+	public static AudioClip GenerateSomethingHarmonic(float frequency, float dur, float noise, int harmonics=0,float harmonicFactor=1f){
+		int numSamples=Mathf.FloorToInt(dur*_sampleRate);
+		float [] samples = new float[numSamples];
+		float max=0;
+		for(int i=0;i<numSamples; i++){
+			float t01 = i/(float)numSamples;
+			float t = t01*dur;
+			float n=noise*(2*Random.value-1f);
+			samples[i]=Mathf.Sin(t*frequency*Mathf.PI*2);//+n;
+			for(int j=1;j<=harmonics;j++){
+				float amount=harmonicFactor;
+				//samples[i]+=Mathf.Sin(t*(frequency+j*100)*Mathf.PI*2)*amount;//+n;
+				samples[i]+=Mathf.Sin(t*(frequency*(j+1))*Mathf.PI*2)*amount;//+n;
+			}
+			samples[i]+=n;
+			if(Mathf.Abs(samples[i])>max)
+				max=Mathf.Abs(samples[i]);
+		}
+		//normalize
+		if(max>1f){
+			float factor=1f/max;
+			for(int i=0;i<numSamples; i++)
+				samples[i]*=factor;
+		}
+
+		AudioClip foo = AudioClip.Create("synth",numSamples,1,_sampleRate,false);
+		foo.SetData(samples,0);
+		return foo;
+	}
+
+	public static AudioClip GenerateSomethingAm(float frequency,float ampFrequency, float dur, float noise){
+		int numSamples=Mathf.FloorToInt(dur*_sampleRate);
+		float [] samples = new float[numSamples];
+		float max=0;
+		for(int i=0;i<numSamples; i++){
+			float t01 = i/(float)numSamples;
+			float t = t01*dur;
+			float n=noise*(2*Random.value-1f);
+			float ampMod=Mathf.Cos(t*ampFrequency*Mathf.PI*2);
+			samples[i]=Mathf.Sin(t*frequency*Mathf.PI*2)*ampMod;//+n;
+
+			samples[i]+=n;
+			if(Mathf.Abs(samples[i])>max)
+				max=Mathf.Abs(samples[i]);
+		}
+		//normalize
+		if(max>1f){
+			float factor=1f/max;
+			for(int i=0;i<numSamples; i++)
+				samples[i]*=factor;
+		}
+
+		AudioClip foo = AudioClip.Create("synth",numSamples,1,_sampleRate,false);
+		foo.SetData(samples,0);
+		return foo;
+	}
+
+	public static AudioClip GenerateSomethingFm(float frequency,float frequencyB, float dur, float noise){
+		int numSamples=Mathf.FloorToInt(dur*_sampleRate);
+		float [] samples = new float[numSamples];
+		float max=0;
+		for(int i=0;i<numSamples; i++){
+			float t01 = i/(float)numSamples;
+			float t = t01*dur;
+			float n=noise*(2*Random.value-1f);
+			float freqMod=Mathf.Cos(t*frequencyB*Mathf.PI*2);
+			samples[i]=Mathf.Sin(t*frequency*freqMod*Mathf.PI*2);//+n;
+
+			samples[i]+=n;
+			if(Mathf.Abs(samples[i])>max)
+				max=Mathf.Abs(samples[i]);
+		}
+		//normalize
+		if(max>1f){
+			float factor=1f/max;
+			for(int i=0;i<numSamples; i++)
+				samples[i]*=factor;
+		}
+
+		AudioClip foo = AudioClip.Create("synth",numSamples,1,_sampleRate,false);
+		foo.SetData(samples,0);
+		return foo;
+	}
+
+	public static AudioClip GenerateSomethingDetune(float frequency, float dur, float noise, int voices=0,float detune=0){
+		int numSamples=Mathf.FloorToInt(dur*_sampleRate);
+		float [] samples = new float[numSamples];
+		float max=0;
+		float [] voiceFreqs = new float[voices];
+		for(int i=0;i<voices; i++){
+			voiceFreqs[i]=frequency+(Random.value*2f-1)*detune;
+		}
+		for(int i=0;i<numSamples; i++){
+			float t01 = i/(float)numSamples;
+			float t = t01*dur;
+			float n=noise*(2*Random.value-1f);
+			samples[i]=Mathf.Sin(t*frequency*Mathf.PI*2);//+n;
+			for(int j=0;j<voices;j++){
+				float amount=0.5f;
+				//float amount=1f/(j+2);
+				samples[i]+=Mathf.Sin(t*voiceFreqs[j]*Mathf.PI*2)*amount;//+n;
+			}
+			//average voices
+			//samples[i]/=(voices+1);
+			samples[i]+=n;
+			if(Mathf.Abs(samples[i])>max)
+				max=Mathf.Abs(samples[i]);
+		}
+		//normalize
+		if(max>1f){
+			float factor=1f/max;
+			for(int i=0;i<numSamples; i++)
+				samples[i]*=factor;
+		}
+
+		AudioClip foo = AudioClip.Create("synth",numSamples,1,_sampleRate,false);
+		foo.SetData(samples,0);
+		return foo;
+	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -70,11 +174,4 @@ public class Synthesizer : MonoBehaviour
     {
         
     }
-
-	public void PlayParticles(){
-		Transform parts = Instantiate(_musicParts,transform.position,Quaternion.identity);
-		ParticleSystem ps = parts.GetComponent<ParticleSystem>();
-		var main = ps.main;
-		main.startColor=GetComponent<MeshRenderer>().material.color;
-	}
 }
