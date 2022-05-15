@@ -299,7 +299,7 @@ public class Fly : MonoBehaviour
 			flatForward.y=0;
 			flatForward.Normalize();
 			float prevAoa=_aoa;
-			float y01=(input.y+1)*0.5f;
+			float y01=1-(input.y+1)*0.5f;//inverted
 			_aoa=Mathf.Lerp(-_maxAoa,_maxAoa,y01);
 			//_aoa = Mathf.Clamp(_aoa,-_maxAoa,_maxAoa);
 
