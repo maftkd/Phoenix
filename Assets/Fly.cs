@@ -706,6 +706,18 @@ public class Fly : MonoBehaviour
 		_velocity.y=0;
 	}
 
+	void OnTriggerEnter(Collider other){
+		if(other.tag=="Foliage"){
+			Debug.Log("We can land in: "+other.name);
+		}
+	}
+
+	void OnTriggerExit(Collider other){
+		if(other.tag=="Foliage"){
+			Debug.Log("We can no longer land in: "+other.name);
+		}
+	}
+
 	void OnDrawGizmos(){
 		Gizmos.color=Color.red;
 		Gizmos.color=Color.blue;

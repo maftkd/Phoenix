@@ -143,7 +143,7 @@ public class Bird : MonoBehaviour
 		_lastSpot=transform.position;
 
 		//band
-		_band.GetComponent<MeshRenderer>().material.SetColor("_Color",_bandColor);
+		//_band.GetComponent<MeshRenderer>().material.SetColor("_Color",_bandColor);
 
 		_player=GameManager._player;
 
@@ -158,7 +158,6 @@ public class Bird : MonoBehaviour
 		_hitRadius=_sphereCol.radius*transform.localScale.x;
 		_hitYOffset=_sphereCol.center.y*transform.localScale.x;
 		SetCheckPoint();
-
 	}
 
     // Start is called before the first frame update

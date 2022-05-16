@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MockingBirdSing
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Mockingbird
+    m_Weight: 0
+  - m_Path: Mockingbird_rig
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back/Head
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back/Head/BeakLower
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back/Head/BeakUpper
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back/Humerus_L
+    m_Weight: 0
+  - m_Path: Mockingbird_rig/Root/Back/Humerus_L/Radius_L
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back/Humerus_L/Radius_L/Metacarpus_L
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back/Humerus_R
+    m_Weight: 0
+  - m_Path: Mockingbird_rig/Root/Back/Humerus_R/Radius_R
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back/Humerus_R/Radius_R/Metacarpus_R
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Back/Tail
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_L
+    m_Weight: 0
+  - m_Path: Mockingbird_rig/Root/Femur_L/Fibula_L
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_L/Fibula_L/Digit1_L
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_L/Fibula_L/Digit1_L/Digit1_L.001
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_L/Fibula_L/Digit2_L
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_L/Fibula_L/Digit2_L/Digit2_L.001
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_L/Fibula_L/Digit3_L
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_L/Fibula_L/Digit3_L/Digit3_L.001
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_R
+    m_Weight: 0
+  - m_Path: Mockingbird_rig/Root/Femur_R/Fibula_R
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_R/Fibula_R/Digit1_R
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_R/Fibula_R/Digit1_R/Digit1_R.001
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_R/Fibula_R/Digit2_R
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_R/Fibula_R/Digit2_R/Digit2_R.001
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_R/Fibula_R/Digit3_R
+    m_Weight: 1
+  - m_Path: Mockingbird_rig/Root/Femur_R/Fibula_R/Digit3_R/Digit3_R.001
+    m_Weight: 1

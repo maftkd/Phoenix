@@ -19,10 +19,15 @@ public class Whistle : MonoBehaviour
 	public AnimationCurve _releaseCurve;
 	IEnumerator _releaseRoutine;
 
+	public bool _dontGenClip;
+
 	void Awake(){
-		_source=GetComponent<AudioSource>();
 		_parts=GetComponent<ParticleSystem>();
-		_source.clip=AudioClip.Create("Whistle",_sampleRate,1,_sampleRate,true,OnAudioRead,OnAudioSetPosition);
+		if(!_dontGenClip)
+		{
+			_source=GetComponent<AudioSource>();
+			_source.clip=AudioClip.Create("Whistle",_sampleRate,1,_sampleRate,true,OnAudioRead,OnAudioSetPosition);
+		}
 	}
     // Start is called before the first frame update
     void Start()
@@ -32,6 +37,8 @@ public class Whistle : MonoBehaviour
 
 	public void Play(){
 		_parts.Play();
+		if(_dontGenClip)
+			return;
 		if(_releaseRoutine!=null)
 			StopCoroutine(_releaseRoutine);
 		_attackRoutine = Attack();
@@ -54,6 +61,8 @@ public class Whistle : MonoBehaviour
 
 	public void Stop(){
 		_parts.Stop();
+		if(_dontGenClip)
+			return;
 		if(_attackRoutine!=null)
 			StopCoroutine(_attackRoutine);
 		_releaseRoutine=Release();
