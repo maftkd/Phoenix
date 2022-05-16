@@ -269,7 +269,7 @@ public class Bird : MonoBehaviour
 			RaycastHit hit;
 			if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
 				//Debug.Log("Hit: "+hit.transform.name);
-				hit.transform.parent.GetComponent<NpcBird>().Targeted();
+				hit.transform.GetComponent<NPB>().Targeted();
 			}
 		}
 		else{

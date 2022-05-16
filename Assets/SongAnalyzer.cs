@@ -111,10 +111,12 @@ public class SongAnalyzer : MonoBehaviour
 			Debug.Log("Cannot serialize song. Please generate frequencies first.");
 			return;
 		}
-		byte[] data = new byte[transform.childCount*12+4];
+		byte[] data = new byte[transform.childCount*12+8];
 		int numNotes=transform.childCount;
 		byte[] nNotes = System.BitConverter.GetBytes(numNotes);
 		System.Array.Copy(nNotes,0,data,0,4);
+		byte[] songLength = System.BitConverter.GetBytes(_length);
+		System.Array.Copy(songLength,0,data,4,4);
 		for(int i=0; i<transform.childCount; i++){
 			Transform t = transform.GetChild(i);
 			float leftT=(t.localPosition.x-t.localScale.x*0.5f)/_plotDim.x;
@@ -134,11 +136,12 @@ public class SongAnalyzer : MonoBehaviour
 			else
 				pitchId=2;//high
 			byte[] startT=System.BitConverter.GetBytes(leftT);
-			System.Array.Copy(startT,0,data,i*12+4,4);
+			System.Array.Copy(startT,0,data,i*12+8,4);
 			byte[] endT=System.BitConverter.GetBytes(rightT);
-			System.Array.Copy(endT,0,data,i*12+8,4);
+			System.Array.Copy(endT,0,data,i*12+12,4);
 			byte[] pId = System.BitConverter.GetBytes(pitchId);
-			System.Array.Copy(pId,0,data,i*12+12,4);
+			System.Array.Copy(pId,0,data,i*12+16,4);
+			Debug.Log("Serializing note: "+i+", start: "+leftT+", end: "+rightT);
 		}
 		string path=Application.streamingAssetsPath+"/Songs/"+name+".song";
 		Debug.Log("song path: "+path);
