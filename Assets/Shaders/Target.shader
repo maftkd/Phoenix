@@ -3,13 +3,17 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+		_FillTex ("Fill Texture", 2D) = "white" {}
+		_Fill ("Fill", Range(0,1)) = 0.5
+		_FillColor ("Fill color", Color) = (1,1,1,1)
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" }
         LOD 100
 			ZTest Off
 			Cull Front
+			Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -36,6 +40,9 @@
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            sampler2D _FillTex;
+			fixed _Fill;
+			fixed4 _FillColor;
 
             v2f vert (appdata v)
             {
@@ -49,8 +56,12 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
+				fixed filledFull=step(0.999,_Fill);
                 fixed4 col = tex2D(_MainTex, i.uv);
-				clip(col.a-0.5);
+				col.rgb=lerp(col.rgb,_FillColor.rgb,filledFull);
+				fixed filled=step(1-i.uv.x,_Fill)*(1-filledFull);
+				clip(col.a-0.5+filled);
+				col+=filled*_FillColor*tex2D(_FillTex,i.uv).a;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

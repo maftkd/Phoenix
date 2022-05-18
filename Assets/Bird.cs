@@ -173,6 +173,7 @@ public class Bird : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		RaycastHit hit;
 		_vel=transform.position-_prevPos;
 		if(_playerControlled){
 			//player update
@@ -187,6 +188,11 @@ public class Bird : MonoBehaviour
 						Interact();
 					if(_mIn.GetSingDown()){
 						Call();
+					}
+					//look for other birds
+					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
+						//Debug.Log("Hit: "+hit.transform.name);
+						hit.transform.GetComponent<NPB>().Targeted();
 					}
 					break;
 				case 1://waddling
@@ -203,6 +209,11 @@ public class Bird : MonoBehaviour
 						Interact();
 					if(_mIn.GetSingDown()){
 						Call();
+					}
+					//look for other birds
+					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
+						//Debug.Log("Hit: "+hit.transform.name);
+						hit.transform.GetComponent<NPB>().Targeted();
 					}
 					break;
 				case 2://hopping
@@ -224,6 +235,11 @@ public class Bird : MonoBehaviour
 						if(_mIn.GetJumpDown()){
 							Fly();
 						}
+					}
+					//look for other birds
+					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
+						//Debug.Log("Hit: "+hit.transform.name);
+						hit.transform.GetComponent<NPB>().Targeted();
 					}
 					break;
 				case 3://flying
@@ -266,11 +282,6 @@ public class Bird : MonoBehaviour
 				_waddle.ToggleCamLines();
 			}
 			*/
-			RaycastHit hit;
-			if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
-				//Debug.Log("Hit: "+hit.transform.name);
-				hit.transform.GetComponent<NPB>().Targeted();
-			}
 		}
 		else{
 			switch(_state){
@@ -281,7 +292,6 @@ public class Bird : MonoBehaviour
 					if(_peckTimer>_peckCheckTime){
 						if(Random.value<_peckChance){
 							_anim.SetTrigger("peck");
-							RaycastHit hit;
 							if(Physics.Raycast(transform.position+Vector3.up*_size.y*0.5f, Vector3.down, out hit, _size.y,1)){
 								Footstep f = hit.transform.GetComponent<Footstep>();
 								if(f!=null)

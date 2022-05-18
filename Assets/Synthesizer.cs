@@ -10,6 +10,23 @@ public class Synthesizer : MonoBehaviour
 	void Awake(){
 	}
 
+	public static AudioClip GenerateSimpleWave(float frequency, float dur, float noise){
+		int numSamples=Mathf.FloorToInt(dur*_sampleRate);
+		float [] samples = new float[numSamples];
+		for(int i=0;i<numSamples; i++){
+			float t01 = i/(float)numSamples;
+			float t = t01*dur;
+			//float n = Mathf.Lerp(minNoise,noise,Mathf.Abs(Mathf.Cos(t*noiseFreq*Mathf.PI*2)));
+			//n=2*n*Random.value-1f;
+			//n=2*n-1f;
+			float n = (Random.value*2-1f)*noise;
+			samples[i]=Mathf.Sin(t*frequency*Mathf.PI*2)+n;
+		}
+		AudioClip foo = AudioClip.Create("synth",numSamples,1,_sampleRate,false);
+		foo.SetData(samples,0);
+		return foo;
+	}
+
 	public static AudioClip GenerateSineWave(float frequency, float dur, float noise, float noiseFreq=0,float minNoise=0){
 		int numSamples=Mathf.FloorToInt(dur*_sampleRate);
 		float [] samples = new float[numSamples];

@@ -18,6 +18,7 @@
 		_PlayerPos ("Player Pos", Vector) = (0,0,0,0)
 		_MaxNoiseBoost ("Max Noise Boost", Range(0.5,1.5)) = 1
 		_RippleNoiseReduce ("Ripple Noise Reduce", Range(0,1)) = 0.1
+		_Foam ("Foam", Range(0,.1)) = 0.01
     }
     SubShader
     {
@@ -69,6 +70,7 @@
 			fixed _MaxPlayerDist;
 			fixed _MaxNoiseBoost;
 			fixed _RippleNoiseReduce;
+			fixed _Foam;
 
             v2f vert (appdata v)
             {
@@ -132,6 +134,10 @@
 
 				//apply sun reflect
 				col.rgb=lerp(col.rgb,_LightColor0.rgb,reflectNoise);
+
+				//foam
+				fixed foam = step(s,_Foam);
+				col.rgb=lerp(col.rgb,fixed3(1,1,1),foam);
 
 
                 // apply fog

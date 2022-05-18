@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 	List<BirdHouse> _solvedPuzzles;
 	public static GameManager _instance;
 	public static Bird _player;
+	public static Transform _mate;
 	public static MInput _mIn;
 	public static MCamera _mCam;
 	public static ColorPalette _color;
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
 		_solvedPuzzles=new List<BirdHouse>();
 		_instance=this;
 		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
+		_mate=GameObject.FindGameObjectWithTag("Mate").transform;
 		_mIn=FindObjectOfType<MInput>();
 		_mCam=FindObjectOfType<MCamera>();
 		_color = FindObjectOfType<ColorPalette>();

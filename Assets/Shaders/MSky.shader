@@ -108,7 +108,8 @@
 				//col.rgb*=cloud;
 
 				//col.rgb=fixed3(sun,0,0);
-				col.a=0.5;
+				//col.a=0.5;
+				col.a=1;
                 return col;
             }
             ENDCG

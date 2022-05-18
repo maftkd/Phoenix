@@ -14,8 +14,8 @@ public class Sing : MonoBehaviour
 
 	[Header("Npb stuff")]
 	public bool _npb;
-	AudioSource _audio;
-	public float _singPeriod;
+	public AudioClip _song;
+	public AudioClip _call;
 	public string _birdName;
 	public float _accuracyThreshold;
 	public float _earShot;
@@ -46,9 +46,8 @@ public class Sing : MonoBehaviour
 		
 		_anim=transform.GetComponentInParent<Animator>();
 
-		if(_npb)
+		if(_npb&&_song!=null)
 		{
-			_audio=GetComponent<AudioSource>();
 			//get data
 			string path = Application.streamingAssetsPath+"/Songs/"+_birdName+".song";
 			byte[] data = File.ReadAllBytes(path);
@@ -76,10 +75,9 @@ public class Sing : MonoBehaviour
 	}
 
 	IEnumerator SingR(){
-		_audio.Play();
 		float pitch=Random.Range(0.8f,1f);
-		_audio.pitch=pitch;
-		float dur=_audio.clip.length/pitch;
+		Sfx.PlayOneShot3D(_song,transform.position,pitch);
+		float dur=_song.length/pitch;
 		float curTime=0;
 		for(int i=0;i<_notes.Length; i++){
 			float curNoteStart=_notes[i]._startT*dur;
@@ -114,6 +112,19 @@ public class Sing : MonoBehaviour
 				_high.Stop();
 			}
 		}
+	}
+
+	public void Call(){
+		StartCoroutine(CallR());
+	}
+
+	IEnumerator CallR(){
+		float pitch=Random.Range(0.8f,1f);
+		Sfx.PlayOneShot3D(_call,transform.position,pitch);
+		float dur=_call.length/pitch;
+		_anim.SetFloat("pitch",0.666f);
+		yield return new WaitForSeconds(dur);
+		_anim.SetFloat("pitch",0f);
 	}
 
     // Update is called once per frame
