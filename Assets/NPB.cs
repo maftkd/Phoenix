@@ -28,7 +28,7 @@ public class NPB : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		StartCoroutine(ToggleCamera());
+		//StartCoroutine(ToggleCamera());
     }
 
     // Update is called once per frame
