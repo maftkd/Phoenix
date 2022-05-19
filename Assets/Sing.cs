@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Sing : MonoBehaviour
 {
@@ -22,8 +23,11 @@ public class Sing : MonoBehaviour
 	IEnumerator _cancelRoutine;
 	Note[] _notes;
 	float _songLength;
+	public UnityEvent _onPatternSuccess;
 
 	Bird _player;
+	Transform _cam;
+
 
 	public struct Note{
 		public float _startT;
@@ -68,6 +72,8 @@ public class Sing : MonoBehaviour
 			playerSing._onSing+=SongHandler;
 			_lastSongEventTime=System.DateTime.Now;
 		}
+		if(!_npb)
+			_cam=GameManager._mCam.transform;
 	}
 
 	public void SingSong(){
@@ -248,6 +254,11 @@ public class Sing : MonoBehaviour
 		}
     }
 
+	void LateUpdate(){
+		if(!_npb)
+			transform.forward=_cam.forward;
+	}
+
 	public void SongHandler(int pitchId, bool singing){
 		if((transform.position-_player.transform.position).sqrMagnitude>_earShot*_earShot)
 			return;
@@ -317,6 +328,9 @@ public class Sing : MonoBehaviour
 			if(_patternNote==_notes.Length-1&&_patternDir==false){
 				//check for last note in pattern
 				Debug.Log("Full pattern success!");
+				_onPatternSuccess.Invoke();
+				if(_npb)
+					transform.parent.GetComponent<NPB>().FullPatternSuccess();
 				_patternNote=0;
 				_patternDir=true;
 				if(_cancelRoutine!=null)

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 
 public class Bird : MonoBehaviour
@@ -111,6 +112,10 @@ public class Bird : MonoBehaviour
 	public AudioClip _waterShake;
 	public Transform _splash;
 
+	//ui stuff
+	ButtonPrompts _butts;
+	RawImage _reticle;
+
 	void Awake(){
 		//calculations
 		_smr = transform.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -142,9 +147,6 @@ public class Bird : MonoBehaviour
 
 		_lastSpot=transform.position;
 
-		//band
-		//_band.GetComponent<MeshRenderer>().material.SetColor("_Color",_bandColor);
-
 		_player=GameManager._player;
 
 		if(_state==0)
@@ -153,6 +155,9 @@ public class Bird : MonoBehaviour
 			_anim.SetTrigger("flyLoop");
 		}
 		_prevPos=transform.position;
+
+		_butts=FindObjectOfType<ButtonPrompts>();
+		_reticle=_butts.transform.parent.Find("Reticle").GetComponent<RawImage>();
 
 		_sphereCol = GetComponent<SphereCollider>();
 		_hitRadius=_sphereCol.radius*transform.localScale.x;
@@ -174,6 +179,7 @@ public class Bird : MonoBehaviour
     void Update()
     {
 		RaycastHit hit;
+		bool targetting=false;
 		_vel=transform.position-_prevPos;
 		if(_playerControlled){
 			//player update
@@ -193,6 +199,7 @@ public class Bird : MonoBehaviour
 					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
 						//Debug.Log("Hit: "+hit.transform.name);
 						hit.transform.GetComponent<NPB>().Targeted();
+						targetting=true;
 					}
 					break;
 				case 1://waddling
@@ -214,6 +221,7 @@ public class Bird : MonoBehaviour
 					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
 						//Debug.Log("Hit: "+hit.transform.name);
 						hit.transform.GetComponent<NPB>().Targeted();
+						targetting=true;
 					}
 					break;
 				case 2://hopping
@@ -240,6 +248,7 @@ public class Bird : MonoBehaviour
 					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
 						//Debug.Log("Hit: "+hit.transform.name);
 						hit.transform.GetComponent<NPB>().Targeted();
+						targetting=true;
 					}
 					break;
 				case 3://flying
@@ -308,6 +317,9 @@ public class Bird : MonoBehaviour
 			}
 		}
 		_prevPos=transform.position;
+		
+		_butts.SetActive(targetting);
+		_reticle.color=targetting?Color.white:Color.black;
     }
 
 	public bool IsPlayerClose(Bird other){

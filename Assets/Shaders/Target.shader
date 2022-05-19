@@ -6,6 +6,8 @@
 		_FillTex ("Fill Texture", 2D) = "white" {}
 		_Fill ("Fill", Range(0,1)) = 0.5
 		_FillColor ("Fill color", Color) = (1,1,1,1)
+		_SuccessColor ("Success color", Color) = (1,1,1,1)
+		_Success ("Success", Range(0,1)) = 0
     }
     SubShader
     {
@@ -43,6 +45,8 @@
             sampler2D _FillTex;
 			fixed _Fill;
 			fixed4 _FillColor;
+			fixed _Success;
+			fixed4 _SuccessColor;
 
             v2f vert (appdata v)
             {
@@ -58,10 +62,12 @@
                 // sample the texture
 				fixed filledFull=step(0.999,_Fill);
                 fixed4 col = tex2D(_MainTex, i.uv);
-				col.rgb=lerp(col.rgb,_FillColor.rgb,filledFull);
+				//col.rgb=lerp(col.rgb,_FillColor.rgb,filledFull);
 				fixed filled=step(1-i.uv.x,_Fill)*(1-filledFull);
 				clip(col.a-0.5+filled);
+				col.a*=lerp(1,_FillColor.a,filledFull);
 				col+=filled*_FillColor*tex2D(_FillTex,i.uv).a;
+				col=lerp(col,_SuccessColor,_Success*abs(sin(_Time.w*4)));
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

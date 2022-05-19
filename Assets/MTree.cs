@@ -5,12 +5,15 @@ using UnityEngine;
 public class MTree : MonoBehaviour
 {
 	//trunk
-	public int _numRings;
+	public int _minRings;
+	public int _maxRings;
+	int _numRings;
 	public float _ringSpacing;
 	public bool _useSeed;
 	public int _seed;
 	public bool _incSeed;
 	public bool _decSeed;
+	[Range(0,0.5f)]
 	public float _trunkCurve;
 
 	//branch
@@ -19,7 +22,9 @@ public class MTree : MonoBehaviour
 	List<List<Vector3>> _branches;
 	public int _numBranchRings;
 	public float _branchRingSpacing;
+	[Range(0,0.5f)]
 	public float _branchCurve;
+	public float _branchSpiral;
 
 	//buttons
 	public bool _genTree;
@@ -43,7 +48,7 @@ public class MTree : MonoBehaviour
 	}
 
 	void GenTree(){
-		if(_numRings<2||_branchSpacing<1||_numBranchRings<2)
+		if(_minRings<2||_branchSpacing<1||_numBranchRings<2)
 			return;
 		if(_useSeed)
 			Random.InitState(_seed);
@@ -51,8 +56,11 @@ public class MTree : MonoBehaviour
 		_branches = new List<List<Vector3>>();
 		Vector3 curPos=Vector3.zero;
 		Vector3 offset=Vector3.zero;
+		Vector3 branchGrowth=Vector3.zero;
 		_trunk.Add(curPos);
+		_numRings=Random.Range(_minRings,_maxRings+1);
 		for(int i=1;i<_numRings; i++){
+			offset*=0.5f;
 			offset+=Vector3.right*(Random.value*2f-1)*_trunkCurve;
 			offset+=Vector3.forward*(Random.value*2f-1)*_trunkCurve;
 			curPos+=Vector3.up*_ringSpacing;
@@ -63,7 +71,10 @@ public class MTree : MonoBehaviour
 				List<Vector3> branch = new List<Vector3>();
 				Vector3 bPos=curPos;
 				branch.Add(bPos);
-				Vector3 branchGrowth=Vector3.Cross((_trunk[i]-_trunk[i-1]).normalized,Vector3.up);
+				if(branchGrowth==Vector3.zero)
+					branchGrowth=Vector3.Cross((_trunk[i]-_trunk[i-1]).normalized,Vector3.up);
+				else
+					branchGrowth=Quaternion.Euler(0,_branchSpiral,0)*branchGrowth;
 				Vector3 branchRight=Vector3.Cross(branchGrowth,Vector3.up);
 				Vector3 bOffset=Vector3.zero;
 				for(int j=1;j<_numBranchRings; j++){
@@ -89,8 +100,10 @@ public class MTree : MonoBehaviour
 		if(_branches!=null){
 			Gizmos.color=Color.magenta;
 			foreach(List<Vector3> b in _branches){
-				foreach(Vector3 v in b){
-					Gizmos.DrawSphere(transform.TransformPoint(v),0.1f);
+				for(int i=0;i<b.Count; i++){
+					Gizmos.DrawSphere(transform.TransformPoint(b[i]),0.1f);
+					if(i==b.Count-1)
+						Gizmos.DrawSphere(transform.TransformPoint(b[i]),1f);
 				}
 			}
 		}

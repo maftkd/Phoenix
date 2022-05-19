@@ -160,6 +160,12 @@ public class MInput : MonoBehaviour
 		return Input.GetButtonUp("Low");
 	}
 
+	public bool GetLow(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButton("Low");
+	}
+
 	public bool GetMidDown(){
 		if(_inputLocked)
 			return false;
@@ -172,6 +178,12 @@ public class MInput : MonoBehaviour
 		return Input.GetButtonUp("Middle");
 	}
 
+	public bool GetMid(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButton("Middle");
+	}
+
 	public bool GetHighDown(){
 		if(_inputLocked)
 			return false;
@@ -182,6 +194,12 @@ public class MInput : MonoBehaviour
 		if(_inputLocked)
 			return false;
 		return Input.GetButtonUp("High");
+	}
+
+	public bool GetHigh(){
+		if(_inputLocked)
+			return false;
+		return Input.GetButton("High");
 	}
 
 

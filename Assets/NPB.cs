@@ -7,11 +7,16 @@ public class NPB : MonoBehaviour
 	bool _targeted;
 	GameObject _target;
 	Sing _sing;
-	float _targetTime=5f;
+	float _targetTime=1f;
 	float _targetTimer;
 	Material _targetMat;
 	Animator _anim;
 	AudioSource _audio;
+
+	public delegate void BirdEvent(bool foo);
+	public event BirdEvent _onTargetted;
+
+	public AudioClip _rewardSound;
 
 	void Awake(){
 		_target=transform.Find("Target").gameObject;
@@ -32,19 +37,23 @@ public class NPB : MonoBehaviour
 		if(_targeted&&!_target.activeSelf)
 		{
 			_target.SetActive(true);
+			if(_onTargetted!=null)
+				_onTargetted.Invoke(true);
 		}
 		else if(!_targeted&&_target.activeSelf)
 		{
 			_target.SetActive(false);
 			_targetMat.SetFloat("_Fill", 0);
 			_targetTimer=0f;
+			if(_onTargetted!=null)
+				_onTargetted.Invoke(false);
 		}
 		if(_targeted&&_targetTimer<_targetTime){
 			//inc target timer
 			_targetTimer+=Time.deltaTime;
 			_targetMat.SetFloat("_Fill",_targetTimer/_targetTime);
 			if(_targetTimer>=_targetTime){
-				_targetTimer=0;
+				//_targetTimer=0;
 				_sing.SingSong();
 			}
 		}
@@ -61,8 +70,26 @@ public class NPB : MonoBehaviour
 	IEnumerator ToggleCamera(){
 		Camera cam = transform.GetComponentInChildren<Camera>();
 		yield return null;
-		cam.enabled=true;
-		yield return null;
-		cam.enabled=false;
+		if(cam!=null){
+			cam.enabled=true;
+			yield return null;
+			cam.enabled=false;
+		}
+	}
+
+	public void FullPatternSuccess(){
+		Sfx.PlayOneShot3D(_rewardSound,transform.position,Random.Range(0.95f,1.05f));
+		StartCoroutine(Success());
+	}
+
+	IEnumerator Success(){
+		_targetMat.SetFloat("_Success",1f);
+		yield return new WaitForSeconds(1f);
+		float success=1f;
+		while(success>0){
+			success-=Time.deltaTime;
+			_targetMat.SetFloat("_Success",success);
+			yield return null;
+		}
 	}
 }
