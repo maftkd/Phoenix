@@ -65,7 +65,7 @@
 				//col.rgb=lerp(col.rgb,_FillColor.rgb,filledFull);
 				fixed filled=step(1-i.uv.x,_Fill)*(1-filledFull);
 				clip(col.a-0.5+filled);
-				col.a*=lerp(1,_FillColor.a,filledFull);
+				col.a*=lerp(_FillColor.a,1,filledFull);
 				col+=filled*_FillColor*tex2D(_FillTex,i.uv).a;
 				col=lerp(col,_SuccessColor,_Success*abs(sin(_Time.w*4)));
                 // apply fog

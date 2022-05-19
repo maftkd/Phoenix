@@ -134,11 +134,17 @@ public class Waddle : MonoBehaviour
 					if(Physics.Raycast(targetPos+Vector3.up*_size,Vector3.down,out hit, _size*1.5f,_colLayer)){
 						transform.position=hit.point;
 					}
+					else{
+						Debug.Log("yo");
+					}
 				}
 				else
 				{
 					transform.position=hit.point;
 				}
+			}
+			else{
+				Debug.Log("yoyo");
 			}
 			//always ground?
 			if(_bird!=null)
@@ -147,22 +153,14 @@ public class Waddle : MonoBehaviour
 				TakeStep(hit.transform);
 				_stepTimer=0;
 			}
-			//_anim.SetFloat("walkSpeed",0.1f);
 
 			if(_npc){
 				if(Arrived()){
 					if(_onDoneWalking!=null)
 						_onDoneWalking.Invoke();
 					StopWaddling();
-					//on arrive.Invoke
-					//stop walking
 				}
-				//check for being done walking
 			}
-			/*
-			if(_npc && Arrived(_bird._arriveRadius))
-				StopWaddling();
-				*/
 		}
 		else{
 			if(_bird!=null&&!_bird.IsGrounded()){

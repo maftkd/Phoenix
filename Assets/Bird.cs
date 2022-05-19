@@ -320,6 +320,7 @@ public class Bird : MonoBehaviour
 		
 		_butts.SetActive(targetting);
 		_reticle.color=targetting?Color.white:Color.black;
+		_reticle.enabled=_state<3;
     }
 
 	public bool IsPlayerClose(Bird other){

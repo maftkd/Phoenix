@@ -72,6 +72,7 @@ public class CollisionHelper : MonoBehaviour
 			}
 		}
 	}
+	/*
 	void OnTriggerStay(Collider other){
 		if(other.transform==transform)
 			return;
@@ -79,6 +80,7 @@ public class CollisionHelper : MonoBehaviour
 		if(b!=null&&b._state<3&&!_inverted)
 			HandleCollision(other);
 	}
+	*/
 
 	void OnTriggerExit(Collider other){
 		if(_inverted)
@@ -108,10 +110,13 @@ public class CollisionHelper : MonoBehaviour
 		_newPoint=_hitPoint+_hitNormal.normalized*b._hitRadius;
 		if(b._state==1)
 		{
+			b.SnapToPos(_newPoint);
+			/*
 			if(!_isCapsule)
 				b.SnapToPos(_newPoint);
 			else
 				b.RevertToPreviousPosition();
+				*/
 
 		}
 		Vector3 flatNormal=_hitNormal;
