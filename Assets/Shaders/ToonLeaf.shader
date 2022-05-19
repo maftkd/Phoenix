@@ -92,7 +92,9 @@
 				fixed lit=tex2D(_ToonGrad, fixed2(1-dt,0)).x;
 				lit=lerp(_MinShadow,1,lit);
 				fixed world01 = (i.world.y-_HeightVec.x)/(_HeightVec.y-_HeightVec.x);
+				fixed worldXZ = 1+sin((i.world.x+i.world.z)*_HeightVec.z)*_HeightVec.w;
 				fixed3 color = tex2D(_ColorGrad, fixed2(world01,0)).rgb;
+				color.rgb*=worldXZ;
 				col.rgb=lerp(color*lit,fixed3(0,0,0),outline);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);

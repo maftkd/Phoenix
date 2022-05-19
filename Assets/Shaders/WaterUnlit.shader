@@ -138,6 +138,8 @@
 				//foam
 				fixed foam = step(s,_Foam);
 				col.rgb=lerp(col.rgb,fixed3(1,1,1),foam);
+				fixed superFoam = step(s+0.007,_Foam);
+				col.rgb=lerp(col.rgb,fixed3(0,0,0),superFoam);
 
 
                 // apply fog

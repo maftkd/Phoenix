@@ -9,6 +9,8 @@ public class Planter : MonoBehaviour
 	public int _terrainLayer;
 	public float _alphaThreshold;
 	public int _seed;
+	public bool _incSeed;
+	public bool _decSeed;
 	public Vector3 _minSize;
 	public Vector3 _maxSize;
 	public float _minSpacing;
@@ -26,8 +28,17 @@ public class Planter : MonoBehaviour
 	public bool _autoUpdate;
 
 	void OnValidate(){
+		if(_incSeed)
+		{
+			_seed++;
+			_incSeed=false;
+		}
+		if(_decSeed){
+			_seed--;
+			_decSeed=false;
+		}
 		if(_plantTransform||_autoUpdate){
-			PlantTransform();
+			PlantGrass();
 			_plantTransform=false;
 		}
 		if(_plantDetail){
@@ -61,11 +72,15 @@ public class Planter : MonoBehaviour
 		StartCoroutine(Clear());
 	}
 
+	public void PlantGrass(){
+		StartCoroutine(ClearAndPlant());
+	}
+
 	public void PlantTransform(){
-		ClearGrass();
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int grassCount=0;
+		Debug.Log("Initting random state with seed");
 		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			for(int x=0;x<td.alphamapWidth; x++){
@@ -93,17 +108,10 @@ public class Planter : MonoBehaviour
 						if(canPlant){
 							grassCount++;
 							Transform grass = Instantiate(_grassPrefab, p,Quaternion.Euler(0,Random.value*360f,0),transform);
-							/*
-							Vector3 scale = grass.localScale;
-							scale.x*=Random.Range(_minSize.x,_maxSize.x);
-							scale.y*=Random.Range(_minSize.y,_maxSize.y);
-							scale.z*=Random.Range(_minSize.z,_maxSize.z);
-							grass.localScale=scale;
-							*/
 							if(_offsetVert)
 								grass.position+=Vector3.up*grass.localScale.y*0.5f;
-							if(grass.GetComponent<Tree>()!=null)
-								grass.GetComponent<Tree>().Generate();
+							if(grass.GetComponent<MTree>()!=null)
+								grass.GetComponent<MTree>().GenTree();
 						}
 					}
 				}
@@ -113,7 +121,6 @@ public class Planter : MonoBehaviour
 	}
 
 	public void PlantDetail(){
-		//ClearGrass();
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int [,] detailMap = td.GetDetailLayer(0, 0, td.detailWidth, td.detailHeight, _detailLayer);
@@ -176,5 +183,20 @@ public class Planter : MonoBehaviour
 		for(int i=0; i<numChildren; i++){
 			DestroyImmediate(children[i].gameObject);
 		}
+	}
+
+	IEnumerator ClearAndPlant(){
+		int numChildren=transform.childCount;
+		Transform [] children = new Transform[numChildren];
+		for(int i=0;i<numChildren; i++){
+			children[i]=transform.GetChild(i);
+		}
+
+		yield return null;
+
+		for(int i=0; i<numChildren; i++){
+			DestroyImmediate(children[i].gameObject);
+		}
+		PlantTransform();
 	}
 }

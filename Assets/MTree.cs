@@ -43,6 +43,7 @@ public class MTree : MonoBehaviour
 	public Vector3 _maxLeafSize;
 	[Range(0f,1f)]
 	public float _leafRotation;
+	public Material _trunkMat;
 
 	//buttons
 	public bool _genTree;
@@ -82,8 +83,8 @@ public class MTree : MonoBehaviour
 		}
 	}
 
-	void GenTree(){
-		if(_minRings<2||_capsule==null||_leaf==null)
+	public void GenTree(){
+		if(_minRings<2||_capsule==null||_leaf==null||!gameObject.activeInHierarchy)
 			return;
 		if(_useSeed)
 			Random.InitState(_seed);
@@ -117,6 +118,7 @@ public class MTree : MonoBehaviour
 							Random.Range(_minLeafSize.y,_maxLeafSize.y),
 							Random.Range(_minLeafSize.z,_maxLeafSize.z));
 				}
+				cylinder.GetComponent<Renderer>().material=_trunkMat;
 			}
 			branchIndex++;
 		}

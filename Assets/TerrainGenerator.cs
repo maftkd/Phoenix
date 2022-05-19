@@ -99,6 +99,7 @@ public class TerrainGenerator : MonoBehaviour
 	public int _pebbleLayer;
 	public float _grassDot;
 	public int _grassLayer;
+	public float _grassLevel;
 	public float _grassPerlinCutoff;
 	public float _mountainHeight;
 	public float _snowHeight;
@@ -783,7 +784,7 @@ public class TerrainGenerator : MonoBehaviour
 				float upness = Vector3.Dot(worldNormal,Vector3.up);
 
 				int layer=_sandLayer;
-				if(upness>_grassDot&&height>_seaLevel&&height<_mountainHeight)
+				if(upness>_grassDot&&height>_grassLevel&&height<_mountainHeight)
 					layer=_grassLayer;
 				else if(upness>_pebbleDot)
 					layer=_pebbleLayer;
