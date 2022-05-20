@@ -22,6 +22,10 @@ public class GroundForager : MonoBehaviour
 	public Vector2 _hopDur;
 	public Vector2 _hopHeight;
 	Terrain _terrain;
+	Bird _player;
+	public float _fleeRadius;
+	TreeBehaviour _treeB;
+	public int _terrainLayer;
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
@@ -30,7 +34,15 @@ public class GroundForager : MonoBehaviour
 		_hopDir=new Vector3(Mathf.Cos(_theta),0,Mathf.Sin(_theta));
 		transform.forward=_hopDir;
 		_terrain=transform.parent.GetComponent<BirdSpawner>()._terrain;
+		_player=GameManager._player;
+		_treeB=GetComponent<TreeBehaviour>();
 	}
+
+	void OnEnable(){
+		_anim.SetBool("hop",false);
+		_anim.SetBool("peck",false);
+	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,13 +61,23 @@ public class GroundForager : MonoBehaviour
 				if(_listenTimer>=_listenTime){
 					StartCoroutine(GetWorm());
 				}
+				else{
+				}
 				break;
 			case 1://pecking
 				break;
 			default:
 				break;
 		}
-		_debugText.text="State: "+_state.ToString("0");
+		//if near player
+		//	flee to tree
+		if((_player.transform.position-transform.position).sqrMagnitude<_fleeRadius*_fleeRadius){
+			StopAllCoroutines();
+			_treeB.enabled=true;
+			_treeB.ScareIntoTree();
+			enabled=false;
+		}
+		//_debugText.text="State: "+_state.ToString("0");
     }
 
 	void Listen(){
@@ -103,7 +125,6 @@ public class GroundForager : MonoBehaviour
 			float frac=timer/dur;
 			Vector3 pos=Vector3.Lerp(startPos,endPos,frac);
 			float yOffset=(-4*Mathf.Pow(frac-0.5f,2)+1)*height;
-			//float yOffset=_jumpCurve.Evaluate(timer/dur)*height;
 			pos.y+=yOffset;
 			transform.position=pos;
 			yield return null;
@@ -111,5 +132,32 @@ public class GroundForager : MonoBehaviour
 		transform.position=endPos;
 		_anim.SetBool("hop",false);
 		Listen();
+	}
+
+	public Vector3 GetRandomSpotOnGround(){
+		TerrainData td = _terrain.terrainData;
+		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
+		int iters=0;
+		bool spotFound=false;
+		while(iters<1000&&!spotFound){
+			float xFrac=Random.value;
+			float zFrac=Random.value;
+			int alphaMapZ=Mathf.RoundToInt(xFrac*(td.alphamapHeight-1));
+			int alphaMapX=Mathf.RoundToInt(zFrac*(td.alphamapWidth-1));
+			float worldX=_terrain.transform.position.x+td.size.x*xFrac;
+			float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
+			float worldY=_terrain.SampleHeight(new Vector3(worldX,0,worldZ));
+			if(worldY<5)
+				continue;
+			if(alphaMaps[alphaMapX,alphaMapZ,_terrainLayer]>0.5f){
+				Vector3 worldPos=new Vector3(worldX,worldY,worldZ);
+				if((worldPos-_player.transform.position).sqrMagnitude>_fleeRadius*_fleeRadius){
+					spotFound=true;
+					return worldPos;
+				}
+			}
+			iters++;
+		}
+		return Vector3.zero;
 	}
 }

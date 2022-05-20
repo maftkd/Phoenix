@@ -48,9 +48,10 @@ public class MTree : MonoBehaviour
 	//buttons
 	public bool _genTree;
 	public bool _autoGen;
+	public bool _buttonsEnabled;
 
 	void OnValidate(){
-		if(Application.isPlaying&&Time.time<1f)
+		if(!_buttonsEnabled)
 			return;
 		if(_incSeed)
 		{
@@ -81,6 +82,10 @@ public class MTree : MonoBehaviour
 			_genTree=false;
 			GenTree();
 		}
+	}
+
+	void Awake(){
+		//GenTree();
 	}
 
 	public void GenTree(){
@@ -175,7 +180,25 @@ public class MTree : MonoBehaviour
 	IEnumerator DestroyNextFrame(Transform[] ts){
 		yield return null;
 		foreach(Transform t in ts)
-			DestroyImmediate(t.gameObject);
+		{
+			if(t!=null)
+				DestroyImmediate(t.gameObject);
+		}
+	}
+
+	public Vector3 GetRandomPerch(){
+		int branchIndex=Random.Range(0,_branches.Count-1);//disclude last branch, that's the trunk
+		//Debug.Log("branch index: "+branchIndex);
+		List<Vector3> branch = _branches[branchIndex];
+		int branchPart=Random.Range(0,branch.Count-1);
+		Vector3 a=transform.TransformPoint(branch[branchPart]);
+		Vector3 b=transform.TransformPoint(branch[branchPart+1]);
+		Vector3 spot=Vector3.Lerp(a,b,Mathf.Lerp(0.25f,1f,Random.value));
+		RaycastHit hit;
+		if(Physics.Raycast(spot+Vector3.up*0.5f,Vector3.down, out hit, 1f, 1)){
+			return hit.point;
+		}
+		return transform.TransformPoint(branch[Random.Range(0,branch.Count)]);
 	}
 
 	void OnDrawGizmos(){

@@ -19,10 +19,20 @@ public class BirdSpawner : MonoBehaviour
 	public Terrain _terrain;
 
 	void Awake(){
+	}
+
+	void Start(){
+		StartCoroutine(SpawnBirdsNextFrame());
+	}
+
+	//cuz have to wait a frame for trees, because of this editor compatibility thing
+	IEnumerator SpawnBirdsNextFrame(){
+		yield return null;
 		SpawnBirds();
 	}
 
 	void SpawnBirds(){
+		MTree[] trees = transform.parent.Find("Planters").GetComponentsInChildren<MTree>();
 		Random.InitState(_seed);
 		_terrain = transform.parent.GetComponentInChildren<Terrain>();
 		TerrainData td = _terrain.terrainData;
@@ -34,21 +44,36 @@ public class BirdSpawner : MonoBehaviour
 				int iters=0;
 				bool spotFound=false;
 				while(iters<1000&&!spotFound){
-					float xFrac=Random.value;
-					float zFrac=Random.value;
-					int alphaMapZ=Mathf.RoundToInt(xFrac*(td.alphamapHeight-1));
-					int alphaMapX=Mathf.RoundToInt(zFrac*(td.alphamapWidth-1));
-					float worldX=_terrain.transform.position.x+td.size.x*xFrac;
-					float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
-					float worldY=_terrain.SampleHeight(new Vector3(worldX,0,worldZ));
-					if(worldY<5)
-						continue;
-					if(alphaMaps[alphaMapX,alphaMapZ,sg._spawnTerrainLayer]>0.5f){
+					if(sg._spawnTerrainLayer>=0){
+						float xFrac=Random.value;
+						float zFrac=Random.value;
+						int alphaMapZ=Mathf.RoundToInt(xFrac*(td.alphamapHeight-1));
+						int alphaMapX=Mathf.RoundToInt(zFrac*(td.alphamapWidth-1));
+						float worldX=_terrain.transform.position.x+td.size.x*xFrac;
+						float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
+						float worldY=_terrain.SampleHeight(new Vector3(worldX,0,worldZ));
+						if(worldY<5)
+							continue;
+						if(alphaMaps[alphaMapX,alphaMapZ,sg._spawnTerrainLayer]>0.5f){
+							spotFound=true;
+							Transform bird = Instantiate(sg._birdPrefab,new Vector3(worldX,worldY,worldZ),Quaternion.identity,transform);
+							if(i%2==0&&sg._altMat!=null)
+								bird.GetChild(0).GetComponent<Renderer>().material=sg._altMat;
+							//Debug.Log("spot found in: "+iters+" iters");
+							GroundForager gf = bird.GetComponent<GroundForager>();
+							if(gf!=null)
+								gf._terrainLayer=sg._spawnTerrainLayer;
+						}
+					}
+					else{
+						//spawn in tree
+						MTree tree = trees[Random.Range(0,trees.Length)];
+						Vector3 perch = tree.GetRandomPerch();
+						//Debug.Log("perching at: "+perch);
 						spotFound=true;
-						Transform bird = Instantiate(sg._birdPrefab,new Vector3(worldX,worldY,worldZ),Quaternion.identity,transform);
+						Transform bird = Instantiate(sg._birdPrefab,perch,Quaternion.identity,transform);
 						if(i%2==0&&sg._altMat!=null)
 							bird.GetChild(0).GetComponent<Renderer>().material=sg._altMat;
-						//Debug.Log("spot found in: "+iters+" iters");
 					}
 					iters++;
 				}

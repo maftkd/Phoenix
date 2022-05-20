@@ -82,6 +82,7 @@ public class Planter : MonoBehaviour
 		int grassCount=0;
 		//Debug.Log("Initting random state with seed");
 		Random.InitState(_seed);
+		//Debug.Log("Planting: "+_grassPrefab.name+", seed is: "+_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			for(int x=0;x<td.alphamapWidth; x++){
 				if(alphaMaps[x,y,_terrainLayer]>_alphaThreshold)

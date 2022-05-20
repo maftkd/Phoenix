@@ -116,16 +116,6 @@ public class Waddle : MonoBehaviour
 			float dy = (targetPos.y-transform.position.y);
 			float dx = move.magnitude;
 			float slope = dy/dx;
-			/*
-			if(slope<-_maxWalkSlope*0.5f){
-				//check for very negative slope
-				if(_input.magnitude>0.9f){
-					_anim.SetFloat("walkSpeed",0f);
-					if(_bird!=null)
-						_bird.StartHopping(true);
-				}
-			}
-			*/
 			if(slope<_maxWalkSlope)
 			{
 				if(slope>_minSlopeToCheckSpeed){

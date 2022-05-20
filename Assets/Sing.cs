@@ -262,7 +262,7 @@ public class Sing : MonoBehaviour
 	public void SongHandler(int pitchId, bool singing){
 		if((transform.position-_player.transform.position).sqrMagnitude>_earShot*_earShot)
 			return;
-		Debug.Log("Heard note: "+pitchId+" dir: "+singing);
+		//Debug.Log("Heard note: "+pitchId+" dir: "+singing);
 		if(_cancelRoutine!=null)
 			StopCoroutine(_cancelRoutine);
 
@@ -298,8 +298,8 @@ public class Sing : MonoBehaviour
 						StartCoroutine(_cancelRoutine);
 					}
 					else{
-						Debug.Log("time delta: "+timeDelta);
-						Debug.Log("perfect time: "+perfectTime);
+						//Debug.Log("time delta: "+timeDelta);
+						//Debug.Log("perfect time: "+perfectTime);
 						NoteHandler(false);
 					}
 				}
@@ -324,10 +324,10 @@ public class Sing : MonoBehaviour
 		if(success)
 		{
 			//handle a successful note
-			Debug.Log("Success!");
+			//Debug.Log("Success!");
 			if(_patternNote==_notes.Length-1&&_patternDir==false){
 				//check for last note in pattern
-				Debug.Log("Full pattern success!");
+				//Debug.Log("Full pattern success!");
 				_onPatternSuccess.Invoke();
 				if(_npb)
 					transform.parent.GetComponent<NPB>().FullPatternSuccess();
