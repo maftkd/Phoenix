@@ -135,7 +135,7 @@ public class Waddle : MonoBehaviour
 						transform.position=hit.point;
 					}
 					else{
-						Debug.Log("yo");
+						//Debug.Log("yo");
 					}
 				}
 				else
@@ -144,7 +144,7 @@ public class Waddle : MonoBehaviour
 				}
 			}
 			else{
-				Debug.Log("yoyo");
+				//Debug.Log("yoyo");
 			}
 			//always ground?
 			if(_bird!=null)

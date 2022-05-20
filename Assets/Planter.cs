@@ -80,7 +80,7 @@ public class Planter : MonoBehaviour
 		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		int grassCount=0;
-		Debug.Log("Initting random state with seed");
+		//Debug.Log("Initting random state with seed");
 		Random.InitState(_seed);
 		for(int y=0;y<td.alphamapHeight; y++){
 			for(int x=0;x<td.alphamapWidth; x++){
@@ -117,7 +117,7 @@ public class Planter : MonoBehaviour
 				}
 			}
 		}
-		Debug.Log("Grass count: "+grassCount);
+		//Debug.Log("Grass count: "+grassCount);
 	}
 
 	public void PlantDetail(){

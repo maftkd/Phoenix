@@ -57,7 +57,7 @@ public class Sing : MonoBehaviour
 			byte[] data = File.ReadAllBytes(path);
 			int numNotes=System.BitConverter.ToInt32(data,0);
 			_songLength = System.BitConverter.ToSingle(data,4);
-			Debug.Log("Loaded: "+ numNotes+ " notes");
+			//Debug.Log("Loaded: "+ numNotes+ " notes");
 			_notes = new Note[numNotes];
 			for(int i=0; i<numNotes; i++){
 				Note n;

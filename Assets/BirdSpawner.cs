@@ -16,6 +16,7 @@ public class BirdSpawner : MonoBehaviour
 
 	public int _seed;
 	public SpawnGroup [] _spawnGroup;
+	public Terrain _terrain;
 
 	void Awake(){
 		SpawnBirds();
@@ -23,8 +24,8 @@ public class BirdSpawner : MonoBehaviour
 
 	void SpawnBirds(){
 		Random.InitState(_seed);
-		Terrain ter = transform.parent.GetComponentInChildren<Terrain>();
-		TerrainData td = ter.terrainData;
+		_terrain = transform.parent.GetComponentInChildren<Terrain>();
+		TerrainData td = _terrain.terrainData;
 		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
 		foreach(SpawnGroup sg in _spawnGroup){
 			for(int i=0; i<sg._numSpawn; i++){
@@ -37,15 +38,17 @@ public class BirdSpawner : MonoBehaviour
 					float zFrac=Random.value;
 					int alphaMapZ=Mathf.RoundToInt(xFrac*(td.alphamapHeight-1));
 					int alphaMapX=Mathf.RoundToInt(zFrac*(td.alphamapWidth-1));
-					float worldX=ter.transform.position.x+td.size.x*xFrac;
-					float worldZ=ter.transform.position.z+td.size.z*zFrac;
-					float worldY=ter.SampleHeight(new Vector3(worldX,0,worldZ));
+					float worldX=_terrain.transform.position.x+td.size.x*xFrac;
+					float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
+					float worldY=_terrain.SampleHeight(new Vector3(worldX,0,worldZ));
 					if(worldY<5)
 						continue;
 					if(alphaMaps[alphaMapX,alphaMapZ,sg._spawnTerrainLayer]>0.5f){
 						spotFound=true;
-						Instantiate(sg._birdPrefab,new Vector3(worldX,worldY,worldZ),Quaternion.identity,transform);
-						Debug.Log("spot found in: "+iters+" iters");
+						Transform bird = Instantiate(sg._birdPrefab,new Vector3(worldX,worldY,worldZ),Quaternion.identity,transform);
+						if(i%2==0&&sg._altMat!=null)
+							bird.GetChild(0).GetComponent<Renderer>().material=sg._altMat;
+						//Debug.Log("spot found in: "+iters+" iters");
 					}
 					iters++;
 				}

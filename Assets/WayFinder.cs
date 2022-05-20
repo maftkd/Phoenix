@@ -24,7 +24,8 @@ public class WayFinder : MonoBehaviour
 		_opaque=Color.white;
 		_transparent=Color.black;
 		_transparent.a=0.5f;
-		_image.texture=_quarterRest;
+		//_image.texture=_quarterRest;
+		_image.texture=_wholeNote;
 	}
     // Start is called before the first frame update
     void Start()
