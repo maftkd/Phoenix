@@ -43,7 +43,7 @@ public class NPB : MonoBehaviour
 		else if(!_targeted&&_target.activeSelf)
 		{
 			_target.SetActive(false);
-			_targetMat.SetFloat("_Fill", 0);
+			//_targetMat.SetFloat("_Fill", 0);
 			_targetTimer=0f;
 			if(_onTargetted!=null)
 				_onTargetted.Invoke(false);
@@ -51,10 +51,10 @@ public class NPB : MonoBehaviour
 		if(_targeted&&_targetTimer<_targetTime){
 			//inc target timer
 			_targetTimer+=Time.deltaTime;
-			_targetMat.SetFloat("_Fill",_targetTimer/_targetTime);
+			//_targetMat.SetFloat("_Fill",_targetTimer/_targetTime);
 			if(_targetTimer>=_targetTime){
 				//_targetTimer=0;
-				_sing.SingSong();
+				//_sing.SingSong();
 			}
 		}
     }

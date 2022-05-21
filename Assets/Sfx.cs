@@ -30,7 +30,7 @@ public class Sfx : MonoBehaviour
 		audio.pitch=pitch;
 		audio.clip=clip;
 		audio.Play();
-		Destroy(foo,clip.length);
+		Destroy(foo,clip.length/pitch);
 	}
 
 	public static void PlayOneShot2DVol(AudioClip clip, float volume){
@@ -49,7 +49,7 @@ public class Sfx : MonoBehaviour
 		audio.volume=vol;
 		audio.clip=clip;
 		audio.Play();
-		Destroy(foo,clip.length);
+		Destroy(foo,clip.length/pitch);
 	}
 
 	public static AudioSource PlayOneShot3D(AudioClip clip,Vector3 pos){
@@ -74,7 +74,7 @@ public class Sfx : MonoBehaviour
 		audio.rolloffMode=AudioRolloffMode.Linear;
 		audio.maxDistance=10f;
 
-		Destroy(foo,clip.length);
+		Destroy(foo,clip.length/pitch);
 	}
 
 	public static void PlayOneShot3DVol(AudioClip clip,Vector3 pos,float volume){
@@ -97,7 +97,7 @@ public class Sfx : MonoBehaviour
 		audio.volume=vol;
 		audio.clip=clip;
 		audio.Play();
-		Destroy(foo,clip.length);
+		Destroy(foo,clip.length/pitch);
 	}
 
 	public void Pause(){

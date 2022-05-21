@@ -24,6 +24,10 @@ public class Sing : MonoBehaviour
 	Note[] _notes;
 	float _songLength;
 	public UnityEvent _onPatternSuccess;
+	public bool _male;
+	public Vector2 _singDelayRange;
+	float _singDelay;
+	float _singTimer;
 
 	Bird _player;
 	Transform _cam;
@@ -74,6 +78,10 @@ public class Sing : MonoBehaviour
 		}
 		if(!_npb)
 			_cam=GameManager._mCam.transform;
+	}
+
+	void Start(){
+		_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
 	}
 
 	public void SingSong(){
@@ -137,7 +145,17 @@ public class Sing : MonoBehaviour
     void Update()
     {
 		if(_npb)
-			return;
+		{
+			//#temp
+			if(_male){
+				_singTimer+=Time.deltaTime;
+				if(_singTimer>_singDelay){
+					_singTimer=0;
+					SingSong();
+					_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
+				}
+			}
+		}
 		switch(_state){
 			case 0://not singing
 				if(_mIn.GetLowDown()){
@@ -351,6 +369,10 @@ public class Sing : MonoBehaviour
 			_patternNote=0;
 			_patternDir=true;
 		}
+	}
+
+	public void SetMale(){
+		_male=true;
 	}
 
 	void OnDrawGizmos(){

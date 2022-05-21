@@ -20,12 +20,14 @@ public class TreeBehaviour : MonoBehaviour
 	float _hideTimer;
 	public float _hideTime;
 	public int _takeOffFlaps;
+	Sing _sing;
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
 		_trail=transform.GetComponentInChildren<TrailRenderer>();
 		_player=GameManager._player;
 		_groundForager=GetComponent<GroundForager>();
+		_sing=transform.GetComponentInChildren<Sing>();
 	}
 
 	void OnEnable(){
@@ -43,7 +45,7 @@ public class TreeBehaviour : MonoBehaviour
     {
 		switch(_state){
 			case 0:
-				if(_groundForager!=null){
+				if(_groundForager!=null&&!_sing._male){
 					_hideTimer+=Time.deltaTime;
 					if(_hideTimer>=_hideTime){
 						ReturnToGround();

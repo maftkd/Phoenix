@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
 		_solvedPuzzles=new List<BirdHouse>();
 		_instance=this;
 		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
-		_mate=GameObject.FindGameObjectWithTag("Mate").transform;
+		//_mate=GameObject.FindGameObjectWithTag("Mate").transform;
 		_mIn=FindObjectOfType<MInput>();
 		_mCam=FindObjectOfType<MCamera>();
 		_color = FindObjectOfType<ColorPalette>();

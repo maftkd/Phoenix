@@ -59,10 +59,16 @@ public class BirdSpawner : MonoBehaviour
 							Transform bird = Instantiate(sg._birdPrefab,new Vector3(worldX,worldY,worldZ),Quaternion.identity,transform);
 							if(i%2==0&&sg._altMat!=null)
 								bird.GetChild(0).GetComponent<Renderer>().material=sg._altMat;
-							//Debug.Log("spot found in: "+iters+" iters");
 							GroundForager gf = bird.GetComponent<GroundForager>();
 							if(gf!=null)
 								gf._terrainLayer=sg._spawnTerrainLayer;
+							if(i%2!=0){
+								bird.GetComponentInChildren<Sing>().SetMale();
+								gf.enabled=false;
+								MTree tree = trees[Random.Range(0,trees.Length)];
+								Vector3 perch = tree.GetRandomPerch();
+								bird.position=perch;
+							}
 						}
 					}
 					else{

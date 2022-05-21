@@ -1473,6 +1473,16 @@ PrefabInstance:
       propertyPath: _song
       value: 
       objectReference: {fileID: 8300000, guid: 1a65796945d0f4a45b05ca8e86d33634, type: 3}
+    - target: {fileID: 3120362190264279050, guid: 8528f57028aa262438a6577f54173304,
+        type: 3}
+      propertyPath: _singDelayRange.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3120362190264279050, guid: 8528f57028aa262438a6577f54173304,
+        type: 3}
+      propertyPath: _singDelayRange.y
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 3120362190264279051, guid: 8528f57028aa262438a6577f54173304,
         type: 3}
       propertyPath: m_RootOrder
