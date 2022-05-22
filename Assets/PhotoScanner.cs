@@ -42,9 +42,11 @@ public class PhotoScanner : MonoBehaviour
     {
 		switch(_state){
 			case 0:
+				/*
 				if(_mIn.GetSingDown()&&_photoCount<_photos.Length){
 					StartCoroutine(PlacePhotoOnScanner());
 				}
+				*/
 				break;
 			case 1://moving photo
 				break;

@@ -12,9 +12,11 @@ public class NPB : MonoBehaviour
 	Material _targetMat;
 	Animator _anim;
 	AudioSource _audio;
+	public bool _listening;
+	TreeBehaviour _tb;
 
-	public delegate void BirdEvent(bool foo);
-	public event BirdEvent _onTargetted;
+	//public delegate void BirdEvent(bool foo);
+	//public event BirdEvent _onTargetted;
 
 	public AudioClip _rewardSound;
 
@@ -24,6 +26,7 @@ public class NPB : MonoBehaviour
 		_targetMat=_target.GetComponent<Renderer>().material;
 		_anim=GetComponent<Animator>();
 		_audio=gameObject.AddComponent<AudioSource>();
+		_tb=GetComponent<TreeBehaviour>();
 	}
     // Start is called before the first frame update
     void Start()
@@ -34,28 +37,20 @@ public class NPB : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if(_listening)
+			return;
 		if(_targeted&&!_target.activeSelf)
 		{
 			_target.SetActive(true);
-			if(_onTargetted!=null)
-				_onTargetted.Invoke(true);
+			TipHud.ShowTip("Press E to Sing",transform,Vector3.up*0.5f);
+			//_targetMat.SetFloat("_Fill", 0);
 		}
 		else if(!_targeted&&_target.activeSelf)
 		{
 			_target.SetActive(false);
+			TipHud.ClearTip();
 			//_targetMat.SetFloat("_Fill", 0);
 			_targetTimer=0f;
-			if(_onTargetted!=null)
-				_onTargetted.Invoke(false);
-		}
-		if(_targeted&&_targetTimer<_targetTime){
-			//inc target timer
-			_targetTimer+=Time.deltaTime;
-			//_targetMat.SetFloat("_Fill",_targetTimer/_targetTime);
-			if(_targetTimer>=_targetTime){
-				//_targetTimer=0;
-				//_sing.SingSong();
-			}
 		}
     }
         
@@ -65,6 +60,18 @@ public class NPB : MonoBehaviour
 
 	public void Targeted(){
 		_targeted=true;
+	}
+
+	public void StartListening(){
+		_target.SetActive(true);
+		_targetMat.SetFloat("_Fill", 0);
+		_listening=true;
+	}
+
+	public void StopListening(){
+		_targetMat.SetFloat("_Fill", 1);
+		_listening=false;
+
 	}
 
 	IEnumerator ToggleCamera(){
@@ -80,6 +87,7 @@ public class NPB : MonoBehaviour
 	public void FullPatternSuccess(){
 		Sfx.PlayOneShot3D(_rewardSound,transform.position,Random.Range(0.95f,1.05f));
 		StartCoroutine(Success());
+		_tb.ScareIntoTree();
 	}
 
 	IEnumerator Success(){

@@ -68,6 +68,8 @@ public class BirdSpawner : MonoBehaviour
 								MTree tree = trees[Random.Range(0,trees.Length)];
 								Vector3 perch = tree.GetRandomPerch();
 								bird.position=perch;
+								TreeBehaviour tb = bird.GetComponent<TreeBehaviour>();
+								tb.enabled=true;
 							}
 						}
 					}

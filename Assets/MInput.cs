@@ -141,11 +141,10 @@ public class MInput : MonoBehaviour
 		return Input.GetButtonUp("Jump")||Input.GetMouseButtonUp(0);
 	}
 
-	public bool GetSingDown(){
+	public bool GetInteractDown(){
 		if(_inputLocked)
 			return false;
-		return false;
-		//return Input.GetButtonDown("Sing");
+		return (Input.GetButtonDown("Interact")||GetTriggerRDown());
 	}
 
 	public bool GetLowDown(){
@@ -288,10 +287,4 @@ public class MInput : MonoBehaviour
 
 	}
 
-	public bool GetInteractDown(){
-		if(_inputLocked)
-			return false;
-		return false;
-		//return (Input.GetButtonDown("Interact")||Input.GetMouseButtonDown(1));
-	}
 }

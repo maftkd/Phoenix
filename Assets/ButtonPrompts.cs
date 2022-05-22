@@ -58,9 +58,11 @@ public class ButtonPrompts : MonoBehaviour
     }
 
 	public void SetActive(bool active){
-		_low.gameObject.SetActive(active);
-		_mid.gameObject.SetActive(active);
-		_high.gameObject.SetActive(active);
+		_low.GetComponent<RawImage>().enabled=active;
+		_mid.GetComponent<RawImage>().enabled=active;
+		_high.GetComponent<RawImage>().enabled=active;
+		//_mid.gameObject.SetActive(active);
+		//_high.gameObject.SetActive(active);
 		_active=active;
 	}
 }

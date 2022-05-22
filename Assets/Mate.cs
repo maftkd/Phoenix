@@ -11,7 +11,6 @@ public class Mate : MonoBehaviour
 	void Awake(){
 		_wayFinder=FindObjectOfType<WayFinder>();
 		_npb=GetComponent<NPB>();
-		_npb._onTargetted+=HandleTargetChange;
 	}
 
     // Start is called before the first frame update

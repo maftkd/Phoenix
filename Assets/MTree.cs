@@ -201,6 +201,62 @@ public class MTree : MonoBehaviour
 		return transform.TransformPoint(branch[Random.Range(0,branch.Count)]);
 	}
 
+	public Vector3 GetClosestPerch(Vector3 cur){
+		float minDistSqr=100000f;
+		int branchIndex=-1;
+		int twigIndex=-1;
+		Vector3 playerLocal=transform.InverseTransformPoint(cur);
+		for(int i=0;i<_branches.Count;i++){
+			for(int j=0; j<_branches[i].Count; j++){
+				float sqrDist=(_branches[i][j]-playerLocal).sqrMagnitude;
+				if(sqrDist<minDistSqr){
+					minDistSqr=sqrDist;
+					branchIndex=i;
+					twigIndex=j;
+				}
+			}
+		}
+		if(branchIndex<0||branchIndex==_branches.Count-1)
+			return Vector3.zero;
+		Vector3 a = Vector3.zero;
+		Vector3 b = Vector3.zero;
+		List<Vector3> branch = _branches[branchIndex];
+		if(twigIndex==0)
+		{
+			a=branch[0];
+			b=branch[1];
+		}
+		else if(twigIndex==branch.Count-1){
+			Debug.Log("twig index: "+twigIndex);
+			b=branch[branch.Count-1];
+			a=branch[branch.Count-2];
+		}
+		else{
+			Vector3 foo=branch[twigIndex-1];
+			Vector3 bar=branch[twigIndex+1];
+			float fooDistSqr=(foo-playerLocal).sqrMagnitude;
+			float barDistSqr=(bar-playerLocal).sqrMagnitude;
+			if(fooDistSqr<barDistSqr){
+				a=foo;
+				b=branch[twigIndex];
+			}
+			else{
+				a=branch[twigIndex];
+				b=bar;
+			}
+		}
+		//frac=ap-ab
+		float ab=(a-b).magnitude;
+		float ap=(playerLocal-a).magnitude;
+		float t01=ap/ab;
+		Vector3 spot = transform.TransformPoint(Vector3.Lerp(a,b,t01));
+		RaycastHit hit;
+		if(Physics.Raycast(spot+Vector3.up*0.5f,Vector3.down, out hit, 1f, 1)){
+			return hit.point;
+		}
+		return Vector3.zero;
+	}
+
 	void OnDrawGizmos(){
 		if(_branches!=null){
 			Gizmos.color=Color.magenta;

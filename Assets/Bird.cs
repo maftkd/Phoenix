@@ -84,6 +84,7 @@ public class Bird : MonoBehaviour
 	public Camera _idleCam;
 	public Camera _hopCam;
 	public Camera _flyCam;
+	public Camera _singCam;
 
 	[System.Serializable]
 	public struct BirdData{
@@ -115,6 +116,8 @@ public class Bird : MonoBehaviour
 	//ui stuff
 	ButtonPrompts _butts;
 	RawImage _reticle;
+	NPB _npb;
+	Sing _sing;
 
 	void Awake(){
 		//calculations
@@ -139,6 +142,7 @@ public class Bird : MonoBehaviour
 		{
 			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
 			_flyCam = transform.Find("FlyCam").GetComponent<Camera>();
+			_singCam = transform.Find("SingCam").GetComponent<Camera>();
 		}
 
 		//disable things
@@ -158,6 +162,7 @@ public class Bird : MonoBehaviour
 
 		_butts=FindObjectOfType<ButtonPrompts>();
 		_reticle=_butts.transform.parent.Find("Reticle").GetComponent<RawImage>();
+		_sing=transform.GetComponentInChildren<Sing>();
 
 		_sphereCol = GetComponent<SphereCollider>();
 		_hitRadius=_sphereCol.radius*transform.localScale.x;
@@ -190,17 +195,8 @@ public class Bird : MonoBehaviour
 						StartHopping();
 					else if(_mIn.GetControllerInput().sqrMagnitude>_controllerZero*_controllerZero)
 						StartWaddling();
-					if(_mIn.GetInteractDown())
-						Interact();
-					if(_mIn.GetSingDown()){
-						Call();
-					}
 					//look for other birds
-					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
-						//Debug.Log("Hit: "+hit.transform.name);
-						hit.transform.GetComponent<NPB>().Targeted();
-						targetting=true;
-					}
+					targetting=ScanForNpb();
 					break;
 				case 1://waddling
 					if(!_waddle.IsWaddling()){
@@ -212,17 +208,8 @@ public class Bird : MonoBehaviour
 					else if(_mIn.GetJumpDown()){
 						StartHopping();
 					}
-					if(_mIn.GetInteractDown())
-						Interact();
-					if(_mIn.GetSingDown()){
-						Call();
-					}
 					//look for other birds
-					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
-						//Debug.Log("Hit: "+hit.transform.name);
-						hit.transform.GetComponent<NPB>().Targeted();
-						targetting=true;
-					}
+					targetting=ScanForNpb();
 					break;
 				case 2://hopping
 					if(!_hop.IsHopping()){
@@ -245,18 +232,9 @@ public class Bird : MonoBehaviour
 						}
 					}
 					//look for other birds
-					if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
-						//Debug.Log("Hit: "+hit.transform.name);
-						hit.transform.GetComponent<NPB>().Targeted();
-						targetting=true;
-					}
+					targetting=ScanForNpb();
 					break;
 				case 3://flying
-					/*
-					if(_mIn.GetSingDown()){
-						Call();
-					}
-					*/
 					break;
 				case 4://after dive
 					_afterDiveTimer+=Time.deltaTime;
@@ -269,7 +247,10 @@ public class Bird : MonoBehaviour
 						_state=0;
 					}
 					break;
-				case 6://using tool
+				case 6://singing
+					if(_mIn.GetInteractDown()){
+						StopSinging();
+					}
 					break;
 				case 7://entering house
 					break;
@@ -318,9 +299,12 @@ public class Bird : MonoBehaviour
 		}
 		_prevPos=transform.position;
 		
-		_butts.SetActive(targetting);
+		//_butts.SetActive(targetting);
 		_reticle.color=targetting?Color.white:Color.black;
 		_reticle.enabled=_state<3;
+		//if targetting and get sing down
+		//	go to sing state
+		//	tell npb to listen
     }
 
 	public bool IsPlayerClose(Bird other){
@@ -485,14 +469,6 @@ public class Bird : MonoBehaviour
 			Instantiate(_footprints[terrainIndex],pos,Quaternion.identity);
 		}
 	}
-
-	/*
-	public void EquipFeather(Transform t){
-		Material[] mats = _smr.materials;
-		mats[1]=t.GetComponent<MeshRenderer>().materials[1];
-		_smr.materials=mats;
-	}
-	*/
 
 	IEnumerator PlayExplodeParticlesR(float vel){
 		Instantiate(_explodeParts,transform.position,Quaternion.identity);
@@ -1100,6 +1076,52 @@ public class Bird : MonoBehaviour
 			return false;
 		Destroy(_mandible.GetChild(0).gameObject);
 		return true;
+	}
+
+	bool ScanForNpb(){
+		RaycastHit hit;
+		if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
+			//Debug.Log("Hit: "+hit.transform.name);
+			if(_mIn.GetInteractDown()){
+				_npb=hit.transform.GetComponent<NPB>();
+				_npb.StartListening();
+				StartSinging();
+			}
+			else{
+				hit.transform.GetComponent<NPB>().Targeted();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void StartSinging(){
+		//stop walking
+		//stop hopping
+		//state=some number
+		//transition camera
+		//tell npb to hide tip and stop targetting and stop singing and start listening
+		//show butt prompts
+		//change tip to press E to Listen
+		//disable waddle
+		_waddle.enabled=false;
+		//disable hop
+		_hop.enabled=false;
+		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0,_npb.transform);
+		//GameManager._mCam.Transition(_singCam,MCamera.Transitions.LERP,0f,null,0.5f);
+		_state=6;
+		_butts.SetActive(true);
+		TipHud.ShowTip("Press E to Listen",transform,Vector3.up*0.5f);
+		//TipHud.ClearTip();
+	}
+
+	void StopSinging(){
+		_state=0;
+		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);
+		TipHud.ClearTip();
+		_butts.SetActive(false);
+		_npb.StopListening();
+		_sing.Reset();
 	}
 
 	void OnDrawGizmos(){

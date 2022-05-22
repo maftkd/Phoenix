@@ -67,6 +67,19 @@ public class CollisionHelper : MonoBehaviour
 			if(b._state<3)
 				HandleCollision(other);
 			else{
+				MTree tree = transform.GetComponentInParent<MTree>();
+				if(tree!=null)
+				{
+					Vector3 spot=tree.GetClosestPerch(b.transform.position);
+					//#temp
+					if(spot!=Vector3.zero){
+						b.SnapToPos(spot);
+						b.Land();
+						return;
+					}
+				}
+				//check if it's a good branch to land on
+				//if so, then do some landing maneuver
 				_hitPoint=b.transform.position;
 				b.KnockBack(this,-b.transform.forward.normalized,_supressHitFx,_supressNpcKnockback);
 			}

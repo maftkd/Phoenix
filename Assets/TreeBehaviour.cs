@@ -63,6 +63,8 @@ public class TreeBehaviour : MonoBehaviour
     }
 
 	public void ScareIntoTree(){
+		if(_state!=0)
+			return;
 		//MTree tree = GetNearestTree();
 		MTree tree = GetRandomTree();
 		if(tree!=null){

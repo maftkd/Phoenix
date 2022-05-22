@@ -14,7 +14,7 @@ public class Sing : MonoBehaviour
 	Whistle _high;
 
 	[Header("Npb stuff")]
-	public bool _npb;
+	public NPB _npb;
 	public AudioClip _song;
 	public AudioClip _call;
 	public string _birdName;
@@ -54,7 +54,9 @@ public class Sing : MonoBehaviour
 		
 		_anim=transform.GetComponentInParent<Animator>();
 
-		if(_npb&&_song!=null)
+		_npb=transform.GetComponentInParent<NPB>();
+		_player=GameManager._player;
+		if(_npb!=null&&_song!=null)
 		{
 			//get data
 			string path = Application.streamingAssetsPath+"/Songs/"+_birdName+".song";
@@ -71,12 +73,11 @@ public class Sing : MonoBehaviour
 				_notes[i]=n;
 			}
 
-			_player=GameManager._player;
 			Sing playerSing=_player.transform.GetComponentInChildren<Sing>();
 			playerSing._onSing+=SongHandler;
 			_lastSongEventTime=System.DateTime.Now;
 		}
-		if(!_npb)
+		if(_npb==null)
 			_cam=GameManager._mCam.transform;
 	}
 
@@ -141,13 +142,14 @@ public class Sing : MonoBehaviour
 		_anim.SetFloat("pitch",0f);
 	}
 
+
     // Update is called once per frame
     void Update()
     {
-		if(_npb)
+		if(_npb!=null)
 		{
 			//#temp
-			if(_male){
+			if(_male&&!_npb._listening){
 				_singTimer+=Time.deltaTime;
 				if(_singTimer>_singDelay){
 					_singTimer=0;
@@ -155,7 +157,10 @@ public class Sing : MonoBehaviour
 					_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
 				}
 			}
+			return;
 		}
+		if(_player._state!=6)
+			return;
 		switch(_state){
 			case 0://not singing
 				if(_mIn.GetLowDown()){
@@ -273,12 +278,14 @@ public class Sing : MonoBehaviour
     }
 
 	void LateUpdate(){
-		if(!_npb)
+		if(_npb==null)
 			transform.forward=_cam.forward;
 	}
 
 	public void SongHandler(int pitchId, bool singing){
 		if((transform.position-_player.transform.position).sqrMagnitude>_earShot*_earShot)
+			return;
+		if(!_npb._listening)
 			return;
 		//Debug.Log("Heard note: "+pitchId+" dir: "+singing);
 		if(_cancelRoutine!=null)
@@ -347,7 +354,7 @@ public class Sing : MonoBehaviour
 				//check for last note in pattern
 				//Debug.Log("Full pattern success!");
 				_onPatternSuccess.Invoke();
-				if(_npb)
+				if(_npb!=null)
 					transform.parent.GetComponent<NPB>().FullPatternSuccess();
 				_patternNote=0;
 				_patternDir=true;
@@ -373,6 +380,14 @@ public class Sing : MonoBehaviour
 
 	public void SetMale(){
 		_male=true;
+	}
+
+	public void Reset(){
+		_low.Stop();
+		_mid.Stop();
+		_high.Stop();
+		_state=0;
+		_anim.SetFloat("pitch",0f);
 	}
 
 	void OnDrawGizmos(){
