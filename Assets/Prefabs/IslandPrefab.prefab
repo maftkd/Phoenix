@@ -103,6 +103,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc723ea4787e6394d8aa63c27fa93219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _seed: 0
+  _spawnGroup: []
+  _terrain: {fileID: 0}
+  _cardPrefab: {fileID: 8553508446292889701, guid: 6d4c59e92a36d754eb5076df030d24df,
+    type: 3}
 --- !u!1 &3892413071049802007
 GameObject:
   m_ObjectHideFlags: 0

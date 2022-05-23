@@ -227,7 +227,6 @@ public class MTree : MonoBehaviour
 			b=branch[1];
 		}
 		else if(twigIndex==branch.Count-1){
-			Debug.Log("twig index: "+twigIndex);
 			b=branch[branch.Count-1];
 			a=branch[branch.Count-2];
 		}

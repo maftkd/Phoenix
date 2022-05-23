@@ -9,7 +9,7 @@
         // No culling or depth
         Cull Off ZWrite Off ZTest Always
 		Blend SrcAlpha OneMinusSrcAlpha
-		Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "PreviewType"="Plane" }
+		Tags { "Queue"="Transparent+1" "IgnoreProjector"="True" "RenderType"="Transparent" "PreviewType"="Plane" }
 		//Blend SrcAlpha One
 		ColorMask RGB
 		//Cull Off Lighting Off ZWrite Off

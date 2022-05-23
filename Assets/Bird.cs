@@ -607,10 +607,30 @@ public class Bird : MonoBehaviour
 	}
 
 	public void SetTerrain(Terrain t){
+		if(_terrain==t)
+			return;
 		_terrain=t;
 		if(_terrain!=null){
 			_terrainData = _terrain.terrainData;
 			_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
+			//show species list
+			//BirdSpawner bs = t.transform.parent.Find("BirdSpawner").GetComponent<BirdSpawner>();
+			//bs.ShowList();
+		}
+		else{
+		}
+	}
+
+	Terrain _cardTerrain;
+	public void SetCardTerrain(Terrain t){
+		if(_cardTerrain==t)
+			return;
+		_cardTerrain=t;
+		if(_cardTerrain!=null){
+			BirdSpawner bs = t.transform.parent.Find("BirdSpawner").GetComponent<BirdSpawner>();
+			bs.ShowList();
+		}
+		else{
 		}
 	}
 
@@ -1096,23 +1116,14 @@ public class Bird : MonoBehaviour
 	}
 
 	void StartSinging(){
-		//stop walking
-		//stop hopping
-		//state=some number
-		//transition camera
-		//tell npb to hide tip and stop targetting and stop singing and start listening
-		//show butt prompts
-		//change tip to press E to Listen
-		//disable waddle
 		_waddle.enabled=false;
-		//disable hop
 		_hop.enabled=false;
 		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0,_npb.transform);
-		//GameManager._mCam.Transition(_singCam,MCamera.Transitions.LERP,0f,null,0.5f);
 		_state=6;
 		_butts.SetActive(true);
 		TipHud.ShowTip("Press E to Listen",transform,Vector3.up*0.5f);
-		//TipHud.ClearTip();
+		_sing.SetTargetBird(_npb._sing);
+		_npb.Hush();
 	}
 
 	void StopSinging(){

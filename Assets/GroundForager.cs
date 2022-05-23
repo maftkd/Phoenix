@@ -75,6 +75,8 @@ public class GroundForager : MonoBehaviour
 			StopAllCoroutines();
 			_treeB.enabled=true;
 			_treeB.ScareIntoTree();
+			//tell sing component to chill for a bit
+			//sing.Alarm()
 			enabled=false;
 		}
 		//_debugText.text="State: "+_state.ToString("0");

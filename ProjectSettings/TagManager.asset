@@ -11,6 +11,7 @@ TagManager:
   - Float
   - Flatten
   - Foliage
+  - Cards
   layers:
   - Default
   - TransparentFX

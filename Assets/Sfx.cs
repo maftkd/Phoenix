@@ -57,7 +57,7 @@ public class Sfx : MonoBehaviour
 		foo.transform.position=pos;
 		AudioSource audio = foo.AddComponent<AudioSource>();
 		audio.spatialBlend=1f;
-		audio.maxDistance=100f;
+		//audio.maxDistance=100f;
 		audio.clip=clip;
 		audio.Play();
 		Destroy(foo,clip.length);
@@ -71,8 +71,8 @@ public class Sfx : MonoBehaviour
 		audio.pitch=pitch;
 		audio.clip=clip;
 		audio.Play();
-		audio.rolloffMode=AudioRolloffMode.Linear;
-		audio.maxDistance=10f;
+		//audio.rolloffMode=AudioRolloffMode.Linear;
+		//audio.maxDistance=10f;
 
 		Destroy(foo,clip.length/pitch);
 	}

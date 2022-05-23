@@ -72,6 +72,7 @@ public class TreeBehaviour : MonoBehaviour
 			Vector3 perch = tree.GetRandomPerch();
 			StartCoroutine(FlyTo(perch));
 		}
+		_sing.FleeAlarm();
 	}
 
 	MTree GetNearestTree(){
@@ -145,6 +146,7 @@ public class TreeBehaviour : MonoBehaviour
 			enabled=false;
 			_groundForager.enabled=true;
 		}
+		_sing.Chill();
 	}
 
 	void ReturnToGround(){

@@ -471,10 +471,18 @@ public class Fly : MonoBehaviour
 
 			//raycast down 
 			Vector3 hitPoint=Vector3.zero;
-			if(Physics.Raycast(transform.position,Vector3.down, out hit, 5f, _bird._collisionLayer)){
+			if(Physics.Raycast(transform.position,Vector3.down, out hit, 50f, _bird._collisionLayer)){
 				hitPoint=hit.point;
+				Terrain t = hit.transform.GetComponent<Terrain>();
 				//change of terrain
-				_bird.SetTerrain(hit.transform.GetComponent<Terrain>());
+				if(hitPoint.y<5f)
+					_bird.SetTerrain(null);
+				else
+				{
+					_bird.SetTerrain(t);
+				}
+				_bird.SetCardTerrain(t);
+
 			}
 			else{
 				_bird.SetTerrain(null);
