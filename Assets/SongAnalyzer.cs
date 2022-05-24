@@ -148,6 +148,7 @@ public class SongAnalyzer : MonoBehaviour
 		File.WriteAllBytes(path,data);
 	}
 
+#if UNITY_EDITOR
 	void OnDrawGizmos(){
 		Gizmos.DrawSphere(transform.position,0.5f);
 		if(_peaks!=null){
@@ -178,4 +179,5 @@ public class SongAnalyzer : MonoBehaviour
 			Handles.EndGUI();
 		}
 	}
+#endif
 }

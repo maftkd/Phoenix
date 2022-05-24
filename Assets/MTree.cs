@@ -85,7 +85,11 @@ public class MTree : MonoBehaviour
 	}
 
 	void Awake(){
-		//GenTree();
+#if UNITY_EDITOR
+		//nada
+#else
+		GenTree();
+#endif
 	}
 
 	public void GenTree(){
@@ -187,6 +191,8 @@ public class MTree : MonoBehaviour
 	}
 
 	public Vector3 GetRandomPerch(){
+		if(_branches==null)
+			Debug.Log("oopsies");
 		int branchIndex=Random.Range(0,_branches.Count-1);//disclude last branch, that's the trunk
 		//Debug.Log("branch index: "+branchIndex);
 		List<Vector3> branch = _branches[branchIndex];

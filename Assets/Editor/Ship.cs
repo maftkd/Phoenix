@@ -55,7 +55,9 @@ public class Ship : EditorWindow
 		}
 		PlayerPrefs.Save();
 
-		buildPath+="Slice_"+buildNumber.ToString("0")+".exe";
+		buildPath+="Slice_"+buildNumber.ToString("0");//+".exe";
+		Directory.CreateDirectory(buildPath);
+		buildPath+="/AvianBrain.exe";
 
 		BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPath,BuildTarget.StandaloneWindows, BuildOptions.None);
 	}
