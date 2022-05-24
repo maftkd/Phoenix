@@ -95,11 +95,14 @@ public class TerrainGenerator : MonoBehaviour
 	public float _textureNoiseScale;
 	public int _numLayers;
 	public int _sandLayer;
+	public float _maxSandHeight;
+	[Range(0,1)]
 	public float _pebbleDot;
 	public int _pebbleLayer;
 	public float _grassDot;
 	public int _grassLayer;
 	public float _grassLevel;
+	[Range(0,1)]
 	public float _grassPerlinCutoff;
 	public float _mountainHeight;
 	public float _snowHeight;
@@ -790,7 +793,10 @@ public class TerrainGenerator : MonoBehaviour
 					layer=_pebbleLayer;
 				if(layer==_grassLayer){
 					if(perlin2<1-_grassPerlinCutoff||puzzleZone)
-						layer=_sandLayer;
+					{
+						if(height<_maxSandHeight)
+							layer=_sandLayer;
+					}
 				}
 				if(height>_snowHeight)
 					layer=_snowLayer;

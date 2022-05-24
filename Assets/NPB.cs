@@ -18,6 +18,7 @@ public class NPB : MonoBehaviour
 	bool _scanned;
 	BirdSpawner _bs;
 	Fader _fader;
+	Bird _player;
 
 	//public delegate void BirdEvent(bool foo);
 	//public event BirdEvent _onTargetted;
@@ -37,6 +38,7 @@ public class NPB : MonoBehaviour
 		_fader=GetComponent<Fader>();
 		AudioSource audio = GetComponent<AudioSource>();
 		audio.clip=Synthesizer.GenerateSimpleWave(440f,1f,0.05f);
+		_player=GameManager._player;
 	}
     // Start is called before the first frame update
     void Start()
@@ -47,35 +49,33 @@ public class NPB : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(_listening)
-			return;
 		if(_targeted&&!_target.activeSelf)
 		{
 			_target.SetActive(true);
-			TipHud.ShowTip("Press E to Sing",transform,Vector3.up*0.5f);
+			//TipHud.ShowTip("Press E to Sing",transform,Vector3.up*0.5f);
 			_targetTimer=0f;
 		}
-		else if(!_targeted&&_target.activeSelf)
+		else if(!_targeted&&_target.activeSelf&&!_listening)
 		{
 			_target.SetActive(false);
-			TipHud.ClearTip();
-			if(!_scanned){
-				_targetMat.SetFloat("_Fill",0);
-			}
+			//TipHud.ClearTip();
+			_targetMat.SetFloat("_Fill",0);
 			if(_fader.IsOn())
 				_fader.Stop();
 			_targetTimer=0f;
+			_listening=false;
 		}
-		if(!_scanned&&_targeted){
+		if(!_listening&&_targeted){
 			if(!_fader.IsOn())
 				_fader.Play();
 			_targetTimer+=Time.deltaTime;
 			float frac=_targetTimer/_targetTime;
 			_targetMat.SetFloat("_Fill",frac);
 			if(_targetTimer>=_targetTime){
-				IncBirdCount();
-				_scanned=true;
+				//IncBirdCount();
+				//_scanned=true;
 				_fader.Stop();
+				_player.StartSinging();
 			}
 		}
     }
@@ -90,12 +90,14 @@ public class NPB : MonoBehaviour
 
 	public void StartListening(){
 		_target.SetActive(true);
-		_targetMat.SetFloat("_Fill", 0);
+		//_targetMat.SetFloat("_Fill", 0);
 		_listening=true;
+		int index = _sing.SingSong();
+		Sfx.PlayOneShot3D(_rewardSounds[index],transform.position);
 	}
 
 	public void StopListening(){
-		_targetMat.SetFloat("_Fill", 1);
+		//_targetMat.SetFloat("_Fill", 1);
 		_listening=false;
 
 	}
@@ -111,7 +113,8 @@ public class NPB : MonoBehaviour
 	}
 
 	public void FullPatternSuccess(int i){
-		Sfx.PlayOneShot3D(_rewardSounds[i],transform.position);
+		//Sfx.PlayOneShot3D(_rewardSounds[i],transform.position);
+		Sfx.PlayOneShot3D(_rewardBirdCount,transform.position);
 		StartCoroutine(Success(Color.green));
 		_tb.ScareIntoTree();
 	}
@@ -140,6 +143,11 @@ public class NPB : MonoBehaviour
 
 	public void Hush(){
 		if(_fader.IsOn())
+		{
 			_fader.Stop();
+			_targetMat.SetFloat("_Fill",1f);
+			//_scanned=true;
+			//IncBirdCount();
+		}
 	}
 }

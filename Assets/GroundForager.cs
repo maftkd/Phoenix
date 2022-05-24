@@ -117,23 +117,33 @@ public class GroundForager : MonoBehaviour
 		Vector3 newPos=transform.position+_hopDir*dist;
 		float y = _terrain.SampleHeight(newPos);
 		newPos.y=y;
-		Vector3 startPos=transform.position;
-		Vector3 endPos=newPos;
-		float timer=0;
-		float dur=Random.Range(_hopDur.x,_hopDur.y);
-		float height=Random.Range(_hopHeight.x,_hopHeight.y);
-		while(timer<dur){
-			timer+=Time.deltaTime;
-			float frac=timer/dur;
-			Vector3 pos=Vector3.Lerp(startPos,endPos,frac);
-			float yOffset=(-4*Mathf.Pow(frac-0.5f,2)+1)*height;
-			pos.y+=yOffset;
-			transform.position=pos;
+		if(PositionHasGrass(newPos)){
+			Vector3 startPos=transform.position;
+			Vector3 endPos=newPos;
+			float timer=0;
+			float dur=Random.Range(_hopDur.x,_hopDur.y);
+			float height=Random.Range(_hopHeight.x,_hopHeight.y);
+			while(timer<dur){
+				timer+=Time.deltaTime;
+				float frac=timer/dur;
+				Vector3 pos=Vector3.Lerp(startPos,endPos,frac);
+				float yOffset=(-4*Mathf.Pow(frac-0.5f,2)+1)*height;
+				pos.y+=yOffset;
+				transform.position=pos;
+				yield return null;
+			}
+			transform.position=endPos;
+			_anim.SetBool("hop",false);
+			Listen();
+		}
+		else{
+			_treeB.enabled=true;
+			_treeB.ScareIntoTree();
+			//tell sing component to chill for a bit
+			//sing.Alarm()
+			enabled=false;
 			yield return null;
 		}
-		transform.position=endPos;
-		_anim.SetBool("hop",false);
-		Listen();
 	}
 
 	public Vector3 GetRandomSpotOnGround(){
@@ -161,5 +171,17 @@ public class GroundForager : MonoBehaviour
 			iters++;
 		}
 		return Vector3.zero;
+	}
+
+	bool PositionHasGrass(Vector3 foo){
+		TerrainData td = _terrain.terrainData;
+		float [,,] alphaMaps = td.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);
+		float worldX=foo.x;
+		float worldZ=foo.z;
+		float xFrac=(worldX-_terrain.transform.position.x)/td.size.x;
+		float zFrac=(worldZ-_terrain.transform.position.z)/td.size.z;
+		int alphaMapZ=Mathf.RoundToInt(xFrac*(td.alphamapHeight-1));
+		int alphaMapX=Mathf.RoundToInt(zFrac*(td.alphamapWidth-1));
+		return alphaMaps[alphaMapX,alphaMapZ,_terrainLayer]>0.5f;
 	}
 }

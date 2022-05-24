@@ -182,7 +182,8 @@ public class Planter : MonoBehaviour
 		yield return null;
 
 		for(int i=0; i<numChildren; i++){
-			DestroyImmediate(children[i].gameObject);
+			if(children[i]!=null)
+				DestroyImmediate(children[i].gameObject);
 		}
 	}
 

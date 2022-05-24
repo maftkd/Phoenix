@@ -15,6 +15,7 @@
 		_CloudRange ("Cloud Range", Vector) = (0.2,1,0,0)
 		_CloudSpeed ("Cloud Speed", Float) = 0.5
 		_GradTex ("Gradient Texture", 2D) = "white" {}
+		_Darkness ("Darkness", Range(0,1)) = 0
     }
     SubShader
     {
@@ -56,6 +57,7 @@
 			fixed4 _CloudRange;
 			fixed _CloudSpeed;
 			sampler2D _GradTex;
+			fixed _Darkness;
 
             v2f vert (appdata_t v)
             {
@@ -105,7 +107,12 @@
 				cloudAmount=1-abs(cloudAmount-0.5)*2;
 
 				col.rgb=lerp(col.rgb,cloudColor,cloud*cloudAmount);
+				//col.rgb=lerp(col.rgb,fixed3(0,0,0),_Darkness);
+				col.rgb*=_Darkness;
 				//col.rgb*=cloud;
+				//fixed star=tex2D(_NoiseTex,skyRay.xy*1).r;
+				//star=step(0.8,star);
+				//col.rgb+=fixed3(1,1,1)*star;
 
 				//col.rgb=fixed3(sun,0,0);
 				//col.a=0.5;

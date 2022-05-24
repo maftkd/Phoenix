@@ -19,6 +19,7 @@
 		_MaxNoiseBoost ("Max Noise Boost", Range(0.5,1.5)) = 1
 		_RippleNoiseReduce ("Ripple Noise Reduce", Range(0,1)) = 0.1
 		_Foam ("Foam", Range(0,.1)) = 0.01
+		_Darkness ("Darkness", Range(0,1)) = 0
     }
     SubShader
     {
@@ -71,6 +72,7 @@
 			fixed _MaxNoiseBoost;
 			fixed _RippleNoiseReduce;
 			fixed _Foam;
+			fixed _Darkness;
 
             v2f vert (appdata v)
             {
@@ -140,6 +142,8 @@
 				col.rgb=lerp(col.rgb,fixed3(1,1,1),foam);
 				fixed superFoam = step(s+0.007,_Foam);
 				col.rgb=lerp(col.rgb,fixed3(0,0,0),superFoam);
+				
+				col.rgb*=_Darkness;
 
 
                 // apply fog

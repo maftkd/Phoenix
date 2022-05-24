@@ -1100,7 +1100,11 @@ public class Bird : MonoBehaviour
 
 	bool ScanForNpb(){
 		RaycastHit hit;
-		if(Physics.Raycast(_camera.position,_camera.forward,out hit, 10f,_birdLayer)){
+		if(Physics.Raycast(_camera.position,_camera.forward,out hit, 5f,_birdLayer)){
+			_npb=hit.transform.GetComponent<NPB>();
+			_npb.Targeted();
+			return true;
+			/*
 			//Debug.Log("Hit: "+hit.transform.name);
 			if(_mIn.GetInteractDown()){
 				_npb=hit.transform.GetComponent<NPB>();
@@ -1111,17 +1115,19 @@ public class Bird : MonoBehaviour
 				hit.transform.GetComponent<NPB>().Targeted();
 				return true;
 			}
+			*/
 		}
 		return false;
 	}
 
-	void StartSinging(){
+	public void StartSinging(){
+		_npb.StartListening();
 		_waddle.enabled=false;
 		_hop.enabled=false;
 		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0,_npb.transform);
 		_state=6;
 		_butts.SetActive(true);
-		TipHud.ShowTip("Press E to Listen",transform,Vector3.up*0.5f);
+		TipHud.ShowTip("Press E to Return",transform,Vector3.up*0.5f);
 		_sing.SetTargetBird(_npb._sing);
 		_npb.Hush();
 	}

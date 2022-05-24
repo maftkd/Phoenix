@@ -59,6 +59,7 @@ public class Sing : MonoBehaviour
 	bool _patternDir=true;//true means next step in pattern is to hear the note. False means next step is for note to stop
 	BirdSong _curSong;
 	int _curSongIndex;
+	int _orderedIndex;
 	Sing _mate;
 	Sing _targetBird;
 	System.DateTime _lastSongEventTime;
@@ -101,15 +102,24 @@ public class Sing : MonoBehaviour
 		_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
 	}
 
-	public void SingSong(){
-		if(_state==1)
-			return;
-		_curSongIndex=Random.Range(0,_songs.Length);
+	public int SingSong(){
+		if(_state!=0)
+			return 0;
+		if(!_male)
+			return 0;
+		if(_npb._listening&&_orderedIndex<_songs.Length){
+			_curSongIndex=_orderedIndex;
+		}
+		else{
+			_curSongIndex=Random.Range(0,_songs.Length);
+		}
 		_curSong=_songs[_curSongIndex];
 		StartCoroutine(SingR(_curSong));
+		return _curSongIndex;
 	}
 
 	IEnumerator SingR(BirdSong bs,bool delay=true){
+		_state=2;
 		//wait a sec - play it cool
 		if(delay)
 			yield return new WaitForSeconds(Random.Range(_responseRange.x,_responseRange.y));
@@ -154,6 +164,7 @@ public class Sing : MonoBehaviour
 				_high.Stop();
 			}
 		}
+		_state=0;
 	}
 
 	public void Call(){
@@ -322,12 +333,15 @@ public class Sing : MonoBehaviour
 	public void HandleNote(int pitchId, bool singing){
 		if((transform.position-_player.transform.position).sqrMagnitude>_earShot*_earShot)
 			return;
-		if(!_npb._listening)
+		if(_curSong._notes==null)//catches cases like alarm and female calls
+			return;
+		if(_npb==null||!_npb._listening)
 			return;
 		//Debug.Log("Heard note: "+pitchId+" dir: "+singing);
 		if(_cancelRoutine!=null)
 			StopCoroutine(_cancelRoutine);
 
+		Debug.Log("pattern note: "+_patternNote+", "+name);
 		if(pitchId==_curSong._notes[_patternNote]._pitchId){
 			if(singing==_patternDir){
 				System.DateTime time=System.DateTime.Now;
@@ -395,6 +409,8 @@ public class Sing : MonoBehaviour
 				{
 					_npb.FullPatternSuccess(_curSongIndex);
 					_birdSpawner.SongSuccess(_name,_curSongIndex);
+					if(_orderedIndex<_songs.Length)
+						_orderedIndex++;
 				}
 				_patternNote=0;
 				_patternDir=true;
