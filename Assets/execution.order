@@ -7,3 +7,5 @@ FlyCam - needs to be after-default to counter-rotate and counter-translate any o
 Intro - needs to be after default, because we want to ensure the Shots are already awake. They disable on awake. So 
 WaddleCam - trying this after-default for same reason as fly cam
 DebugScreen - early af because it has to clear its slots before anything else writes to them
+MTree before BirdSpawner - trees need to be setup before birds can be spawned
+HideTreesInEditor - before planter, because it ensures trees are unhidden when play starts

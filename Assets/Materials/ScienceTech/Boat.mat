@@ -67,12 +67,14 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _LightBoost: 2
     - _Metallic: 0
-    - _MinShadow: 0.5
+    - _MinShadow: 1
     - _Mode: 0
     - _OcclusionStrength: 1
     - _OutlineThickness: 0.01
     - _Parallax: 0.02
+    - _ShadowStrength: 0.71
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

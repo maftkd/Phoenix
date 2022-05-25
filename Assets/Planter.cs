@@ -73,6 +73,8 @@ public class Planter : MonoBehaviour
 	}
 
 	public void PlantGrass(){
+		if(!gameObject.activeSelf)
+			return;
 		StartCoroutine(ClearAndPlant());
 	}
 

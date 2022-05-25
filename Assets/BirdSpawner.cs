@@ -149,12 +149,15 @@ public class BirdSpawner : MonoBehaviour
 		RawImage cardImage = card.Find("Rt").GetComponent<RawImage>();
 		Camera birdCam = bird.Find("Camera").GetComponent<Camera>();
 		CanvasGroup cg = card.GetComponent<CanvasGroup>();
+		Renderer smr = bird.GetChild(0).GetComponent<Renderer>();
+		smr.receiveShadows=false;
 		cg.alpha=0f;
 		//setup camera
 		birdCam.enabled=true;
 		cardImage.texture=birdCam.targetTexture;
 		yield return null;
 		birdCam.enabled=false;
+		smr.receiveShadows=true;
 		//wait
 		yield return new WaitForSeconds(1f*index);
 		//animate cg

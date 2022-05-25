@@ -9,6 +9,7 @@ Shader "Unlit/Toon"
 		_OutlineThickness ("Outline Thickness", Range(0,0.01)) = 0.001
 		_ToonGrad ("Toon Gradient", 2D) = "white" {}
 		_MinShadow ("Max Shadow", Range(0,1)) = 0.5
+		_ShadowStrength ("Shadow strength", Range(0,1)) = 1
     }
     SubShader
     {
@@ -48,6 +49,7 @@ Shader "Unlit/Toon"
 			sampler2D _ToonGrad;
 			fixed4 _Color;
 			fixed _MinShadow;
+			fixed _ShadowStrength;
 
             v2f vert (appdata v)
             {
@@ -85,9 +87,11 @@ Shader "Unlit/Toon"
 				
 				//receive shadow
 				fixed shadow=lerp(minShadow,1,attenuation);
+				fixed3 preShadow=col.rgb;
 				col.rgb*=shadow;
 				fixed ambient=0.25;
 				col.rgb=lerp(col.rgb,unity_FogColor.rgb,(1-shadow)*ambient);
+				col.rgb=lerp(preShadow,col.rgb,_ShadowStrength);
 
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
@@ -104,6 +108,7 @@ Shader "Unlit/Toon"
 			#include "UnityCG.cginc"
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma multi_compile_fog
 
 			struct appdata{
 				float4 vertex : POSITION;
@@ -114,6 +119,7 @@ Shader "Unlit/Toon"
 			struct v2f{
 				float4 position : SV_POSITION;
 				float2 uv : TEXCOORD0;
+                UNITY_FOG_COORDS(1)
 			};
 
 			fixed _OutlineThickness;
@@ -127,11 +133,13 @@ Shader "Unlit/Toon"
 				float3 position = v.vertex+outlineOffset;
 				o.position = UnityObjectToClipPos(position);
 				o.uv=v.uv;
+                UNITY_TRANSFER_FOG(o,o.position);
 				return o;
 			}
 			fixed4 frag(v2f i) : SV_TARGET{
 				clip(_OutlineThickness-0.0001);
 				fixed4 col = fixed4(0,0,0,1);
+                UNITY_APPLY_FOG(i.fogCoord, col);
 				return col;
 			}
 

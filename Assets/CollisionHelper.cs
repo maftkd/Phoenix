@@ -32,6 +32,11 @@ public class CollisionHelper : MonoBehaviour
 	public UnityEvent _onBirdEnter;
 
 	void Awake(){
+	}
+
+    // Start is called before the first frame update
+    void Start()
+    {
 		_col=GetComponent<Collider>();
 		_meshCol=transform.GetComponent<MeshCollider>();
 		_hasBoxCollider=transform.GetComponent<BoxCollider>()!=null;
@@ -41,11 +46,6 @@ public class CollisionHelper : MonoBehaviour
 		_player=GameManager._player;
 		_player._onFlight+=FlightMode;
 		_player._onLand+=LandMode;
-	}
-
-    // Start is called before the first frame update
-    void Start()
-    {
         
     }
 
