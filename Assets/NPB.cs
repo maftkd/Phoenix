@@ -7,7 +7,7 @@ public class NPB : MonoBehaviour
 	bool _targeted;
 	GameObject _target;
 	[HideInInspector]
-	public Sing _sing;
+	public Sing _sing;//sing
 	float _targetTime=1f;
 	float _targetTimer;
 	Material _targetMat;
@@ -19,6 +19,7 @@ public class NPB : MonoBehaviour
 	BirdSpawner _bs;
 	Fader _fader;
 	Bird _player;
+	public string _species;
 
 	//public delegate void BirdEvent(bool foo);
 	//public event BirdEvent _onTargetted;
@@ -93,7 +94,7 @@ public class NPB : MonoBehaviour
 		//_targetMat.SetFloat("_Fill", 0);
 		_listening=true;
 		int index = _sing.SingSong();
-		Sfx.PlayOneShot3D(_rewardSounds[index],transform.position);
+		//Sfx.PlayOneShot3D(_rewardSounds[index],transform.position);
 	}
 
 	public void StopListening(){

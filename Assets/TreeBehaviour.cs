@@ -18,7 +18,8 @@ public class TreeBehaviour : MonoBehaviour
 	Bird _player;
 	GroundForager _groundForager;
 	float _hideTimer;
-	public float _hideTime;
+	float _hideTime;
+	public Vector2 _hideTimeRange;
 	public int _takeOffFlaps;
 	Sing _sing;
 
@@ -32,6 +33,7 @@ public class TreeBehaviour : MonoBehaviour
 
 	void OnEnable(){
 		_hideTimer=0f;
+		_hideTime=Random.Range(_hideTimeRange.x,_hideTimeRange.y);
 	}
 
     // Start is called before the first frame update
@@ -49,6 +51,7 @@ public class TreeBehaviour : MonoBehaviour
 					_hideTimer+=Time.deltaTime;
 					if(_hideTimer>=_hideTime){
 						ReturnToGround();
+						_hideTimer=0f;
 					}
 				}
 				if((_player.transform.position-transform.position).sqrMagnitude<_fleeRadius*_fleeRadius){
@@ -62,8 +65,10 @@ public class TreeBehaviour : MonoBehaviour
 		}
     }
 
-	public void ScareIntoTree(){
+	public void ScareIntoTree(bool silent=false){
 		if(_state!=0)
+			return;
+		if(_sing._npb._listening)
 			return;
 		//MTree tree = GetNearestTree();
 		MTree tree = GetRandomTree();
@@ -72,7 +77,8 @@ public class TreeBehaviour : MonoBehaviour
 			Vector3 perch = tree.GetRandomPerch();
 			StartCoroutine(FlyTo(perch));
 		}
-		_sing.FleeAlarm();
+		if(!silent)
+			_sing.FleeAlarm();
 	}
 
 	MTree GetNearestTree(){
@@ -125,7 +131,8 @@ public class TreeBehaviour : MonoBehaviour
 			timer+=Time.deltaTime;
 			float frac=timer/dur;
 			Vector3 pos=Vector3.Lerp(startPos,endPos,frac);
-			float yOffset=(-4*Mathf.Pow(frac-0.5f,2)+1)*height;
+			//float yOffset=(-4*Mathf.Pow(frac-0.5f,2)+1)*height;
+			float yOffset=Mathf.Abs(Mathf.Cos(frac*Mathf.PI*2f*dist*0.2f))*height;
 			pos.y+=yOffset;
 			transform.position=pos;
 
@@ -150,6 +157,8 @@ public class TreeBehaviour : MonoBehaviour
 	}
 
 	void ReturnToGround(){
+		if(_sing._npb._listening)
+			return;
 		Vector3 groundPoint=_groundForager.GetRandomSpotOnGround();
 		StartCoroutine(FlyTo(groundPoint,true));
 	}

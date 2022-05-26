@@ -21,15 +21,6 @@ public class SingCam : Shot
 		_rotation=transform.rotation;
 	}
 
-	/*
-	public override void StartTracking(Transform t){
-		base.StartTracking(t);
-	}
-
-	public override void StopTracking(){
-		base.StopTracking();
-	}
-	*/
 
     // Start is called before the first frame update
     protected override void Start()
@@ -45,6 +36,7 @@ public class SingCam : Shot
 		transform.position=_position;
 		transform.rotation=_rotation;
 
+		/*
 		Vector3 dir=_target.position-_player.transform.position;
 		dir.Normalize();
 		dir=Quaternion.Euler(0,_offsetAngle,0)*dir;
@@ -56,6 +48,13 @@ public class SingCam : Shot
 		Vector3 halfway=Vector3.Lerp(_player.transform.position,_target.position,0.5f);
 		transform.LookAt(halfway+Vector3.up*_offset.y);
 		_rotation=Quaternion.Slerp(_rotation,transform.rotation,_slerp*Time.deltaTime);
+		*/
+		transform.LookAt(_target.position);
+		Quaternion targetRot=transform.rotation;
+		_rotation=Quaternion.Slerp(_rotation,targetRot,_slerp*Time.deltaTime);
+		transform.rotation=_rotation;
+		Vector3 targetPos=_target.position-transform.forward*_offset.z;
+		_position=Vector3.Lerp(_position,targetPos,_lerp*Time.deltaTime);
 
 		transform.position=_position;
 		transform.rotation=_rotation;

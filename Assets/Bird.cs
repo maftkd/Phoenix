@@ -118,6 +118,7 @@ public class Bird : MonoBehaviour
 	RawImage _reticle;
 	NPB _npb;
 	Sing _sing;
+	SpeciesScreen _speciesScreen;
 
 	void Awake(){
 		//calculations
@@ -163,6 +164,7 @@ public class Bird : MonoBehaviour
 		_butts=FindObjectOfType<ButtonPrompts>();
 		_reticle=_butts.transform.parent.Find("Reticle").GetComponent<RawImage>();
 		_sing=transform.GetComponentInChildren<Sing>();
+		_speciesScreen=FindObjectOfType<SpeciesScreen>();
 
 		_sphereCol = GetComponent<SphereCollider>();
 		_hitRadius=_sphereCol.radius*transform.localScale.x;
@@ -248,8 +250,13 @@ public class Bird : MonoBehaviour
 					}
 					break;
 				case 6://singing
+					/*
 					if(_mIn.GetInteractDown()){
 						StopSinging();
+					}
+					*/
+					if(_mIn.GetJumpDown()){
+						Debug.Log("Done with species screen");
 					}
 					break;
 				case 7://entering house
@@ -1124,12 +1131,15 @@ public class Bird : MonoBehaviour
 		_npb.StartListening();
 		_waddle.enabled=false;
 		_hop.enabled=false;
-		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0,_npb.transform);
+		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0.3f,_npb.transform,1f);
 		_state=6;
-		_butts.SetActive(true);
-		TipHud.ShowTip("Press E to Return",transform,Vector3.up*0.5f);
-		_sing.SetTargetBird(_npb._sing);
+		//_butts.SetActive(true);
+		//TipHud.ShowTip("Press E to Return",transform,Vector3.up*0.5f);
+		//_sing.SetTargetBird(_npb._sing);
+		_npb._sing.Engage();
 		_npb.Hush();
+		//species screen -> show Species
+		SpeciesScreen.ShowSpecies(_npb);
 	}
 
 	void StopSinging(){
@@ -1139,6 +1149,7 @@ public class Bird : MonoBehaviour
 		_butts.SetActive(false);
 		_npb.StopListening();
 		_sing.Reset();
+		_npb._sing.Reset();
 	}
 
 	void OnDrawGizmos(){

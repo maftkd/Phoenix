@@ -10,10 +10,11 @@ public class Sing : MonoBehaviour
 	[HideInInspector]
 	public string _name;
 	Animator _anim;
-	int _state;
+	public int _state;
 	Whistle _low;
 	Whistle _mid;
 	Whistle _high;
+	AudioSource _audio;
 
 	[System.Serializable]
 	public struct Note{
@@ -44,10 +45,13 @@ public class Sing : MonoBehaviour
 	IEnumerator _cancelRoutine;
 	public UnityEvent _onPatternSuccess;
 	public bool _male;
+	public bool _femaleSings;
 	public Vector2 _singDelayRange;
 	float _singDelay;
 	float _singTimer;
 	BirdSpawner _birdSpawner;
+	public float _switchTreeChance;
+	TreeBehaviour _tb;
 
 	Bird _player;
 	Transform _cam;
@@ -76,6 +80,8 @@ public class Sing : MonoBehaviour
 		_player=GameManager._player;
 		if(_npb==null)
 			_cam=GameManager._mCam.transform;
+		else
+			_tb=_npb.GetComponent<TreeBehaviour>();
 		_birdSpawner=transform.parent.parent.GetComponent<BirdSpawner>();
 	}
 
@@ -83,7 +89,7 @@ public class Sing : MonoBehaviour
 		//setup songs - this is done after awake because we need to ensure _male is set
 		if(_npb!=null)
 		{
-			if(_male)
+			if(_male||_femaleSings)
 			{
 				for(int i=0;i<_songs.Length; i++){
 					Deserialize(_songs, i);
@@ -91,11 +97,6 @@ public class Sing : MonoBehaviour
 				for(int i=0;i<_alarms.Length; i++){
 					Deserialize(_alarms,i);
 				}
-				//may rework this because we don't need this to be event driven
-				//the only time we are listening to notes is when we are locked in and the player
-				//is in the sing state
-				//Sing playerSing=_player.transform.GetComponentInChildren<Sing>();
-				//playerSing._onSing+=SongHandler;
 			}
 			_lastSongEventTime=System.DateTime.Now;
 		}
@@ -105,28 +106,30 @@ public class Sing : MonoBehaviour
 	public int SingSong(){
 		if(_state!=0)
 			return 0;
-		if(!_male)
+		if(!_male&&!_femaleSings)
 			return 0;
+		/*
 		if(_npb._listening&&_orderedIndex<_songs.Length){
 			_curSongIndex=_orderedIndex;
 		}
 		else{
+		*/
 			_curSongIndex=Random.Range(0,_songs.Length);
-		}
+		//}
 		_curSong=_songs[_curSongIndex];
 		StartCoroutine(SingR(_curSong));
 		return _curSongIndex;
 	}
 
 	IEnumerator SingR(BirdSong bs,bool delay=true){
-		_state=2;
+		_state=2;//2 = singing
 		//wait a sec - play it cool
 		if(delay)
 			yield return new WaitForSeconds(Random.Range(_responseRange.x,_responseRange.y));
 
 		//setup audio
 		float pitch=Random.Range(0.95f,1.05f);
-		Sfx.PlayOneShot3D(bs._clip,transform.position,pitch);
+		_audio = Sfx.PlayOneShot3D(bs._clip,transform.position,pitch);
 
 		//setup notes
 		float dur=bs._clip.length/pitch;
@@ -164,7 +167,20 @@ public class Sing : MonoBehaviour
 				_high.Stop();
 			}
 		}
-		_state=0;
+		_state=0;//0 = ready to sing
+
+		if(_femaleSings&&!_male){
+			if(Random.value<_responseChance){
+				_mate.SingSong();
+			}
+		}
+
+		if(!_npb._listening){
+			if(Random.value<_switchTreeChance)
+			{
+				_tb.ScareIntoTree(true);
+			}
+		}
 	}
 
 	public void Call(){
@@ -193,24 +209,16 @@ public class Sing : MonoBehaviour
     {
 		if(_npb!=null)
 		{
-			//#temp
-			/*
-			if(_male&&!_npb._listening){
-				_singTimer+=Time.deltaTime;
-				if(_singTimer>_singDelay){
-					_singTimer=0;
-					SingSong();
-					_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
-				}
-			}
-			*/
 			if(!_male){
 				switch(_state){
 					case 0:
 						_singTimer+=Time.deltaTime;
 						if(_singTimer>_singDelay){
 							_singTimer=0;
-							Call();
+							if(_femaleSings)
+								SingSong();
+							else
+								Call();
 							_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
 						}
 						break;
@@ -461,13 +469,18 @@ public class Sing : MonoBehaviour
 
 	public void FleeAlarm(){
 		StopAllCoroutines();
+		if(_audio!=null)
+			_audio.Stop();
+		_low.Stop();
+		_mid.Stop();
+		_high.Stop();
 		//play sound
 
 		BirdSong alarmSong=_alarms[Random.Range(0,_alarms.Length)];
 		StartCoroutine(SingR(alarmSong,false));
 		
 		//change state
-		_state=1;
+		_state=1;//1 = alarm
 	}
 
 	public void Chill(){
@@ -491,6 +504,19 @@ public class Sing : MonoBehaviour
 			notes[j]=n;
 		}
 		files[index]._notes = notes;
+	}
+
+	public void Engage(){
+		_state=3;//engaged state
+		//stop existing singing
+		StopAllCoroutines();
+		if(_audio!=null)
+			_audio.Stop();
+		_low.Stop();
+		_mid.Stop();
+		_high.Stop();
+		//start new singing
+		SingSong();
 	}
 
 	void OnDrawGizmos(){

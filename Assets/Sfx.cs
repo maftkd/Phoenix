@@ -63,7 +63,7 @@ public class Sfx : MonoBehaviour
 		Destroy(foo,clip.length);
 		return audio;
 	}
-	public static void PlayOneShot3D(AudioClip clip,Vector3 pos,float pitch){
+	public static AudioSource PlayOneShot3D(AudioClip clip,Vector3 pos,float pitch){
 		GameObject foo = new GameObject("one-shot audio");
 		foo.transform.position=pos;
 		AudioSource audio = foo.AddComponent<AudioSource>();
@@ -75,6 +75,7 @@ public class Sfx : MonoBehaviour
 		//audio.maxDistance=10f;
 
 		Destroy(foo,clip.length/pitch);
+		return audio;
 	}
 
 	public static void PlayOneShot3DVol(AudioClip clip,Vector3 pos,float volume){
@@ -101,10 +102,10 @@ public class Sfx : MonoBehaviour
 	}
 
 	public void Pause(){
-		transform.GetChild(0).GetComponent<AudioSource>().Pause();
+		transform.GetChild(2).GetComponent<AudioSource>().Pause();
 	}
 
 	public void Play(){
-		transform.GetChild(0).GetComponent<AudioSource>().Play();
+		transform.GetChild(2).GetComponent<AudioSource>().Play();
 	}
 }

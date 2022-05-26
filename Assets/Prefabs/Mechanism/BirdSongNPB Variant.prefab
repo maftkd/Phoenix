@@ -208,7 +208,7 @@ PrefabInstance:
     - target: {fileID: 8398567894489173518, guid: f7bf206bcb729724ea8c8791e1d1fb17,
         type: 3}
       propertyPath: _npb
-      value: 1
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8398567894489173518, guid: f7bf206bcb729724ea8c8791e1d1fb17,
         type: 3}
@@ -235,6 +235,16 @@ PrefabInstance:
       propertyPath: _rewardSound
       value: 
       objectReference: {fileID: 8300000, guid: a86b307e5f4879749b66af5c5e6f4606, type: 3}
+    - target: {fileID: 8398567894489173518, guid: f7bf206bcb729724ea8c8791e1d1fb17,
+        type: 3}
+      propertyPath: _responseChance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8398567894489173518, guid: f7bf206bcb729724ea8c8791e1d1fb17,
+        type: 3}
+      propertyPath: _switchTreeChance
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 8398567894489173518, guid: f7bf206bcb729724ea8c8791e1d1fb17,
         type: 3}
       propertyPath: _accuracyThreshold

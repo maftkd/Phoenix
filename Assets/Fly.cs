@@ -398,7 +398,7 @@ public class Fly : MonoBehaviour
 		}
 
 		float velMag=_velocity.magnitude;
-		DebugScreen.Print(velMag.ToString("0.000"));
+		//DebugScreen.Print(velMag.ToString("0.000"));
 		float accel=(velMag-_prevMag)/Time.deltaTime;
 		bool boosted=normVel>0.2f;
 		if(boosted&&!_windSound.IsOn()){
@@ -481,7 +481,7 @@ public class Fly : MonoBehaviour
 				{
 					_bird.SetTerrain(t);
 				}
-				_bird.SetCardTerrain(t);
+				//_bird.SetCardTerrain(t);
 
 			}
 			else{

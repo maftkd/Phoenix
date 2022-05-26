@@ -13,14 +13,9 @@ public class BirdSpawner : MonoBehaviour
 		public Material _altMat;
 		public int _pairSpawn;
 		public int _spawnTerrainLayer;
-		int _firstBirdIndex;
-		public void SetFirstBirdIndex(int fbi){
-			_firstBirdIndex=fbi;
-		}
-		public int GetFirstBirdIndex(){
-			return _firstBirdIndex;
-		}
 	}
+
+	Dictionary <string,int> _firstSpawn;
 
 	public int _seed;
 	public SpawnGroup [] _spawnGroup;
@@ -36,6 +31,7 @@ public class BirdSpawner : MonoBehaviour
 		if(_cards==null)
 			_cards=GameObject.FindGameObjectWithTag("Cards").transform;
 		_birdCount = new Dictionary<string,int>();
+		_firstSpawn=new Dictionary<string,int>();
 	}
 
 	void Start(){
@@ -77,7 +73,7 @@ public class BirdSpawner : MonoBehaviour
 							Transform bird = Instantiate(sg._birdPrefab,new Vector3(worldX,worldY,worldZ),Quaternion.identity,transform);
 							Sing curSing = bird.GetComponentInChildren<Sing>();
 							if(i%2==0&&sg._altMat!=null)
-								bird.GetChild(0).GetComponent<Renderer>().material=sg._altMat;
+								bird.GetComponentInChildren<SkinnedMeshRenderer>().material=sg._altMat;
 							GroundForager gf = bird.GetComponent<GroundForager>();
 							if(gf!=null)
 								gf._terrainLayer=sg._spawnTerrainLayer;
@@ -96,12 +92,18 @@ public class BirdSpawner : MonoBehaviour
 								curSing.SetMate(prevBird);
 							}
 							if(i==1)
-								sg.SetFirstBirdIndex(counter);
+							{
+								_firstSpawn.Add(sg._name,counter);
+							}
 							curSing.SetName(sg._name);
 							counter++;
 						}
 					}
 					else{
+						Debug.Log("Not really expecting to get here yet...");
+						//#todo maybe
+						//other spawning stuff like waterfowl
+						/*
 						//spawn in tree
 						MTree tree = trees[Random.Range(0,trees.Length)];
 						Vector3 perch = tree.GetRandomPerch();
@@ -109,7 +111,9 @@ public class BirdSpawner : MonoBehaviour
 						spotFound=true;
 						Transform bird = Instantiate(sg._birdPrefab,perch,Quaternion.identity,transform);
 						if(i%2==0&&sg._altMat!=null)
+							bird.GetComponentInChildren<SkinnedMeshRenderer>().material=sg._altMat;
 							bird.GetChild(0).GetComponent<Renderer>().material=sg._altMat;
+							*/
 					}
 					iters++;
 				}
@@ -133,10 +137,9 @@ public class BirdSpawner : MonoBehaviour
 		int counter=0;
 		foreach(SpawnGroup sg in _spawnGroup)
 		{
-			Debug.Log(sg._name);
 			Transform card = Instantiate(_cardPrefab,_cards);
 			//find relevant bird - perhaps based on sg._name
-			Transform bird = transform.GetChild(sg.GetFirstBirdIndex());
+			Transform bird = transform.GetChild(_firstSpawn[sg._name]);
 			card.name=sg._name;
 			//set card's render texture - this may have to be a coroutine - which may be fine because we would like to animate
 			//this thing anyway
@@ -146,14 +149,16 @@ public class BirdSpawner : MonoBehaviour
 	}
 
 	IEnumerator SetupCard(Transform card, Transform bird, int index){
+		Debug.Log("Setting up: "+bird.name);
 		RawImage cardImage = card.Find("Rt").GetComponent<RawImage>();
 		Camera birdCam = bird.Find("Camera").GetComponent<Camera>();
 		CanvasGroup cg = card.GetComponent<CanvasGroup>();
-		Renderer smr = bird.GetChild(0).GetComponent<Renderer>();
+		Renderer smr = bird.GetComponentInChildren<SkinnedMeshRenderer>();
 		smr.receiveShadows=false;
 		cg.alpha=0f;
 		//setup camera
 		birdCam.enabled=true;
+		Debug.Log("tex name: "+birdCam.targetTexture.name);
 		cardImage.texture=birdCam.targetTexture;
 		yield return null;
 		birdCam.enabled=false;

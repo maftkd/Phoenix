@@ -151,6 +151,7 @@ public class MCamera : MonoBehaviour
 				break;
 			case Transitions.CUT_BACK:
 				CutBack(cam);
+				LerpLetterBox(letterBox,dur);
 				break;
 			case Transitions.LERP:
 				StartCoroutine(LerpTo(cam,dur));

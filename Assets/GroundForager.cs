@@ -21,11 +21,13 @@ public class GroundForager : MonoBehaviour
 	public Vector2 _hopDist;
 	public Vector2 _hopDur;
 	public Vector2 _hopHeight;
+	public float _returnToTreeChance;
 	Terrain _terrain;
 	Bird _player;
 	public float _fleeRadius;
 	TreeBehaviour _treeB;
 	public int _terrainLayer;
+	NPB _npb;
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
@@ -36,11 +38,13 @@ public class GroundForager : MonoBehaviour
 		_terrain=transform.parent.GetComponent<BirdSpawner>()._terrain;
 		_player=GameManager._player;
 		_treeB=GetComponent<TreeBehaviour>();
+		_npb=GetComponent<NPB>();
 	}
 
 	void OnEnable(){
 		_anim.SetBool("hop",false);
 		_anim.SetBool("peck",false);
+		_state=0;
 	}
 
     // Start is called before the first frame update
@@ -59,7 +63,9 @@ public class GroundForager : MonoBehaviour
 			case 0:
 				_listenTimer+=Time.deltaTime;
 				if(_listenTimer>=_listenTime){
-					StartCoroutine(GetWorm());
+					if(!_npb._listening)
+						StartCoroutine(GetWorm());
+					_listenTimer=0;
 				}
 				else{
 				}
@@ -99,7 +105,13 @@ public class GroundForager : MonoBehaviour
 		else
 		{
 			_anim.SetBool("peck",false);
-			Listen();
+			if(Random.value<_returnToTreeChance){
+				_treeB.enabled=true;
+				_treeB.ScareIntoTree();
+				enabled=false;
+			}
+			else
+				Listen();
 		}
 	}
 

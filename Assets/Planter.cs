@@ -11,6 +11,9 @@ public class Planter : MonoBehaviour
 	public int _seed;
 	public bool _incSeed;
 	public bool _decSeed;
+	public int _plantCount;
+	public bool _incCount;
+	public bool _decCount;
 	public Vector3 _minSize;
 	public Vector3 _maxSize;
 	public float _minSpacing;
@@ -18,7 +21,6 @@ public class Planter : MonoBehaviour
 	public int _detailLayer;
 	public float _minHeight;
 	public float _maxHeight;
-	public float _plantChance;
 	public bool _offsetVert;
 	[Header("Controls")]
 	public bool _plantTransform;
@@ -36,6 +38,15 @@ public class Planter : MonoBehaviour
 		if(_decSeed){
 			_seed--;
 			_decSeed=false;
+		}
+		if(_incCount)
+		{
+			_plantCount++;
+			_incCount=false;
+		}
+		if(_decCount){
+			_plantCount--;
+			_decCount=false;
 		}
 		if(_plantTransform||_autoUpdate){
 			PlantGrass();
@@ -85,6 +96,49 @@ public class Planter : MonoBehaviour
 		//Debug.Log("Initting random state with seed");
 		Random.InitState(_seed);
 		//Debug.Log("Planting: "+_grassPrefab.name+", seed is: "+_seed);
+		for(int i=0;i<_plantCount; i++){
+			int iters=0;
+			bool spotFound=false;
+			while(iters<100&&!spotFound){
+				iters++;
+				//get random position
+				float xFrac=Random.value;
+				float zFrac=Random.value;
+				int alphaMapZ=Mathf.RoundToInt(xFrac*(td.alphamapHeight-1));
+				int alphaMapX=Mathf.RoundToInt(zFrac*(td.alphamapWidth-1));
+				//check terrain layer
+				if(alphaMaps[alphaMapX,alphaMapZ,_terrainLayer]<_alphaThreshold)
+					continue;
+				float worldX=_terrain.transform.position.x+td.size.x*xFrac;
+				float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
+				float worldY = _terrain.SampleHeight(new Vector3(worldX,0,worldZ));
+				//check height
+				if(worldY<_minHeight||worldY>_maxHeight)
+					continue;
+				Vector3 p = new Vector3(worldX,worldY,worldZ);
+				bool canPlant=true;
+				//check spacing with other trees
+				foreach(Transform t in transform){
+					float sqrDist=(p-t.position).sqrMagnitude;
+					if(sqrDist<_minSpacing*_minSpacing)
+					{
+						canPlant=false;
+						break;
+					}
+
+				}
+				if(canPlant){
+					grassCount++;
+					Transform grass = Instantiate(_grassPrefab, p,Quaternion.Euler(0,Random.value*360f,0),transform);
+					if(_offsetVert)
+						grass.position+=Vector3.up*grass.localScale.y*0.5f;
+					if(grass.GetComponent<MTree>()!=null)
+						grass.GetComponent<MTree>().GenTree();
+					spotFound=true;
+				}
+			}
+		}
+		/*
 		for(int y=0;y<td.alphamapHeight; y++){
 			for(int x=0;x<td.alphamapWidth; x++){
 				if(alphaMaps[x,y,_terrainLayer]>_alphaThreshold)
@@ -92,34 +146,11 @@ public class Planter : MonoBehaviour
 					if(Random.value<_plantChance){
 						float xFrac=(y/(float)(td.alphamapHeight-1));
 						float zFrac=(x/(float)(td.alphamapWidth-1));
-						float worldX=_terrain.transform.position.x+td.size.x*xFrac;
-						float worldZ=_terrain.transform.position.z+td.size.z*zFrac;
-						float worldY = _terrain.SampleHeight(new Vector3(worldX,0,worldZ));
-						if(worldY<_minHeight||worldY>_maxHeight)
-							continue;
-						Vector3 p = new Vector3(worldX,worldY,worldZ);
-						bool canPlant=true;
-						foreach(Transform t in transform){
-							float sqrDist=(p-t.position).sqrMagnitude;
-							if(sqrDist<_minSpacing*_minSpacing)
-							{
-								canPlant=false;
-								break;
-							}
-
-						}
-						if(canPlant){
-							grassCount++;
-							Transform grass = Instantiate(_grassPrefab, p,Quaternion.Euler(0,Random.value*360f,0),transform);
-							if(_offsetVert)
-								grass.position+=Vector3.up*grass.localScale.y*0.5f;
-							if(grass.GetComponent<MTree>()!=null)
-								grass.GetComponent<MTree>().GenTree();
-						}
 					}
 				}
 			}
 		}
+		*/
 		//Debug.Log("Grass count: "+grassCount);
 	}
 

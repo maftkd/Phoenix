@@ -6,7 +6,7 @@ Shader "Unlit/Toon"
     {
 		_Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
-		_OutlineThickness ("Outline Thickness", Range(0,0.01)) = 0.001
+		_OutlineThickness ("Outline Thickness", Range(0,0.02)) = 0.001
 		_ToonGrad ("Toon Gradient", 2D) = "white" {}
 		_MinShadow ("Max Shadow", Range(0,1)) = 0.5
 		_ShadowStrength ("Shadow strength", Range(0,1)) = 1
