@@ -155,7 +155,7 @@ public class TreeBehaviour : MonoBehaviour
 			enabled=false;
 			_groundForager.enabled=true;
 		}
-		_sing.Chill();
+		_sing.Reset();
 	}
 
 	void ReturnToGround(){

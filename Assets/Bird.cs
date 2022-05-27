@@ -119,7 +119,7 @@ public class Bird : MonoBehaviour
 	RawImage _reticle;
 	NPB _npb;
 	Sing _sing;
-	SpeciesScreen _speciesScreen;
+	List<Sing.BirdSong> _songs;
 
 	void Awake(){
 		//calculations
@@ -164,9 +164,11 @@ public class Bird : MonoBehaviour
 		_prevPos=transform.position;
 
 		_butts=FindObjectOfType<ButtonPrompts>();
-		_reticle=_butts.transform.parent.Find("Reticle").GetComponent<RawImage>();
+		//_reticle=_butts.transform.parent.Find("Reticle").GetComponent<RawImage>();
+		Transform hud=_mCam.transform.Find("Hud");
+		_reticle=hud.Find("Reticle").GetComponent<RawImage>();
 		_sing=transform.GetComponentInChildren<Sing>();
-		_speciesScreen=FindObjectOfType<SpeciesScreen>();
+		_songs = new List<Sing.BirdSong>();
 
 		_sphereCol = GetComponent<SphereCollider>();
 		_hitRadius=_sphereCol.radius*transform.localScale.x;
@@ -201,6 +203,14 @@ public class Bird : MonoBehaviour
 						StartWaddling();
 					//look for other birds
 					targetting=ScanForNpb();
+					if(_mIn.GetInteractDown()){
+						//todo, for certain prompts like new song acquired
+						//new photo, or new island unlocked, I'd like to be able to force the menu
+						//to open to a particular pane, but for now let's just test the input
+						Debug.Log("Opening menu");
+						//state = 7 , so we can disable the input from interfering with the game
+						//GameManager.Pause 
+					}
 					break;
 				case 1://waddling
 					if(!_waddle.IsWaddling()){
@@ -252,11 +262,11 @@ public class Bird : MonoBehaviour
 					}
 					break;
 				case 6://singing
-					if(_mIn.GetJumpDown()){
+					if(SpeciesScreen._canSkip&&_mIn.GetJumpDown()){
 						EndScan();
 					}
 					break;
-				case 7://entering house
+				case 7://menu state
 					break;
 				case 8://feeding
 					break;
@@ -1157,6 +1167,17 @@ public class Bird : MonoBehaviour
 		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK,0f,null,lbDur);
 		yield return new WaitForSeconds(lbDur);
 		_npb.EndScan();
+	}
+
+	public bool LearnSong(Sing.BirdSong song){
+		foreach(Sing.BirdSong s in _songs){
+			if(s._fileName==song._fileName)
+			{
+				return false;
+			}
+		}
+		_songs.Add(song);
+		return true;
 	}
 
 	void OnDrawGizmos(){

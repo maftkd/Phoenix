@@ -144,7 +144,7 @@ public class MInput : MonoBehaviour
 	public bool GetInteractDown(){
 		if(_inputLocked)
 			return false;
-		return (Input.GetButtonDown("Interact")||GetTriggerRDown());
+		return (Input.GetButtonDown("Interact"));
 	}
 
 	public bool GetLowDown(){

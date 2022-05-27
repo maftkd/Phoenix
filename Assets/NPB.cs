@@ -30,6 +30,7 @@ public class NPB : MonoBehaviour
 	public AudioClip[] _rewardSounds;
 	public AudioClip _rewardBirdCount;
 	public AudioClip _patternFail;
+	public AudioClip _rewardNewSong;
 
 	void Awake(){
 		_target=transform.Find("Target").gameObject;
@@ -166,13 +167,14 @@ public class NPB : MonoBehaviour
 			//_scanned=true;
 			//IncBirdCount();
 		}
+		Sfx.PlayOneShot3D(_rewardBirdCount,transform.position);
 		_scanned=true;
 		_sing.Engage();
 	}
 
 	public void EndScan(){
 		//_scanned=false;
-		_sing.Free();
+		_sing.Reset();
 		_state=3;
 		_scanned=false;
 		//some temp code here
@@ -181,6 +183,13 @@ public class NPB : MonoBehaviour
 		//if its a new bird we gotta add it to the song list
 		//and show the tip hud
 		//but for temp, since we just testing tip hud, we show that every time
-		TipHud.ShowTip("New Song Learned!",_species,"Press 'E' to select song");
+
+		if(_player.LearnSong(_sing._playSong))
+		{
+			TipHud.ShowTip("New Song Learned!",_species,"Press 'E' to select song");
+			Sfx.PlayOneShot3D(_rewardNewSong,transform.position);
+		}
+		//player -> learn Song (_sing._playSong)
+
 	}
 }

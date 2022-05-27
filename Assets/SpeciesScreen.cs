@@ -7,6 +7,7 @@ public class SpeciesScreen : MonoBehaviour
 {
 	CanvasGroup _cg;
 	public static SpeciesScreen _instance;
+	public static bool _canSkip;
 	Text _name;
 	Text _scienceName;
 	public float _fadeDelay;
@@ -38,6 +39,7 @@ public class SpeciesScreen : MonoBehaviour
     }
 
 	public static void ShowSpecies(NPB npb){
+		_canSkip=false;
 		_instance.ShowSpeciesA(npb);
 	}
 
@@ -65,6 +67,7 @@ public class SpeciesScreen : MonoBehaviour
 			yield return null;
 		}
 		_cg.alpha=target;
+		_canSkip=true;
 	}
 
 	public static void Hide(){

@@ -1030,6 +1030,31 @@ PrefabInstance:
       propertyPath: _returnToTreeChance
       value: 0.25
       objectReference: {fileID: 0}
+    - target: {fileID: 5845262001939844203, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _playSong._clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 5b308398ebee6cc4a85d3cf12775f3c2, type: 3}
+    - target: {fileID: 5845262001939844203, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _songs.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5845262001939844203, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _playSong._fileName
+      value: AmericanRobinPlay
+      objectReference: {fileID: 0}
+    - target: {fileID: 5845262001939844203, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _songs.Array.data[3]._clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 1e18f53e6fd80ba47b37e0d1969c04b2, type: 3}
+    - target: {fileID: 5845262001939844203, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _songs.Array.data[3]._fileName
+      value: AmericanRobin4
+      objectReference: {fileID: 0}
     - target: {fileID: 5845262002360950305, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
       propertyPath: _species

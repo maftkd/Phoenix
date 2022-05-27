@@ -36,6 +36,7 @@ public class Sing : MonoBehaviour
 	[Header("Npb stuff")]
 	public NPB _npb;
 	public BirdSong [] _songs;
+	public BirdSong _playSong;
 	public AudioClip [] _calls;
 	public BirdSong [] _alarms;
 	public Vector2 _responseRange;
@@ -78,28 +79,22 @@ public class Sing : MonoBehaviour
 
 		_npb=transform.GetComponentInParent<NPB>();
 		_player=GameManager._player;
-		if(_npb==null)
-			_cam=GameManager._mCam.transform;
-		else
-			_tb=_npb.GetComponent<TreeBehaviour>();
+		_tb=_npb.GetComponent<TreeBehaviour>();
 		_birdSpawner=transform.parent.parent.GetComponent<BirdSpawner>();
 	}
 
 	void Start(){
 		//setup songs - this is done after awake because we need to ensure _male is set
-		if(_npb!=null)
+		if(_male||_femaleSings)
 		{
-			if(_male||_femaleSings)
-			{
-				for(int i=0;i<_songs.Length; i++){
-					Deserialize(_songs, i);
-				}
-				for(int i=0;i<_alarms.Length; i++){
-					Deserialize(_alarms,i);
-				}
+			for(int i=0;i<_songs.Length; i++){
+				Deserialize(_songs, i);
 			}
-			_lastSongEventTime=System.DateTime.Now;
+			for(int i=0;i<_alarms.Length; i++){
+				Deserialize(_alarms,i);
+			}
 		}
+		_lastSongEventTime=System.DateTime.Now;
 		_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
 	}
 
@@ -108,14 +103,8 @@ public class Sing : MonoBehaviour
 			return 0;
 		if(!_male&&!_femaleSings)
 			return 0;
-		/*
-		if(_npb._listening&&_orderedIndex<_songs.Length){
-			_curSongIndex=_orderedIndex;
-		}
-		else{
-		*/
-			_curSongIndex=Random.Range(0,_songs.Length);
-		//}
+
+		_curSongIndex=Random.Range(0,_songs.Length);
 		_curSong=_songs[_curSongIndex];
 		StartCoroutine(SingR(_curSong));
 		return _curSongIndex;
@@ -176,6 +165,10 @@ public class Sing : MonoBehaviour
 				_mate.SingSong();
 			}
 		}
+		if(!_femaleSings){
+			//_mate.
+			_mate.Reset();
+		}
 
 		if(!_npb._scanned){
 			if(Random.value<_switchTreeChance)
@@ -190,6 +183,7 @@ public class Sing : MonoBehaviour
 	}
 
 	IEnumerator CallR(){
+		_state=2;//2 is singing for male / calling for female
 		float pitch=Random.Range(0.8f,1f);
 		AudioClip call=_calls[Random.Range(0,_calls.Length)];
 		Sfx.PlayOneShot3D(call,transform.position,pitch);
@@ -209,29 +203,28 @@ public class Sing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(_npb!=null)
-		{
-			if(!_male){
-				switch(_state){
-					case 0:
-						_singTimer+=Time.deltaTime;
-						if(_singTimer>_singDelay){
-							_singTimer=0;
-							if(_femaleSings)
-								SingSong();
-							else
-								Call();
-							_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
-						}
-						break;
-					case 1:
-						break;
-					default:
-						break;
-				}
+		if(!_male){
+			switch(_state){
+				case 0:
+					_singTimer+=Time.deltaTime;
+					if(_singTimer>_singDelay){
+						_singTimer=0;
+						if(_femaleSings)
+							SingSong();
+						else
+							Call();
+						_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
+					}
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				default:
+					break;
 			}
-			return;
 		}
+		/*
 		if(_player._state!=6)
 			return;
 		switch(_state){
@@ -333,11 +326,14 @@ public class Sing : MonoBehaviour
 			default:
 				break;
 		}
+		*/
     }
 
 	void LateUpdate(){
+		/*
 		if(_npb==null)
 			transform.forward=_cam.forward;
+			*/
 	}
 
 	public void HandleNote(int pitchId, bool singing){
@@ -485,9 +481,6 @@ public class Sing : MonoBehaviour
 		_state=1;//1 = alarm
 	}
 
-	public void Chill(){
-		_state=0;
-	}
 
 	public void Deserialize(BirdSong[] files, int index){
 		BirdSong bs=files[index];
@@ -519,10 +512,6 @@ public class Sing : MonoBehaviour
 		//start new singing
 		SingSong();
 		_state=3;//engaged state
-	}
-
-	public void Free(){
-		_state=0;
 	}
 
 	void OnDrawGizmos(){

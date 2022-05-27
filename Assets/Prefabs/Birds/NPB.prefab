@@ -319,6 +319,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 69effffe8076fa647a28072b4c76083f, type: 3}
   _rewardBirdCount: {fileID: 8300000, guid: e1529ef87b63ec748b0b22b4bf346ba3, type: 3}
   _patternFail: {fileID: 8300000, guid: faca32d232dd3b2418f03f24e346abc0, type: 3}
+  _rewardNewSong: {fileID: 8300000, guid: 56854860ea07dcb419f7998c55763ef5, type: 3}
 --- !u!114 &2288084703379707439
 MonoBehaviour:
   m_ObjectHideFlags: 0
