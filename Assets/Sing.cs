@@ -28,6 +28,8 @@ public class Sing : MonoBehaviour
 		public AudioClip _clip;
 		public string _fileName;
 		[HideInInspector]
+		public string _species;
+		[HideInInspector]
 		public Note[] _notes;
 		[HideInInspector]
 		public float _length;

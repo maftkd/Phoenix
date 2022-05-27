@@ -23,6 +23,7 @@ public class NPB : MonoBehaviour
 	public string _speciesLatin;
 	int _state;
 	Text _debugText;
+	MInput _mIn;
 
 	//public delegate void BirdEvent(bool foo);
 	//public event BirdEvent _onTargetted;
@@ -45,6 +46,7 @@ public class NPB : MonoBehaviour
 		AudioSource audio = GetComponent<AudioSource>();
 		audio.clip=Synthesizer.GenerateSimpleWave(440f,1f,0.05f);
 		_player=GameManager._player;
+		_mIn=GameManager._mIn;
 		_debugText=transform.GetComponentInChildren<Text>();
 	}
     // Start is called before the first frame update
@@ -56,6 +58,8 @@ public class NPB : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if(_mIn._inputLocked)
+			return;
 		switch(_state){
 			case 0:
 				if(_targeted){
@@ -184,12 +188,10 @@ public class NPB : MonoBehaviour
 		//and show the tip hud
 		//but for temp, since we just testing tip hud, we show that every time
 
-		if(_player.LearnSong(_sing._playSong))
+		if(_player.LearnSong(_sing._playSong,_species))
 		{
 			TipHud.ShowTip("New Song Learned!",_species,"Press 'E' to select song");
 			Sfx.PlayOneShot3D(_rewardNewSong,transform.position);
 		}
-		//player -> learn Song (_sing._playSong)
-
 	}
 }

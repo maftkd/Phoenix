@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 	Sfx _sfx;
-	GameObject _pauseScreen;
+	public GameObject _pauseScreen;
 	List<BirdHouse> _solvedPuzzles;
 	public static GameManager _instance;
 	public static Bird _player;
@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
 
 	void Awake(){
 		_sfx=FindObjectOfType<Sfx>();
-		_pauseScreen=transform.GetChild(0).gameObject;
 		_solvedPuzzles=new List<BirdHouse>();
 		_instance=this;
 		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
@@ -43,12 +42,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(Input.GetButtonDown("Pause"))
+		if(Input.GetButtonDown("Interact")||Input.GetButtonDown("Pause"))
 		{
 			if(Time.timeScale==0)
-				Play();
+				PlayA();
 			else
-				Pause();
+				PauseA();
 			/*
 #if UNITY_EDITOR
 			UnityEditor.EditorApplication.isPlaying = false;
@@ -63,7 +62,11 @@ public class GameManager : MonoBehaviour
 		}
     }
 
-	public void Pause(){
+	public static void Pause(){
+		_instance.PauseA();
+	}
+
+	public void PauseA(){
 		_mCam.EnableCurrentShot(false);
 		Time.timeScale=0;
 		_sfx.Pause();
@@ -74,7 +77,11 @@ public class GameManager : MonoBehaviour
 		//slots[0].SelectSaveButton();
 	}
 
-	public void Play(){
+	public static void Play(){
+		_instance.PlayA();
+	}
+
+	public void PlayA(){
 		Time.timeScale=1f;
 		_mCam.EnableCurrentShot(true);
 		_sfx.Play();

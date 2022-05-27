@@ -108,7 +108,7 @@ public class SaveSlot : MonoBehaviour
 			}
 		}
 
-		GameManager._instance.Play();
+		//GameManager._instance.Play();
 	}
 
 	public void DeleteGame(){

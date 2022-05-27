@@ -119,7 +119,7 @@ public class Bird : MonoBehaviour
 	RawImage _reticle;
 	NPB _npb;
 	Sing _sing;
-	List<Sing.BirdSong> _songs;
+	public List<Sing.BirdSong> _songs;
 
 	void Awake(){
 		//calculations
@@ -203,14 +203,18 @@ public class Bird : MonoBehaviour
 						StartWaddling();
 					//look for other birds
 					targetting=ScanForNpb();
+					/*
 					if(_mIn.GetInteractDown()){
 						//todo, for certain prompts like new song acquired
 						//new photo, or new island unlocked, I'd like to be able to force the menu
 						//to open to a particular pane, but for now let's just test the input
 						Debug.Log("Opening menu");
+						GameManager.Pause();
+						_state=7;
 						//state = 7 , so we can disable the input from interfering with the game
 						//GameManager.Pause 
 					}
+					*/
 					break;
 				case 1://waddling
 					if(!_waddle.IsWaddling()){
@@ -267,6 +271,18 @@ public class Bird : MonoBehaviour
 					}
 					break;
 				case 7://menu state
+					/*
+					if(_mIn.GetInteractDown()){
+						//todo, for certain prompts like new song acquired
+						//new photo, or new island unlocked, I'd like to be able to force the menu
+						//to open to a particular pane, but for now let's just test the input
+						Debug.Log("Closing menu");
+						GameManager.Play();
+						_state=0;
+						//state = 7 , so we can disable the input from interfering with the game
+						//GameManager.Pause 
+					}
+					*/
 					break;
 				case 8://feeding
 					break;
@@ -1169,13 +1185,14 @@ public class Bird : MonoBehaviour
 		_npb.EndScan();
 	}
 
-	public bool LearnSong(Sing.BirdSong song){
+	public bool LearnSong(Sing.BirdSong song,string species){
 		foreach(Sing.BirdSong s in _songs){
 			if(s._fileName==song._fileName)
 			{
 				return false;
 			}
 		}
+		song._species=species;
 		_songs.Add(song);
 		return true;
 	}

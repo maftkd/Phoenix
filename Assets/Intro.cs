@@ -95,7 +95,7 @@ public class Intro : MonoBehaviour
 				_titleMat.SetFloat("_Power",0);
 				break;
 			case Mode.SKIP:
-				GameManager._instance.Play();
+				GameManager.Play();
 				_coverArtIsland.SetActive(false);
 				_overheadBird.gameObject.SetActive(false);
 				enabled=false;
@@ -226,7 +226,7 @@ public class Intro : MonoBehaviour
 		yield return new WaitForSeconds(_letterBoxFadeDur);
 
 		//free input, etc.
-		GameManager._instance.Play();
+		//GameManager._instance.Play();
 		enabled=false;
 	}
 }
