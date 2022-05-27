@@ -11,6 +11,11 @@ public class SingCam : Shot
 	public Vector3 _offset;
 	public float _offsetAngle;
 	public float _slerp;
+	Vector3 _startPos;
+	bool _revert;
+	float _revertDur;
+	float _revertTimer;
+	Vector3 _revertStart;
 
 	protected override void Awake(){
 		base.Awake();
@@ -19,8 +24,10 @@ public class SingCam : Shot
 	void OnEnable(){
 		_position=transform.position;
 		_rotation=transform.rotation;
+		_startPos=_position;
+		_revert=false;
+		_revertTimer=0f;
 	}
-
 
     // Start is called before the first frame update
     protected override void Start()
@@ -36,28 +43,31 @@ public class SingCam : Shot
 		transform.position=_position;
 		transform.rotation=_rotation;
 
-		/*
-		Vector3 dir=_target.position-_player.transform.position;
-		dir.Normalize();
-		dir=Quaternion.Euler(0,_offsetAngle,0)*dir;
-		Vector3 targetPos=_player.transform.position-dir*_offset.z;
-		targetPos+=Vector3.up*_offset.y;
-		targetPos+=transform.right*_offset.x;
-		_position=Vector3.Lerp(_position,targetPos,_lerp*Time.deltaTime);
-
-		Vector3 halfway=Vector3.Lerp(_player.transform.position,_target.position,0.5f);
-		transform.LookAt(halfway+Vector3.up*_offset.y);
-		_rotation=Quaternion.Slerp(_rotation,transform.rotation,_slerp*Time.deltaTime);
-		*/
-		transform.LookAt(_target.position);
-		Quaternion targetRot=transform.rotation;
-		_rotation=Quaternion.Slerp(_rotation,targetRot,_slerp*Time.deltaTime);
-		transform.rotation=_rotation;
-		Vector3 targetPos=_target.position-transform.forward*_offset.z;
-		_position=Vector3.Lerp(_position,targetPos,_lerp*Time.deltaTime);
+		if(!_revert){
+			transform.LookAt(_target.position);
+			Quaternion targetRot=transform.rotation;
+			_rotation=Quaternion.Slerp(_rotation,targetRot,_slerp*Time.deltaTime);
+			transform.rotation=_rotation;
+			Vector3 targetPos=_target.position-transform.forward*_offset.z;
+			_position=Vector3.Lerp(_position,targetPos,_lerp*Time.deltaTime);
+		}
+		else{
+			_revertTimer+=Time.deltaTime;
+			float frac=_revertTimer/_revertDur;
+			if(_revertTimer>_revertDur){
+				frac=1f;
+			}
+			_position=Vector3.Lerp(_revertStart,_startPos,frac);
+		}
 
 		transform.position=_position;
 		transform.rotation=_rotation;
 
     }
+
+	public void Revert(float f){
+		_revert=true;
+		_revertDur=f;
+		_revertStart=_position;
+	}
 }

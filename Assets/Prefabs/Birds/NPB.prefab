@@ -91,7 +91,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1781285732092151393
 RectTransform:
   m_ObjectHideFlags: 0
@@ -223,7 +223,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Press E to Sing
+  m_Text: 
 --- !u!1 &6764374770604675117
 GameObject:
   m_ObjectHideFlags: 0
@@ -310,7 +310,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sing: {fileID: 0}
-  _listening: 0
+  _scanned: 0
+  _species: 
+  _speciesLatin: 
   _rewardSounds:
   - {fileID: 8300000, guid: 53110ecd8891d3747a843ddc76487854, type: 3}
   - {fileID: 8300000, guid: 47f0f15e00c2d0a49855c1d7681e1cf6, type: 3}

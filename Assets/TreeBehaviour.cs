@@ -22,6 +22,7 @@ public class TreeBehaviour : MonoBehaviour
 	public Vector2 _hideTimeRange;
 	public int _takeOffFlaps;
 	Sing _sing;
+	NPB _npb;
 
 	void Awake(){
 		_anim=GetComponent<Animator>();
@@ -29,6 +30,7 @@ public class TreeBehaviour : MonoBehaviour
 		_player=GameManager._player;
 		_groundForager=GetComponent<GroundForager>();
 		_sing=transform.GetComponentInChildren<Sing>();
+		_npb=GetComponent<NPB>();
 	}
 
 	void OnEnable(){
@@ -68,7 +70,7 @@ public class TreeBehaviour : MonoBehaviour
 	public void ScareIntoTree(bool silent=false){
 		if(_state!=0)
 			return;
-		if(_sing._npb._listening)
+		if(_npb._scanned)
 			return;
 		//MTree tree = GetNearestTree();
 		MTree tree = GetRandomTree();
@@ -157,7 +159,7 @@ public class TreeBehaviour : MonoBehaviour
 	}
 
 	void ReturnToGround(){
-		if(_sing._npb._listening)
+		if(_npb._scanned)
 			return;
 		Vector3 groundPoint=_groundForager.GetRandomSpotOnGround();
 		StartCoroutine(FlyTo(groundPoint,true));

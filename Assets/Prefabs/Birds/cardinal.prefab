@@ -1058,7 +1058,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 830fbecce4c75a64cb20eaf89fc4b0a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rewardSound: {fileID: 8300000, guid: a86b307e5f4879749b66af5c5e6f4606, type: 3}
+  _sing: {fileID: 0}
+  _listening: 0
+  _species: Northern Cardinal
+  _speciesLatin: Cardinalis cardinalis
+  _rewardSounds: []
+  _rewardBirdCount: {fileID: 0}
+  _patternFail: {fileID: 0}
 --- !u!114 &8049587541678239723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1078,7 +1084,7 @@ MonoBehaviour:
   _flapSound: {fileID: 8300000, guid: a21a3dbdf5339e345acd866a94992651, type: 3}
   _flapSoundRange: {x: 0.9, y: 1.3}
   _fleeRadius: 0.5
-  _hideTime: 0
+  _hideTimeRange: {x: 0, y: 0}
   _takeOffFlaps: 4
 --- !u!1 &8091046393843361863
 GameObject:

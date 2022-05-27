@@ -85,6 +85,7 @@ public class Bird : MonoBehaviour
 	public Camera _hopCam;
 	public Camera _flyCam;
 	public Camera _singCam;
+	SingCam _sCam;
 
 	[System.Serializable]
 	public struct BirdData{
@@ -144,6 +145,7 @@ public class Bird : MonoBehaviour
 			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
 			_flyCam = transform.Find("FlyCam").GetComponent<Camera>();
 			_singCam = transform.Find("SingCam").GetComponent<Camera>();
+			_sCam=_singCam.GetComponent<SingCam>();
 		}
 
 		//disable things
@@ -250,13 +252,8 @@ public class Bird : MonoBehaviour
 					}
 					break;
 				case 6://singing
-					/*
-					if(_mIn.GetInteractDown()){
-						StopSinging();
-					}
-					*/
 					if(_mIn.GetJumpDown()){
-						Debug.Log("Done with species screen");
+						EndScan();
 					}
 					break;
 				case 7://entering house
@@ -1106,29 +1103,30 @@ public class Bird : MonoBehaviour
 	}
 
 	bool ScanForNpb(){
+		if(_npb!=null&&_npb._scanned)
+			return false;
 		RaycastHit hit;
+		bool targeted=false;
 		if(Physics.Raycast(_camera.position,_camera.forward,out hit, 5f,_birdLayer)){
-			_npb=hit.transform.GetComponent<NPB>();
-			_npb.Targeted();
-			return true;
-			/*
-			//Debug.Log("Hit: "+hit.transform.name);
-			if(_mIn.GetInteractDown()){
-				_npb=hit.transform.GetComponent<NPB>();
-				_npb.StartListening();
-				StartSinging();
+			NPB curTarget=hit.transform.GetComponent<NPB>();
+			if(_npb!=null&&curTarget!=_npb){
+				_npb.Targeted(false);
 			}
-			else{
-				hit.transform.GetComponent<NPB>().Targeted();
-				return true;
-			}
-			*/
+			_npb=curTarget;
+			targeted=true;
+			_npb.Targeted(true);
 		}
-		return false;
+		else{
+			if(_npb!=null){
+				_npb.Targeted(false);
+				_npb=null;
+			}
+		}
+		return targeted;
 	}
 
-	public void StartSinging(){
-		_npb.StartListening();
+	public void ScanBird(){
+		//_npb.StartListening();
 		_waddle.enabled=false;
 		_hop.enabled=false;
 		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0.3f,_npb.transform,1f);
@@ -1136,20 +1134,29 @@ public class Bird : MonoBehaviour
 		//_butts.SetActive(true);
 		//TipHud.ShowTip("Press E to Return",transform,Vector3.up*0.5f);
 		//_sing.SetTargetBird(_npb._sing);
-		_npb._sing.Engage();
-		_npb.Hush();
 		//species screen -> show Species
 		SpeciesScreen.ShowSpecies(_npb);
 	}
 
-	void StopSinging(){
+	void EndScan(){
+		StartCoroutine(EndScanR());
+		//TipHud.ClearTip();
+		//_butts.SetActive(false);
+		//_npb.StopListening();
+		//_sing.Reset();
+		//_npb._sing.Reset();
+	}
+
+	IEnumerator EndScanR(){
+		float revertDur=1f;
+		_sCam.Revert(revertDur);
+		SpeciesScreen.Hide();
+		yield return new WaitForSeconds(revertDur);
 		_state=0;
-		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK);
-		TipHud.ClearTip();
-		_butts.SetActive(false);
-		_npb.StopListening();
-		_sing.Reset();
-		_npb._sing.Reset();
+		float lbDur=0.5f;
+		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK,0f,null,lbDur);
+		yield return new WaitForSeconds(lbDur);
+		_npb.EndScan();
 	}
 
 	void OnDrawGizmos(){

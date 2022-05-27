@@ -122,7 +122,8 @@ public class Sing : MonoBehaviour
 	}
 
 	IEnumerator SingR(BirdSong bs,bool delay=true){
-		_state=2;//2 = singing
+		if(!_npb._scanned)
+			_state=2;//2 = singing
 		//wait a sec - play it cool
 		if(delay)
 			yield return new WaitForSeconds(Random.Range(_responseRange.x,_responseRange.y));
@@ -167,7 +168,8 @@ public class Sing : MonoBehaviour
 				_high.Stop();
 			}
 		}
-		_state=0;//0 = ready to sing
+		if(!_npb._scanned)
+			_state=0;//0 = ready to sing
 
 		if(_femaleSings&&!_male){
 			if(Random.value<_responseChance){
@@ -175,7 +177,7 @@ public class Sing : MonoBehaviour
 			}
 		}
 
-		if(!_npb._listening){
+		if(!_npb._scanned){
 			if(Random.value<_switchTreeChance)
 			{
 				_tb.ScareIntoTree(true);
@@ -343,7 +345,7 @@ public class Sing : MonoBehaviour
 			return;
 		if(_curSong._notes==null)//catches cases like alarm and female calls
 			return;
-		if(_npb==null||!_npb._listening)
+		if(_npb==null||!_npb._scanned)
 			return;
 		//Debug.Log("Heard note: "+pitchId+" dir: "+singing);
 		if(_cancelRoutine!=null)
@@ -507,7 +509,6 @@ public class Sing : MonoBehaviour
 	}
 
 	public void Engage(){
-		_state=3;//engaged state
 		//stop existing singing
 		StopAllCoroutines();
 		if(_audio!=null)
@@ -517,6 +518,11 @@ public class Sing : MonoBehaviour
 		_high.Stop();
 		//start new singing
 		SingSong();
+		_state=3;//engaged state
+	}
+
+	public void Free(){
+		_state=0;
 	}
 
 	void OnDrawGizmos(){

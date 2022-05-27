@@ -1035,6 +1035,11 @@ PrefabInstance:
       propertyPath: _species
       value: American Robin
       objectReference: {fileID: 0}
+    - target: {fileID: 5845262002360950305, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _speciesLatin
+      value: Turdus migratorius
+      objectReference: {fileID: 0}
     - target: {fileID: 6238668212057262743, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
       propertyPath: m_RootOrder

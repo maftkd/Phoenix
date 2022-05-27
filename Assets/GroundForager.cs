@@ -63,7 +63,7 @@ public class GroundForager : MonoBehaviour
 			case 0:
 				_listenTimer+=Time.deltaTime;
 				if(_listenTimer>=_listenTime){
-					if(!_npb._listening)
+					if(!_npb._scanned)
 						StartCoroutine(GetWorm());
 					_listenTimer=0;
 				}
