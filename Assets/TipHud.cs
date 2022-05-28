@@ -18,6 +18,7 @@ public class TipHud : MonoBehaviour
 	public float _tipDur;
 	float _tipTimer;
 	Image _timerBar;
+	MInput _mIn;
 
 	void Awake(){
 		_instance=this;
@@ -25,6 +26,7 @@ public class TipHud : MonoBehaviour
 		_detail=transform.Find("Detail").GetComponent<Text>();
 		_prompt=transform.Find("Prompt").GetComponent<Text>();
 		_cam=GameManager._mCam.GetComponent<Camera>();
+		_mIn=GameManager._mIn;
 		_anim=GetComponent<Animator>();
 		_timerBar=transform.Find("Timer").GetComponent<Image>();
 	}
@@ -41,7 +43,7 @@ public class TipHud : MonoBehaviour
 			_tipTimer-=Time.deltaTime;
 			float frac=_tipTimer/_tipDur;
 			_timerBar.fillAmount=frac;
-			if(_tipTimer<=0f){
+			if(_tipTimer<=0f||_mIn.GetInteractDown()){
 				ClearTipA();
 			}
 		}

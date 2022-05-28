@@ -905,7 +905,7 @@ PrefabInstance:
     - target: {fileID: 2114195748137338402, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.354
+      value: -0.513
       objectReference: {fileID: 0}
     - target: {fileID: 2114195748137338402, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
@@ -915,7 +915,7 @@ PrefabInstance:
     - target: {fileID: 2114195748137338402, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.167
+      value: 0.226
       objectReference: {fileID: 0}
     - target: {fileID: 2114195748137338402, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
@@ -996,6 +996,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _alarms.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5845262001939844203, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _playSong._mnemonic
+      value: Coo-oo, coo, coo, coo
       objectReference: {fileID: 0}
     - target: {fileID: 5845262001939844203, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}

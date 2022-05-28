@@ -1185,14 +1185,23 @@ public class Bird : MonoBehaviour
 		_npb.EndScan();
 	}
 
-	public bool LearnSong(Sing.BirdSong song,string species){
+	public bool LearnSong(Sing.BirdSong song,NPB npb){
 		foreach(Sing.BirdSong s in _songs){
 			if(s._fileName==song._fileName)
 			{
 				return false;
 			}
 		}
-		song._species=species;
+		song._species=npb._species;
+		if(npb._sing._male)
+		{
+			song._male=npb;
+			song._female=npb._sing._mate._npb;
+		}
+		else{
+			song._female=npb;
+			song._male=npb._sing._mate._npb;
+		}
 		_songs.Add(song);
 		return true;
 	}

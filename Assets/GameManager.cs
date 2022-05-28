@@ -42,9 +42,16 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(Input.GetButtonDown("Interact")||Input.GetButtonDown("Pause"))
+        
+		if(Input.GetKeyDown(KeyCode.F1)){
+			ToggleEditMode();
+		}
+    }
+
+	void LateUpdate(){
+		if(Input.GetButtonDown("Interact"))
 		{
-			if(Time.timeScale==0)
+			if(_pauseScreen.activeSelf)
 				PlayA();
 			else
 				PauseA();
@@ -56,11 +63,8 @@ public class GameManager : MonoBehaviour
 #endif
 */
 		}
-        
-		if(Input.GetKeyDown(KeyCode.F1)){
-			ToggleEditMode();
-		}
-    }
+
+	}
 
 	public static void Pause(){
 		_instance.PauseA();
@@ -68,7 +72,7 @@ public class GameManager : MonoBehaviour
 
 	public void PauseA(){
 		_mCam.EnableCurrentShot(false);
-		Time.timeScale=0;
+		//Time.timeScale=0;
 		_sfx.Pause();
 		_pauseScreen.SetActive(true);
 		_mIn.LockInput(true);
@@ -82,7 +86,7 @@ public class GameManager : MonoBehaviour
 	}
 
 	public void PlayA(){
-		Time.timeScale=1f;
+		//Time.timeScale=1f;
 		_mCam.EnableCurrentShot(true);
 		_sfx.Play();
 		_pauseScreen.SetActive(false);

@@ -27,12 +27,17 @@ public class Sing : MonoBehaviour
 	public struct BirdSong{
 		public AudioClip _clip;
 		public string _fileName;
+		public string _mnemonic;
 		[HideInInspector]
 		public string _species;
 		[HideInInspector]
 		public Note[] _notes;
 		[HideInInspector]
 		public float _length;
+		[HideInInspector]
+		public NPB _female;
+		[HideInInspector]
+		public NPB _male;
 	}
 
 	[Header("Npb stuff")]
@@ -67,7 +72,7 @@ public class Sing : MonoBehaviour
 	BirdSong _curSong;
 	int _curSongIndex;
 	int _orderedIndex;
-	Sing _mate;
+	public Sing _mate;
 	Sing _targetBird;
 	System.DateTime _lastSongEventTime;
 

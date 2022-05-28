@@ -100,7 +100,7 @@ public class NPB : MonoBehaviour
 				}
 				break;
 		}
-		_debugText.text="state: "+_state.ToString();
+		//_debugText.text="state: "+_state.ToString();
     }
 
 	public void Targeted(bool t){
@@ -188,7 +188,7 @@ public class NPB : MonoBehaviour
 		//and show the tip hud
 		//but for temp, since we just testing tip hud, we show that every time
 
-		if(_player.LearnSong(_sing._playSong,_species))
+		if(_player.LearnSong(_sing._playSong,this))
 		{
 			TipHud.ShowTip("New Song Learned!",_species,"Press 'E' to select song");
 			Sfx.PlayOneShot3D(_rewardNewSong,transform.position);
