@@ -126,7 +126,7 @@ public class Sing : MonoBehaviour
 
 		//setup audio
 		float pitch=Random.Range(0.95f,1.05f);
-		_audio = Sfx.PlayOneShot3D(bs._clip,transform.position,pitch);
+		_audio = Sfx.PlayOneShot3D(bs._clip,transform.position,pitch,"Birds");
 
 		//setup notes
 		float dur=bs._clip.length/pitch;
@@ -193,7 +193,7 @@ public class Sing : MonoBehaviour
 		_state=2;//2 is singing for male / calling for female
 		float pitch=Random.Range(0.8f,1f);
 		AudioClip call=_calls[Random.Range(0,_calls.Length)];
-		Sfx.PlayOneShot3D(call,transform.position,pitch);
+		Sfx.PlayOneShot3D(call,transform.position,pitch,"Birds");
 		float dur=call.length/pitch;
 		_anim.SetFloat("pitch",0.666f);
 		_mid.Play();

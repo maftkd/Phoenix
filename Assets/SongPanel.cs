@@ -61,6 +61,8 @@ public class SongPanel : MonoBehaviour
 		//unpause
 		GameManager.Play();
 		//
+		//player sing song(song)
+		_player.SingSong(song);
 	}
 
 	public static void Select(Transform item){
@@ -80,7 +82,6 @@ public class SongPanel : MonoBehaviour
 					if(isSelected){
 						maleCam.targetTexture=_maleTex;
 						femaleCam.targetTexture=_femaleTex;
-						Debug.Log("Should be setting target textures");
 						_mnemonic.text=song._mnemonic;
 					}
 				}

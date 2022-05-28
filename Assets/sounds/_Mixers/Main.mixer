@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!244 &-3064372870388985236
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 6b05dc3bd8a5f44438e155d11338ea1f
+  m_EffectName: Attenuation
+  m_MixLevel: 36de21b9a2dfebd47b20b2fb5df5b56c
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!241 &24100000
+AudioMixerController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Main
+  m_OutputGroup: {fileID: 0}
+  m_MasterGroup: {fileID: 24300002}
+  m_Snapshots:
+  - {fileID: 24500006}
+  m_StartSnapshot: {fileID: 24500006}
+  m_SuspendThreshold: -80
+  m_EnableSuspend: 1
+  m_UpdateMode: 0
+  m_ExposedParameters:
+  - guid: f6f32b7cbcd3bbe47a8cd52888793948
+    name: BirdVol
+  m_AudioMixerGroupViews:
+  - guids:
+    - e31fea01da6d2a743ae91aca4aa2eadf
+    - 23a6cbc3e94309540811ca838014ad3e
+    name: View
+  m_CurrentViewIndex: 0
+  m_TargetSnapshot: {fileID: 24500006}
+--- !u!243 &24300002
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Master
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: e31fea01da6d2a743ae91aca4aa2eadf
+  m_Children:
+  - {fileID: 213182432499100211}
+  m_Volume: ccf442d1edf9a924d8d43de75ac6f3ef
+  m_Pitch: 582193a6f59273c4aa88c404a8497f51
+  m_Send: 00000000000000000000000000000000
+  m_Effects:
+  - {fileID: 24400004}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0
+--- !u!244 &24400004
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: fa26677602b74f740aaadb6d7180818c
+  m_EffectName: Attenuation
+  m_MixLevel: 3a2aac5dce81a2d4f922d89cd02b4547
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!245 &24500006
+AudioMixerSnapshotController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Snapshot
+  m_AudioMixer: {fileID: 24100000}
+  m_SnapshotID: f94f9a62e19f85a4094e3bc64c77c9bc
+  m_FloatValues:
+    f6f32b7cbcd3bbe47a8cd52888793948: 0
+  m_TransitionOverrides: {}
+--- !u!243 &213182432499100211
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Birds
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: 23a6cbc3e94309540811ca838014ad3e
+  m_Children: []
+  m_Volume: f6f32b7cbcd3bbe47a8cd52888793948
+  m_Pitch: 2fe03299db4477645a9515ceb9909b83
+  m_Send: 00000000000000000000000000000000
+  m_Effects:
+  - {fileID: -3064372870388985236}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0

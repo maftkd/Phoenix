@@ -11,6 +11,7 @@ public class DebugScreen : MonoBehaviour
 	Vector3 [] _pSlots;
 	Color [] _pColors;
 	int _curSlot;
+	public InputField _commandLine;
 
 	void Awake(){
 		_instance=this;
@@ -18,6 +19,9 @@ public class DebugScreen : MonoBehaviour
 		//instance the text slots
 		_slots = new Text[_numSlots];
 		Transform reference=transform.GetChild(0);
+		_commandLine=transform.GetChild(1).GetComponent<InputField>();
+		_commandLine.onEndEdit.AddListener(delegate {EnterCommand();});
+		_commandLine.gameObject.SetActive(false);
 		_slots[0]=reference.GetComponent<Text>();
 		for(int i=1;i<_numSlots;i++){
 			Transform s = Instantiate(reference,transform);
@@ -82,6 +86,30 @@ public class DebugScreen : MonoBehaviour
 		{
 			_slots[_curSlot].text=s;
 			_curSlot++;
+		}
+	}
+
+	public static void EnableCli(bool e){
+		_instance._commandLine.gameObject.SetActive(e);
+		if(e)
+			_instance._commandLine.Select();
+	}
+
+	public void EnterCommand(){
+		string cmd = _commandLine.text;
+		Debug.Log("Received command: "+cmd);
+		_commandLine.text="";
+		if(cmd=="getSongs"){
+			StartCoroutine(GetSongs());
+		}
+		GameManager._instance.ToggleCli();
+	}
+
+	IEnumerator GetSongs(){
+		NPB [] npbs = FindObjectsOfType<NPB>();
+		foreach(NPB npb in npbs){
+			npb.EndScan();
+			yield return new WaitForSeconds(0.1f);
 		}
 	}
 

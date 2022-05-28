@@ -84,8 +84,9 @@ public class Bird : MonoBehaviour
 	public Camera _idleCam;
 	public Camera _hopCam;
 	public Camera _flyCam;
+	public Camera _speciesCam;
+	SpeciesCam _sCam;
 	public Camera _singCam;
-	SingCam _sCam;
 
 	[System.Serializable]
 	public struct BirdData{
@@ -144,8 +145,9 @@ public class Bird : MonoBehaviour
 		{
 			_waddleCam = transform.Find("WaddleCam").GetComponent<Camera>();
 			_flyCam = transform.Find("FlyCam").GetComponent<Camera>();
+			_speciesCam = transform.Find("SpeciesCam").GetComponent<Camera>();
+			_sCam=_speciesCam.GetComponent<SpeciesCam>();
 			_singCam = transform.Find("SingCam").GetComponent<Camera>();
-			_sCam=_singCam.GetComponent<SingCam>();
 		}
 
 		//disable things
@@ -1155,7 +1157,7 @@ public class Bird : MonoBehaviour
 		//_npb.StartListening();
 		_waddle.enabled=false;
 		_hop.enabled=false;
-		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0.3f,_npb.transform,1f);
+		GameManager._mCam.Transition(_speciesCam,MCamera.Transitions.CUT_BACK,0.3f,_npb.transform,1f);
 		_state=6;
 		//_butts.SetActive(true);
 		//TipHud.ShowTip("Press E to Return",transform,Vector3.up*0.5f);
@@ -1204,6 +1206,21 @@ public class Bird : MonoBehaviour
 		}
 		_songs.Add(song);
 		return true;
+	}
+
+	public void EnterMenuState(){
+		_waddle.enabled=false;
+		_hop.enabled=false;
+		_fly.enabled=false;
+		_anim.SetFloat("walkSpeed",0f);
+		_state=7;
+	}
+
+	public void SingSong(Sing.BirdSong song){
+		Debug.Log("Time to start singing: "+song._fileName);
+		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0f,transform);
+		//_sCam._offset.y=0.5f;
+
 	}
 
 	void OnDrawGizmos(){

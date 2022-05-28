@@ -1,9 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class Sfx : MonoBehaviour
 {
+	public static Sfx _instance;
+	public AudioMixer _mixer;
+
+	void Awake(){
+		_instance=this;
+	}
     // Start is called before the first frame update
     void Start()
     {
@@ -78,6 +85,23 @@ public class Sfx : MonoBehaviour
 		return audio;
 	}
 
+	public static AudioSource PlayOneShot3D(AudioClip clip,Vector3 pos,float pitch, string mixerGroupName=""){
+		GameObject foo = new GameObject("one-shot audio");
+		foo.transform.position=pos;
+		AudioSource audio = foo.AddComponent<AudioSource>();
+		audio.spatialBlend=1f;
+		audio.pitch=pitch;
+		audio.clip=clip;
+		audio.Play();
+		if(mixerGroupName!="")
+			audio.outputAudioMixerGroup = _instance._mixer.FindMatchingGroups(mixerGroupName)[0];
+		//audio.rolloffMode=AudioRolloffMode.Linear;
+		//audio.maxDistance=10f;
+
+		Destroy(foo,clip.length/pitch);
+		return audio;
+	}
+
 	public static void PlayOneShot3DVol(AudioClip clip,Vector3 pos,float volume){
 		GameObject foo = new GameObject("one-shot audio");
 		foo.transform.position=pos;
@@ -89,7 +113,7 @@ public class Sfx : MonoBehaviour
 		Destroy(foo,clip.length);
 	}
 
-	public static void PlayOneShot3D(AudioClip clip,Vector3 pos,float pitch, float vol){
+	public static void PlayOneShot3D(AudioClip clip,Vector3 pos,float pitch, float vol,string mixerGroupName=""){
 		GameObject foo = new GameObject("one-shot audio");
 		foo.transform.position=pos;
 		AudioSource audio = foo.AddComponent<AudioSource>();
@@ -98,14 +122,20 @@ public class Sfx : MonoBehaviour
 		audio.volume=vol;
 		audio.clip=clip;
 		audio.Play();
+		if(mixerGroupName!="")
+			audio.outputAudioMixerGroup = _instance._mixer.FindMatchingGroups(mixerGroupName)[0];
 		Destroy(foo,clip.length/pitch);
 	}
 
-	public void Pause(){
-		transform.GetChild(2).GetComponent<AudioSource>().Pause();
+	public static void PauseBg(){
+		_instance.transform.GetChild(2).GetComponent<AudioSource>().Pause();
 	}
 
-	public void Play(){
-		transform.GetChild(2).GetComponent<AudioSource>().Play();
+	public static void PlayBg(){
+		_instance.transform.GetChild(2).GetComponent<AudioSource>().Play();
+	}
+
+	public static void SetFloat(string n, float f){
+		_instance._mixer.SetFloat(n,f);
 	}
 }

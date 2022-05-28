@@ -79,4 +79,8 @@ public class SpeciesScreen : MonoBehaviour
 		StopAllCoroutines();
 		StartCoroutine(Fade(0,false));
 	}
+
+	public static bool IsActive(){
+		return _instance._cg.alpha>0;
+	}
 }

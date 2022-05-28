@@ -4,18 +4,16 @@ using UnityEngine;
 
 public class SingCam : Shot
 {
-
 	Vector3 _position;
 	Quaternion _rotation;
-	public float _lerp;
 	public Vector3 _offset;
-	public float _offsetAngle;
-	public float _slerp;
 	Vector3 _startPos;
-	bool _revert;
-	float _revertDur;
-	float _revertTimer;
-	Vector3 _revertStart;
+	Vector3 _targetPos;
+	Quaternion _startRot;
+	Quaternion _targetRot;
+	public float _animDur;
+	float _timer;
+	public AnimationCurve _curve;
 
 	protected override void Awake(){
 		base.Awake();
@@ -25,8 +23,12 @@ public class SingCam : Shot
 		_position=transform.position;
 		_rotation=transform.rotation;
 		_startPos=_position;
-		_revert=false;
-		_revertTimer=0f;
+		_startRot=_rotation;
+		_targetPos=_target.position-_target.forward*_offset.z+Vector3.up*_offset.y+transform.right*_offset.x;
+		transform.forward=_target.forward;
+		_targetRot=transform.rotation;
+		transform.rotation=_rotation;
+		_timer=0f;
 	}
 
     // Start is called before the first frame update
@@ -43,21 +45,18 @@ public class SingCam : Shot
 		transform.position=_position;
 		transform.rotation=_rotation;
 
-		if(!_revert){
-			transform.LookAt(_target.position);
-			Quaternion targetRot=transform.rotation;
-			_rotation=Quaternion.Slerp(_rotation,targetRot,_slerp*Time.deltaTime);
-			transform.rotation=_rotation;
-			Vector3 targetPos=_target.position-transform.forward*_offset.z;
-			_position=Vector3.Lerp(_position,targetPos,_lerp*Time.deltaTime);
-		}
-		else{
-			_revertTimer+=Time.deltaTime;
-			float frac=_revertTimer/_revertDur;
-			if(_revertTimer>_revertDur){
-				frac=1f;
+		if(_timer<_animDur){
+			_timer+=Time.deltaTime;
+			if(_timer>=_animDur){
+				_position=_targetPos;
+				_rotation=_targetRot;
 			}
-			_position=Vector3.Lerp(_revertStart,_startPos,frac);
+			else{
+				float frac=_timer/_animDur;
+				frac=_curve.Evaluate(frac);
+				_position=Vector3.Lerp(_startPos,_targetPos,frac);
+				_rotation=Quaternion.Slerp(_startRot,_targetRot,frac);
+			}
 		}
 
 		transform.position=_position;
@@ -65,9 +64,4 @@ public class SingCam : Shot
 
     }
 
-	public void Revert(float f){
-		_revert=true;
-		_revertDur=f;
-		_revertStart=_position;
-	}
 }

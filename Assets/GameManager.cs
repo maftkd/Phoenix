@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-	Sfx _sfx;
+	//Sfx _sfx;
 	public GameObject _pauseScreen;
 	List<BirdHouse> _solvedPuzzles;
 	public static GameManager _instance;
@@ -17,10 +17,11 @@ public class GameManager : MonoBehaviour
 	public static GameObject _islands;
 	public static GameObject _sky;
 	bool _editMode;
+	bool _cli;
 	MEditor _editor;
 
 	void Awake(){
-		_sfx=FindObjectOfType<Sfx>();
+		//_sfx=FindObjectOfType<Sfx>();
 		_solvedPuzzles=new List<BirdHouse>();
 		_instance=this;
 		_player=GameObject.FindGameObjectWithTag("Player").GetComponent<Bird>();
@@ -42,10 +43,11 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+		/*
 		if(Input.GetKeyDown(KeyCode.F1)){
 			ToggleEditMode();
 		}
+		*/
     }
 
 	void LateUpdate(){
@@ -54,7 +56,11 @@ public class GameManager : MonoBehaviour
 			if(_pauseScreen.activeSelf)
 				PlayA();
 			else
-				PauseA();
+			{
+				//cannot pause when we are zoomed in species screen
+				if(!SpeciesScreen.IsActive()&&!_cli)
+					PauseA();
+			}
 			/*
 #if UNITY_EDITOR
 			UnityEditor.EditorApplication.isPlaying = false;
@@ -63,7 +69,9 @@ public class GameManager : MonoBehaviour
 #endif
 */
 		}
-
+		if(Input.GetKeyDown(KeyCode.F1)){
+			ToggleCli();
+		}
 	}
 
 	public static void Pause(){
@@ -73,12 +81,14 @@ public class GameManager : MonoBehaviour
 	public void PauseA(){
 		_mCam.EnableCurrentShot(false);
 		//Time.timeScale=0;
-		_sfx.Pause();
+		Sfx.PauseBg();
 		_pauseScreen.SetActive(true);
 		_mIn.LockInput(true);
 		_mIn.EnableCursor(true);
 		//SaveSlot [] slots = transform.GetComponentsInChildren<SaveSlot>();
 		//slots[0].SelectSaveButton();
+		_player.EnterMenuState();
+		Sfx.SetFloat("BirdVol",-80f);
 	}
 
 	public static void Play(){
@@ -88,10 +98,11 @@ public class GameManager : MonoBehaviour
 	public void PlayA(){
 		//Time.timeScale=1f;
 		_mCam.EnableCurrentShot(true);
-		_sfx.Play();
+		Sfx.PlayBg();
 		_pauseScreen.SetActive(false);
 		_mIn.LockInput(false);
 		_mIn.EnableCursor(false);
+		Sfx.SetFloat("BirdVol",0f);
 	}
 
 	public void PuzzleSolved(BirdHouse bh){
@@ -112,5 +123,10 @@ public class GameManager : MonoBehaviour
 		_editMode=!_editMode;
 		Debug.Log("Edit Mode: "+_editMode);
 		_editor.enabled=_editMode;
+	}
+
+	public void ToggleCli(){
+		_cli=!_cli;
+		DebugScreen.EnableCli(_cli);
 	}
 }

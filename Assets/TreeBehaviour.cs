@@ -141,7 +141,7 @@ public class TreeBehaviour : MonoBehaviour
 			flapTimer+=Time.deltaTime;
 			if(flapCounter<_takeOffFlaps&&flapTimer>_flapDur){
 				flapTimer=0f;
-				Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(_flapSoundRange.x,_flapSoundRange.y),0.3f);
+				Sfx.PlayOneShot3D(_flapSound,transform.position,Random.Range(_flapSoundRange.x,_flapSoundRange.y),0.3f,"Birds");
 				flapCounter++;
 			}
 			yield return null;
