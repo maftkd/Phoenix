@@ -2,7 +2,7 @@
 {
     Properties
     {
-		_Amount("Amount", Range(0,1)) = 0
+		_Amount("Amount", Range(-1,1)) = 0
     }
     SubShader
     {
@@ -41,9 +41,12 @@
             fixed4 frag (v2f i) : SV_Target
             {
 				//if amount is basically 0, add a fudge value to make sure all pixels are clipped
-				fixed fudge=step(_Amount,0.0001)*0.001;
+				fixed fudge=step(abs(_Amount),0.0001)*0.001;
 				fixed uvHeight=1-abs(i.uv.y-0.5)*2;
-				clip(_Amount-uvHeight-fudge);
+				fixed uvWidth=1-abs(i.uv.x-0.5)*2;
+				fixed useHeight=step(0,_Amount);
+				fixed uv=useHeight*uvHeight+(1-useHeight)*uvWidth;
+				clip(abs(_Amount)-uv-fudge);
 				fixed4 col = fixed4(0,0,0,1);
                 return col;
             }

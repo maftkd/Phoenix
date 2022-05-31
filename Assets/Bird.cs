@@ -1082,6 +1082,21 @@ public class Bird : MonoBehaviour
 	//#todo - rework footstep, fly to use this get terrain texture method
 	public int GetTerrainTextureIndex(){
 		Vector3 pos=transform.position;
+		if(pos.y<6.91f)
+			return 0;
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position+Vector3.up,Vector3.down,out hit, 2f, _collisionLayer)){
+			Vector3 norm = hit.normal;
+			float dt = Vector3.Dot(norm,Vector3.up);
+			if(0.931f>dt){
+				return 1;
+			}
+			else
+				return 2;
+		}
+		return 0;
+		/*
+		Vector3 pos=transform.position;
 		//convert world coord to terrain space
 		float xWorld=pos.x;
 		float zWorld=pos.z;
@@ -1105,6 +1120,7 @@ public class Bird : MonoBehaviour
 			}
 		}
 		return layer;
+		*/
 	}
 
 	public void BoostSpeed(float amount,float dur){
@@ -1157,7 +1173,7 @@ public class Bird : MonoBehaviour
 		//_npb.StartListening();
 		_waddle.enabled=false;
 		_hop.enabled=false;
-		GameManager._mCam.Transition(_speciesCam,MCamera.Transitions.CUT_BACK,0.3f,_npb.transform,1f);
+		GameManager._mCam.Transition(_speciesCam,MCamera.Transitions.CUT_BACK,0.5f,_npb.transform,1f);
 		_state=6;
 		//_butts.SetActive(true);
 		//TipHud.ShowTip("Press E to Return",transform,Vector3.up*0.5f);
@@ -1218,7 +1234,7 @@ public class Bird : MonoBehaviour
 
 	public void SingSong(Sing.BirdSong song){
 		Debug.Log("Time to start singing: "+song._fileName);
-		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,0f,transform);
+		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,-0.38f,transform,1f);
 		//_sCam._offset.y=0.5f;
 
 	}
