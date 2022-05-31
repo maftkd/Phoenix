@@ -9,6 +9,7 @@ Shader "Unlit/Toon"
 		_OutlineThickness ("Outline Thickness", Range(0,0.02)) = 0.001
 		_ToonGrad ("Toon Gradient", 2D) = "white" {}
 		_MinShadow ("Max Shadow", Range(0,1)) = 0.5
+		_MinAtten ("Min Attenuation", Range(0,1)) = 0.5
 		_ShadowStrength ("Shadow strength", Range(0,1)) = 1
     }
     SubShader
@@ -40,6 +41,7 @@ Shader "Unlit/Toon"
                 float2 uv : TEXCOORD0;
                 float4 pos : SV_POSITION;
 				float3 norm : REFLECT;
+				float dist : DIST;
 				LIGHTING_COORDS(0,1)
                 UNITY_FOG_COORDS(2)
             };
@@ -49,6 +51,7 @@ Shader "Unlit/Toon"
 			sampler2D _ToonGrad;
 			fixed4 _Color;
 			fixed _MinShadow;
+			fixed _MinAtten;
 			fixed _ShadowStrength;
 
             v2f vert (appdata v)
@@ -61,6 +64,7 @@ Shader "Unlit/Toon"
 				//float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
                 // world space normal
                 o.norm= UnityObjectToWorldNormal(v.normal);
+				o.dist=length(ObjSpaceViewDir(v.vertex));
 
                 UNITY_TRANSFER_FOG(o,o.pos);
 				TRANSFER_VERTEX_TO_FRAGMENT(o);
@@ -74,6 +78,9 @@ Shader "Unlit/Toon"
 				
 				//get shadowmap
 				float attenuation = LIGHT_ATTENUATION(i);
+				fixed outOfRange=step(25,i.dist);
+				attenuation = lerp(_MinAtten,1,attenuation);
+				attenuation=outOfRange*_MinAtten+(1-outOfRange)*attenuation;
 
 				//get shading via dir light
 				fixed dt = -dot(-i.norm,_WorldSpaceLightPos0.xyz);

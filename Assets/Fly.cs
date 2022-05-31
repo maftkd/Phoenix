@@ -83,7 +83,7 @@ public class Fly : MonoBehaviour
 	float _prevMag;
 
 	//ground effects
-	const float _maxDist=5f;
+	public float _maxDist=5f;
 	//water
 	Material _oceanMat;
 	Vector4 _playerPos;
@@ -501,7 +501,7 @@ public class Fly : MonoBehaviour
 			bool grass=false;
 			bool sand=false;
 			bool gravel=false;
-			if(_bird._terrain!=null && water==false){
+			if(_bird._terrain!=null && water==false&&transform.position.y<hitPoint.y+_maxDist){
 				int terrainIndex=_bird.GetTerrainTextureIndex();
 				if(terrainIndex==0)
 					sand=true;

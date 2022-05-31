@@ -1081,11 +1081,11 @@ public class Bird : MonoBehaviour
 	//where we get terrain stuff
 	//#todo - rework footstep, fly to use this get terrain texture method
 	public int GetTerrainTextureIndex(){
-		Vector3 pos=transform.position;
-		if(pos.y<6.91f)
-			return 0;
+		//Vector3 pos=transform.position;
 		RaycastHit hit;
-		if(Physics.Raycast(transform.position+Vector3.up,Vector3.down,out hit, 2f, _collisionLayer)){
+		if(Physics.Raycast(transform.position+Vector3.up,Vector3.down,out hit, _fly._maxDist, _collisionLayer)){
+			if(hit.point.y<6.91f)
+				return 0;
 			Vector3 norm = hit.normal;
 			float dt = Vector3.Dot(norm,Vector3.up);
 			if(0.931f>dt){
@@ -1094,7 +1094,7 @@ public class Bird : MonoBehaviour
 			else
 				return 2;
 		}
-		return 0;
+		return -1;
 		/*
 		Vector3 pos=transform.position;
 		//convert world coord to terrain space
