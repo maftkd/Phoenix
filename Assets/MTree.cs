@@ -9,6 +9,7 @@ public class MTree : MonoBehaviour
 	//trunk
 	public int _minRings;
 	public int _maxRings;
+	public int _ringRes;
 	public float _baseRingSpacing;
 	public bool _useSeed;
 	public int _seed;
@@ -31,7 +32,7 @@ public class MTree : MonoBehaviour
 	public int _branchFactor;
 	public bool _incBranch;
 	public bool _decBranch;
-	public Transform _capsule;
+	public Transform _sphere;
 	[Range(0.1f,1)]
 	public float _cylinderWidth;
 	[Range(0f,1f)]
@@ -93,7 +94,7 @@ public class MTree : MonoBehaviour
 	}
 
 	public void GenTree(){
-		if(_minRings<2||_capsule==null||_leaf==null||!gameObject.activeInHierarchy)
+		if(_minRings<2||_sphere==null||_leaf==null||!gameObject.activeInHierarchy)
 			return;
 		if(_useSeed)
 			Random.InitState(_seed);
@@ -101,36 +102,96 @@ public class MTree : MonoBehaviour
 		_branchLevels = new Dictionary<int,int>();
 		GenerateBranch(Vector3.zero,Vector3.zero);//growth dir is determined in GenBranch when level==0
 
+		//todo meshify them branches
 		//add some cylinders - maybe temp
 		Transform [] children = new Transform[transform.childCount];
 		for(int i=0; i<transform.childCount;i++)
 			children[i]=transform.GetChild(i);
 		StartCoroutine(DestroyNextFrame(children));
-		//gen cylinders
-		int branchIndex=0;
+		int ringCenters=0;
 		foreach(List<Vector3> branch in _branches){
-			for(int i=1;i<branch.Count;i++){
-				int level=_branchLevels[branchIndex];
-				Transform cylinder = Instantiate(_capsule,transform);
-				Vector3 a = transform.TransformPoint(branch[i-1]);
-				Vector3 b = transform.TransformPoint(branch[i]);
-				cylinder.position=Vector3.Lerp(a,b,0.5f);
-				cylinder.up=(b-a);
-				float widthFactor=1f-level*_branchWidthFactor;
-				cylinder.localScale=new Vector3(_cylinderWidth*widthFactor,(a-b).magnitude*0.5f*_oversize,_cylinderWidth*widthFactor);
-				if(i==branch.Count-1&&level==_maxLevel){
-					Transform leaf = Instantiate(_leaf,transform);
-					leaf.position=b;
-
-					leaf.rotation=Quaternion.Slerp(Quaternion.identity,Random.rotation,_leafRotation);
-					leaf.localScale=new Vector3(Random.Range(_minLeafSize.x,_maxLeafSize.x),
-							Random.Range(_minLeafSize.y,_maxLeafSize.y),
-							Random.Range(_minLeafSize.z,_maxLeafSize.z));
-				}
-				cylinder.GetComponent<Renderer>().material=_trunkMat;
+			foreach(Vector3 b in branch){
+				ringCenters++;
 			}
-			branchIndex++;
 		}
+		Vector3[] vertices = new Vector3[ringCenters*(_ringRes+1)];
+		int[] tris = new int[(ringCenters-1)*(_ringRes)*6];
+		Vector3[] norms = new Vector3[vertices.Length];
+		Vector2[] uvs = new Vector2[vertices.Length];
+		Transform ringCenter = new GameObject("ring center").transform;
+		int vertexCounter=0;
+		int triCounter=0;
+		int baseV=0;
+		for(int i=0; i<_branches.Count; i++){
+			List<Vector3> branch = _branches[i];
+			Vector3 dir=Vector3.up;
+			int level=_branchLevels[i];
+			float widthFactor=1f-level*_branchWidthFactor;
+			float radius=_cylinderWidth*widthFactor;
+			//float radius=0.1f;
+			for(int j=0; j<branch.Count; j++){
+				float r01=j/(float)(branch.Count-1);
+				if(j<branch.Count-1)
+					dir=branch[j+1]-branch[j];
+				ringCenter.up=dir;
+				ringCenter.position=branch[j];
+				for(int n=0;n<=_ringRes;n++){
+					float t01 = n/(float)_ringRes;
+					float ang=t01*Mathf.PI*2f;
+					Vector3 pos=ringCenter.position;
+					pos+=ringCenter.right*radius*Mathf.Cos(ang);
+					pos+=ringCenter.forward*radius*Mathf.Sin(ang);
+					vertices[vertexCounter]=pos;
+					norms[vertexCounter]=pos-ringCenter.position;
+					uvs[vertexCounter] = new Vector2(t01,r01);
+					vertexCounter++;
+				}
+				if(j==branch.Count-1)
+				{
+					Transform sphere = Instantiate(_sphere,transform.TransformPoint(ringCenter.position),Quaternion.identity,transform);
+					sphere.localScale=Vector3.one*2f*radius;
+					if(level==_maxLevel){
+						Transform leaf = Instantiate(_leaf,transform);
+						leaf.position=sphere.position;
+
+						leaf.rotation=Quaternion.Slerp(Quaternion.identity,Random.rotation,_leafRotation);
+						leaf.localScale=new Vector3(Random.Range(_minLeafSize.x,_maxLeafSize.x),
+								Random.Range(_minLeafSize.y,_maxLeafSize.y),
+								Random.Range(_minLeafSize.z,_maxLeafSize.z));
+					}
+				}
+			}
+
+			for(int j=0;j<branch.Count-1;j++){
+				//int baseV=(_ringRes+1)*i;//trust //double trust
+				for(int n=0;n<_ringRes;n++){//trust
+					//fist tri
+					tris[triCounter]=baseV;
+					tris[triCounter+2]=baseV+1;
+					tris[triCounter+1]=baseV+(_ringRes+1);
+					//second tri
+					tris[triCounter+3]=baseV+(_ringRes+1);
+					tris[triCounter+5]=baseV+1;
+					tris[triCounter+4]=baseV+(_ringRes+1)+1;
+					triCounter+=6;
+					baseV++;
+				}
+				baseV++;//inc extra vertex cuz there's an extra for uv wrapping
+			}
+			baseV+=(_ringRes+1);
+		}
+
+		Mesh m = new Mesh();
+		m.vertices=vertices;
+		m.triangles=tris;
+		m.normals = norms;
+		m.uv=uvs;
+		m.RecalculateBounds();
+		//_meshF.sharedMesh=m;
+		GetComponent<MeshFilter>().sharedMesh=m;
+
+		StartCoroutine(DestroyNextFrame(ringCenter.gameObject));
+
 	}
 
 	void GenerateBranch(Vector3 startPos, Vector3 growthDir, int level=0){
@@ -188,6 +249,11 @@ public class MTree : MonoBehaviour
 			if(t!=null)
 				DestroyImmediate(t.gameObject);
 		}
+	}
+
+	IEnumerator DestroyNextFrame(GameObject go){
+		yield return null;
+		DestroyImmediate(go);
 	}
 
 	public Vector3 GetRandomPerch(){
