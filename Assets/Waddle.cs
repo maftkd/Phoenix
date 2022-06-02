@@ -134,7 +134,6 @@ public class Waddle : MonoBehaviour
 				}
 			}
 			else{
-				//Debug.Log("yoyo");
 			}
 			//always ground?
 			if(_bird!=null)

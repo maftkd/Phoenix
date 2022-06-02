@@ -79,14 +79,15 @@
             {
 				//get shadowmap
 				fixed4 col = fixed4(1,1,1,1);
-				fixed xzRandom=tex2D(_MainTex,i.worldPos.xz*0.1);
+				fixed xzRandom=tex2D(_MainTex,i.worldPos.xz*0.05+fixed2(1,1)*sin(_Time.y)*0.002*sin(i.worldPos.x+i.worldPos.z));
 				fixed sand=step(i.worldPos.y+xzRandom,_SandHeight);
 				col.rgb=lerp(col.rgb,_SandColor.rgb,sand);
 				fixed notSand=1-sand;
 				fixed rockDot=dot(i.norm,fixed3(0,1,0));
 				fixed isRock=step(rockDot+xzRandom*0.2,_RockDot);
 				fixed3 grassCol=lerp(_GrassColorA,_GrassColorB,tex2D(_MainTex,i.worldPos.xz*0.005)).rgb;
-				grassCol=lerp(grassCol,_RockColor.rgb,step(0.7,tex2D(_MainTex,i.worldPos.xz*0.2)));
+				//grassCol=lerp(grassCol,_RockColor.rgb,step(0.7,tex2D(_MainTex,i.worldPos.xz*0.2)));
+				grassCol=lerp(grassCol,_RockColor.rgb,step(lerp(0.75,0.8,abs(sin(_Time.x*2))),xzRandom));
 				fixed3 notSandCol=lerp(grassCol,_RockColor.rgb,isRock);
 				col.rgb=lerp(col.rgb,notSandCol,notSand);
 

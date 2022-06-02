@@ -59,11 +59,16 @@
             v2f vert (appdata v)
             {
                 v2f o;
+				fixed amp = 0.04;
+				fixed period=0.5;
+				o.world = mul(unity_ObjectToWorld, v.vertex).xyz;
+				v.vertex.x+=sin(_Time.y*period)*sin(o.world.x)*amp;
+				v.vertex.z+=sin(_Time.y*period)*sin(o.world.z)*amp;
+				//v.vertex.z+=cos(_Time.y)*v.vertex.y*amp;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.norm= UnityObjectToWorldNormal(v.normal);
 				o.dist=min(1,length(ObjSpaceViewDir(v.vertex))*_AlphaDist);
-				o.world = mul(unity_ObjectToWorld, v.vertex).xyz;
 
                 UNITY_TRANSFER_FOG(o,o.pos);
 				TRANSFER_VERTEX_TO_FRAGMENT(o);

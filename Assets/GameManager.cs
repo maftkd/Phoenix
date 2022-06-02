@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour
 		_mIn.LockInput(false);
 		_mIn.EnableCursor(false);
 		Sfx.SetFloat("BirdVol",0f);
+		_player.ExitMenuState();
 	}
 
 	public void PuzzleSolved(BirdHouse bh){

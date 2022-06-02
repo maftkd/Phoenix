@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6868491182425631539}
   - component: {fileID: 1001718398802124245}
   - component: {fileID: 6688029379626858387}
-  - component: {fileID: 529687287613545091}
+  - component: {fileID: 4267871440157269005}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -94,7 +94,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &529687287613545091
+--- !u!114 &4267871440157269005
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,6 +114,7 @@ MonoBehaviour:
   _supressHitFx: 0
   _supressNpcKnockback: 0
   _inverted: 0
+  _dontHandle: 1
   _onBirdEnter:
     m_PersistentCalls:
       m_Calls: []

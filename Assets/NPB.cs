@@ -21,6 +21,7 @@ public class NPB : MonoBehaviour
 	Bird _player;
 	public string _species;
 	public string _speciesLatin;
+	public Material _altMat;
 	int _state;
 	Text _debugText;
 	MInput _mIn;

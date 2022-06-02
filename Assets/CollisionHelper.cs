@@ -26,6 +26,7 @@ public class CollisionHelper : MonoBehaviour
 	public bool _supressNpcKnockback;
 	public bool _inverted;
 	Bird _player;
+	public bool _dontHandle;
 
 	//float _fudge = 1.1f;
 
@@ -44,8 +45,8 @@ public class CollisionHelper : MonoBehaviour
 		if(_hasBoxCollider)
 			_box=GetComponent<BoxCollider>();
 		_player=GameManager._player;
-		_player._onFlight+=FlightMode;
-		_player._onLand+=LandMode;
+		//_player._onFlight+=FlightMode;
+		//_player._onLand+=LandMode;
         
     }
 
@@ -64,7 +65,7 @@ public class CollisionHelper : MonoBehaviour
 		if(!_inverted)
 		{
 			Bird b = other.GetComponent<Bird>();
-			if(b._state<3)
+			if(b._state<2)
 				HandleCollision(other);
 			else{
 				MTree tree = transform.GetComponentInParent<MTree>();
@@ -73,6 +74,7 @@ public class CollisionHelper : MonoBehaviour
 					Vector3 spot=tree.GetClosestPerch(b.transform.position);
 					//#temp
 					if(spot!=Vector3.zero){
+						Debug.Log("Snapping to tree");
 						b.SnapToPos(spot);
 						b.Land();
 						return;
@@ -105,6 +107,10 @@ public class CollisionHelper : MonoBehaviour
 
 	void HandleCollision(Collider other){
 		if(!enabled)
+			return;
+		if(_meshCol!=null&&!_meshCol.convex)
+			return;
+		if(_dontHandle)
 			return;
 		Bird b;
 		if(other==null)

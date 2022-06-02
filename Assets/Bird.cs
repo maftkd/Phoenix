@@ -332,8 +332,8 @@ public class Bird : MonoBehaviour
 		_prevPos=transform.position;
 		
 		//_butts.SetActive(targetting);
-		_reticle.color=targetting?Color.white:Color.black;
-		_reticle.enabled=_state<3;
+		//_reticle.color=targetting?Color.white:Color.black;
+		//_reticle.enabled=_state<3;
 		//if targetting and get sing down
 		//	go to sing state
 		//	tell npb to listen
@@ -1230,6 +1230,10 @@ public class Bird : MonoBehaviour
 		_fly.enabled=false;
 		_anim.SetFloat("walkSpeed",0f);
 		_state=7;
+	}
+
+	public void ExitMenuState(){
+		_state=0;
 	}
 
 	public void SingSong(Sing.BirdSong song){
