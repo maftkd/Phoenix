@@ -91,6 +91,7 @@ public class MTree : MonoBehaviour
 #else
 		GenTree();
 #endif
+		//spawn bird
 	}
 
 	public void GenTree(){
@@ -189,6 +190,7 @@ public class MTree : MonoBehaviour
 		m.RecalculateBounds();
 		//_meshF.sharedMesh=m;
 		GetComponent<MeshFilter>().sharedMesh=m;
+		GetComponent<MeshCollider>().sharedMesh=m;
 
 		StartCoroutine(DestroyNextFrame(ringCenter.gameObject));
 
