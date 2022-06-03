@@ -85,7 +85,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GrassColor: {r: 0.113857046, g: 1, b: 0.042452812, a: 1}
-    - _GrassColorA: {r: 0.80441445, g: 1, b: 0.6273585, a: 1}
+    - _GrassColorA: {r: 0.93661284, g: 1, b: 0.3066038, a: 1}
     - _GrassColorB: {r: 0, g: 0.7169812, b: 0.08153899, a: 1}
     - _RockColor: {r: 0.46226418, g: 0.4347022, b: 0.34669814, a: 1}
     - _SandColor: {r: 1, g: 0.99531925, b: 0.723, a: 1}
