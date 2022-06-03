@@ -255,6 +255,10 @@ public class Bird : MonoBehaviour
 					targetting=ScanForNpb();
 					break;
 				case 3://flying
+					Vector4 pos = new Vector4(transform.position.x,transform.position.y,
+							transform.position.z,GetVel());
+
+					Shader.SetGlobalVector("_PlayerPos",pos);
 					break;
 				case 4://after dive
 					_afterDiveTimer+=Time.deltaTime;

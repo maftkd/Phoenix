@@ -61,6 +61,7 @@
 			fixed _RockDot;
 			fixed4 _LightColor0;
 			fixed _SpecDot;
+			fixed4 _PlayerPos;
 
             v2f vert (appdata v)
             {
@@ -77,9 +78,14 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-				//get shadowmap
+				//player pos stuff
+				fixed3 diff=_PlayerPos.xyz-i.worldPos;
+				fixed sqrDst=dot(diff,diff);
+				fixed closeness=smoothstep(9,0,sqrDst);//*_PlayerPos.w;
+				//col.rgb=lerp(col.rgb,fixed3(1,1,1),closeness);
+
 				fixed4 col = fixed4(1,1,1,1);
-				fixed xzRandom=tex2D(_MainTex,i.worldPos.xz*0.05+fixed2(1,1)*sin(_Time.y)*0.002*sin(i.worldPos.x+i.worldPos.z));
+				fixed xzRandom=tex2D(_MainTex,i.worldPos.xz*(0.05+closeness*0.005)+fixed2(1,1)*sin(_Time.y)*0.002*sin(i.worldPos.x+i.worldPos.z));
 				fixed sand=step(i.worldPos.y+xzRandom,_SandHeight);
 				col.rgb=lerp(col.rgb,_SandColor.rgb,sand);
 				fixed notSand=1-sand;
@@ -91,7 +97,7 @@
 				fixed3 notSandCol=lerp(grassCol,_RockColor.rgb,isRock);
 				col.rgb=lerp(col.rgb,notSandCol,notSand);
 
-
+				//get shadowmap
 				float attenuation = LIGHT_ATTENUATION(i);
 
 				//get shading via dir light
