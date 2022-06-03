@@ -107,7 +107,8 @@
                 fixed noise = tex2D(_MainTex, i.uv).r;
 
 				fixed noiseBoostMult=lerp(1,_MaxNoiseBoost,saturate(playerNearWater-noise*_RippleNoiseReduce));
-                fixed noise2 = tex2D(_MainTex, (i.uv+fixed2(1,1)*_Time.y%_MainTex_ST.x*_WaveSpeed)*_WaveScale*noiseBoostMult).r;
+				//fixed noiseBoostMult=1;
+                fixed noise2 = tex2D(_MainTex, (i.uv+fixed2(1,1)*_Time.y%6000*_WaveSpeed)*_WaveScale*noiseBoostMult).r;
 				//noise2+=step(noise2,noise3);
 
 				//get reflectance
