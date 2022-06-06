@@ -58,8 +58,10 @@ public class GameManager : MonoBehaviour
 			else
 			{
 				//cannot pause when we are zoomed in species screen
+				/*
 				if(!SpeciesScreen.IsActive()&&!_cli)
 					PauseA();
+					*/
 			}
 			/*
 #if UNITY_EDITOR

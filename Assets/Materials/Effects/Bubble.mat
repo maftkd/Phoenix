@@ -71,7 +71,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _MaxStep: 0.64
+    - _MaxStep: 0.73
     - _Metallic: 0
     - _MinAlpha: 0
     - _MinStep: 0
@@ -95,7 +95,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 0.5019608}
     - _ColorBot: {r: 1, g: 1, b: 1, a: 1}
     - _ColorDeep: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorShallow: {r: 1, g: 0, b: 0, a: 0}
+    - _ColorShallow: {r: 1, g: 0.87590456, b: 0, a: 0}
     - _ColorTop: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}

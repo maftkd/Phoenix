@@ -100,11 +100,12 @@ public class DebugScreen : MonoBehaviour
 		Debug.Log("Received command: "+cmd);
 		_commandLine.text="";
 		if(cmd=="getSongs"){
-			StartCoroutine(GetSongs());
+			//StartCoroutine(GetSongs());
 		}
 		GameManager._instance.ToggleCli();
 	}
 
+	/*
 	IEnumerator GetSongs(){
 		NPB [] npbs = FindObjectsOfType<NPB>();
 		foreach(NPB npb in npbs){
@@ -112,6 +113,7 @@ public class DebugScreen : MonoBehaviour
 			yield return new WaitForSeconds(0.1f);
 		}
 	}
+	*/
 
 	//point debugging
 	public static void DebugPoint(Vector3 v, Color c, int slot){

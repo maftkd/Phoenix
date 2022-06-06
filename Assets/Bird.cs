@@ -116,11 +116,12 @@ public class Bird : MonoBehaviour
 	public Transform _splash;
 
 	//ui stuff
-	ButtonPrompts _butts;
 	RawImage _reticle;
 	NPB _npb;
+	/*
 	Sing _sing;
 	public List<Sing.BirdSong> _songs;
+	*/
 
 	void Awake(){
 		//calculations
@@ -165,12 +166,10 @@ public class Bird : MonoBehaviour
 		}
 		_prevPos=transform.position;
 
-		_butts=FindObjectOfType<ButtonPrompts>();
-		//_reticle=_butts.transform.parent.Find("Reticle").GetComponent<RawImage>();
 		Transform hud=_mCam.transform.Find("Hud");
 		_reticle=hud.Find("Reticle").GetComponent<RawImage>();
-		_sing=transform.GetComponentInChildren<Sing>();
-		_songs = new List<Sing.BirdSong>();
+		//_sing=transform.GetComponentInChildren<Sing>();
+		//_songs = new List<Sing.BirdSong>();
 
 		_sphereCol = GetComponent<SphereCollider>();
 		_hitRadius=_sphereCol.radius*transform.localScale.x;
@@ -272,9 +271,11 @@ public class Bird : MonoBehaviour
 					}
 					break;
 				case 6://singing
+					/*
 					if(SpeciesScreen._canSkip&&_mIn.GetJumpDown()){
 						EndScan();
 					}
+					*/
 					break;
 				case 7://menu state
 					/*
@@ -335,7 +336,6 @@ public class Bird : MonoBehaviour
 		}
 		_prevPos=transform.position;
 		
-		//_butts.SetActive(targetting);
 		//_reticle.color=targetting?Color.white:Color.black;
 		//_reticle.enabled=_state<3;
 		//if targetting and get sing down
@@ -650,7 +650,6 @@ public class Bird : MonoBehaviour
 			_terrainData = _terrain.terrainData;
 			_alphaMaps = _terrainData.GetAlphamaps(0,0,_terrainData.alphamapWidth,_terrainData.alphamapHeight);
 			//show species list
-			//BirdSpawner bs = t.transform.parent.Find("BirdSpawner").GetComponent<BirdSpawner>();
 			//bs.ShowList();
 		}
 		else{
@@ -663,8 +662,6 @@ public class Bird : MonoBehaviour
 			return;
 		_cardTerrain=t;
 		if(_cardTerrain!=null){
-			BirdSpawner bs = t.transform.parent.Find("BirdSpawner").GetComponent<BirdSpawner>();
-			bs.ShowList();
 		}
 		else{
 		}
@@ -1150,7 +1147,10 @@ public class Bird : MonoBehaviour
 		return true;
 	}
 
+
 	bool ScanForNpb(){
+		return false;
+		/*
 		if(_npb!=null&&_npb._scanned)
 			return false;
 		RaycastHit hit;
@@ -1160,9 +1160,11 @@ public class Bird : MonoBehaviour
 			if(_npb!=null&&curTarget!=_npb){
 				_npb.Targeted(false);
 			}
-			_npb=curTarget;
-			targeted=true;
-			_npb.Targeted(true);
+			if(curTarget!=null){
+				_npb=curTarget;
+				targeted=true;
+				_npb.Targeted(true);
+			}
 		}
 		else{
 			if(_npb!=null){
@@ -1171,6 +1173,7 @@ public class Bird : MonoBehaviour
 			}
 		}
 		return targeted;
+		*/
 	}
 
 	public void ScanBird(){
@@ -1179,53 +1182,33 @@ public class Bird : MonoBehaviour
 		_hop.enabled=false;
 		GameManager._mCam.Transition(_speciesCam,MCamera.Transitions.CUT_BACK,0.5f,_npb.transform,1f);
 		_state=6;
-		//_butts.SetActive(true);
 		//TipHud.ShowTip("Press E to Return",transform,Vector3.up*0.5f);
 		//_sing.SetTargetBird(_npb._sing);
 		//species screen -> show Species
-		SpeciesScreen.ShowSpecies(_npb);
+		//SpeciesScreen.ShowSpecies(_npb);
 	}
 
 	void EndScan(){
 		StartCoroutine(EndScanR());
 		//TipHud.ClearTip();
-		//_butts.SetActive(false);
 		//_npb.StopListening();
 		//_sing.Reset();
 		//_npb._sing.Reset();
 	}
 
 	IEnumerator EndScanR(){
+		yield return null;
+		/*
 		float revertDur=1f;
 		_sCam.Revert(revertDur);
-		SpeciesScreen.Hide();
+		//SpeciesScreen.Hide();
 		yield return new WaitForSeconds(revertDur);
 		_state=0;
 		float lbDur=0.5f;
 		GameManager._mCam.Transition(_waddleCam,MCamera.Transitions.CUT_BACK,0f,null,lbDur);
 		yield return new WaitForSeconds(lbDur);
 		_npb.EndScan();
-	}
-
-	public bool LearnSong(Sing.BirdSong song,NPB npb){
-		foreach(Sing.BirdSong s in _songs){
-			if(s._fileName==song._fileName)
-			{
-				return false;
-			}
-		}
-		song._species=npb._species;
-		if(npb._sing._male)
-		{
-			song._male=npb;
-			song._female=npb._sing._mate._npb;
-		}
-		else{
-			song._female=npb;
-			song._male=npb._sing._mate._npb;
-		}
-		_songs.Add(song);
-		return true;
+		*/
 	}
 
 	public void EnterMenuState(){
@@ -1238,13 +1221,6 @@ public class Bird : MonoBehaviour
 
 	public void ExitMenuState(){
 		_state=0;
-	}
-
-	public void SingSong(Sing.BirdSong song){
-		Debug.Log("Time to start singing: "+song._fileName);
-		GameManager._mCam.Transition(_singCam,MCamera.Transitions.CUT_BACK,-0.38f,transform,1f);
-		//_sCam._offset.y=0.5f;
-
 	}
 
 	void OnDrawGizmos(){

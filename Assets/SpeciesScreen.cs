@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class SpeciesScreen : MonoBehaviour
 {
+	/*
 	CanvasGroup _cg;
 	public static SpeciesScreen _instance;
 	public static bool _canSkip;
@@ -83,4 +84,5 @@ public class SpeciesScreen : MonoBehaviour
 	public static bool IsActive(){
 		return _instance._cg.alpha>0;
 	}
+	*/
 }

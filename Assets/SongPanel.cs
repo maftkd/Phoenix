@@ -14,6 +14,7 @@ public class SongPanel : MonoBehaviour
 	public RenderTexture _femaleTex;
 	Text _mnemonic;
 
+	/*
 	void Awake(){
 		_player=GameManager._player;
 		Transform songList=transform.Find("SongList");
@@ -90,4 +91,5 @@ public class SongPanel : MonoBehaviour
 		}
 
 	}
+*/
 }

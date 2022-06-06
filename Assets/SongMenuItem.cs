@@ -16,7 +16,9 @@ public class SongMenuItem : MonoBehaviour
         
     }
 
+	/*
 	public void Selected(){
 		SongPanel.Select(transform);
 	}
+	*/
 }
