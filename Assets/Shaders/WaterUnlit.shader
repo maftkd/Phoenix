@@ -15,7 +15,6 @@
         _GradTex ("Grad Tex", 2D) = "white" {}
 		_MinFresnel ("Min Fresnel", Range(0,1)) = 0.5
 		_MaxPlayerDist ("Min player dist", Range(0,8)) = 5
-		_PlayerPos ("Player Pos", Vector) = (0,0,0,0)
 		_MaxNoiseBoost ("Max Noise Boost", Range(0.5,1.5)) = 1
 		_RippleNoiseReduce ("Ripple Noise Reduce", Range(0,1)) = 0.1
 		_Foam ("Foam", Range(0,.1)) = 0.01

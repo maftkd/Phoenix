@@ -79,9 +79,9 @@
             fixed4 frag (v2f i) : SV_Target
             {
 				//player pos stuff
-				fixed3 diff=_PlayerPos.xyz-i.worldPos;
+				fixed2 diff=_PlayerPos.xz-i.worldPos.xz;
 				fixed sqrDst=dot(diff,diff);
-				fixed closeness=smoothstep(9,0,sqrDst);//*_PlayerPos.w;
+				fixed closeness=smoothstep(1,0,sqrDst);//*_PlayerPos.w;
 				//col.rgb=lerp(col.rgb,fixed3(1,1,1),closeness);
 
 				fixed4 col = fixed4(1,1,1,1);

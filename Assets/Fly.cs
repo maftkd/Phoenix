@@ -185,7 +185,7 @@ public class Fly : MonoBehaviour
 		//_boundary.SetActive(false);
 		_oceanMat=FindObjectOfType<Ocean>().GetComponent<Renderer>().material;
 		_playerPos=Vector4.zero;
-		_oceanMat.SetVector("_PlayerPos",_playerPos);
+		Shader.SetGlobalVector("_PlayerPos",_playerPos);
 	}
 
 	void OnEnable(){
@@ -221,7 +221,8 @@ public class Fly : MonoBehaviour
 		//_landTarget.gameObject.SetActive(false);
 		//_mCam.SetVignette(0);
 		_playerPos=Vector4.zero;
-		_oceanMat.SetVector("_PlayerPos",_playerPos);
+		//_oceanMat.SetVector("_PlayerPos",_playerPos);
+		Shader.SetGlobalVector("_PlayerPos",_playerPos);
 	}
 
     // Start is called before the first frame update
@@ -467,7 +468,8 @@ public class Fly : MonoBehaviour
 			_playerPos.y=transform.position.y;
 			_playerPos.z=transform.position.z;
 			_playerPos.w=_prevMag/_maxVel;
-			_oceanMat.SetVector("_PlayerPos",_playerPos);
+			//_oceanMat.SetVector("_PlayerPos",_playerPos);
+			Shader.SetGlobalVector("_PlayerPos",_playerPos);
 
 			//raycast down 
 			Vector3 hitPoint=Vector3.zero;

@@ -167,6 +167,7 @@ public class Sing : MonoBehaviour
 		if(!_npb._scanned)
 			_state=0;//0 = ready to sing
 
+		/*
 		if(_femaleSings&&!_male){
 			if(Random.value<_responseChance){
 				_mate.SingSong();
@@ -176,6 +177,7 @@ public class Sing : MonoBehaviour
 			//_mate.
 			_mate.Reset();
 		}
+		*/
 
 		if(!_npb._scanned){
 			if(Random.value<_switchTreeChance)
@@ -210,130 +212,12 @@ public class Sing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(!_male){
-			switch(_state){
-				case 0:
-					_singTimer+=Time.deltaTime;
-					if(_singTimer>_singDelay){
-						_singTimer=0;
-						if(_femaleSings)
-							SingSong();
-						else
-							Call();
-						_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
-					}
-					break;
-				case 1:
-					break;
-				case 2:
-					break;
-				default:
-					break;
-			}
+		_singTimer+=Time.deltaTime;
+		if(_singTimer>_singDelay){
+			_singTimer=0;
+			_singDelay=Random.Range(_singDelayRange.x,_singDelayRange.y);
+			SingSong();
 		}
-		/*
-		if(_player._state!=6)
-			return;
-		switch(_state){
-			case 0://not singing
-				if(_mIn.GetLowDown()){
-					_low.Play();
-					_anim.SetFloat("pitch",0.333f);
-					_state=1;
-					//rework this 
-					//instead of firing an event
-					//we can sing directly to the bird that we have engaged
-					_targetBird.HandleNote(0,true);
-				}
-				else if(_mIn.GetMidDown()){
-					_mid.Play();
-					_anim.SetFloat("pitch",0.666f);
-					_state=2;
-					_targetBird.HandleNote(1,true);
-				}
-				else if(_mIn.GetHighDown()){
-					_high.Play();
-					_anim.SetFloat("pitch",1f);
-					_state=3;
-					_targetBird.HandleNote(2,true);
-				}
-				break;
-			case 1://sing low
-				if(_mIn.GetMidDown()){
-					_low.Stop();
-					_mid.Play();
-					_anim.SetFloat("pitch",0.666f);
-					_state=2;
-					_targetBird.HandleNote(0,false);
-					_targetBird.HandleNote(1,true);
-				}
-				else if(_mIn.GetHighDown()){
-					_low.Stop();
-					_high.Play();
-					_anim.SetFloat("pitch",1f);
-					_state=3;
-					_targetBird.HandleNote(0,false);
-					_targetBird.HandleNote(2,true);
-				}
-				else if(_mIn.GetLowUp()){
-					_low.Stop();
-					_state=0;
-					_anim.SetFloat("pitch",0f);
-					_targetBird.HandleNote(0,false);
-				}
-				break;
-			case 2://sing mid
-				if(_mIn.GetLowDown()){
-					_mid.Stop();
-					_low.Play();
-					_anim.SetFloat("pitch",0.333f);
-					_state=1;
-					_targetBird.HandleNote(1,false);
-					_targetBird.HandleNote(0,true);
-				}
-				else if(_mIn.GetHighDown()){
-					_mid.Stop();
-					_high.Play();
-					_anim.SetFloat("pitch",1f);
-					_state=3;
-					_targetBird.HandleNote(1,false);
-					_targetBird.HandleNote(2,true);
-				}
-				else if(_mIn.GetMidUp()){
-					_mid.Stop();
-					_state=0;
-					_anim.SetFloat("pitch",0f);
-					_targetBird.HandleNote(1,false);
-				}
-				break;
-			case 3://sing high
-				if(_mIn.GetLowDown()){
-					_high.Stop();
-					_low.Play();
-					_anim.SetFloat("pitch",0.333f);
-					_state=1;
-					_targetBird.HandleNote(2,false);
-					_targetBird.HandleNote(0,true);
-				}
-				else if(_mIn.GetMidDown()){
-					_high.Stop();
-					_mid.Play();
-					_anim.SetFloat("pitch",0.666f);
-					_state=2;
-					_targetBird.HandleNote(2,false);
-					_targetBird.HandleNote(1,true);
-				}
-				else if(_mIn.GetHighUp()){
-					_high.Stop();
-					_state=0;
-					_anim.SetFloat("pitch",0f);
-					_targetBird.HandleNote(2,false);
-				}
-				break;
-			default:
-				break;
-		}
-		*/
     }
 
 	void LateUpdate(){
