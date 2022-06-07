@@ -336,8 +336,8 @@ public class Bird : MonoBehaviour
 		}
 		_prevPos=transform.position;
 		
-		//_reticle.color=targetting?Color.white:Color.black;
-		//_reticle.enabled=_state<3;
+		_reticle.color=targetting?Color.white:Color.black;
+		_reticle.enabled=_state<3;
 		//if targetting and get sing down
 		//	go to sing state
 		//	tell npb to listen
@@ -1149,8 +1149,6 @@ public class Bird : MonoBehaviour
 
 
 	bool ScanForNpb(){
-		return false;
-		/*
 		if(_npb!=null&&_npb._scanned)
 			return false;
 		RaycastHit hit;
@@ -1173,7 +1171,6 @@ public class Bird : MonoBehaviour
 			}
 		}
 		return targeted;
-		*/
 	}
 
 	public void ScanBird(){

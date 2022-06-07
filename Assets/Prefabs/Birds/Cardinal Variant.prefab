@@ -1022,13 +1022,33 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 45488a3daa760df47bccab055d21d173, type: 3}
     - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
+      propertyPath: _maxCalls
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _minCalls
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _chillRange.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _chillRange.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
       propertyPath: _callDelayRange.x
-      value: 1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
       propertyPath: _callDelayRange.y
-      value: 3
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 5845262002360950304, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}

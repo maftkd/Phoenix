@@ -14,6 +14,8 @@ public class NPB : MonoBehaviour
 	int _callCounter;
 	public Vector2 _chillRange;
 	int _state;
+	public bool _scanned;
+	bool _targetted;
 
 	void Awake(){
 		_callDelay=Random.Range(_callDelayRange.x,_callDelayRange.y);
@@ -53,4 +55,8 @@ public class NPB : MonoBehaviour
 				break;
 		}
     }
+
+	public void Targeted(bool foo){
+		_targetted=foo;
+	}
 }

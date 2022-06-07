@@ -186,7 +186,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7643519323981827949}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &5843446283019457806
 SkinnedMeshRenderer:
@@ -755,7 +755,7 @@ Transform:
   m_Children:
   - {fileID: 8941054844448735498}
   m_Father: {fileID: 7643519323981827949}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: 180}
 --- !u!1 &7556771090576853820
 GameObject:
@@ -887,6 +887,41 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _call
+      value: 
+      objectReference: {fileID: 8300000, guid: d215b1e771c329b4faba0be7cca12b82, type: 3}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _maxCalls
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _minCalls
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _chillRange.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _chillRange.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _callDelayRange.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 231353964750523298, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
+        type: 3}
+      propertyPath: _callDelayRange.y
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1528446131974672649, guid: 85ef7374fc2ab4f4b80212c64ff3351e,
         type: 3}
       propertyPath: m_Enabled
