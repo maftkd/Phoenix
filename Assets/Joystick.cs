@@ -11,9 +11,11 @@ public class Joystick : MonoBehaviour
 	float _moveTimer;
 	public float _movePeriod;
 	public float _moveSpeed;
+	Transform _cam;
 
 	void Awake(){
 		_player=GameObject.Find("Player").transform;
+		_cam=GameObject.Find("GameViewCam").transform;
 	}
 
     // Start is called before the first frame update
@@ -46,6 +48,14 @@ public class Joystick : MonoBehaviour
 			else{
 				_player.position+=dir*Time.deltaTime*_moveSpeed;
 				_player.forward=dir;
+				if(_player.position.x-5>_cam.position.x)
+					_cam.position+=Vector3.right*10f;
+				if(_player.position.x+5<_cam.position.x)
+					_cam.position+=Vector3.left*10f;
+				if(_player.position.z-5>_cam.position.z)
+					_cam.position+=Vector3.forward*10f;
+				if(_player.position.z+5<_cam.position.z)
+					_cam.position+=Vector3.back*10f;
 			}
 		}
 		if(Input.GetMouseButtonUp(0)){
