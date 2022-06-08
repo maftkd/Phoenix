@@ -224,7 +224,7 @@ PrefabInstance:
     - target: {fileID: 3565575490557516849, guid: 80e46dee289544f9489fc512c9165dca,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3565575490557516849, guid: 80e46dee289544f9489fc512c9165dca,
         type: 3}
@@ -1099,7 +1099,7 @@ PrefabInstance:
     - target: {fileID: 3565575490557516849, guid: 80e46dee289544f9489fc512c9165dca,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3565575490557516849, guid: 80e46dee289544f9489fc512c9165dca,
         type: 3}
@@ -1876,7 +1876,7 @@ GameObject:
   - component: {fileID: 1984142428}
   - component: {fileID: 1984142427}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2030,7 +2030,7 @@ PrefabInstance:
     - target: {fileID: 3565575490557516849, guid: 80e46dee289544f9489fc512c9165dca,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3565575490557516849, guid: 80e46dee289544f9489fc512c9165dca,
         type: 3}

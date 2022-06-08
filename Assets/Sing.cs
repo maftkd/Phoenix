@@ -26,6 +26,7 @@ public class Sing : MonoBehaviour
 	Transform _low;
 	Transform _mid;
 	Transform _high;
+	Transform _bar;
 	public float _yPerSec;
 
 	void Awake(){
@@ -37,6 +38,7 @@ public class Sing : MonoBehaviour
 		_low.gameObject.SetActive(false);
 		_mid.gameObject.SetActive(false);
 		_high.gameObject.SetActive(false);
+		_bar=transform.Find("Bar");
 	}
     // Start is called before the first frame update
     void Start()
@@ -53,16 +55,15 @@ public class Sing : MonoBehaviour
     }
 
 	IEnumerator PlaySong(){
-		float pitch=1f;
-		AudioSource audio = Sfx.PlayOneShot3D(_song._clip,transform.position,pitch,"Birds");
-
 		//setup notes
-		float dur=_song._clip.length/pitch;
+		Transform[] notes = new Transform[_song._notes.Length];
+		float dur=_song._clip.length;
+		float startHeight=_low.position.y;
 		for(int i=0;i<_song._notes.Length; i++){
 			float curNoteStart=_song._notes[i]._startT*dur;
 			float curNoteEnd=_song._notes[i]._endT*dur;
 			int pitchId=_song._notes[i]._pitchId;
-			float y=1.14f+curNoteStart*_yPerSec;
+			float y=startHeight+curNoteStart*_yPerSec;
 			float delta=curNoteEnd-curNoteStart;
 			Transform note;
 			if(pitchId==0)
@@ -77,45 +78,27 @@ public class Sing : MonoBehaviour
 			note.position=pos;
 			LineRenderer line=note.GetChild(0).GetComponent<LineRenderer>();
 			line.SetPosition(1,Vector3.up*delta*_yPerSec);
+			notes[i]=note;
 		}
+
+		float distToBar=startHeight-_bar.position.y;
+		float delay=distToBar/_yPerSec;
+		StartCoroutine(PlayAfterDelay(delay));
+		float overallDur=dur+delay;
 		float timer=0f;
-		float curTime=0;
-		for(int i=0;i<_song._notes.Length; i++){
-			float curNoteStart=_song._notes[i]._startT*dur;
-			float curNoteEnd=_song._notes[i]._endT*dur;
-			int pitchId=_song._notes[i]._pitchId;
-			float delta=curNoteStart-curTime;
-			yield return new WaitForSeconds(delta);
-			//note start
-			curTime+=delta;
-			//_anim.SetFloat("pitch",0.333f);
-			if(pitchId==0){
-				//_low.Play();
-				Debug.Log("L");
+		while(timer<overallDur){
+			timer+=Time.deltaTime;
+			foreach(Transform n in notes){
+				n.position+=Vector3.down*Time.deltaTime*_yPerSec;
 			}
-			else if(pitchId==1){
-				//_mid.Play();
-				Debug.Log("M");
-			}
-			else{
-				//_high.Play();
-				Debug.Log("H");
-			}
-			delta=curNoteEnd-curNoteStart;
-			yield return new WaitForSeconds(delta);
-			//note end
-			curTime+=delta;
-			//_anim.SetFloat("pitch",0f);
-			if(pitchId==0){
-				//_low.Stop();
-			}
-			else if(pitchId==1){
-				//_mid.Stop();
-			}
-			else{
-				//_high.Stop();
-			}
+			yield return null;
 		}
+
+	}
+
+	IEnumerator PlayAfterDelay(float d){
+		yield return new WaitForSeconds(d);
+		Sfx.PlayOneShot2D(_song._clip);
 	}
 
 	public void DeserializeSong(){
