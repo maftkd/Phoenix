@@ -7,6 +7,7 @@ public class Sfx : MonoBehaviour
 {
 	public static Sfx _instance;
 	public AudioMixer _mixer;
+	public AnimationCurve _fallOff;
 
 	void Awake(){
 		_instance=this;
@@ -78,8 +79,11 @@ public class Sfx : MonoBehaviour
 		audio.pitch=pitch;
 		audio.clip=clip;
 		audio.Play();
-		audio.rolloffMode=AudioRolloffMode.Linear;
-		audio.maxDistance=15f;
+		//audio.rolloffMode=AudioRolloffMode.Linear;
+		//audio.maxDistance=15f;
+		audio.rolloffMode=AudioRolloffMode.Custom;
+		audio.SetCustomCurve(AudioSourceCurveType.CustomRolloff,_instance._fallOff);
+		audio.maxDistance=25f;
 
 		Destroy(foo,clip.length/pitch);
 		return audio;
