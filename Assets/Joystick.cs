@@ -46,16 +46,29 @@ public class Joystick : MonoBehaviour
 				}
 			}
 			else{
-				_player.position+=dir*Time.deltaTime*_moveSpeed;
+				Vector3 pos=_player.position+dir*Time.deltaTime*_moveSpeed;
 				_player.forward=dir;
-				if(_player.position.x-5>_cam.position.x)
-					_cam.position+=Vector3.right*10f;
-				if(_player.position.x+5<_cam.position.x)
-					_cam.position+=Vector3.left*10f;
-				if(_player.position.z-5>_cam.position.z)
-					_cam.position+=Vector3.forward*10f;
-				if(_player.position.z+5<_cam.position.z)
-					_cam.position+=Vector3.back*10f;
+				if(pos.x-5>_cam.position.x)
+				{
+					pos.x=_player.position.x;
+					//_cam.position+=Vector3.right*10f;
+				}
+				if(pos.x+5<_cam.position.x)
+				{
+					pos.x=_player.position.x;
+					//_cam.position+=Vector3.left*10f;
+				}
+				if(pos.z-5>_cam.position.z)
+				{
+					pos.z=_player.position.z;
+					//_cam.position+=Vector3.forward*10f;
+				}
+				if(pos.z+5<_cam.position.z)
+				{
+					pos.z=_player.position.z;
+					//_cam.position+=Vector3.back*10f;
+				}
+				_player.position=pos;
 			}
 		}
 		if(Input.GetMouseButtonUp(0)){

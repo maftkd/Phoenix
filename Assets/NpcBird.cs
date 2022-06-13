@@ -53,7 +53,7 @@ public class NpcBird : MonoBehaviour
 	}
 
 	public void PlayerEnter(){
-		_dialog.Activate(true);
+		//_dialog.Activate(true);
 
 		//if player has seed
 		//	eat it
@@ -69,7 +69,7 @@ public class NpcBird : MonoBehaviour
 	}
 
 	public void PlayerExit(){
-		_dialog.Activate(false);
+		//_dialog.Activate(false);
 	}
 
 	public void Callback(){

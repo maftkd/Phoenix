@@ -8,14 +8,15 @@ public class Herald : MonoBehaviour
 	int _state;
 	Transform _player;
 	Transform _joystick;
-	Transform _dialog;
 	NPB _npb;
+	Dialog _dialog;
 
 	void Awake(){
 		_player=GameObject.Find("Player").transform;
 		_joystick=GameObject.Find("Joystick").transform;
-		_dialog=GameObject.Find("Dialog").transform;
-		_dialog.gameObject.SetActive(false);
+		_dialog=GameObject.Find("Dialog").transform.GetComponent<Dialog>();;
+		_dialog.Hide();
+		//_dialog.gameObject.SetActive(false);
 		_npb=GetComponent<NPB>();
 	}
 
@@ -32,16 +33,20 @@ public class Herald : MonoBehaviour
 			case 0:
 				if((_player.position-transform.position).sqrMagnitude<_radius*_radius){
 					_state=1;
-					Debug.Log("Herald time");
 					//disable joystick
 					_joystick.gameObject.SetActive(false);
 					//enable dialog
-					_dialog.gameObject.SetActive(true);
+					//_dialog.gameObject.SetActive(true);
+					_dialog.ShowText("Hello World");
 					//disble calling
 					_npb.enabled=false;
 				}
 				break;
 			case 1:
+				if(Input.GetMouseButtonDown(0)){
+					Debug.Log("Time for more text");
+					_dialog.ShowText("Moar Text!");
+				}
 				break;
 			default:
 				break;

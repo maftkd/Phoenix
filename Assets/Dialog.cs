@@ -5,12 +5,10 @@ using UnityEngine.UI;
 
 public class Dialog : MonoBehaviour
 {
-	GameObject _canvas;
+	Text _text;
 
 	void Awake(){
-		_canvas=transform.Find("Dialog").gameObject;
-		//_canvas=transform.GetComponentInChildren<Canvas>().gameObject;
-		_canvas.SetActive(false);
+		_text=transform.GetChild(0).GetComponent<Text>();
 	}
 
     // Start is called before the first frame update
@@ -25,7 +23,12 @@ public class Dialog : MonoBehaviour
         
     }
 
-	public void Activate(bool active){
-		_canvas.SetActive(active);
+	public void ShowText(string s){
+		gameObject.SetActive(true);
+		_text.text=s;
+	}
+
+	public void Hide(){
+		gameObject.SetActive(false);
 	}
 }

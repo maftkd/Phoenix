@@ -59,4 +59,11 @@ public class NPB : MonoBehaviour
 	public void Targeted(bool foo){
 		_targetted=foo;
 	}
+
+	void OnTriggerEnter(Collider other){
+		Debug.Log("yoyoyoyo");
+		//tree view
+		//game logic somewhere
+		//animations and stuff
+	}
 }

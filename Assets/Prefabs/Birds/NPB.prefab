@@ -272,7 +272,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0.12, z: 0}
 --- !u!95 &5845262002360950304
 Animator:
@@ -305,8 +305,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 830fbecce4c75a64cb20eaf89fc4b0a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _calls: []
+  _call: {fileID: 0}
   _callDelayRange: {x: 4, y: 6}
+  _minCalls: 0
+  _maxCalls: 0
+  _chillRange: {x: 0, y: 0}
+  _scanned: 0
 --- !u!1001 &6372459728020278732
 PrefabInstance:
   m_ObjectHideFlags: 0
