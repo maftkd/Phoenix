@@ -50,23 +50,23 @@ public class Joystick : MonoBehaviour
 				_player.forward=dir;
 				if(pos.x-5>_cam.position.x)
 				{
-					pos.x=_player.position.x;
-					//_cam.position+=Vector3.right*10f;
+					//pos.x=_player.position.x;
+					_cam.position+=Vector3.right*10f;
 				}
 				if(pos.x+5<_cam.position.x)
 				{
-					pos.x=_player.position.x;
-					//_cam.position+=Vector3.left*10f;
+					//pos.x=_player.position.x;
+					_cam.position+=Vector3.left*10f;
 				}
 				if(pos.z-5>_cam.position.z)
 				{
-					pos.z=_player.position.z;
-					//_cam.position+=Vector3.forward*10f;
+					//pos.z=_player.position.z;
+					_cam.position+=Vector3.forward*10f;
 				}
 				if(pos.z+5<_cam.position.z)
 				{
-					pos.z=_player.position.z;
-					//_cam.position+=Vector3.back*10f;
+					//pos.z=_player.position.z;
+					_cam.position+=Vector3.back*10f;
 				}
 				_player.position=pos;
 			}

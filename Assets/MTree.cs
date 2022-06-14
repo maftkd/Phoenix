@@ -192,8 +192,10 @@ public class MTree : MonoBehaviour
 		GetComponent<MeshFilter>().sharedMesh=m;
 		GetComponent<MeshCollider>().sharedMesh=m;
 
-		StartCoroutine(DestroyNextFrame(ringCenter.gameObject));
-
+		if(Application.isPlaying)
+			Destroy(ringCenter.gameObject);
+		else
+			StartCoroutine(DestroyNextFrame(ringCenter.gameObject));
 	}
 
 	void GenerateBranch(Vector3 startPos, Vector3 growthDir, int level=0){

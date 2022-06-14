@@ -83,7 +83,7 @@ public class Sfx : MonoBehaviour
 		//audio.maxDistance=15f;
 		audio.rolloffMode=AudioRolloffMode.Custom;
 		audio.SetCustomCurve(AudioSourceCurveType.CustomRolloff,_instance._fallOff);
-		audio.maxDistance=25f;
+		audio.maxDistance=10f;
 
 		Destroy(foo,clip.length/pitch);
 		return audio;
